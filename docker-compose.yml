@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+
+  theremine:
+    build: ./theremine
+    networks:
+      - kiva
+      - mongo
+    ports:
+      - 8080:80
+
+  byte-diver:
+    build: 
+      context: ./haskell
+      dockerfile: ./byte-diver/Dockerfile
+    networks:
+      - mongo
+
+  kiva:
+    build: 
+      context: ./haskell
+      dockerfile: ./kiva/Dockerfile
+    networks:
+      - kiva
+      - mongo
+    ports:
+      - 8081:80
+
+  mongo:
+    image: mongo
+    networks:
+      - mongo
+    volumes:
+      - ./state/mongo:/data/db
+
+networks:
+  kiva:
+  mongo:
