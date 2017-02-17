@@ -2,20 +2,20 @@
 
 module Drive.Crawl.Auchan.Category (AuchanData(..), fetchAuchanData) where
 
-import           Protolude hiding (Selector)
-import           Data.Aeson 
-import qualified Data.Text           as T
-import           Text.HTML.TagSoup
+import           Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BL
+import qualified Data.Text                  as T
+import           Drive.Crawl                hiding (html)
 import           Drive.Product
-import           Drive.Crawl hiding (html)
 import           Drive.Utils
+import           Protolude                  hiding (Selector)
+import           Text.HTML.TagSoup
 
-import qualified Data.Text.Read  as T
-import           Prelude         (String)
-import           Text.Regex.TDFA
+import           Data.List                  (nubBy)
+import qualified Data.Text.Read             as T
 import           Network.HTTP.Types.Header
-import qualified Data.List           as L
+import           Prelude                    (String)
+import           Text.Regex.TDFA
 
 data ProductsNotFoundException = ProductsNotFoundException deriving (Show, Typeable)
 instance Exception ProductsNotFoundException
@@ -30,22 +30,20 @@ data AuchanData = AuchanData
   }
   deriving (Typeable, Show)
 
-instance Eq AuchanData where
-  x == y = adId x == adId y
-
-data Zone = Zone { itemsList :: Text }
+newtype Zone = Zone { itemsList :: Text }
   deriving (Show, Generic)
-data PaginationJSON = PaginationJSON { zones :: Zone }
-  deriving (Show, Generic)
-instance FromJSON PaginationJSON
-instance ToJSON PaginationJSON
 instance FromJSON Zone
 instance ToJSON Zone
 
+newtype PaginationJSON = PaginationJSON { zones :: Zone }
+  deriving (Show, Generic)
+instance FromJSON PaginationJSON
+instance ToJSON PaginationJSON
+
 getCatUrl :: Integer -> Text
-getCatUrl pageNb =
-  T.replace "{page_nb}" (show pageNb :: Text) pageUrl
-    where pageUrl = "http://www.auchandrive.fr/drive/rayon.productlist.pagination_0.topage/{page_nb}?t:ac=3686969/3686339"
+getCatUrl pageNb = "http://www.auchandrive.fr/drive/rayon.productlist.pagination_0.topage/"
+                <> show pageNb
+                <> "?t:ac=3686969/3686339"
 
 getHtmlCategoryPage :: Text -> Maybe [Tag Text]
 getHtmlCategoryPage html = do
@@ -61,9 +59,9 @@ extractPrice :: Text -> Maybe Price
 extractPrice txt =
   do
     priceStr <- head $ getAllTextMatches matches
-    either 
+    either
       (const Nothing)
-      (\(r,_) -> return $ toPrice (r :: Double)) 
+      (\(r,_) -> return $ toPrice (r :: Double))
       (T.rational $ T.pack priceStr)
   where
     newTxt = T.unpack $ T.replace "," "." txt
@@ -109,7 +107,7 @@ productInfo _ = do
   return $ buildAuchanData idTxt priceTxt nameTxt imageTxt priceByQuantityTxt quantityUnitTxt
 
 productDivSel :: Selector
-productDivSel = "div" @: [hasClass "vignette", 
+productDivSel = "div" @: [hasClass "vignette",
                           notP $ hasClass "vignette-indispo"]
              // "div" @: [hasClass "vignette-content"]
 
@@ -126,7 +124,7 @@ fetchAuchanData url =
     goURI url
     _ <- getHtml []
     hotByPage <- takeWhileM (not . null) (map parseCategoryPage [1,2..])
-    return $ L.nub $ catMaybes $ concat hotByPage
+    return $ nubBy (\x y -> adId x == adId y) $ catMaybes $ concat hotByPage
 
 -- case head $ getAllTextSubmatches matches of
 --   Nothing -> return Nothing

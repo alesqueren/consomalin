@@ -12,7 +12,6 @@ import           Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BL
 import           Data.HashMap.Strict (lookup)
 
-
 data MerchData = MerchData
   { cdId           :: !Text
   , cdNameShort    :: !Text
@@ -26,8 +25,9 @@ data MerchData = MerchData
   }
   deriving (Typeable, Show, Eq)
 
-data Measure = Measure { name :: Text }
+newtype Measure = Measure { name :: Text }
   deriving (Show, Generic)
+
 data DataField = DataField 
   { namePublicShort :: Text 
   , namePublicLong  :: Text 
@@ -57,7 +57,7 @@ fetchMerchData id html =
           { cdId           = id
           , cdNameShort    = ""
           , cdNameLong     = ""
-          , cdImageUrl     = newImage
+          , cdImageUrl     = image
           , cdQuantity     = Nothing
           , cdQuantityUnit = Nothing
           , cdDescription  = Nothing
@@ -69,7 +69,7 @@ fetchMerchData id html =
           { cdId           = id
           , cdNameShort    = namePublicShort resp
           , cdNameLong     = namePublicLong resp
-          , cdImageUrl     = newImage
+          , cdImageUrl     = image
           , cdQuantity     = quantityNormalized resp
           , cdQuantityUnit = Nothing -- name $ isMeasuredBy resp
           , cdDescription  = Drive.Crawl.Auchan.Merchandising.description resp
@@ -77,12 +77,12 @@ fetchMerchData id html =
           , cdComposition  = Drive.Crawl.Auchan.Merchandising.composition resp
           }
   where 
-    image = "http://www.auchandrive.fr/drive/static-media/front/pictures/product/zoom/{pid}.jpg"
-    newImage = T.replace "{pid}" id image
+    image = "http://www.auchandrive.fr/drive/static-media/front/pictures/product/zoom/" <> id <> ".jpg"
 
 getMerchUrl :: Text -> Text
-getMerchUrl id = T.replace "{pid}" id url
-    where url = "http://merch.productpage.io/merch/v1/productinshop/product?productinshop_shortidout={pid}&productinshop_shopid=1&with_issubstitutablewith=1&with_iscomplementarywith=1"
+getMerchUrl id = "http://merch.productpage.io/merch/v1/productinshop/product?productinshop_shortidout="
+              <> id
+              <> "&productinshop_shopid=1&with_issubstitutablewith=1&with_iscomplementarywith=1"
 
 makeProduct :: MerchData -> AuchanData -> Product
 makeProduct cd ad =
