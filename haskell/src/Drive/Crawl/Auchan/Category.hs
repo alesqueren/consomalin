@@ -30,14 +30,15 @@ data AuchanData = AuchanData
   }
   deriving (Typeable, Show)
 
-data Zone = Zone { itemsList :: Text }
+newtype Zone = Zone { itemsList :: Text }
   deriving (Show, Generic)
-data PaginationJSON = PaginationJSON { zones :: Zone }
+instance FromJSON Zone
+instance ToJSON Zone
+
+newtype PaginationJSON = PaginationJSON { zones :: Zone }
   deriving (Show, Generic)
 instance FromJSON PaginationJSON
 instance ToJSON PaginationJSON
-instance FromJSON Zone
-instance ToJSON Zone
 
 getCatUrl :: Integer -> Text
 getCatUrl pageNb =
