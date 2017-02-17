@@ -41,9 +41,9 @@ instance FromJSON PaginationJSON
 instance ToJSON PaginationJSON
 
 getCatUrl :: Integer -> Text
-getCatUrl pageNb =
-  T.replace "{page_nb}" (show pageNb :: Text) pageUrl
-    where pageUrl = "http://www.auchandrive.fr/drive/rayon.productlist.pagination_0.topage/{page_nb}?t:ac=3686969/3686339"
+getCatUrl pageNb = "http://www.auchandrive.fr/drive/rayon.productlist.pagination_0.topage/"
+                <> show pageNb
+                <> "?t:ac=3686969/3686339"
 
 getHtmlCategoryPage :: Text -> Maybe [Tag Text]
 getHtmlCategoryPage html = do
