@@ -7,7 +7,6 @@ import Drive.Types
 import           Drive.Crawl hiding (html)
 import           Drive.Product
 import           Drive.Crawl.Auchan.Category
-import qualified Data.Text           as T
 import           Data.Aeson 
 import qualified Data.ByteString.Lazy.Char8 as BL
 import           Data.HashMap.Strict (lookup)
