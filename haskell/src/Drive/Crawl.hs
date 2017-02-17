@@ -13,7 +13,7 @@ import           Network.HTTP.Conduit    as X
 import           Network.HTTP.Types.Header
 
 import           Network.URI
-import           Text.HTML.Scalpel       as X hiding (URL)
+import           Text.HTML.Scalpel.Core  as X
 
 import           Control.Lens            (makeLenses, use, (.=))
 import           Control.Monad.Catch
