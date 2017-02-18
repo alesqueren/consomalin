@@ -105,6 +105,6 @@ fetchProductAuchanData :: Crawl cr => AuchanData -> cr Product
 fetchProductAuchanData ad =
   do
     goURI $ getMerchUrl (adId ad)
-    html <- getText "" []
-    let cd = fetchMerchData (adId ad) html
+    jsonR <- getText "" []
+    let cd = fetchMerchData (adId ad) jsonR
     return $ makeProduct cd ad

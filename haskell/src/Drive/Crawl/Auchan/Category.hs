@@ -2,19 +2,19 @@
 
 module Drive.Crawl.Auchan.Category (AuchanData(..), fetchAuchanData) where
 
+import           Protolude                  hiding (Selector)
+import           Prelude                    (String)
+
 import           Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Text                  as T
 import           Drive.Crawl                hiding (html)
 import           Drive.Product
 import           Drive.Utils
-import           Protolude                  hiding (Selector)
 import           Text.HTML.TagSoup
 
 import           Data.List                  (nubBy)
 import qualified Data.Text.Read             as T
-import           Network.HTTP.Types.Header
-import           Prelude                    (String)
 import           Text.Regex.TDFA
 
 data ProductsNotFoundException = ProductsNotFoundException deriving (Show, Typeable)
