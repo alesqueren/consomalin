@@ -10,9 +10,10 @@ function addGroup(_idUser, groupName) {
         wishGroups: { name: groupName },
       },
     },
-    (err) => {
-      console.log(`err: ${err}`);
-    });
+    // (err) => {
+    //   console.log(`err: ${err}`);
+    // });
+    );
 }
 
 module.exports = {

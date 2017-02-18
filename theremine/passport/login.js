@@ -1,3 +1,5 @@
+/* global passport-local, bcrypt-nodejs */
+
 const LocalStrategy = require('passport-local').Strategy;
 const bCrypt = require('bcrypt-nodejs');
 const usersManager = require('../managers/usersManager');

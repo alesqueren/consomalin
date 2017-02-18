@@ -11,15 +11,16 @@ function isAuthenticated(req, res, next) {
 
 module.exports = function init() {
   router.get('/', isAuthenticated, (req, res) => {
-    // console.log('get whishlist/ req.user ' + req.user);
+    console.log('get whishlist/ req.user $(req.user)');
     res.render('wishList/wishList', { user: req.user });
   });
 
   router.post('/groups', isAuthenticated, (req, res) => {
-    groupsManager.add(req.user._id, req.body.name);
+    // groupsManager.add(req.user._id, req.body.name);
+    groupsManager.add(req.user.id, req.body.name);
     // console.log(req.user);
-    console.log(`req.user._id ${req.user._id}`);
-    console.log(`req.body.name ${req.body.name}`);
+    // console.log(`req.user._id ${req.user._id}`);
+    // console.log(`req.body.name ${req.body.name}`);
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify('OK'));
   });

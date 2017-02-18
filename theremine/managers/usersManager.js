@@ -9,8 +9,8 @@ function addUser(email, password, callback) {
       wishGroups: [{ name: 'default' }],
     },
     (err, user) => {
-      console.log('user contents', JSON.stringify(user, null, 4));
-      console.log('user inserted', JSON.stringify(user.ops[0], null, 4));
+      // console.log('user contents', JSON.stringify(user, null, 4));
+      // console.log('user inserted', JSON.stringify(user.ops[0], null, 4));
       // console.log('user');
       // console.log(user[0]);
       callback(user.ops[0]);
