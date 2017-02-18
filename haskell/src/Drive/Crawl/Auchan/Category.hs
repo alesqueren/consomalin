@@ -114,15 +114,14 @@ productDivSel = "div" @: [hasClass "vignette",
 parseCategoryPage :: Crawl cr => Integer -> cr [Maybe AuchanData]
 parseCategoryPage pageNb =
   do
-    goURI $ getCatUrl pageNb
-    resp <- getHtml [("X-Requested-With" :: HeaderName, "XMLHttpRequest" :: ByteString)]
+    resp <- postText (getCatUrl pageNb) [("X-Requested-With", "XMLHttpRequest")] ""
     return $ fetchAuchanDataFromPageNb resp
 
 fetchAuchanData :: Crawl cr => Text -> cr [AuchanData]
 fetchAuchanData url =
   do
     goURI url
-    _ <- getHtml []
+    _ <- getText "" []  -- FIXME: still needed?
     hotByPage <- takeWhileM (not . null) (map parseCategoryPage [1,2..])
     return $ nubBy (\x y -> adId x == adId y) $ catMaybes $ concat hotByPage
 

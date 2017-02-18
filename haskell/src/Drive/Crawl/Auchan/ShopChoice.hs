@@ -31,7 +31,7 @@ entryShopLink sn = do
 selectCityShop :: Crawl cr => ShopName -> cr TextURI
 selectCityShop shop = do
   goURI "https://www.auchandrive.fr"
-  startP <- getPageTags []
+  startP <- getPage "/"
 
   -- get the shop link
   maybeOrThrow ShopNotFoundException $ scrape (entryShopLink shop) startP
@@ -42,8 +42,7 @@ chooseDrive :: Crawl cr => ShopName -> cr Text
 chooseDrive shop = do
   shopURI <- selectCityShop shop
  
-  -- does not work if commented. why ?
-  goURI "http://www.auchandrive.fr/drive/faq"
-  _ <- getHtml []
+  -- FIXME: does not work if commented. why ?
+  _ <- getText "http://www.auchandrive.fr/drive/faq" []
 
   return $ T.append "http://www.auchandrive.fr" shopURI

@@ -23,7 +23,6 @@ entryCategories = chroots categoryDivSel (categoryLink anySelector)
 fetchCategoryUrls :: Crawl cr => Text -> cr [Text]
 fetchCategoryUrls url =
   do
-    goURI url
-    _ <- getHtml []
-    tags <- getPageTags []
+    _ <- getText "" []  -- FIXME: still needed?
+    tags <- getPage url
     maybeOrThrow CategoryNotFoundException $ scrape entryCategories tags

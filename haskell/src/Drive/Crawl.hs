@@ -7,7 +7,7 @@ module Drive.Crawl
   , module X
   ) where
 
-import           Protolude               hiding (decodeUtf8, try)
+import           Protolude               hiding (try)
 
 import           Network.HTTP.Conduit    as X
 import           Network.HTTP.Types.Header
@@ -18,7 +18,8 @@ import           Text.HTML.Scalpel.Core  as X
 import           Control.Lens            (makeLenses, use, (.=))
 import           Control.Monad.Catch
 import qualified Data.Text               as T
-import           Data.Text.Lazy.Encoding (decodeUtf8)
+import qualified Data.Text.Encoding      as T
+import qualified Data.Text.Lazy.Encoding as LT
 import           Drive.Utils
 import           Drive.Types             as X
 import           Text.HTML.TagSoup
@@ -36,36 +37,53 @@ instance Exception CrawlException
 class (Monad m, MonadIO m, MonadThrow m) => Crawl m where
   curUri :: m (Maybe URI)
   chUri :: URI -> m ()
-  getHttp :: RequestHeaders -> m (Response LByteString)
+  httpRequest :: TextURI -> ByteString -> RequestHeaders -> ByteString -> m (Response LByteString)
+
+-- | Compute an absolute or relative uri like a browser would do
+computeUri :: Maybe URI -> TextURI -> Maybe URI
+computeUri Nothing tUri = parseURI $ T.unpack tUri
+computeUri (Just baseUri) tUri = do
+  nu <- parseURIReference $ T.unpack tUri
+  return $ if uriIsAbsolute nu
+    then nu
+    else nu `relativeTo` baseUri
 
 -- |Navigate from an URI (absolute or relative to the current page)
 goURI :: Crawl cr => TextURI -> cr ()
 goURI u = do
   mcu <- curUri
-  case mcu of
-    Nothing -> do
-      nu <- maybeOrThrow InvalidURIException (parseURI u')
-      chUri nu
-    Just cu -> do
-      nu <- maybeOrThrow InvalidURIException (parseURIReference u')
-      if uriIsAbsolute nu
-         then chUri nu
-         else chUri $ nu `relativeTo` cu
-  where
-    u' = T.unpack u
+  nUri <- maybeOrThrow InvalidURIException (computeUri mcu u)
+  chUri nUri
 
+{-
 getHtml :: Crawl cr => RequestHeaders -> cr Text
 getHtml headers = do
   resp <- getHttp headers 
   return . toStrict . decodeUtf8 . responseBody $ resp
 
--- |Get the tags of the current page
 getPageTags :: Crawl cr => RequestHeaders -> cr [Tag Text]
 getPageTags headers = do
   resp <- getHttp headers
 
   return . parseTags . toStrict . decodeUtf8 . responseBody $ resp
+-}
 
+httpReqText :: Crawl cr => TextURI -> ByteString -> RequestHeaders -> Text -> cr Text
+httpReqText tUri met h body = do
+  resp <- httpRequest tUri met h (T.encodeUtf8 body)
+  return . toStrict . LT.decodeUtf8 . responseBody $ resp
+
+postText :: Crawl cr => TextURI -> RequestHeaders -> Text -> cr Text
+postText tUri h body = httpReqText tUri "POST" h body
+
+getText :: Crawl cr => TextURI -> RequestHeaders -> cr Text
+getText tUri h = httpReqText tUri "GET" h ""
+
+-- |Get the tags of a page
+getPage :: Crawl cr => TextURI -> cr [Tag Text]
+getPage tUri = do
+  resp <- getText tUri []
+  return . parseTags $ resp
 
 {-
    NetCrawl: crawl with http requests
@@ -76,6 +94,7 @@ data NetSession = NetSession
   { _manager :: !Manager
   , _cookies :: !CookieJar
   , _cUri    :: !(Maybe URI)
+  , _defHeaders :: RequestHeaders
   }
 
 makeLenses ''NetSession
@@ -89,25 +108,29 @@ newNetSession :: Manager -> NetSession
 newNetSession man = NetSession { _manager = man
                                , _cookies = createCookieJar []
                                , _cUri = Nothing
+                               , _defHeaders = []
                                }
 
 -- |NetCrawl: a crawler which executes real http requests
 instance Crawl NetCrawl where
   curUri = use cUri
   chUri = (.=) cUri . Just
-  getHttp headers = do
-    uri <- use cUri >>= maybeOrThrow NoURIException
-    cooks <- use cookies
+  httpRequest tUri met headers body = do
     man <- use manager
+    cooks <- use cookies
+    baseUri <- use cUri
+    defH <- use defHeaders
 
-    req <- parseRequest $ show uri
-    let req' = if null headers
-                then req { cookieJar = Just cooks }
-                else req { 
-                  cookieJar = Just cooks,
-                  requestHeaders = headers,
-                  method = "POST" -- should be set elsewhere
-                }
+    uri <- maybeOrThrow InvalidURIException $ computeUri baseUri tUri
+
+    req <- (parseRequest $ show uri)
+
+    -- DANGER: header fields can be duplicated, read RFC 2616 section 4.2
+    let req' = req { cookieJar = Just cooks
+                   , requestHeaders = defH <> headers
+                   , method = met
+                   , requestBody = RequestBodyBS body
+                   }
 
     resp <- X.httpLbs req' man
     cookies .= responseCookieJar resp
