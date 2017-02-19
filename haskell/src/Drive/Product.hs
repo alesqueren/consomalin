@@ -124,6 +124,7 @@ instance Val Product where
     -- composition <- lookup "composition" doc :: Maybe Text
     -- return $ Product id price priceByQuantity nameShort nameLong imageUrl (Just quantity) (Just quantityUnit) (Just description) (Just benefits) (Just composition)
     return $ Product id price priceByQuantity name nameShort nameLong imageUrl Nothing Nothing Nothing Nothing Nothing
+  cast' _ = Nothing
 
 summarize :: Product -> ProductSummary
 summarize p =
