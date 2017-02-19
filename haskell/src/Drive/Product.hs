@@ -162,10 +162,11 @@ insertProducts pds = do
       doAction pipe = access pipe master dbName action
 
 
+{-# ANN module "HLint: ignore Reduce duplication" #-}
 -- FIXME: duplication with ./src/Drive/Product.hs:175:3
 findProducts :: [Text] -> IO [Product]
 findProducts pids = do
-  h <- fromEnvOr "MONGO_HOST" A.takeText $ "127.0.0.1" <> ""
+  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
   docs <- withMongoPipe (host $ T.unpack h) doAction
   return $ mapMaybe (cast' . val) docs
     where 
