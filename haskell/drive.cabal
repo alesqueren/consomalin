@@ -64,8 +64,6 @@ executable byte-diver
   build-depends:       base
                      , protolude
                      , drive
-                     , split
-                     , scalpel-core
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
