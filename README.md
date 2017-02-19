@@ -13,5 +13,13 @@ A simple drive website
 git clone ssh://git@git.consomalin.ovh:2222/drive/drive.git
 cd drive
 git clone ssh://git@git.consomalin.ovh:2222/drive/state.git
+
+docker-compose -f haskell/compiler/docker-compose.yml up
 docker-compose up -d
+```
+
+## Update
+```bash
+docker-compose -f haskell/compiler/docker-compose.yml up
+docker-compose up -d --build
 ```

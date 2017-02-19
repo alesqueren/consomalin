@@ -74,7 +74,7 @@ httpReqText tUri met h body = do
   return . toStrict . LT.decodeUtf8 . responseBody $ resp
 
 postText :: Crawl cr => TextURI -> RequestHeaders -> Text -> cr Text
-postText tUri h body = httpReqText tUri "POST" h body
+postText tUri = httpReqText tUri "POST"
 
 getText :: Crawl cr => TextURI -> RequestHeaders -> cr Text
 getText tUri h = httpReqText tUri "GET" h ""
@@ -123,7 +123,7 @@ instance Crawl NetCrawl where
 
     uri <- maybeOrThrow InvalidURIException $ computeUri baseUri tUri
 
-    req <- (parseRequest $ show uri)
+    req <- parseRequest $ show uri
 
     -- DANGER: header fields can be duplicated, read RFC 2616 section 4.2
     let req' = req { cookieJar = Just cooks
