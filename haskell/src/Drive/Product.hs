@@ -160,21 +160,43 @@ insertProducts pds = do
       action = insertMany_ colName docs
       doAction pipe = access pipe master dbName action
 
-doAction :: Cursor -> IO [Products]
-doAction c = do
+
+findProducts :: [Text] -> IO [Product]
+findProducts pids = do
   h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1" 
   docs <- withMongoPipe (host $ T.unpack h) doAction
   return $ mapMaybe (cast' . val) docs
-  where
-      doAction pipe = access pipe master dbName $ rest =<< c
-
-findProducts :: [Text] -> IO [Product]
-findProducts pids = doAction $ find (select ["_id" =: ["$in" =: pids]] colName)
+    where 
+      action = rest =<< find (select ["_id" =: ["$in" =: pids]] colName)
+      doAction pipe = access pipe master dbName action
 
 searchProducts :: Text -> IO [Product]
-searchProducts search = doAction action
-  where 
-    action = find (select ["$text" =: ["$search" =: search]] colName)
-                  {limit = 10,
-                   project = ["score" =: ["$meta" =: ("textScore" :: Text)]],
-                   sort = ["score" =: ["$meta" =: ("textScore" :: Text)]] }
+searchProducts search = do
+  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1" 
+  docs <- withMongoPipe (host $ T.unpack h) doAction
+  return $ mapMaybe (cast' . val) docs
+    where 
+      action = rest =<< find (select ["$text" =: ["$search" =: search]] colName)
+        {limit = 10,
+         project = ["score" =: ["$meta" =: ("textScore" :: Text)]],
+         sort = ["score" =: ["$meta" =: ("textScore" :: Text)]] }
+      doAction pipe = access pipe master dbName action
+
+-- doAction :: Cursor -> IO [Product]
+-- doAction c = do
+--   h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1" 
+--   docs <- withMongoPipe (host $ T.unpack h) doAction
+--   return $ mapMaybe (cast' . val) docs
+--   where
+--       doAction pipe = access pipe master dbName $ rest c
+-- 
+-- findProducts :: [Text] -> IO [Product]
+-- findProducts pids = doAction $ find (select ["_id" =: ["$in" =: pids]] colName)
+-- 
+-- searchProducts :: Text -> IO [Product]
+-- searchProducts search = doAction action
+--   where 
+--     action = find (select ["$text" =: ["$search" =: search]] colName)
+--                   {limit = 10,
+--                    project = ["score" =: ["$meta" =: ("textScore" :: Text)]],
+--                    sort = ["score" =: ["$meta" =: ("textScore" :: Text)]] }

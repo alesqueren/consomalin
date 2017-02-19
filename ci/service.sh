@@ -11,6 +11,7 @@ if [ $# -ne 1 ]; then
 fi
 service=$1
 
+# sudo mount --bind /home/antoine/.stack/ .stack-lib
 docker-compose build --pull $service
 img=$(pwd | rev | cut -d"/" -f1 | rev | tr '[:upper:]' '[:lower:]')_$service
 docker tag $img registry.consomalin.ovh:443/$service
