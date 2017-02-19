@@ -40,9 +40,9 @@ class (Monad m, MonadIO m, MonadThrow m) => Crawl m where
   httpRequest :: TextURI -> ByteString -> RequestHeaders -> ByteString -> m (Response LByteString)
 
 -- | Compute an absolute or relative uri like a browser would do
-computeUri :: Maybe URI -> TextURI -> Maybe URI
-computeUri Nothing tUri = parseURI $ T.unpack tUri
-computeUri (Just baseUri) tUri = do
+computeURI :: Maybe URI -> TextURI -> Maybe URI
+computeURI Nothing tUri = parseURI $ T.unpack tUri
+computeURI (Just baseUri) tUri = do
   nu <- parseURIReference $ T.unpack tUri
   return $ if uriIsAbsolute nu
     then nu
@@ -52,7 +52,7 @@ computeUri (Just baseUri) tUri = do
 goURI :: Crawl cr => TextURI -> cr ()
 goURI u = do
   mcu <- curUri
-  nUri <- maybeOrThrow InvalidURIException (computeUri mcu u)
+  nUri <- maybeOrThrow InvalidURIException (computeURI mcu u)
   chUri nUri
 
 {-
@@ -121,7 +121,7 @@ instance Crawl NetCrawl where
     baseUri <- use cUri
     defH <- use defHeaders
 
-    uri <- maybeOrThrow InvalidURIException $ computeUri baseUri tUri
+    uri <- maybeOrThrow InvalidURIException $ computeURI baseUri tUri
 
     req <- parseRequest $ show uri
 

@@ -19,7 +19,7 @@ maybeOrThrow :: (MonadThrow m, Exception e) => e -> Maybe a -> m a
 maybeOrThrow e Nothing  = throwM e
 maybeOrThrow _ (Just r) = return r
 
--- FIXME: move somewhere else?
+
 fromEnv :: Text -> Parser a -> IO (Maybe a)
 fromEnv envVar p = do
   mp <- (lookupEnv . T.unpack) envVar

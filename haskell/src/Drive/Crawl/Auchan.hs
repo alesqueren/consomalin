@@ -50,7 +50,7 @@ crawl _ = return []
 
 crawlList :: (Crawl cr)  => [CrawlElement] -> cr [Product]
 crawlList [] = return []
-crawlList (x:xs) = 
+crawlList (x:xs) =
   case x of
     (ProductPage pd) -> do
       pds <- crawlList xs
@@ -61,6 +61,6 @@ crawlList (x:xs) =
 
 auchanCrawl :: (Crawl cr)  => cr [Product]
 auchanCrawl = 
-  do 
+  do
     pds <- crawlList [ShopChoicePage]
     return $ nub pds
