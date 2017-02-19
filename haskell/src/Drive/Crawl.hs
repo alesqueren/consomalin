@@ -124,11 +124,10 @@ newNetSession man = NetSession { _manager = man
                                , _defHeaders = []
                                }
 
--- |Run a NetCrawl session and returns the result in IO
-runNetCrawl :: Manager -> Crawl a -> IO a
+runNetCrawl :: (MonadThrow m, MonadIO m) => Manager -> Crawl a -> m a
 runNetCrawl m c = evalStateT (iterM go c) (newNetSession m)
   where
-    go :: CrawlF (StateT NetSession IO a) -> StateT NetSession IO a
+    -- go :: CrawlF (StateT NetSession m a) -> StateT NetSession m a
     go (CurUri f) = use cUri >>= f
     go (ChUri u f) = cUri .= Just u >> f
     go (HttpRequest tUri met headers body f) = f =<< do
