@@ -19,7 +19,7 @@ if [ $# -ne 1 ]; then
 fi
 service=$1
 
-ex "docker-compose -f haskell/compiler/docker-compose.yml run compiler $service"
+ex "docker-compose -f haskell/compiler/docker-compose2.yml run compiler $service"
 ex "docker-compose build --pull $service"
 
 img=$(pwd | rev | cut -d"/" -f1 | rev | tr '[:upper:]' '[:lower:]')_$service
