@@ -2,5 +2,5 @@ compiler:
     build: .
     volumes:
         - ..:/app
-        - /tmp/stack-work:/app/.stack-work
-        - /tmp/stack:/root/.stack
+        - /tmp/stack/local:/app/.stack-work
+        - /tmp/stack/global:/root/.stack

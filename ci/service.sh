@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+function ex () {
+    COLOR='\033[0;35m'
+    NC='\033[0m'
+    echo ""
+    echo -e "${COLOR} $ "$1"${NC}"
+    eval $1
+}
+
 myself=$(readlink -f ${BASH_SOURCE[0]})
 myfile=$(basename $myself)
 
@@ -11,8 +19,9 @@ if [ $# -ne 1 ]; then
 fi
 service=$1
 
-# sudo mount --bind /home/antoine/.stack/ .stack-lib
-docker-compose build --pull $service
+ex "docker-compose -f haskell/compiler/docker-compose.yml run compiler $service"
+ex "docker-compose build --pull $service"
+
 img=$(pwd | rev | cut -d"/" -f1 | rev | tr '[:upper:]' '[:lower:]')_$service
-docker tag $img registry.consomalin.ovh:443/$service
-docker push registry.consomalin.ovh:443/$service
+ex "docker tag $img registry.consomalin.ovh:443/$service"
+ex "docker push registry.consomalin.ovh:443/$service"
