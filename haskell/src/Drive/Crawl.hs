@@ -3,6 +3,7 @@
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TemplateHaskell            #-}
+--{-# LANGUAGE OverlappingInstances       #-}
 
 module Drive.Crawl
   ( module Drive.Crawl
@@ -28,7 +29,7 @@ import           Drive.Types             as X
 import           Text.HTML.TagSoup
 import           System.Log.FastLogger
 
-import           Control.Monad.Free.Church
+import           Control.Monad.Trans.Free.Church
 
 
 -- |Some exception types for this module
@@ -62,7 +63,7 @@ httpRequest tUri met headers body = liftF $ HttpRequest tUri met headers body id
 -- log :: MonadFree CrawlF m => Text -> m ()
 -- log t = liftF $ Log t ()
 
-instance MonadThrow Crawl where
+instance {-# OVERLAPPING #-} MonadThrow Crawl where
   throwM e = liftF $ Throw (toException e)
 
 instance MonadLogger Crawl where
@@ -124,8 +125,8 @@ newNetSession man = NetSession { _manager = man
                                , _defHeaders = []
                                }
 
-runNetCrawl :: (MonadThrow m, MonadIO m) => Manager -> Crawl a -> m a
-runNetCrawl m c = evalStateT (iterM go c) (newNetSession m)
+runNetCrawl :: (MonadThrow m, MonadIO m) => Manager -> FT CrawlF m a -> m a
+runNetCrawl m c = evalStateT (iterTM go c) (newNetSession m)
   where
     -- go :: CrawlF (StateT NetSession m a) -> StateT NetSession m a
     go (CurUri f) = use cUri >>= f

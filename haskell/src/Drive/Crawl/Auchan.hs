@@ -1,11 +1,11 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+--{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
 
 module Drive.Crawl.Auchan (auchanCrawl) where
 
 import           Protolude           hiding (Product, inits)
 import qualified Data.Text           as T
-import           Data.List           (nub)
 
 import           Drive.Product
 import           Drive.Crawl hiding (html)
@@ -14,6 +14,8 @@ import           Drive.Crawl.Auchan.Home
 import           Drive.Crawl.Auchan.Category
 import           Drive.Crawl.Auchan.Merchandising
 
+import           Conduit
+import           Control.Monad.Trans.Free.Church
 
 data CrawlElement = ShopChoicePage
                   | HomePage TextURI
@@ -49,19 +51,16 @@ crawl (AuchanDataPage hot) =
 
 crawl _ = return []
 
-crawlList :: [CrawlElement] -> Crawl [Product]
-crawlList [] = return []
-crawlList (x:xs) =
+crawlC :: (MonadFree CrawlF cr) => [CrawlElement] -> ConduitM () Product cr ()
+crawlC [] = return ()
+crawlC (x:xs) =
   case x of
     (ProductPage pd) -> do
-      pds <- crawlList xs
-      return $ pd:pds
+      yield pd
+      crawlC xs
     _ -> do
-      new <- crawl x
-      crawlList $ new ++ xs
+      new <- lift . fromF $ crawl x
+      crawlC $ new ++ xs
 
-auchanCrawl :: Crawl [Product]
-auchanCrawl = 
-  do
-    pds <- crawlList [ShopChoicePage]
-    return $ nub pds
+auchanCrawl :: (MonadFree CrawlF cr) => ConduitM () Product cr ()
+auchanCrawl = crawlC [ShopChoicePage]

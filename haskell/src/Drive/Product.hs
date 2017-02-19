@@ -161,7 +161,6 @@ insertProducts pds = do
       action = insertMany_ colName docs
       doAction pipe = access pipe master dbName action
 
-
 {-# ANN module ("HLint: ignore Reduce duplication" :: Text) #-}
 -- FIXME: duplication with ./src/Drive/Product.hs:175:3
 findProducts :: [Text] -> IO [Product]

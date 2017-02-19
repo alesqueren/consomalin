@@ -27,9 +27,11 @@ library
   build-depends:       base >= 4.7 && < 5
                      , protolude
                      , aeson
+                     , attoparsec
                      , blaze-builder
                      , bson
                      , bytestring
+                     , conduit-combinators
                      , errors
                      , fast-logger
                      , free
@@ -52,8 +54,6 @@ library
                      , wl-pprint-text
                      , wai
                      , warp
-                     , attoparsec
-                     , text
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
@@ -63,7 +63,12 @@ executable byte-diver
   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , protolude
+                     , containers
                      , drive
+                     , conduit
+                     , conduit-combinators
+                     , free
+                     , transformers
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
