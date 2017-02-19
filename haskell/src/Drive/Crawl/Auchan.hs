@@ -1,4 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TemplateHaskell     #-}
 
 module Drive.Crawl.Auchan (auchanCrawl) where
 
@@ -21,34 +22,34 @@ data CrawlElement = ShopChoicePage
                   | ProductPage Product
                   deriving (Show, Typeable)
 
-crawl :: (Crawl cr) => CrawlElement -> cr [CrawlElement]
+crawl :: CrawlElement -> Crawl [CrawlElement]
 crawl ShopChoicePage =
   do
-    putText "[ShopChoicePage]"
+    $(logDebug) "[ShopChoicePage]"
     return [HomePage "Toulouse-954"]
 
 crawl (HomePage shopName) =
   do
-    putText $ T.append "[HomePage] " shopName
+    $(logDebug) $ T.append "[HomePage] " shopName
     shopUrl <- chooseDrive shopName
     catUrls <- fetchCategoryUrls shopUrl
     return $ map CategoryPage catUrls
 
 crawl (CategoryPage url) =
   do
-    putText $ T.append "[CategoryPage] " url
+    $(logDebug) $ T.append "[CategoryPage] " url
     pds <- fetchAuchanData url
     return $ map AuchanDataPage pds
 
 crawl (AuchanDataPage hot) =
   do
-    putText $ T.append "[AuchanDataPage] " $ show hot
+    $(logDebug) $ T.append "[AuchanDataPage] " $ show hot
     pd <- fetchProductAuchanData hot
     return [ProductPage pd]
 
 crawl _ = return []
 
-crawlList :: (Crawl cr)  => [CrawlElement] -> cr [Product]
+crawlList :: [CrawlElement] -> Crawl [Product]
 crawlList [] = return []
 crawlList (x:xs) =
   case x of
@@ -59,7 +60,7 @@ crawlList (x:xs) =
       new <- crawl x
       crawlList $ new ++ xs
 
-auchanCrawl :: (Crawl cr)  => cr [Product]
+auchanCrawl :: Crawl [Product]
 auchanCrawl = 
   do
     pds <- crawlList [ShopChoicePage]

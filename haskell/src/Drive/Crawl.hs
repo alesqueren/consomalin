@@ -1,4 +1,6 @@
 {-# LANGUAGE DeriveFunctor              #-}
+{-# LANGUAGE FlexibleContexts           #-}
+{-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TemplateHaskell            #-}
 
@@ -17,12 +19,16 @@ import           Text.HTML.Scalpel.Core  as X
 
 import           Control.Lens            (makeLenses, use, (.=))
 import           Control.Monad.Catch
+import           Control.Monad.Logger    as X
 import qualified Data.Text               as T
 import qualified Data.Text.Encoding      as T
 import qualified Data.Text.Lazy.Encoding as LT
 import           Drive.Utils
 import           Drive.Types             as X
 import           Text.HTML.TagSoup
+import           System.Log.FastLogger
+
+import           Control.Monad.Free.Church
 
 
 -- |Some exception types for this module
@@ -32,12 +38,35 @@ data CrawlException = NoURIException | InvalidURIException
 
 instance Exception CrawlException
 
--- |The Crawl typeclass which provides a generic interface
--- for a crawler
-class (Monad m, MonadIO m, MonadThrow m) => Crawl m where
-  curUri :: m (Maybe URI)
-  chUri :: URI -> m ()
-  httpRequest :: TextURI -> ByteString -> RequestHeaders -> ByteString -> m (Response LByteString)
+type Method = ByteString
+
+data CrawlF next =
+    CurUri (Maybe URI -> next)
+  | ChUri URI next
+  | HttpRequest TextURI Method RequestHeaders ByteString (Response LByteString -> next)
+  | LogMsg Loc LogSource LogLevel LogStr next
+  | Throw SomeException
+  deriving (Functor)
+
+type Crawl = F CrawlF
+
+curUri :: MonadFree CrawlF m => m (Maybe URI)
+curUri = liftF $ CurUri identity
+
+chUri :: MonadFree CrawlF m => URI -> m ()
+chUri u = liftF $ ChUri u ()
+
+httpRequest :: MonadFree CrawlF m => TextURI -> Method -> RequestHeaders -> ByteString -> m (Response LByteString)
+httpRequest tUri met headers body = liftF $ HttpRequest tUri met headers body identity
+
+-- log :: MonadFree CrawlF m => Text -> m ()
+-- log t = liftF $ Log t ()
+
+instance MonadThrow Crawl where
+  throwM e = liftF $ Throw (toException e)
+
+instance MonadLogger Crawl where
+  monadLoggerLog loc source level s = liftF $ LogMsg loc source level (toLogStr s) ()
 
 -- | Compute an absolute or relative uri like a browser would do
 computeURI :: Maybe URI -> TextURI -> Maybe URI
@@ -49,41 +78,29 @@ computeURI (Just baseUri) tUri = do
     else nu `relativeTo` baseUri
 
 -- |Navigate from an URI (absolute or relative to the current page)
-goURI :: Crawl cr => TextURI -> cr ()
+goURI :: TextURI -> Crawl ()
 goURI u = do
   mcu <- curUri
-  nUri <- maybeOrThrow InvalidURIException (computeURI mcu u)
+  nUri <- maybe (throwM InvalidURIException) return (computeURI mcu u)
   chUri nUri
 
-{-
-getHtml :: Crawl cr => RequestHeaders -> cr Text
-getHtml headers = do
-  resp <- getHttp headers 
-  return . toStrict . decodeUtf8 . responseBody $ resp
-
-getPageTags :: Crawl cr => RequestHeaders -> cr [Tag Text]
-getPageTags headers = do
-  resp <- getHttp headers
-
-  return . parseTags . toStrict . decodeUtf8 . responseBody $ resp
--}
-
-httpReqText :: Crawl cr => TextURI -> ByteString -> RequestHeaders -> Text -> cr Text
+httpReqText :: TextURI -> Method -> RequestHeaders -> Text -> Crawl Text
 httpReqText tUri met h body = do
   resp <- httpRequest tUri met h (T.encodeUtf8 body)
   return . toStrict . LT.decodeUtf8 . responseBody $ resp
 
-postText :: Crawl cr => TextURI -> RequestHeaders -> Text -> cr Text
+postText :: TextURI -> RequestHeaders -> Text -> Crawl Text
 postText tUri = httpReqText tUri "POST"
 
-getText :: Crawl cr => TextURI -> RequestHeaders -> cr Text
+getText :: TextURI -> RequestHeaders -> Crawl Text
 getText tUri h = httpReqText tUri "GET" h ""
 
 -- |Get the tags of a page
-getPage :: Crawl cr => TextURI -> cr [Tag Text]
+getPage :: TextURI -> Crawl [Tag Text]
 getPage tUri = do
   resp <- getText tUri []
   return . parseTags $ resp
+
 
 {-
    NetCrawl: crawl with http requests
@@ -99,10 +116,6 @@ data NetSession = NetSession
 
 makeLenses ''NetSession
 
-newtype NetCrawl a = NetCrawl (StateT NetSession IO a)
-  deriving (Functor, Applicative, Monad, MonadIO,
-            MonadState NetSession, MonadThrow)
-
 -- |Create a new NetSession to use with a NetCrawl
 newNetSession :: Manager -> NetSession
 newNetSession man = NetSession { _manager = man
@@ -111,31 +124,35 @@ newNetSession man = NetSession { _manager = man
                                , _defHeaders = []
                                }
 
--- |NetCrawl: a crawler which executes real http requests
-instance Crawl NetCrawl where
-  curUri = use cUri
-  chUri = (.=) cUri . Just
-  httpRequest tUri met headers body = do
-    man <- use manager
-    cooks <- use cookies
-    baseUri <- use cUri
-    defH <- use defHeaders
-
-    uri <- maybeOrThrow InvalidURIException $ computeURI baseUri tUri
-
-    req <- parseRequest $ show uri
-
-    -- DANGER: header fields can be duplicated, read RFC 2616 section 4.2
-    let req' = req { cookieJar = Just cooks
-                   , requestHeaders = defH <> headers
-                   , method = met
-                   , requestBody = RequestBodyBS body
-                   }
-
-    resp <- X.httpLbs req' man
-    cookies .= responseCookieJar resp
-    return resp
-
 -- |Run a NetCrawl session and returns the result in IO
-runNetCrawl :: Exception e => Manager -> NetCrawl a -> IO (Either e a)
-runNetCrawl man (NetCrawl cr) = try $ evalStateT cr (newNetSession man)
+runNetCrawl :: Manager -> Crawl a -> IO a
+runNetCrawl m c = evalStateT (iterM go c) (newNetSession m)
+  where
+    go :: CrawlF (StateT NetSession IO a) -> StateT NetSession IO a
+    go (CurUri f) = use cUri >>= f
+    go (ChUri u f) = cUri .= Just u >> f
+    go (HttpRequest tUri met headers body f) = f =<< do
+      man <- use manager
+      cooks <- use cookies
+      baseUri <- use cUri
+      defH <- use defHeaders
+
+      uri <- maybeOrThrow InvalidURIException $ computeURI baseUri tUri
+
+      req <- (parseRequest $ show uri)
+
+
+      -- DANGER: header fields can be duplicated, read RFC 2616 section 4.2
+      let req' = req { cookieJar = Just cooks
+                     , requestHeaders = defH <> headers
+                     , method = met
+                     , requestBody = RequestBodyBS body
+                     }
+
+      resp <- X.httpLbs req' man
+      cookies .= responseCookieJar resp
+      return resp
+    go (LogMsg loc source level s f) = do
+      putStr (fromLogStr $ defaultLogStr loc source level s)
+      f
+    go (Throw e) = throwIO e

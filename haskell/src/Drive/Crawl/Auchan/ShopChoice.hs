@@ -28,7 +28,7 @@ entryShopLink sn = do
 
 
 -- |Returns a link to a shop from its name
-selectCityShop :: Crawl cr => ShopName -> cr TextURI
+selectCityShop :: ShopName -> Crawl TextURI
 selectCityShop shop = do
   goURI "https://www.auchandrive.fr"
   startP <- getPage "/"
@@ -38,7 +38,7 @@ selectCityShop shop = do
 
 -- |Directly goes into a drive from a shop name
 -- after that, the same Crawl object can be used to crawl in parallel
-chooseDrive :: Crawl cr => ShopName -> cr Text
+chooseDrive :: ShopName -> Crawl Text
 chooseDrive shop = do
   shopURI <- selectCityShop shop
  

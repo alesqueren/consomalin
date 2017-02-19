@@ -31,10 +31,13 @@ library
                      , bson
                      , bytestring
                      , errors
+                     , fast-logger
+                     , free
                      , exceptions
                      , http-conduit
                      , http-types
                      , lens
+                     , monad-logger
                      , mongoDB
                      , mtl
                      , network-uri

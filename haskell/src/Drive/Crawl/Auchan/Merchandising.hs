@@ -101,7 +101,7 @@ makeProduct cd ad =
     , Drive.Product.composition = cdComposition cd
   }
 
-fetchProductAuchanData :: Crawl cr => AuchanData -> cr Product
+fetchProductAuchanData :: AuchanData -> Crawl Product
 fetchProductAuchanData ad =
   do
     goURI $ getMerchUrl (adId ad)

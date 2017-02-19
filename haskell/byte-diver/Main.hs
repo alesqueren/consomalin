@@ -8,7 +8,7 @@ import           Drive.Product
 main :: IO ()
 main = do
   man <- newManager tlsManagerSettings
-  cr <- runNetCrawl man auchanCrawl
+  cr <- try $ runNetCrawl man auchanCrawl
   case (cr :: Either SomeException [Product]) of
     Left e -> putText $ show e
     Right pds -> insertProducts pds

@@ -20,7 +20,7 @@ categoryLink _ = do
 entryCategories :: Scraper Text [TextURI]
 entryCategories = chroots categoryDivSel (categoryLink anySelector)
 
-fetchCategoryUrls :: Crawl cr => Text -> cr [Text]
+fetchCategoryUrls :: Text -> Crawl [Text]
 fetchCategoryUrls url =
   do
     -- _ <- getText "" []  -- FIXME: still needed?

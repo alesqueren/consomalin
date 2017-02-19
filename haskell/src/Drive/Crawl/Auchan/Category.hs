@@ -111,13 +111,13 @@ productDivSel = "div" @: [hasClass "vignette",
                           notP $ hasClass "vignette-indispo"]
              // "div" @: [hasClass "vignette-content"]
 
-parseCategoryPage :: Crawl cr => Integer -> cr [Maybe AuchanData]
+parseCategoryPage :: Integer -> Crawl [Maybe AuchanData]
 parseCategoryPage pageNb =
   do
     resp <- postText (getCatUrl pageNb) [("X-Requested-With", "XMLHttpRequest")] ""
     return $ fetchAuchanDataFromPageNb resp
 
-fetchAuchanData :: Crawl cr => Text -> cr [AuchanData]
+fetchAuchanData :: Text -> Crawl [AuchanData]
 fetchAuchanData url =
   do
     goURI url
