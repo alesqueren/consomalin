@@ -5,7 +5,7 @@ function ex () {
     COLOR='\033[0;35m'
     NC='\033[0m'
     echo ""
-    echo -e "${COLOR} $ "$1"${NC}"
+    echo -e "${COLOR}[ci]$ "$1"${NC}"
     eval $1
 }
 
@@ -19,10 +19,11 @@ if [ $# -ne 1 ]; then
 fi
 service=$1
 
-ex "docker-compose -f haskell/compiler/docker-compose2.yml build --pull"
-ex "docker-compose -f haskell/compiler/docker-compose2.yml run compiler $service"
+ex "docker-compose -f haskell/compiler/docker-compose-srv.yml build --pull"
+ex "docker-compose -f haskell/compiler/docker-compose-srv.yml run compiler $service"
 ex "docker-compose build --pull $service"
 
 img=$(pwd | rev | cut -d"/" -f1 | rev | tr '[:upper:]' '[:lower:]')_$service
-ex "docker tag $img registry.consomalin.ovh:443/$service"
-ex "docker push registry.consomalin.ovh:443/$service"
+dst_img="registry.consomalin.ovh:443/$service:$GO_PIPELINE_LABEL"
+ex "docker tag $img $dst_img"
+ex "docker push $dst_img"

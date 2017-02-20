@@ -5,7 +5,7 @@ function ex () {
     COLOR='\033[0;35m'
     NC='\033[0m'
     echo ""
-    echo -e "${COLOR} $ "$1"${NC}"
+    echo -e "${COLOR}[ci]$ "$1"${NC}"
     eval $1
 }
 
@@ -21,5 +21,6 @@ fi
 ex "docker-compose build --pull theremine"
 
 img=$(pwd | rev | cut -d"/" -f1 | rev | tr '[:upper:]' '[:lower:]')_theremine
-ex "docker tag $img registry.consomalin.ovh:443/theremine"
-ex "docker push registry.consomalin.ovh:443/theremine"
+dst_img="registry.consomalin.ovh:443/$service:$GO_PIPELINE_LABEL"
+ex "docker tag $img $dst_img"
+ex "docker push $dst_img"

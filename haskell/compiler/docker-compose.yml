@@ -1,5 +1,5 @@
 compiler:
-    build: .
+    build: ./image
     volumes:
         - ..:/app
         - /tmp/stack/local:/app/.stack-work

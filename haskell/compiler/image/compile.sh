@@ -5,7 +5,7 @@ function ex () {
     COLOR='\033[0;35m'
     NC='\033[0m'
     echo ""
-    echo -e "${COLOR} $ "$1"${NC}"
+    echo -e "${COLOR}[compiler]$ "$1"${NC}"
     eval $1
 }
 
