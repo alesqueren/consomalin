@@ -19,6 +19,7 @@ if [ $# -ne 1 ]; then
 fi
 service=$1
 
+ex "docker-compose -f haskell/compiler/docker-compose2.yml build --pull"
 ex "docker-compose -f haskell/compiler/docker-compose2.yml run compiler $service"
 ex "docker-compose build --pull $service"
 

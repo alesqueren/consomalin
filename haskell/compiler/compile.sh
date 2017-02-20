@@ -28,5 +28,6 @@ cd /app
 
 ex "hlint ."
 
+mkdir -p /app/bin
 PATH=$PATH:/app/bin # remove stack install warning
-ex "stack install --allow-different-user --local-bin-path /app/bin $service"
+ex "stack install --allow-different-user --local-bin-path /app/bin drive:$service"
