@@ -16,9 +16,9 @@ import           Drive.Product
 productsInsert :: (MonadIO m) => ConduitM [Product] Void m ()
 productsInsert = evalStateLC Set.empty (awaitForever ins) where
   ins pds = do
-    seenIds <- lift $ get
+    seenIds <- lift get
     let dedup = filter (not . wasSeen seenIds) pds
-    lift $ forM_ dedup (\p -> modify $ Set.insert $ pid p)
+    lift $ forM_ dedup (modify . Set.insert . pid)
     liftIO $ insertProducts dedup
       where
         wasSeen s p = Set.member (pid p) s

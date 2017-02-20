@@ -139,7 +139,7 @@ runNetCrawl m c = evalStateT (iterTM go c) (newNetSession m)
 
       uri <- maybeOrThrow InvalidURIException $ computeURI baseUri tUri
 
-      req <- (parseRequest $ show uri)
+      req <- parseRequest $ show uri
 
 
       -- DANGER: header fields can be duplicated, read RFC 2616 section 4.2
