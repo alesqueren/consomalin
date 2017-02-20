@@ -21,6 +21,6 @@ fi
 ex "docker-compose build --pull theremine"
 
 img=$(pwd | rev | cut -d"/" -f1 | rev | tr '[:upper:]' '[:lower:]')_theremine
-dst_img="registry.consomalin.ovh:443/$service:$GO_PIPELINE_LABEL"
+dst_img="registry.consomalin.ovh:443/theremine:$GO_PIPELINE_LABEL"
 ex "docker tag $img $dst_img"
 ex "docker push $dst_img"
