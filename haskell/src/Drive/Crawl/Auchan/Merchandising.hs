@@ -7,7 +7,7 @@ import Drive.Types
 import           Drive.Crawl hiding (html)
 import           Drive.Product
 import           Drive.Crawl.Auchan.Category
-import           Data.Aeson 
+import           Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BL
 import           Data.HashMap.Strict (lookup)
 
@@ -27,7 +27,7 @@ data MerchData = MerchData
 newtype Measure = Measure { name :: Text }
   deriving (Show, Generic)
 
-data DataField = DataField 
+data DataField = DataField
   { namePublicShort :: Text 
   , namePublicLong  :: Text 
   , quantityNormalized :: Maybe Int64
