@@ -24,6 +24,11 @@ ex "docker-compose -f haskell/compiler/docker-compose-srv.yml run compiler $serv
 ex "docker-compose build --pull $service"
 
 img=$(pwd | rev | cut -d"/" -f1 | rev | tr '[:upper:]' '[:lower:]')_$service
+
 dst_img="registry.consomalin.ovh:443/$service:$GO_PIPELINE_LABEL"
+ex "docker tag $img $dst_img"
+ex "docker push $dst_img"
+
+dst_img="registry.consomalin.ovh:443/$service:latest"
 ex "docker tag $img $dst_img"
 ex "docker push $dst_img"

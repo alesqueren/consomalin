@@ -10,13 +10,6 @@ services:
     ports:
       - 8080:80
 
-  byte-diver:
-    build: 
-      context: ./haskell
-      dockerfile: ./byte-diver/Dockerfile
-    networks:
-      - mongo
-
   kiva:
     build: 
       context: ./haskell
@@ -25,7 +18,7 @@ services:
       - kiva
       - mongo
     ports:
-      - 8081:80
+      - "8081:80"
 
   mongo:
     image: mongo
@@ -33,6 +26,14 @@ services:
       - mongo
     volumes:
       - ./state/mongo:/data/db
+
+  # oneoff command:
+  #byte-diver:
+  #  build:
+  #    context: ./haskell
+  #    dockerfile: ./byte-diver/Dockerfile
+  #  networks:
+  #    - mongo
 
 networks:
   kiva:
