@@ -2,5 +2,5 @@ compiler:
     build: ./image
     volumes:
         - ..:/app
-        - /tmp/stack/local:/app/.stack-work
-        - /tmp/stack/global:/root/.stack
+        - ../.stack-compiler/local:/app/.stack-work
+        - ../.stack-compiler/global:/root/.stack

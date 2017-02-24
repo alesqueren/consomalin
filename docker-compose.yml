@@ -27,14 +27,6 @@ services:
     volumes:
       - ./state/mongo:/data/db
 
-  # oneoff command:
-  #byte-diver:
-  #  build:
-  #    context: ./haskell
-  #    dockerfile: ./byte-diver/Dockerfile
-  #  networks:
-  #    - mongo
-
 networks:
   kiva:
   mongo:
