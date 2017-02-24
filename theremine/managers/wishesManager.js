@@ -1,13 +1,14 @@
+"use strict"
 const db = require('../db');
 
-function addGroup(_idUser, groupName) {
+function addWish(_idUser, groupId, wishName) {
   const users = db.get().collection('users');
-
+  let request = "wishGroups["+groupId+"].wishes";
   users.updateOne(
     { _id: _idUser },
     {
       $push: {
-        wishGroups: { name: groupName },
+        request: {name: wishName}
       },
     },
     (err) => {
@@ -16,5 +17,5 @@ function addGroup(_idUser, groupName) {
 }
 
 module.exports = {
-  add: addGroup,
+  add: addWish,
 };

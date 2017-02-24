@@ -10,13 +10,13 @@ function connect(url, callback) {
     return;
   }
 
-  MongoClient.connect(url, { db: 'drive_web' }, (err, db) => {
+  MongoClient.connect(url, {db : 'drive_web'}, (err, db) => {
     if (err) {
       callback(err);
       return;
     }
-    state.db = db;
-    callback();
+    state.db = db
+    callback()
   });
 }
 
@@ -37,6 +37,6 @@ function close(callback) {
 
 module.exports = {
   connect,
-  get,
+  get : get,
   close,
 };
