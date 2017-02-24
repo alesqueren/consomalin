@@ -11,8 +11,8 @@ block content
         a(href='/users/signout') Sign Out
 
     div#wishgroups
-        wishgroup-item(v-for="wishGroup in wishGroups" v-bind:wishGroup="wishGroup")
-        input(v-model="newWishGroupText" v-on:keyup.enter="addNewWishGroup" placeholder="Add a wishGroup")
+        wishgroup-item(v-for="wishgroup in wishGroups" v-bind:wishgroup="wishgroup")
+        input(v-model="newWishGroupText" v-on:keyup.enter="addWishGroup" placeholder="Add a wishGroup")
 
 block append script
     script.

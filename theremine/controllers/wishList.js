@@ -31,10 +31,17 @@ module.exports = function init() {
     res.send(JSON.stringify('OK'));
   });
 
+  router.delete('/groups/:gid', (req, res) => {
+    let groupId = req.params.gid;
+    groupsManager.remove("az@hotmail.fr", groupId);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify('OK'));
+  });
+
   router.post('/groups/:gid/wishes/bulk', isAuthenticated, (req, res) => {
-    let groupId = request.params.gid;
-    for(var i in req.body.names){
-      wishesManager.add(req.user._id, groupId, req.body.names);
+    let groupId = req.params.gid;
+    for(var i in req.body.names) {
+      wishesManager.add(req.user._id, groupId, req.body.names[i]);
     }
     console.log(`req.user._id ${req.user._id}`);
     console.log(`req.body.names ${req.body.names}`);
