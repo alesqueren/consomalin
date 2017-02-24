@@ -1,4 +1,4 @@
-const mongoURL = process.env.MONGO_URI || 'mongodb://localhost:27017/drive_web';
+const mongoURL = process.env.MONGOURL || 'mongodb://localhost:27017/theremine';
 
 module.exports = {
   url: mongoURL,

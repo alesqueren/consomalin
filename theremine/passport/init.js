@@ -7,8 +7,7 @@ module.exports = function init(passport) {
   // support persistent login sessions
   passport.serializeUser((user, callback) => {
     // console.log('serializing user ' + user._id);
-    // callback(null, user._id);
-    callback(null, user.id);
+    callback(null, user._id);
   });
 
   passport.deserializeUser((id, callback) => {
