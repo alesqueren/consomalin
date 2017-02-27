@@ -8,7 +8,7 @@ function addWish(_idUser, groupId, wishName) {
     { _id: _idUser },
     {
       $push: {
-        [request]: {name: wishName}
+        [request]: {name: wishName, selected: true}
       },
     },
     (err) => {
@@ -16,6 +16,21 @@ function addWish(_idUser, groupId, wishName) {
     });
 }
 
+function selectWish(_idUser, groupId, wishId, selected) {
+  var select = selected=='false'?false:true;
+  const users = db.get().collection('users');
+  let request = "wishGroups."+groupId+".wishes."+wishId+".selected";
+  users.updateOne(
+    { _id: _idUser },
+    {
+      $set: {
+        [request]: select
+      },
+    }
+  );
+}
+
 module.exports = {
   add: addWish,
+  select: selectWish,
 };

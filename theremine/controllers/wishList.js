@@ -43,11 +43,27 @@ module.exports = function init() {
     for(var i in req.body.names) {
       wishesManager.add(req.user._id, groupId, req.body.names[i]);
     }
-    console.log(`req.user._id ${req.user._id}`);
-    console.log(`req.body.names ${req.body.names}`);
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify('OK'));
   });
+
+  router.put('/groups/:gid/wishes/:wid', isAuthenticated, (req, res) => {
+    let groupId = req.params.gid;
+    let wishId = req.params.wid;
+    wishesManager.select(req.user._id, groupId, wishId, req.body.selected);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify('OK'));
+  });
+
+  router.put('/groups/:gid', isAuthenticated, (req, res) => {
+    let groupId = req.params.gid;
+    for(let id in req.user.wishGroups[groupId]) {
+      wishesManager.select(req.user._id, groupId, req.user.wishGroups[groupId][id], req.body.selected);
+    }
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify('OK'));
+  });
+
 
   return router;
 };

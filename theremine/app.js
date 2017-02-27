@@ -4,6 +4,7 @@ const favicon = require('static-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const mongoConfig = require('./mongoConfig');
 
 const app = express();
 
@@ -21,10 +22,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Configuring Passport
 const passport = require('passport');
 const expressSession = require('express-session');
+const MongoStore = require('connect-mongo')(expressSession);
 
 app.use(expressSession({ secret: 'myNotSoSecretKey' }));
 app.use(passport.initialize());
-app.use(passport.session());
+console.log('mongoConfig.url : ' + mongoConfig.url);
+app.use(passport.session({
+    secret:'somethingimportantandsecret',
+    cookie:
+      {
+        maxAge: 60000 * 60 * 24 // 1 day
+      },
+    store:
+      new MongoStore({
+        url: mongoConfig.url
+      })
+}));
 
  // Using the flash middleware
 const flash = require('connect-flash');
