@@ -19,6 +19,8 @@ library
                        Drive.Crawl.Auchan.Category
                        Drive.Crawl.Auchan.Merchandising
                        Drive.Product
+                       Drive.Mongo
+                       Drive.User
                        Drive.Utils
                        Drive.Re
                        Drive.Types
@@ -80,6 +82,16 @@ executable kiva
                      , protolude
                      , drive
                      , attoparsec
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable wendy
+  hs-source-dirs:      wendy
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , drive
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 

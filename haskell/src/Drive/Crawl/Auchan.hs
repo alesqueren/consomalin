@@ -1,4 +1,4 @@
---{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
 

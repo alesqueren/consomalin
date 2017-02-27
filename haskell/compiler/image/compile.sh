@@ -14,7 +14,7 @@ myself=$(readlink -f ${BASH_SOURCE[0]})
 myfile=$(basename $myself)
 
 # check arguments
-if [ $# -gt 1 ]; then
+if [ $# -ne 1 ]; then
     echo "Usage: $myfile service"
     exit 1
 fi
