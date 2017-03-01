@@ -19,10 +19,10 @@ instance Queryable MongoResource where
   getPath UserResource = ("users", "user")
   getPath ProductResource = ("auchan", "product")
 
-
 withMongoPipe :: Host -> (Pipe -> IO a) -> IO a
 withMongoPipe h = bracket (connect h) close
 
+-- TODO: get host only once
 doSelectOne :: (Queryable r, Val v) => r -> [Field] -> IO v
 doSelectOne r s = do
   h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"

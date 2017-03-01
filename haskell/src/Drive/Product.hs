@@ -148,6 +148,5 @@ findProducts pids =
     where mkQuery = select ["_id" =: ["$in" =: pids]]
 
 searchProducts :: Text -> IO [Product]
-searchProducts search =
-  doSelect ProductResource mkQuery
+searchProducts search = doSelect ProductResource mkQuery
     where mkQuery = select ["$text" =: ["$search" =: search]]

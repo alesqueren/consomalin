@@ -20,6 +20,14 @@ services:
     ports:
       - "8081:80"
 
+  wendy:
+    build:
+      context: ./haskell
+      dockerfile: ./wendy/Dockerfile
+    networks:
+      - rabbitmq
+      - mongo
+
   mongo:
     image: mongo
     networks:
@@ -29,6 +37,15 @@ services:
     ports:
       - "27017:27017"
 
+  rabbitmq:
+    image: rabbitmq:3.5.5-management
+    networks:
+      - rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
 networks:
   kiva:
   mongo:
+  rabbitmq:
