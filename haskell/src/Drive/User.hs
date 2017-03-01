@@ -26,7 +26,7 @@ instance Val Product where
 data Wish = Wish
   { wName :: !Text
   , selected :: Bool
-  , product :: Product
+  , product :: Maybe Product
   }
   deriving (Typeable, Show, Eq)
 
@@ -38,7 +38,7 @@ instance Val Wish where
   cast' (Doc doc) = do
     n <- lookup "name" doc :: Maybe Text
     s <- lookup "selected" doc :: Maybe Bool
-    p <- lookup "product" doc :: Maybe Product
+    p <- lookup "product" doc :: Maybe (Maybe Product)
     return $ Wish n s p
   cast' _ = Nothing
 
@@ -85,7 +85,7 @@ data Transaction = Transaction
   { username :: !Text
   , drivePassword :: !Text
   , driveSlotTime :: !Text
-  , basket :: [(Text, Int)]
+  , basket :: [(Text, Int64)]
   }
   deriving (Typeable, Show, Eq)
 
@@ -93,7 +93,13 @@ data Transaction = Transaction
 getTransaction :: User -> Maybe Transaction
 getTransaction u = do
   st <- slotTime u
-  Just $ Transaction (uid u) (password u) st []
+  Just $ Transaction (uid u) (password u) st b
+  where
+    b = concatMap getWishGroupPds (wishGroups u)
+    getWishGroupPds wg = mapMaybe getPd (wishes wg)
+    getPd w = case product w of
+                Nothing -> Nothing
+                Just p -> Just (pid p, quantity p)
 
 findTransaction :: Text -> IO (Maybe Transaction)
 findTransaction id = do

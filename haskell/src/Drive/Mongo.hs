@@ -1,6 +1,6 @@
-module Drive.Mongo (MongoResource(..), doSelectOne) where
+module Drive.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert) where
 
-import           Protolude                    hiding (Product, (<>), find, sort)
+import           Protolude                    hiding (Product, (<>), find, sort, Selector)
 import           Database.MongoDB
 import           Drive.Utils
 import qualified Data.Attoparsec.Text as A
@@ -34,14 +34,25 @@ doSelectOne r s = do
     action = findOne (select s colName)
     doAction pipe = access pipe master dbName action
 
--- doSelect :: (Queryable r, Val v) => r -> [Field] -> IO [v]
--- doSelect r s = do
---   h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1" 
---   docs <- withMongoPipe (host $ T.unpack h) doAction
---   return $ mapMaybe (cast' . val) docs
--- 
---   where 
---     (dbName, colName) = getPath r
---     action = rest =<< find (select s colName)
---     doAction pipe = access pipe master dbName action
+doSelect :: (Queryable r, Val v) => r -> (Text -> Query) -> IO [v]
+doSelect r mkQuery = do
+  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
+  docs <- withMongoPipe (host $ T.unpack h) doAction
+  return $ mapMaybe (cast' . val) docs
 
+  where
+    (dbName, colName) = getPath r
+    action = rest =<< find (mkQuery colName)
+    doAction pipe = access pipe master dbName action
+
+doInsert :: (Queryable r, Val v) => r -> [v] -> IO ()
+doInsert r values = do
+  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
+  e <- withMongoPipe (host $ T.unpack h) doAction
+  print e
+
+    where
+      (dbName, colName) = getPath r
+      docs = map (typed . val) values
+      action = insertMany_ colName docs
+      doAction pipe = access pipe master dbName action
