@@ -22,7 +22,7 @@ service=$1
 ex "docker-compose -f haskell/compiler/docker-compose-srv.yml build --pull"
 ex "docker-compose -f haskell/compiler/docker-compose-srv.yml run compiler $service"
 
-filename=$(grep -l "  $service:" *.yml)
+filename=$(grep -l "  $service:" *.yml | head -n 1)
 ex "docker-compose -f $filename build --pull $service"
 
 img=$(pwd | rev | cut -d"/" -f1 | rev | tr '[:upper:]' '[:lower:]')_$service

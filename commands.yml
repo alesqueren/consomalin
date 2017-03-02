@@ -9,12 +9,5 @@ services:
     networks:
       - mongo
 
-  wendy:
-    build:
-      context: ./haskell
-      dockerfile: ./wendy/Dockerfile
-    networks:
-      - mongo
-
 networks:
   mongo:
