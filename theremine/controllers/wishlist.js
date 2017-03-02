@@ -19,7 +19,7 @@ module.exports = function init() {
     for (let id in req.user.wishGroups) {
       wishGroups.push({id : id, name : req.user.wishGroups[id].name, wishes: req.user.wishGroups[id].wishes});
     }
-    res.render('wishList/wishList', {
+    res.render('wishlist/wishlist', {
       user: req.user,
       wishGroups: JSON.stringify(wishGroups)
     });

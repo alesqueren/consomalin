@@ -1,0 +1,20 @@
+extends ../layout
+
+block append css
+    link(rel='stylesheet', href='/stylesheets/wishlist.css')
+
+block content
+    h1 WHISLIST PAGE
+    p Email : #{user._id}
+    p
+        a(href='/users/signout') Sign Out
+
+    div#wishgroups
+        wishgroup-item(v-for="wishgroup in wishGroups" v-bind:wishgroup="wishgroup")
+        input(v-model="newWishGroupText" v-on:keyup.enter="addWishGroup" placeholder="Add a wishGroup")
+
+    a(href='/section') Passer aux rayons
+block append script
+    script.
+        wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));
+    script(src="/javascripts/wishlist.js")

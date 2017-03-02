@@ -51,17 +51,19 @@ initPassport(passport);
 
 const controllers = require('./controllers/index')();
 const userControllers = require('./controllers/users')(passport);
-const wishListControllers = require('./controllers/wishList')(passport);
+const wishListControllers = require('./controllers/wishlist')(passport);
+const sectionControllers = require('./controllers/section')(passport);
 
 app.use('/', controllers);
 app.use('/users', userControllers);
-app.use('/wishList', wishListControllers);
+app.use('/wishlist', wishListControllers);
+app.use('/section', sectionControllers);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
-  next(err);
+  // next(err);
 });
 
 // development error handler
