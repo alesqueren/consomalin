@@ -6,6 +6,7 @@ ADD . .
 RUN npm install
 
 ENV SERVER_PORT=80 \
-    MONGO_URI=mongodb://mongo
+    MONGO_URI=mongodb://mongo \
+    MONGO_DB_NAME='users'
     
 CMD npm start

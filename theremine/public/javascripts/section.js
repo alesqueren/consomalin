@@ -1,28 +1,17 @@
-Vue.component('wishgroup-item', {
-    props: ['wishgroup'],
-    template:
-        `
-            <div>
-                <wish-item v-for="(wish, wishIndex) in wishgroup.wishes" v-if="wish.selected == true" v-bind:wish="wish" v-bind:wishIndex="wishIndex" :key="wish.name"></wish-item>
-            </div>
-        `,
-    methods: {
-    }
-});
 Vue.component('wish-item', {
-    props: ['wish', 'wishIndex'],
+    props: ['wish'],
     template:
     `
         <div class="wish list-group-item col-xs-6">
-            {{wish.name}}
+             {{wish.id}} : {{wish.name}} ( {{wish.groupId}}:{{wish.groupName}})
         </div>
     `,
     methods: {
     }
 });
 var app = new Vue({
-    el: '#wishgroups',
+    el: '#wishes',
     data: {
-        wishGroups: wishGroups
+        wishesSelected: wishesSelected
     }
 });

@@ -19,7 +19,7 @@ function addGroup(_idUser, groupName) {
     { _id: _idUser },
     {
       $push: {
-        wishGroups: { name: groupName },
+        wishGroups: { name: groupName, wishes: [] },
       },
     },
     (err) => {
@@ -30,23 +30,21 @@ function removeGroup(_idUser, groupId) {
   const users = db.get().collection('users');
   let request = "wishGroups."+groupId;
   console.log("req:" + request + _idUser);
-  let callback = users.updateOne(
+  users.updateOne(
+    { _id: _idUser },
+    {
+      $unset : {
+        [request] : 1
+      }
+    }
+  );
+  users.updateOne(
     { _id: _idUser },
     {
       $pull : {
         "wishGroups" : null
       }
     }
-  );
-
-  users.update(
-    { _id: _idUser },
-    {
-      $unset : {
-        [request] : 1
-      }
-    },
-    callback
   );
 }
 

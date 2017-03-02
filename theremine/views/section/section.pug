@@ -8,12 +8,29 @@ block content
     p
         a(href='/users/signout') Sign Out
 
-    div#wishgroups
-        wishgroup-item(v-for="wishgroup in wishGroups" v-bind:wishgroup="wishgroup")
+    div#wishes
+        wish-item(v-for="wish in wishesSelected" v-bind:wish="wish")
 
     a(href='/wishlist') Revenir a la wishlist
 
 block append script
     script.
         wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));
+        wishesSelected = [];
+        for(var i = 0; i < wishGroups.length; i++ ) {
+            var wishGroup = wishGroups[i];
+            console.log('wishGroup : ');
+            console.log(wishGroup);
+            for(var j = 0; j < wishGroup.wishes.length; j++ ) {
+                var wish = wishGroup.wishes[j];
+                console.log('wish : ');
+                console.log(wish);
+                if( wish.selected ) {
+                    wish.groupId = wishGroup.id;
+                    wish.groupName = wishGroup.name;
+                    wish.id = j;
+                    wishesSelected.push(wish);
+                }
+            }
+        }
     script(src="/javascripts/section.js")
