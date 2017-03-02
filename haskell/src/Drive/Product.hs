@@ -19,11 +19,9 @@ import           Database.MongoDB
 import           Text.PrettyPrint.Leijen.Text
 
 import           Drive.Types
-import           Drive.Utils
+import           Drive.Mongo
 import           Data.Aeson 
 import           GHC.Generics (Generic)
-import qualified Data.Attoparsec.Text as A
-import qualified Data.Text as T
 
 -- | Price are stored in nanocents
 moneyScale :: Rational
@@ -141,64 +139,14 @@ summarize p =
 
 -- Mongo
 
-dbName :: Text
-dbName = "auchan"
-
-colName :: Text 
-colName = "product"
-
-withMongoPipe :: Host -> (Pipe -> IO a) -> IO a
-withMongoPipe h = bracket (connect h) close
-
 insertProducts :: [Product] -> IO ()
-insertProducts pds = do
-  -- FIXME: factorize
-  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1" 
-  e <- withMongoPipe (host $ T.unpack h) doAction
-  print e
-    where 
-      docs = map (typed . val) pds
-      action = insertMany_ colName docs
-      doAction pipe = access pipe master dbName action
+insertProducts = doInsert ProductResource
 
-{-# ANN module ("HLint: ignore Reduce duplication" :: Text) #-}
--- FIXME: duplication with ./src/Drive/Product.hs:175:3
 findProducts :: [Text] -> IO [Product]
-findProducts pids = do
-  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
-  docs <- withMongoPipe (host $ T.unpack h) doAction
-  return $ mapMaybe (cast' . val) docs
-    where 
-      action = rest =<< find (select ["_id" =: ["$in" =: pids]] colName)
-      doAction pipe = access pipe master dbName action
+findProducts pids =
+  doSelect ProductResource mkQuery
+    where mkQuery = select ["_id" =: ["$in" =: pids]]
 
 searchProducts :: Text -> IO [Product]
-searchProducts search = do
-  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1" 
-  docs <- withMongoPipe (host $ T.unpack h) doAction
-  return $ mapMaybe (cast' . val) docs
-    where 
-      action = rest =<< find (select ["$text" =: ["$search" =: search]] colName)
-        {limit = 10,
-         project = ["score" =: ["$meta" =: ("textScore" :: Text)]],
-         sort = ["score" =: ["$meta" =: ("textScore" :: Text)]] }
-      doAction pipe = access pipe master dbName action
-
--- doAction :: Cursor -> IO [Product]
--- doAction c = do
---   h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1" 
---   docs <- withMongoPipe (host $ T.unpack h) doAction
---   return $ mapMaybe (cast' . val) docs
---   where
---       doAction pipe = access pipe master dbName $ rest c
--- 
--- findProducts :: [Text] -> IO [Product]
--- findProducts pids = doAction $ find (select ["_id" =: ["$in" =: pids]] colName)
--- 
--- searchProducts :: Text -> IO [Product]
--- searchProducts search = doAction action
---   where 
---     action = find (select ["$text" =: ["$search" =: search]] colName)
---                   {limit = 10,
---                    project = ["score" =: ["$meta" =: ("textScore" :: Text)]],
---                    sort = ["score" =: ["$meta" =: ("textScore" :: Text)]] }
+searchProducts search = doSelect ProductResource mkQuery
+    where mkQuery = select ["$text" =: ["$search" =: search]]

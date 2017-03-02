@@ -19,6 +19,9 @@ library
                        Drive.Crawl.Auchan.Category
                        Drive.Crawl.Auchan.Merchandising
                        Drive.Product
+                       Drive.User
+                       Drive.Mongo
+                       Drive.Rabbitmq
                        Drive.Utils
                        Drive.Re
                        Drive.Types
@@ -54,6 +57,7 @@ library
                      , wl-pprint-text
                      , wai
                      , warp
+                     , amqp
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
@@ -80,6 +84,16 @@ executable kiva
                      , protolude
                      , drive
                      , attoparsec
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable wendy
+  hs-source-dirs:      wendy
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , drive
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 

@@ -30,4 +30,7 @@ ex "hlint ."
 
 mkdir -p /app/bin
 PATH=$PATH:/app/bin # remove stack install warning
-ex "stack install --allow-different-user --local-bin-path /app/bin drive:$service"
+if [ ! -z $service ]; then
+  target="drive:$service"
+fi
+ex "stack install --allow-different-user --local-bin-path /app/bin $target"
