@@ -14,7 +14,7 @@ myself=$(readlink -f ${BASH_SOURCE[0]})
 myfile=$(basename $myself)
 
 # check arguments
-if [ $# -ne 1 ]; then
+if [ $# -gt 1 ]; then
     echo "Usage: $myfile service"
     exit 1
 fi
@@ -30,4 +30,7 @@ ex "hlint ."
 
 mkdir -p /app/bin
 PATH=$PATH:/app/bin # remove stack install warning
-ex "stack install --allow-different-user --local-bin-path /app/bin drive:$service"
+if [ ! -z $service ]; then
+  target="drive:$service"
+fi
+ex "stack install --allow-different-user --local-bin-path /app/bin $target"
