@@ -10,27 +10,14 @@ block content
 
     div#wishes
         wish-item(v-for="wish in wishesSelected" v-bind:wish="wish")
+        currentwish-item(v-bind:currentWish="currentWish")
+        products-item(v-for="product in currentWish.products" v-bind:wish="currentWish" v-bind:product="product")
 
     a(href='/wishlist') Revenir a la wishlist
 
 block append script
     script.
         wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));
-        wishesSelected = [];
-        for(var i = 0; i < wishGroups.length; i++ ) {
-            var wishGroup = wishGroups[i];
-            console.log('wishGroup : ');
-            console.log(wishGroup);
-            for(var j = 0; j < wishGroup.wishes.length; j++ ) {
-                var wish = wishGroup.wishes[j];
-                console.log('wish : ');
-                console.log(wish);
-                if( wish.selected ) {
-                    wish.groupId = wishGroup.id;
-                    wish.groupName = wishGroup.name;
-                    wish.id = j;
-                    wishesSelected.push(wish);
-                }
-            }
-        }
+        var currentWish = null;
+        var pcurrentWish = {group : 3, wish: 0}
     script(src="/javascripts/section.js")

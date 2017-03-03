@@ -8,18 +8,18 @@ Vue.component('wishgroup-item', {
     template:
         `
             <div class="wishgroup list-group-item col-xs-6">
-                <button class="btn btn-danger" @click="removeWishGroup(wishgroupindex)"><i class="fa fa-trash-o fa-lg"></i></button>
+                <button class="btn btn-danger" @click="removeWishGroup"><i class="fa fa-trash-o fa-lg"></i></button>
                 {{ wishgroup.name }}
                 <wish-item v-for="(wish, wishIndex) in wishgroup.wishes" v-bind:wish="wish" v-bind:wishIndex="wishIndex" :key="wish.name"></wish-item>
-                <input v-model="newText" v-on:keyup.enter="addWish( wishgroup.id )" placeholder="Add a wish"/>
+                <input v-model="newText" v-on:keyup.enter="addWish" placeholder="Add a wish"/>
             </div>
         `,
     methods: {
-        addWish: function (gid) {
+        addWish: function () {
             var self = this;
             $.ajax({
                 type: 'POST',
-                url : '/wishlist/groups/'+gid+'/wishes/bulk',
+                url : '/wishlist/groups/'+self.wishgroup.id+'/wishes/bulk',
                 data: { names : [ self.newText ] },
                 complete: function(responseObject) {
                     self.wishgroup.wishes.push({name:self.newText, selected:true});
@@ -28,15 +28,15 @@ Vue.component('wishgroup-item', {
             });
         },
 
-        removeWishGroup: function (gid) {
+        removeWishGroup: function () {
             var self = this;
             // console.log(' gid : ' + gid)
             $.ajax({
                 type: 'DELETE',
-                url : '/wishlist/groups/'+gid,
+                url : '/wishlist/groups/'+self.wishgroupindex,
                 data: {},
                 complete: function(responseObject) {
-                    self.wishgroups.splice(gid, 1);
+                    self.wishgroups.splice(self.wishgroupindex, 1);
                 }
             });
         }
@@ -48,19 +48,19 @@ Vue.component('wish-item', {
     `
         <div class="wish list-group-item col-xs-6">
             {{ wish.name }}
-            <input type="checkbox" v-model="wish.selected" v-on:change="selectWish( wishIndex, wish.selected )">
+            <input type="checkbox" v-model="wish.selected" v-on:change="selectWish">
         </div>
     `,
     methods: {
-        selectWish: function (wid, selected) {
+        selectWish: function () {
             var self = this;
             var gid = this.$parent.wishgroup.id;
             $.ajax({
                 type: 'PUT',
-                url : '/wishlist/groups/'+gid+'/wishes/'+wid,
-                data: { selected: selected},
+                url : '/wishlist/groups/'+gid+'/wishes/'+self.wishIndex,
+                data: { selected: self.wish.selected},
                 complete: function(responseObject) {
-                    self.$parent.wishgroup.wishes[wid].selected = selected;
+                    self.$parent.wishgroup.wishes[self.wishIndex].selected = self.wish.selected;
                 }
             });
         }

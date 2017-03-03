@@ -3,6 +3,7 @@
 const router = require('express').Router();
 const groupsManager = require('../managers/groupsManager');
 const wishesManager = require('../managers/wishesManager');
+const usersManager = require('../managers/usersManager');
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -21,9 +22,17 @@ module.exports = function init() {
     }
     res.render('section/section', {
       user: req.user,
-      wishGroups: JSON.stringify(wishGroups)
+      wishGroups: JSON.stringify(wishGroups),
+      pcurrentWish: JSON.stringify(req.user.currentWish)||false
     });
   });
+
+  router.put('/section/currentwish/:gid/:wid', isAuthenticated, (req, res) => {
+    usersManager.setCurrentWish(req.user._id, req.params.gid, req.params.wid);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify('OK'));
+  });
+
 
   return router;
 };

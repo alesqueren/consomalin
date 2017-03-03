@@ -28,6 +28,20 @@ function findUser(email, callback) {
     });
 }
 
+function setCurrentWish(email, groupId, wishId) {
+  var select = selected=='false'?false:true;
+  const users = db.get().collection('users');
+  const request = "currentWish";
+  users.updateOne(
+    { _id: _idUser },
+    {
+      $set: {
+        [request]: { group : groupId, wish : wishId }
+      },
+    }
+  );
+}
+
 module.exports = {
   add: addUser,
   find: findUser,
