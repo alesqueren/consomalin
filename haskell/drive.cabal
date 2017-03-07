@@ -18,6 +18,7 @@ library
                        Drive.Crawl.Auchan.Home
                        Drive.Crawl.Auchan.Category
                        Drive.Crawl.Auchan.Merchandising
+                       Drive.Crawl.Auchan.Schedule
                        Drive.Crawl.Auchan.Actions
                        Drive.Product
                        Drive.User

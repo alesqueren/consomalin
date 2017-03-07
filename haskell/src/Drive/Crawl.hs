@@ -31,9 +31,6 @@ import           System.Log.FastLogger
 
 import           Control.Monad.Trans.Free.Church
 
-import Data.Time.Clock
-import Data.Time.Calendar
-
 -- |Some exception types for this module
 -- Should these provide an extra string description?
 data CrawlException = NoURIException | InvalidURIException
@@ -90,7 +87,6 @@ goURI u = do
 httpReqText :: TextURI -> Method -> RequestHeaders -> Text -> Crawl Text
 httpReqText tUri met h body = do
   resp <- httpRequest tUri met h (T.encodeUtf8 body)
-  $(logDebug) (show $ responseStatus resp :: Text)
   return . toStrict . LT.decodeUtf8 . responseBody $ resp
 
 postText :: TextURI -> RequestHeaders -> Text -> Crawl Text
@@ -137,9 +133,6 @@ runNetCrawl m c = evalStateT (iterTM go c) (newNetSession m)
     go (HttpRequest tUri met headers body f) = f =<< do
       man <- use manager
       cooks <- use cookies
-      -- putStrLn (show $ filter (\x -> cookie_name x == "JSESSIONID") cooks :: Text)
-      --putStrLn (show cooks :: Text)
-
       baseUri <- use cUri
       defH <- use defHeaders
 
@@ -147,39 +140,8 @@ runNetCrawl m c = evalStateT (iterTM go c) (newNetSession m)
 
       req <- parseRequest $ show uri
 
-      let past = UTCTime (ModifiedJulianDay 57818) (secondsToDiffTime 34000)
-      let future = UTCTime (ModifiedJulianDay 562000) (secondsToDiffTime 0)
-      
-      let c1 = Cookie { cookie_name = "JSESSIONID"
-                      , cookie_value = "9C916B17F67B9F1994FA44A6DA8E0965.drive03s"
-                      , cookie_expiry_time = future
-                      , cookie_domain = "www.auchandrive.fr"
-                      , cookie_path = "/drive"
-                      , cookie_creation_time = past
-                      , cookie_last_access_time = past
-                      , cookie_persistent = True
-                      , cookie_host_only = True
-                      , cookie_secure_only = False
-                      , cookie_http_only = True
-                      }
-
-      let c2 = Cookie { cookie_name = "auchanCook"
-                      , cookie_value = "\"954|\""
-                      , cookie_expiry_time = future
-                      , cookie_domain = "www.auchandrive.fr"
-                      , cookie_path = "/"
-                      , cookie_creation_time = past
-                      , cookie_last_access_time = past
-                      , cookie_persistent = False
-                      , cookie_host_only = True
-                      , cookie_secure_only = False
-                      , cookie_http_only = True
-                      }
-
-
       -- DANGER: header fields can be duplicated, read RFC 2616 section 4.2
       let req' = req { cookieJar = Just cooks
-      -- let req' = req { cookieJar = Just $ createCookieJar [c1, c2]
                      , requestHeaders = defH <> headers
                      , method = met
                      , requestBody = RequestBodyBS body
@@ -189,8 +151,8 @@ runNetCrawl m c = evalStateT (iterTM go c) (newNetSession m)
 
       cookies .= responseCookieJar resp
 
-      cooks2 <- use cookies
-      putStrLn (show cooks2 :: Text)
+      -- cooks2 <- use cookies
+      -- putStrLn (show cooks2 :: Text)
 
       return resp
     go (LogMsg loc source level s f) = do

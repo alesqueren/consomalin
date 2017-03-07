@@ -1,45 +1,28 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Drive.Rabbitmq (RabbitmqResource(..), listen) where
+module Drive.Rabbitmq (RabbitmqResource(..), TransactionMessage(..), listen) where
 
 import           Protolude hiding (msg)
 import           Network.AMQP
-import qualified Data.ByteString.Lazy.Char8 as BL
 import           Drive.Utils
 import qualified Data.Attoparsec.Text as A
 import qualified Data.Text as T
 import           Data.Aeson
 import           GHC.Generics (Generic)
-import           Drive.User
-import           Drive.Crawl.Auchan
 
 newtype TransactionMessage = TransactionMessage { user :: Text }
   deriving (Typeable, Show, Eq, Generic)
-
 instance FromJSON TransactionMessage
 instance ToJSON TransactionMessage
 
-processTransactionMessage :: TransactionMessage -> IO ()
-processTransactionMessage tm = do
-  mt <- findTransaction $ user tm
-  case mt of
-    Just t -> makeTransaction t
-    Nothing -> putStrLn ("Error: no transaction found" :: Text)
-
 data RabbitmqResource = TransactionResource
 
-class Queryable a where
-  getQueue :: a -> Text
-  -- TODO: no TransactionMessage (rigid type)
-  getCallback :: a -> (TransactionMessage -> IO ())
-
-instance Queryable RabbitmqResource where
-  getQueue TransactionResource = "transactions"
-  getCallback TransactionResource = processTransactionMessage
+getQueueName :: RabbitmqResource -> Text
+getQueueName TransactionResource = "transactions"
 
 
-listen ::(Queryable r) => r -> IO ()
-listen r = do
+listen ::(FromJSON m) => RabbitmqResource -> (m -> IO ()) -> IO ()
+listen r cb = do
   h <- fromEnvOr "AMQP_HOST" A.takeText "127.0.0.1"
   u <- fromEnvOr "AMQP_USER" A.takeText "guest"
   p <- fromEnvOr "AMQP_PASS" A.takeText "guest"
@@ -47,20 +30,20 @@ listen r = do
   conn <- openConnection (T.unpack h) "/" u p
   chan <- openChannel conn
 
-  declareQueue chan newQueue {queueName = qname}
+  _ <- declareQueue chan newQueue {queueName = qname}
 
-  consumeMsgs chan qname Ack $ processMsg $ getCallback r
+  _ <- consumeMsgs chan qname Ack $ processMsg cb
   putStrLn ("listening to " <> qname <> "...":: Text)
 
   -- closeConnection conn
   -- putStrLn ("connection closed" :: Text)
 
   where
-    qname = getQueue r
+    qname = getQueueName r
 
 processMsg :: (FromJSON a) => (a -> IO ()) -> (Message,Envelope) -> IO ()
 processMsg cb (msg, env) = do
-  putStrLn $ "received message: " ++ BL.unpack (msgBody msg)
+  putStrLn $ "received message: " <> msgBody msg
   case decode (msgBody msg) of
     Just tm -> cb tm
     Nothing -> putStrLn ("parsing error" :: Text)

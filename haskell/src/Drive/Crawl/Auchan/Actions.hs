@@ -1,11 +1,13 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
+{-# LANGUAGE DeriveGeneric #-}
 
-module Drive.Crawl.Auchan.Actions (doTransaction0) where
+module Drive.Crawl.Auchan.Actions (doTransaction) where
 
 import           Protolude       hiding (Selector)
 import           Drive.Crawl
 import           Drive.Crawl.Auchan.ShopChoice
+import           Drive.Crawl.Auchan.Schedule
 import           Control.Monad.Trans.Free.Church
 import           Conduit hiding (connect)
 import qualified Data.Text       as T
@@ -14,7 +16,7 @@ user :: Text
 user = "goto.devnull%40mailoo.org"
 
 password :: Text
-password = "secret"
+password = "Auchan31!"
 
 connect :: Crawl ()
 connect = do
@@ -33,7 +35,6 @@ connect = do
                , ("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
                , ("X-Requested-With", "XMLHttpRequest")
                ]
-
 
 addToBasket :: Text -> Crawl ()
 addToBasket pid = do
@@ -69,30 +70,6 @@ goSchedule = do
     where
       url = "https://www.auchandrive.fr/drive/coffre.basketsummary.finalisercoffre"
 
-getDay :: Int -> Crawl ()
-getDay day = do
-  $(logDebug) ""
-  $(logDebug) ("getDay" <> show day)
-  _ <- postText url headers httpData
-
-  return ()
-    where
-      url = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.changejour/" <> show day
-      headers = [("X-Requested-With", "XMLHttpRequest")]
-      httpData = "t%3Azoneid=forceAjax"
-
-selectSchedule :: Text -> Crawl ()
-selectSchedule slotId = do
-  $(logDebug) ""
-  $(logDebug) $ "selectSchedule" <> slotId
-  _ <- postText url headers httpData
-
-  return ()
-    where
-      url = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.selectslot/" <> slotId
-      headers = [("X-Requested-With", "XMLHttpRequest")]
-      httpData = "t%3Azoneid=forceAjax"
-
 goPayment :: Crawl ()
 goPayment = do
   $(logDebug) ""
@@ -123,17 +100,16 @@ validatePayment = do
 
 
 
-doTransaction0 :: (MonadFree CrawlF cr) => ConduitM () Void cr ()
-doTransaction0 = do
+doTransaction :: (MonadFree CrawlF cr) => ConduitM () Void cr ()
+doTransaction = do
 
   _ <- lift . fromF $ chooseDrive "Toulouse-954"
   _ <- lift . fromF $ connect
   _ <- lift . fromF $ addToBasket "354342"
   _ <- lift . fromF $ getBasket
   _ <- lift . fromF $ goSchedule
-  _ <- lift . fromF $ getDay 3
   _ <- lift . fromF $ selectSchedule "3556569"
   _ <- lift . fromF $ goPayment
-  _ <- lift . fromF $ validatePayment
+  -- _ <- lift . fromF $ validatePayment
 
   return ()

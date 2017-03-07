@@ -4,7 +4,7 @@
 
 module Drive.Crawl.Auchan (auchanCrawl, makeTransaction) where
 
-import           Protolude           hiding (Product, inits)
+import           Protolude           hiding (Product)
 
 import           Drive.Product
 import           Drive.Crawl hiding (html)
@@ -67,11 +67,9 @@ crawlC (x:xs) =
 auchanCrawl :: (MonadFree CrawlF cr) => ConduitM () Product cr ()
 auchanCrawl = crawlC [ShopChoicePage]
 
-
-
 makeTransaction :: Transaction -> IO ()
 makeTransaction t = do
   man <- newManager tlsManagerSettings
 
-  runNetCrawl man $ runConduit doTransaction0
+  runNetCrawl man $ runConduit doTransaction
   return ()
