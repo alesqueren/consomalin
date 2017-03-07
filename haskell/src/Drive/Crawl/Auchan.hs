@@ -2,10 +2,9 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
 
-module Drive.Crawl.Auchan (auchanCrawl) where
+module Drive.Crawl.Auchan (auchanCrawl, makeTransaction) where
 
 import           Protolude           hiding (Product, inits)
-import qualified Data.Text           as T
 
 import           Drive.Product
 import           Drive.Crawl hiding (html)
@@ -14,8 +13,11 @@ import           Drive.Crawl.Auchan.Home
 import           Drive.Crawl.Auchan.Category
 import           Drive.Crawl.Auchan.Merchandising
 
-import           Conduit
+import           Conduit hiding (connect)
 import           Control.Monad.Trans.Free.Church
+import           Drive.User
+
+import           Drive.Crawl.Auchan.Actions
 
 data CrawlElement = ShopChoicePage
                   | HomePage TextURI
@@ -32,20 +34,20 @@ crawl ShopChoicePage =
 
 crawl (HomePage shopName) =
   do
-    $(logDebug) $ T.append "[HomePage] " shopName
+    $(logDebug) $ "[HomePage] " <> shopName
     shopUrl <- chooseDrive shopName
     catUrls <- fetchCategoryUrls shopUrl
     return $ map CategoryPage catUrls
 
 crawl (CategoryPage url) =
   do
-    $(logDebug) $ T.append "[CategoryPage] " url
+    $(logDebug) $ "[CategoryPage] " <> url
     pds <- fetchAuchanData url
     return $ map AuchanDataPage pds
 
 crawl (AuchanDataPage hot) =
   do
-    $(logDebug) $ T.append "[AuchanDataPage] " $ show hot
+    $(logDebug) $ "[AuchanDataPage] " <> show hot
     pd <- fetchProductAuchanData hot
     return [ProductPage pd]
 
@@ -64,3 +66,12 @@ crawlC (x:xs) =
 
 auchanCrawl :: (MonadFree CrawlF cr) => ConduitM () Product cr ()
 auchanCrawl = crawlC [ShopChoicePage]
+
+
+
+makeTransaction :: Transaction -> IO ()
+makeTransaction t = do
+  man <- newManager tlsManagerSettings
+
+  runNetCrawl man $ runConduit doTransaction0
+  return ()

@@ -11,6 +11,7 @@ import qualified Data.Text as T
 import           Data.Aeson
 import           GHC.Generics (Generic)
 import           Drive.User
+import           Drive.Crawl.Auchan
 
 newtype TransactionMessage = TransactionMessage { user :: Text }
   deriving (Typeable, Show, Eq, Generic)
@@ -20,10 +21,10 @@ instance ToJSON TransactionMessage
 
 processTransactionMessage :: TransactionMessage -> IO ()
 processTransactionMessage tm = do
-  t <- findTransaction $ user tm
-  putStrLn (show t :: Text)
-
-
+  mt <- findTransaction $ user tm
+  case mt of
+    Just t -> makeTransaction t
+    Nothing -> putStrLn ("Error: no transaction found" :: Text)
 
 data RabbitmqResource = TransactionResource
 

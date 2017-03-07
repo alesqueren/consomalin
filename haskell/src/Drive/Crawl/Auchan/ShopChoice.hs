@@ -30,7 +30,7 @@ entryShopLink sn = do
 -- |Returns a link to a shop from its name
 selectCityShop :: ShopName -> Crawl TextURI
 selectCityShop shop = do
-  goURI "https://www.auchandrive.fr"
+  goURI "http://www.auchandrive.fr"
   startP <- getPage "/"
 
   -- get the shop link
@@ -43,6 +43,13 @@ chooseDrive shop = do
   shopURI <- selectCityShop shop
  
   -- FIXME: does not work if commented. why ?
+  -- set auchanCook cookie
   _ <- getText "http://www.auchandrive.fr/drive/faq" []
 
-  return $ T.append "http://www.auchandrive.fr" shopURI
+  -- validate selection
+  _ <- getText ("http://www.auchandrive.fr" <> shopURI) []
+
+  -- set new jsession cookie
+  _ <- getText ("http://www.auchandrive.fr" <> shopURI) []
+
+  return $ "http://www.auchandrive.fr" <> shopURI
