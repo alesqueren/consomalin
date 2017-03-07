@@ -31,7 +31,6 @@ import           System.Log.FastLogger
 
 import           Control.Monad.Trans.Free.Church
 
-
 -- |Some exception types for this module
 -- Should these provide an extra string description?
 data CrawlException = NoURIException | InvalidURIException
@@ -141,7 +140,6 @@ runNetCrawl m c = evalStateT (iterTM go c) (newNetSession m)
 
       req <- parseRequest $ show uri
 
-
       -- DANGER: header fields can be duplicated, read RFC 2616 section 4.2
       let req' = req { cookieJar = Just cooks
                      , requestHeaders = defH <> headers
@@ -150,9 +148,15 @@ runNetCrawl m c = evalStateT (iterTM go c) (newNetSession m)
                      }
 
       resp <- X.httpLbs req' man
+
       cookies .= responseCookieJar resp
+
+      -- cooks2 <- use cookies
+      -- putStrLn (show cooks2 :: Text)
+
       return resp
     go (LogMsg loc source level s f) = do
+
       putStr (fromLogStr $ defaultLogStr loc source level s)
       f
     go (Throw e) = throwIO e

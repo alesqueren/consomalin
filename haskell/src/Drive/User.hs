@@ -104,5 +104,4 @@ getTransaction u = do
 findTransaction :: Text -> IO (Maybe Transaction)
 findTransaction id = do
   u <- doSelectOne UserResource ["_id" =: id]
-  putStrLn (show (u :: User) :: Text)
   return $ getTransaction u

@@ -33,12 +33,10 @@ data AuchanData = AuchanData
 newtype Zone = Zone { itemsList :: Text }
   deriving (Show, Generic)
 instance FromJSON Zone
-instance ToJSON Zone
 
 newtype PaginationJSON = PaginationJSON { zones :: Zone }
   deriving (Show, Generic)
 instance FromJSON PaginationJSON
-instance ToJSON PaginationJSON
 
 getCatUrl :: Integer -> Text
 getCatUrl pageNb = "http://www.auchandrive.fr/drive/rayon.productlist.pagination_0.topage/"
