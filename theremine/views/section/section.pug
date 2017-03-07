@@ -11,12 +11,81 @@ block content
     div#wishes
         wish-item(v-for="wish in wishesSelected" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish")
         currentwish-item(v-bind:currentwish="currentWish")
-        products-item(v-for="product in currentWish.products" v-bind:wish="currentWish" v-bind:product="product")
+        products-item(v-for="(product, productKey, productIndex) in currentWish.products" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:update_current_wish_product="bindCurrentWishWithProduct")
 
     a(href='/wishlist') Revenir a la wishlist
 
 block append script
     script.
+        function getFirstSelectedWish(){
+            var wishesSelected = [];
+            for(var i = 0; i < wishGroups.length; i++ ) {
+                var wishGroup = wishGroups[i];
+                var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
+                for(var j = 0; j < wishGroupLength; j++ ) {
+                    var wish = wishGroup.wishes[j];
+                    if( wish.selected ) {
+                        wish.products = [];
+                        wish.groupId = wishGroup.id;
+                        wish.groupName = wishGroup.name;
+                        wish.id = j;
+                        return wish;
+                    }
+                }
+            }
+        }
+        function getCurrentWishEntity( pCurrentWish ){
+            if ( pCurrentWish && wishGroups[pCurrentWish.groupId][pCurrentWish.wishid].selected ) {
+                var wish = wishGroups[pCurrentWish.groupId][pCurrentWish.wishid];
+                wish.products = [];
+                wish.groupId = pCurrentWish.groupId;
+                wish.groupName = wishGroups[pCurrentWish.groupId].name;
+                wish.id = j;
+                return wish;
+            }else{
+                return getFirstSelectedWish();
+            }
+        }
+
+        //add some usefull fields for vuejs to watch them
         var wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));
-        currentWish = JSON.parse('#{ currentWish }'.replace(/&quot;/g,'"'));
+        var productToMatch;
+        var productsPids = [];
+        var wishGroupsLength = wishGroups.length;
+        for(var i = 0; i < wishGroupsLength; i++ ) {
+            var wishGroup = wishGroups[i];
+            var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
+            for(var j = 0; j < wishGroupLength; j++ ) {
+                wish = wishGroups[i].wishes[j];
+                wish.products = [];
+                wish.product = {};
+                wish.productInfos = {};
+                if( wish.selected && wish.product.id ) {
+                    productToMatch.push( { [wish.product.id] : { groupId:i, wishId:j } });
+                    products.push( wish.product.id );
+                }
+            }
+        }
+        $.ajax({
+            type: 'GET',
+            url : '/products/details/'+JSON.stringify(productsPids),
+            data: {},
+            complete: function(responseObject) {
+                var products = JSON.parse(responseObject.responseText);
+                console.log(products);
+                //- for(var i = 0; i < products.length; i++) {
+                //-     var productInfos = products[i]
+                //-     var productKey = 
+                //-     productInfos = match with productToMatch
+                //-     wishGroups[i].wishes[j].productInfos = 
+                //- }
+                 
+                //- self.currentWish.products = products;
+                //- self.maxProducts++;
+            }
+        });
+        // pCurrentWish is partial current wish, it is an object with group id and wish id
+        pCurrentWish = JSON.parse('#{ pCurrentWish }'.replace(/&quot;/g,'"'));
+        var currentWish = getCurrentWishEntity( pCurrentWish );
+        var maxProducts = 20;
     script(src="/javascripts/section.js")
