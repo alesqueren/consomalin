@@ -9,15 +9,14 @@ block content
         a(href='/users/signout') Sign Out
 
     div#wishes
-        wish-item(v-for="wish in wishesSelected" v-bind:wish="wish")
-        currentwish-item(v-bind:currentWish="currentWish")
+        wish-item(v-for="wish in wishesSelected" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish")
+        currentwish-item(v-bind:currentwish="currentWish")
         products-item(v-for="product in currentWish.products" v-bind:wish="currentWish" v-bind:product="product")
 
     a(href='/wishlist') Revenir a la wishlist
 
 block append script
     script.
-        wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));
-        var currentWish = null;
-        var pcurrentWish = {group : 3, wish: 0}
+        var wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));
+        currentWish = JSON.parse('#{ currentWish }'.replace(/&quot;/g,'"'));
     script(src="/javascripts/section.js")

@@ -2,20 +2,63 @@ Vue.component('wish-item', {
     props: ['wish'],
     template:
     `
-        <div class="wish list-group-item col-xs-6">
+        <div class="wish list-group-item col-xs-6" @click="setCurrentWish()">
              {{wish.id}} : {{wish.name}} ( {{wish.groupId}}:{{wish.groupName}})
         </div>
     `,
     methods: {
+        setCurrentWish: function () {
+            var self = this;
+            var currentWish = self.wish;
+            // this.currentWish = currentWish;
+            // console.log(this)
+            self.$emit('new_current_wish', currentWish);
+            // console.log('end');
+            // $.ajax({
+            //     type: 'PUT',
+            //     url : '/section/currentwish/' + currentWish.groupId + '/' + currentWish.id,
+            //     data: {},
+            //     complete: function(responseObject) {
+            //         window.products = JSON.parse(responseObject.responseText);
+            //         console.log('products : ');
+            //         console.log(products);
+            //         currentWish.products = products;
+            //     }
+            // });
+        }
     }
 });
 Vue.component('currentwish-item', {
     props: ['currentwish'],
+    data: function() {
+        return {
+            wishName: ''
+        }   
+    },
     template:
     `
-        <input v-model="currentwish.name">
+        <input v-model.sync="currentwish.name" >
     `,
     methods: {
+        newCurrentWish: function (newCurrentWish) {
+            // console.log('current-wish-item methods receive newCurentWish');
+          //   this.currentWish = newCurrentWish;
+          //   var currentProducts = newCurrentWish.products?newCurrentWish.products:null;
+          //   if ( !currentProducts ) {
+          //       $.ajax({
+          //           type: 'GET',
+          //           url : '/products/search/'+currentWish.name,
+          //           data: {},
+          //           complete: function(responseObject) {
+          //               window.products = JSON.parse(responseObject.responseText);
+          //               console.log('products : ');
+          //               console.log(products);
+          //               this.currentWish.products = products;
+          //           }
+          //       });
+          //   }
+          // return currentProducts;
+        }
     }
 });
 Vue.component('products-item', {
@@ -24,6 +67,7 @@ Vue.component('products-item', {
     `
         <div class="product list-group-item col-xs-6">
              {{product.name}}
+             <img style="width:75px;height:75px;" v-bind:src="product.imageUrl">
         </div>
     `,
     methods: {
@@ -31,55 +75,22 @@ Vue.component('products-item', {
 });
 var app = new Vue({
     el: '#wishes',
-    data: {
-        wishGroups: wishGroups,
-        pcurrentWish: '',
-        wishName: '',
+    data: function() {
+        return {
+            wishGroups: wishGroups,
+            currentWish: currentWish,
+            wishName: ''
+        }
     },
     computed: {
-        currentWish: {
-          cache: false,
-          get () {
-                console.log('update currentWish');
-                var currentWish = null;
-                var firstSelected = true;
-                for(var i = 0; i < wishGroups.length; i++ ) {
-                    var wishGroup = wishGroups[i];
-                    for(var j = 0; j < wishGroup.wishes.length; j++ ) {
-                        var wish = wishGroup.wishes[j];
-                        if( wish.selected ) {
-                            if ( firstSelected && !pcurrentWish) {
-                                console.log('cas1');
-                                currentWish =  wish;
-                                firstSelected = false;
-                            }else if ( pcurrentWish && pcurrentWish.group == i && pcurrentWish.wish == j) {
-                                console.log('cas2');
-                                currentWish = wish;
-                            }
-                        }
-                    }
-                }
-                return currentWish;
-            }
-        },
         wishesSelected: function () {
-            console.log('update wishesSelected');
             var wishesSelected = [];
-            var firstSelected = true;
             for(var i = 0; i < wishGroups.length; i++ ) {
                 var wishGroup = wishGroups[i];
-                for(var j = 0; j < wishGroup.wishes.length; j++ ) {
+                var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
+                for(var j = 0; j < wishGroupLength; j++ ) {
                     var wish = wishGroup.wishes[j];
                     if( wish.selected ) {
-                        if ( firstSelected && !pcurrentWish) {
-                            wish.current = true;
-                            firstSelected = false;
-                        }else if ( pcurrentWish && pcurrentWish.group == i && pcurrentWish.wish == j) {
-                            wish.current = true;
-                            firstSelected = false;
-                        }else{
-                            wish.current = false;
-                        }
                         wish.groupId = wishGroup.id;
                         wish.groupName = wishGroup.name;
                         wish.id = j;
@@ -88,56 +99,76 @@ var app = new Vue({
                 }
             }
           return wishesSelected;
-        }
+        },
+        // currentProducts: function () {
+        //     var self = this;
+        //     var currentProducts = currentWish.products?currentWish.products:null;
+        //     if ( !currentProducts ) {
+        //         $.ajax({
+        //         type: 'GET',
+        //         url : '/products/search/'+currentWish.name,
+        //         data: {},
+        //         complete: function(responseObject) {
+        //             window.products = JSON.parse(responseObject.responseText);
+        //             console.log('products : ');
+        //             console.log(products);
+        //             currentProductsself = products;
+        //         }
+        //     });
+        //     }
+        //   return currentProducts;
+        // }
     },
     methods: {
-        setCurrentWish: function () {
+        newCurrentWish: function (newCurrentWish) {
+            // console.log('Vue methods receive newCurentWish');
             var self = this;
-            $.ajax({
-                type: 'PUT',
-                url : '/section/currentwish/'+currentWish.name,
-                data: {},
-                complete: function(responseObject) {
-                    window.products = JSON.parse(responseObject.responseText);
-                    console.log('products : ');
-                    console.log(products);
-                    currentWish.products = products;
-                }
-            });
+            this.currentWish = newCurrentWish;
+
+            // var currentProducts = this.currentWish.products?this.currentWish.products:null;
+            // if ( !currentProducts ) {
+                $.ajax({
+                    type: 'GET',
+                    url : '/products/search/'+this.currentWish.name,
+                    data: {},
+                    complete: function(responseObject) {
+                        var products = JSON.parse(responseObject.responseText);
+                        self.currentWish.products = products;
+                        // self.toto.tata = "done"
+                    }
+                });
+            // }
+
         },
+        // setCurrentWishToNext: function () {
+        //     var currentWish = this.getCurrentWish();
+        //     var groupCurrentWish = currentWish.groupId;
+        //     var wishCurrentWish = currentWish.wishId;
+        //     if ( wishGroups[groupCurrentWish].length > currentWish.wishId) {
+        //         currentWish = wishGroups[groupCurrentWish][wishCurrentWish+1];
+        //     }else{
+        //         return currentWish;
+        //     }
+        // },
         getProducts: function () {
-            var self = this;
-            $.ajax({
-                type: 'GET',
-                url : '/products/search/'+currentWish.name,
-                data: {},
-                complete: function(responseObject) {
-                    window.products = JSON.parse(responseObject.responseText);
-                    console.log('products : ');
-                    console.log(products);
-                    currentWish.products = products;
-                }
-            });
+            // var self = this;
+            // $.ajax({
+            //     type: 'GET',
+            //     url : '/products/search/'+currentWish.name,
+            //     data: {},
+            //     complete: function(responseObject) {
+            //         window.products = JSON.parse(responseObject.responseText);
+            //         console.log('products : ');
+            //         console.log(products);
+            //         currentWish.products = products;
+            //     }
+            // });
         }
     },
-    watch: {
-        wishName: function () {
-          this.answer = 'Waiting for you to stop typing...'
-          this.getAnswer()
-        },
-        currentWish: function () {
-            console.log('coucou');
-            var self = this;
-            $.ajax({
-                type: 'PUT',
-                url : '/section/currentwish/'+group.id +'/'+wish.id,
-                data: {},
-                complete: function(responseObject) {
-                    var response = JSON.parse(responseObject.responseText);
-                    console.log('response setcurrentwish: ' + response);
-                }
-            });
-        },
-    },
+    // watch: {
+    //     currentWish: function () {
+    //       this.getProducts();
+    //     }
+    // },
 
 });

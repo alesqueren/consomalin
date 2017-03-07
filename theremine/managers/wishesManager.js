@@ -30,7 +30,21 @@ function selectWish(_idUser, groupId, wishId, selected) {
   );
 }
 
+function renameWish(_idUser, groupId, wishId, newName) {
+  const users = db.get().collection('users');
+  let request = "wishGroups."+groupId+".wishes."+wishId+".name";
+  users.updateOne(
+    { _id: _idUser },
+    {
+      $set: {
+        [request]: newName
+      },
+    }
+  );
+}
+
 module.exports = {
   add: addWish,
   select: selectWish,
+  rename: renameWish,
 };

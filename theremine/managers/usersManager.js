@@ -29,14 +29,13 @@ function findUser(email, callback) {
 }
 
 function setCurrentWish(email, groupId, wishId) {
-  var select = selected=='false'?false:true;
   const users = db.get().collection('users');
   const request = "currentWish";
   users.updateOne(
-    { _id: _idUser },
+    { _id: email },
     {
       $set: {
-        [request]: { group : groupId, wish : wishId }
+        [request]: { 'group' : groupId, 'wish' : wishId }
       },
     }
   );
@@ -45,4 +44,5 @@ function setCurrentWish(email, groupId, wishId) {
 module.exports = {
   add: addUser,
   find: findUser,
+  setCurrentWish: setCurrentWish,
 };
