@@ -1,4 +1,4 @@
-module Drive.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert) where
+module Drive.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doAggregate) where
 
 import           Protolude                    hiding (Product, (<>), find, sort, Selector)
 import           Database.MongoDB
@@ -56,3 +56,14 @@ doInsert r values = do
       docs = map (typed . val) values
       action = insertMany_ colName docs
       doAction pipe = access pipe master dbName action
+
+doAggregate :: (Queryable r, Val v) => r -> [Document] -> IO [v]
+doAggregate r query = do
+  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
+  docs <- withMongoPipe (host $ T.unpack h) doAction
+  return $ mapMaybe (cast' . val) docs
+
+  where
+    (dbName, colName) = getPath r 
+    action = aggregate colName query
+    doAction pipe = access pipe master dbName action

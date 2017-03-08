@@ -5,12 +5,12 @@
 module Drive.Crawl.Auchan.Actions (doTransaction) where
 
 import           Protolude       hiding (Selector)
+import           Drive.Transaction
 import           Drive.Crawl
 import           Drive.Crawl.Auchan.ShopChoice
 import           Drive.Crawl.Auchan.Schedule
 import           Control.Monad.Trans.Free.Church
 import           Conduit hiding (connect)
-import qualified Data.Text       as T
 
 user :: Text
 user = "goto.devnull%40mailoo.org"
@@ -36,11 +36,11 @@ connect = do
                , ("X-Requested-With", "XMLHttpRequest")
                ]
 
-addToBasket :: Text -> Crawl ()
-addToBasket pid = do
-  $(logDebug) ""
-  $(logDebug) "add2basket"
-  _ <- postText url headers httpData
+addToBasket :: (Text, Int64) -> Crawl ()
+addToBasket (pid, qty) = do
+  $(logDebug) ("add2basket: " <> pid <> ", " <> show qty <> " times")
+
+  _ <- mapM (const $ postText url headers httpData) [1..qty]
 
   return ()
     where
@@ -52,9 +52,7 @@ getBasket :: Crawl ()
 getBasket = do
   $(logDebug) ""
   $(logDebug) "getBasket"
-  resp <- getText url []
-
-  $(logDebug) (T.pack $ take 50 $ T.unpack resp)
+  _ <- getText url []
 
   return ()
     where
@@ -84,9 +82,7 @@ validatePayment :: Crawl ()
 validatePayment = do
   $(logDebug) ""
   $(logDebug) "validatePayment"
-  resp <- postText url headers httpData
-
-  $(logDebug) (T.pack $ take 50 $ T.unpack resp)
+  _ <- postText url headers httpData
 
   return ()
     where
@@ -99,16 +95,15 @@ validatePayment = do
 
 
 
-
-doTransaction :: (MonadFree CrawlF cr) => ConduitM () Void cr ()
-doTransaction = do
+doTransaction :: (MonadFree CrawlF cr) => Transaction -> ConduitM () Void cr ()
+doTransaction t = do
 
   _ <- lift . fromF $ chooseDrive "Toulouse-954"
   _ <- lift . fromF $ connect
-  _ <- lift . fromF $ addToBasket "354342"
+  _ <- mapM (lift . fromF . addToBasket) $ basket t
   _ <- lift . fromF $ getBasket
   _ <- lift . fromF $ goSchedule
-  _ <- lift . fromF $ selectSchedule "3556569"
+  _ <- lift . fromF $ selectSchedule $ slot t
   _ <- lift . fromF $ goPayment
   -- _ <- lift . fromF $ validatePayment
 

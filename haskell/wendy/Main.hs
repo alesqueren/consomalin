@@ -2,7 +2,7 @@ module Main where
 
 import           Protolude
 import           Drive.Rabbitmq
-import           Drive.User
+import           Drive.Transaction
 import           Drive.Crawl.Auchan
 
 main :: IO ()
@@ -12,7 +12,7 @@ main = do
 
 processTransactionMessage :: TransactionMessage -> IO ()
 processTransactionMessage tm = do
-  mt <- findTransaction $ user tm
+  mt <- findTransaction (user tm) (transaction tm)
   case mt of
     Just t -> makeTransaction t
     Nothing -> putStrLn ("Error: no transaction found" :: Text)

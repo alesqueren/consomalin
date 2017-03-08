@@ -10,7 +10,10 @@ import qualified Data.Text as T
 import           Data.Aeson
 import           GHC.Generics (Generic)
 
-newtype TransactionMessage = TransactionMessage { user :: Text }
+data TransactionMessage = TransactionMessage 
+  { user :: !Text 
+  , transaction :: !Text 
+  }
   deriving (Typeable, Show, Eq, Generic)
 instance FromJSON TransactionMessage
 instance ToJSON TransactionMessage
