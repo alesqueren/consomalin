@@ -36,7 +36,7 @@ instance Val Transaction where
     slId <- lookup "id" sl :: Maybe Text
 
     wishGroups <- lookup "wishGroups" t
-    let b = catMaybes $ map extractPd $ concat $ catMaybes $ map (lookup "wishes") wishGroups
+    let b = mapMaybe extractPd $ concat $ mapMaybe (lookup "wishes") wishGroups
 
     return $ Transaction du p slId s b
 
