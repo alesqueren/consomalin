@@ -14,14 +14,11 @@ function isAuthenticated(req, res, next) {
 
 module.exports = function init() {
   router.get('/wishlist', isAuthenticated, (req, res) => {
-    // console.log('get whishlist/ req.user ' + req.user);
-    let wishGroups = [];
-    for (let id in req.user.wishGroups) {
-      wishGroups.push({id : id, name : req.user.wishGroups[id].name, wishes: req.user.wishGroups[id].wishes});
-    }
+    var selectedWishes = req.user.currentBasket?req.user.currentBasket.selectedWishes:{};
     res.render('wishlist/wishlist', {
       user: req.user,
-      wishGroups: JSON.stringify(wishGroups)
+      wishGroups: JSON.stringify(req.user.wishGroups),
+      selectedWishes: JSON.stringify(selectedWishes)
     });
   });
 

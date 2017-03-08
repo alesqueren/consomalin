@@ -24,10 +24,7 @@ const passport = require('passport');
 const expressSession = require('express-session');
 const MongoStore = require('connect-mongo')(expressSession);
 
-app.use(expressSession({ secret: 'myNotSoSecretKey' }));
-app.use(passport.initialize());
-console.log('mongoConfig.url : ' + mongoConfig.url);
-app.use(passport.session({
+app.use(expressSession({
     secret:'somethingimportantandsecret',
     cookie:
       {
@@ -38,6 +35,9 @@ app.use(passport.session({
         url: mongoConfig.url
       })
 }));
+app.use(passport.initialize());
+// console.log('mongoConfig.url : ' + mongoConfig.url);
+app.use(passport.session());
 
  // Using the flash middleware
 const flash = require('connect-flash');
