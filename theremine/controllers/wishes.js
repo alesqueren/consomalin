@@ -3,6 +3,7 @@
 const router = require('express').Router();
 const groupsManager = require('../managers/groupsManager');
 const wishesManager = require('../managers/wishesManager');
+const usersManager = require('../managers/usersManager');
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -36,7 +37,9 @@ module.exports = function init() {
 
   //rename a wish
   router.put('/wishlist/groups/:gid/wishes/:wid/rename', isAuthenticated, (req, res) => {
-    wishesManager.rename(req.user._id, req.body.name);
+    let groupId = req.params.gid;
+    let wishId = req.params.wid;
+    wishesManager.rename(req.user._id, groupId, wishId, req.body.name);
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify('OK'));
   });
@@ -50,6 +53,21 @@ module.exports = function init() {
     res.send(JSON.stringify('OK'));
   });
 
+  //set a product quantity
+  router.put('/wishlist/groups/:gid/wishes/:wid/product', isAuthenticated, (req, res) => {
+    let groupId = req.params.gid;
+    let wishId = req.params.wid;
+    wishesManager.setProductQty(req.user._id, groupId, wishId, req.body.qty);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify('OK'));
+  });
+
+  //set current wish
+  router.put('/wishlist/groups/:gid/wishes/:wid/current', isAuthenticated, (req, res) => {
+    usersManager.setCurrentWish(req.user._id, req.params.gid, req.params.wid);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify('OK'));
+  });
 
   return router;
 };

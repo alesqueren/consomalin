@@ -26,13 +26,14 @@ module.exports = function init() {
   // res.send(JSON.stringify(products));
   });
 
-        http://localhost:8081/details?pids=[%22271293%22]
-  router.get('/products/details/pids', isAuthenticated, (req, res) => {
-  	const search_url = 'http://localhost:8081/details?s=' + req.params.pids;
+  // http://localhost:8081/details?pids=[%22271293%22]
+  router.get('/products/details', isAuthenticated, (req, res) => {
+    console.log('ici');
+  	const details_url = 'http://localhost:8081/details?pids='+req.query.pids;
     res.setHeader('Content-Type', 'application/json');
 
     var products;
-  	request(search_url, function (error, response, body) {
+  	request(details_url, function (error, response, body) {
   		console.log('error:', error);
   		console.log('statusCode:', response && response.statusCode);
   		// console.log('body:', body);

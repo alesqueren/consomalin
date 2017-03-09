@@ -10,8 +10,8 @@ block content
 
     div#wishes
         wish-item(v-for="wish in selectedWishes" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish")
-        currentwish-item(v-bind:currentwish="currentWish")
-        products-item(v-for="(product, productKey, productIndex) in currentWish.products" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct")
+        currentwish-item(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
+        products-item(v-for="(product, productKey, productIndex) in currentWish.matchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct")
 
     a(href='/wishlist') Revenir a la wishlist
 
@@ -26,10 +26,6 @@ block append script
                     var wish = wishGroup.wishes[j];
                     var selected = pSelectedWishes[wishGroup.id]?pSelectedWishes[wishGroup.id][wish.id]?true:false:false;
                     if( selected ) {
-                        wish.products = [];
-                        wish.groupId = wishGroup.id;
-                        wish.groupId = wish.id;
-                        wish.groupName = wishGroup.name;
                         return wish;
                     }
                 }
@@ -38,24 +34,30 @@ block append script
         function getCurrentWishEntity( pCurrentWish ){
             //si le wish courant existe et est dans le tableau de wish selectionné, alors on le renvoi. Dans les autres cas on renvoi le premier element selectionné.
             if ( pCurrentWish ) {
-                var currentWishIsSelected = pSelectedWishes[pCurrentWish.groupId]?pSelectedWishes[pCurrentWish.groupId][pCurrentWish.wishId]?true:false:false;
+                var currentWishIsSelected = pSelectedWishes[pCurrentWish.group]?pSelectedWishes[pCurrentWish.group][pCurrentWish.wish]?true:false:false;
                 if ( currentWishIsSelected ) {
-                    var wish = wishGroups[pCurrentWish.groupId][pCurrentWish.wishId];
-                    wish.products = [];
-                    wish.groupId = pCurrentWish.groupId;
-                    wish.wishId = pCurrentWish.wishId;
-                    wish.groupName = wishGroups[pCurrentWish.groupId].name;
-                    return wish;
+                    for(var i = 0; i < wishGroups.length; i++ ) {
+                        var wishGroup = wishGroups[i];
+                        var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
+                        for(var j = 0; j < wishGroupLength; j++ ) {
+                            var wish = wishGroup.wishes[j];
+                            var selected = pSelectedWishes[wishGroup.id]?pSelectedWishes[wishGroup.id][wish.id]?true:false:false;
+                            if( wish.groupId == pCurrentWish.groupId && wish.id == pCurrentWish.wish ) {
+                                return wish;
+                            }
+                        }
+                    }
                 }
             }
             return getFirstSelectedWish();
         }
 
         //add some usefull fields for vuejs to watch them
-        //products et productsToMatch sont les listes des produits à chercher avec leur pid puis rattacher aux wishes
+        //productsPids(pour l'appel) et productsToMatch(pour la reponse) sont les listes des produits à chercher avec leur pid puis rattacher aux wishes
+        //on change le champ product en objet pour qu'il comprenne les productsInfos et l'id
         var wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));
         var pSelectedWishes = JSON.parse('#{ pSelectedWishes }'.replace(/&quot;/g,'"'));
-        var productsToMatch;
+        var productsToMatch = [];
         var productsPids = [];
         var wishGroupsLength = wishGroups.length;
         for(var i = 0; i < wishGroupsLength; i++ ) {
@@ -63,29 +65,40 @@ block append script
             var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
             for(var j = 0; j < wishGroupLength; j++ ) {
                 var wish = wishGroups[i].wishes[j];
-                wish.products = [];
-                wish.product = {};
-                wish.productInfos = {};
+                wish.product = {id:wish.product, infos:{}, quantity : 0};
+                wish.matchingProducts = [];
                 var selected = pSelectedWishes[wishGroup.id]?pSelectedWishes[wishGroup.id][wish.id]?true:false:false;
-                if( selected && wish.product.id ) {
-                    productsToMatch.push( { [wish.product.id] : { groupId:i, wishId:j } });
-                    products.push( wish.product.id );
+                if( selected && pSelectedWishes[wishGroup.id][wish.id].product && pSelectedWishes[wishGroup.id][wish.id].product.id) {
+                    var productId = pSelectedWishes[wishGroup.id][wish.id].product.id;
+                    productsToMatchAlreadyExist = productsToMatch.hasOwnProperty(productId);
+                    if ( !productsToMatchAlreadyExist ) {
+                        productsToMatch[productId] = [{ groupPosition:i, wishPosition:j }];
+                    }else{
+                        productsToMatch[productId].push({ groupPosition:i, wishPosition:j });
+                    }
+                    productsPids.push( productId );
                 }
             }
         }
         $.ajax({
             type: 'GET',
-            url : '/products/details/'+JSON.stringify(productsPids),
-            data: {},
+            url : '/products/details/',
+            data: { pids :JSON.stringify(productsPids)},
             complete: function(responseObject) {
-                var products = JSON.parse(responseObject.responseText);
-                console.log(products);
-                //- for(var i = 0; i < products.length; i++) {
-                //-     var productInfos = products[i]
-                //-     var productKey = 
-                //-     productInfos = match with productToMatch
-                //-     wishGroups[i].wishes[j].productInfos = 
-                //- }
+                var retreivedProducts = responseObject.responseJSON;
+                try {
+                    for(var product in productsToMatch) {
+                        var infos = retreivedProducts[product];
+                        for(var wishIndex in productsToMatch[product]) {
+                            var wish = productsToMatch[product][wishIndex];
+                            wishGroups[wish.groupPosition].wishes[wish.wishPosition].product.infos = infos;
+                        }
+                    }
+                    //- console.log(products);
+                } catch (e) {
+                    console.log('une erreur à la recuperation des details est survenue : ' +e)
+                }
+                
                  
                 //- self.currentWish.products = products;
                 //- self.maxProducts++;

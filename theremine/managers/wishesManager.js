@@ -61,14 +61,34 @@ function selectWish(_idUser, groupId, wishId, selected) {
 function renameWish(_idUser, groupId, wishId, newName) {
   const users = db.get().collection('users');
   let request = "wishGroups."+groupId+".wishes."+wishId+".name";
-  users.updateOne(
-    { _id: _idUser },
-    {
-      $set: {
-        [request]: newName
-      },
+  users.findOne({_id: _idUser}, function(err, document) {
+    var wishGroups = document.wishGroups;
+    for(var i = 0; i < wishGroups.length; i++ ) {
+        var wishGroup = wishGroups[i];
+        var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
+        for(var j = 0; j < wishGroupLength; j++ ) {
+            var wish = wishGroup.wishes[j];
+            if( wishGroup.id == groupId && wish.id == wishId ) {
+                wish.name = newName;
+            }
+        }
     }
-  );
+    users.updateOne(
+      { _id: _idUser },
+      {
+        $set: {
+          "wishGroups": wishGroups
+        },
+      }
+    );
+  });
+  // users.find({ _id: _idUser },
+  //   {
+  //     $set: {
+  //       [request]: newName
+  //     },
+  //   }
+  // );
 }
 
 function setProduct(_idUser, groupId, wishId, productId) {
@@ -85,32 +105,7 @@ function setProduct(_idUser, groupId, wishId, productId) {
 }
 function setProductQty(_idUser, groupId, wishId, qty) {
   const users = db.get().collection('users');
-  let request = "wishGroups."+groupId+".wishes."+wishId+".product.quantity";
-  users.updateOne(
-    { _id: _idUser },
-    {
-      $set: {
-        [request]: qty
-      },
-    }
-  );
-}
-
-function setProduct(_idUser, groupId, wishId, productId) {
-  const users = db.get().collection('users');
-  let request = "wishGroups."+groupId+".wishes."+wishId+'.product';
-  users.updateOne(
-    { _id: _idUser },
-    {
-      $set: {
-        [request]: { 'id' : productId, 'quantity' : 1 }
-      },
-    }
-  );
-}
-function setProductQty(_idUser, groupId, wishId, qty) {
-  const users = db.get().collection('users');
-  let request = "wishGroups."+groupId+".wishes."+wishId+".product.quantity";
+  let request = "currentBasket.selectedWishes."+groupId+"."+wishId+".product.quantity";
   users.updateOne(
     { _id: _idUser },
     {

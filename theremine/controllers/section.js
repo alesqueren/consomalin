@@ -25,11 +25,5 @@ module.exports = function init() {
       pSelectedWishes: JSON.stringify(selectedWishes)
     });
   });
-
-  router.put('/currentwish/:gid/:wid', isAuthenticated, (req, res) => {
-    usersManager.setCurrentWish(req.user._id, req.params.gid, req.params.wid);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify('OK'));
-  });
   return router;
 };
