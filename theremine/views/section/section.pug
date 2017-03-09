@@ -10,8 +10,13 @@ block content
 
     div#wishes
         wish-item(v-for="wish in selectedWishes" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish")
+<<<<<<< HEAD
         currentwish-item(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
         products-item(v-for="(product, productKey, productIndex) in currentWish.matchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct")
+=======
+        currentwish-item(v-bind:currentwish="currentWish")
+        products-item(v-for="(product, productKey, productIndex) in currentWish.products" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:update_current_wish_product="bindCurrentWishWithProduct")
+>>>>>>> 6a9a02091fe1c76d515ba2e9db57d529a1cdd280
 
     a(href='/wishlist') Revenir a la wishlist
 
