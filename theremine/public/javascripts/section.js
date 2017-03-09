@@ -81,23 +81,6 @@ var app = new Vue({
     created () {
         //on ecoute le scroll pour augmenter le nombre de produits visibles
         window.addEventListener('scroll', this.handleScroll);
-<<<<<<< HEAD
-=======
-        var selectedWishes = [];
-        for(var i = 0; i < wishGroups.length; i++ ) {
-            var wishGroup = wishGroups[i];
-            var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
-            for(var j = 0; j < wishGroupLength; j++ ) {
-                var wish = wishGroup.wishes[j];
-                if( wish.selected ) {
-                    wish.groupId = wishGroup.id;
-                    wish.groupName = wishGroup.name;
-                    wish.id = j;
-                    selectedWishes.push(wish);
-                }
-            }
-        }
->>>>>>> 6a9a02091fe1c76d515ba2e9db57d529a1cdd280
     },
     destroyed () {
         window.removeEventListener('scroll', this.handleScroll);
