@@ -17,11 +17,12 @@ module.exports = function init() {
   //create wishes
   router.post('/wishlist/groups/:gid/wishes/bulk', isAuthenticated, (req, res) => {
     let groupId = req.params.gid;
+    //renvoi le dernier hash utilisé car pour le moment on ne crée pas plus d'un wish à la fois
     for(var i in req.body.names) {
-      wishesManager.add(req.user._id, groupId, req.body.names[i]);
+      var hash = wishesManager.add(req.user._id, groupId, req.body.names[i]);
     }
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify('OK'));
+    res.send(JSON.stringify(hash));
   });
 
   //select a wish

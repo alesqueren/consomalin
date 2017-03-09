@@ -21,7 +21,7 @@ library
                        Drive.Crawl.Auchan.Schedule
                        Drive.Crawl.Auchan.Actions
                        Drive.Product
-                       Drive.User
+                       Drive.Transaction
                        Drive.Mongo
                        Drive.Rabbitmq
                        Drive.Utils

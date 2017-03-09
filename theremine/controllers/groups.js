@@ -16,9 +16,9 @@ module.exports = function init() {
 
   //create a group
   router.post('/wishlist/groups', isAuthenticated, (req, res) => {
-    groupsManager.add(req.user._id, req.body.name);
+    const groupId = groupsManager.add(req.user._id, req.body.name);
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify('OK'));
+    res.send(JSON.stringify(groupId));
   });
 
   //delete a group

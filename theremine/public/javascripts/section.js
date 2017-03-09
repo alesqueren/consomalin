@@ -44,7 +44,7 @@ Vue.component('products-item', {
     methods: {
         selectProduct: function ( product ) {
             var product = this.product;
-            this.$emit('update_current_wish_product', this.productkey, product);
+            this.$emit('select_product', this.productkey, product);
         }
     }
 });
@@ -62,20 +62,6 @@ var app = new Vue({
     created () {
         //on ecoute le scroll pour augmenter le nombre de produits visibles
         window.addEventListener('scroll', this.handleScroll);
-        var selectedWishes = [];
-        for(var i = 0; i < wishGroups.length; i++ ) {
-            var wishGroup = wishGroups[i];
-            var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
-            for(var j = 0; j < wishGroupLength; j++ ) {
-                var wish = wishGroup.wishes[j];
-                if( wish.selected ) {
-                    wish.groupId = wishGroup.id;
-                    wish.groupName = wishGroup.name;
-                    wish.id = j;
-                    selectedWishes.push(wish);
-                }
-            }
-        }
     },
     destroyed () {
         window.removeEventListener('scroll', this.handleScroll);
@@ -118,6 +104,23 @@ var app = new Vue({
                 });
             }
         },
+        setCurrentWishToNext: function () {
+            var currentIndex;
+            for (i = 0; i < this.selectedWishes.length; i += 1) {
+                if (this.selectedWishes[i] === this.currentWish) {
+                    currentIndex = i;
+                }
+            }
+            var groupCurrentWish = currentWish.groupId;
+            var wishCurrentWish = currentWish.wishId;
+            if ( this.selectedWishes.length > currentIndex) {
+                console.log(this.selectedWishes[currentIndex+1])
+                this.currentWish = this.selectedWishes[currentIndex+1];
+                this.newCurrentWish(this.currentWish);
+            }else{
+                console.log('on est au dernier wish')
+            }
+        },
         bindCurrentWishWithProduct: function (key, product) {
             this.currentWish.productInfos = product;
             const groupId = this.currentWish.groupId;
@@ -133,23 +136,14 @@ var app = new Vue({
                     self.maxProducts++;
                 }
             });
+            this.setCurrentWishToNext();
         },
         handleScroll: function () {
             // console.log("scroll detected");
             if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
                this.maxProducts += 20;
             }
-        }
-        // setCurrentWishToNext: function () {
-        //     var currentWish = this.getCurrentWish();
-        //     var groupCurrentWish = currentWish.groupId;
-        //     var wishCurrentWish = currentWish.wishId;
-        //     if ( wishGroups[groupCurrentWish].length > currentWish.wishId) {
-        //         currentWish = wishGroups[groupCurrentWish][wishCurrentWish+1];
-        //     }else{
-        //         return currentWish;
-        //     }
-        // },
+        },
     },
 
 });

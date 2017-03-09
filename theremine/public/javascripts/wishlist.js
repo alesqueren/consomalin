@@ -22,7 +22,7 @@ Vue.component('wishgroup-item', {
                 url : '/wishlist/groups/'+self.wishgroup.id+'/wishes/bulk',
                 data: { names : [ self.newText ] },
                 complete: function(responseObject) {
-                    self.wishgroup.wishes.push({name:self.newText, selected:true});
+                    self.wishgroup.wishes.push({id : responseObject.responseJSON, name:self.newText, selected:true});
                     self.newText = ''
                 }
             });
@@ -80,8 +80,9 @@ var app = new Vue({
                 url : '/wishlist/groups',
                 data: { name : self.newText},
                 complete: function(responseObject) {
+                    // console.log(responseObject);
                     self.wishGroups.push({
-                        id:$('.wishgroup').length, 
+                        id:responseObject.responseJSON, 
                         name:self.newText,
                         wishes: []
                     });

@@ -20,6 +20,7 @@ function addGroup(_idUser, groupName) {
     (err) => {
       console.log(`err: ${err}`);
     });
+  return hash;
 }
 
 function removeGroup(_idUser, groupId) {

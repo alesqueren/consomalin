@@ -30,10 +30,10 @@ parseIds :: Text -> Maybe [Text]
 parseIds response = do
   jsonResponse <- decode' $ BL.fromStrict $ encodeUtf8 response
   h <- head $ inits jsonResponse
-  let res = catMaybes $ map (head . getAllTextSubmatches . matches . T.unpack . url) $ linkZone h
+  let res = mapMaybe (head . getAllTextSubmatches . matches . T.unpack . url) $ linkZone h
   return $ map T.pack res
     where 
-      re = ("[0-9][0-9]+$" :: String)
+      re = "[0-9][0-9]+$" :: String
       matches x = (x :: String) =~ re :: AllTextSubmatches [] String
 
 checkDay :: Int -> Crawl [Text] 

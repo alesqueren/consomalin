@@ -15,7 +15,7 @@ import           Drive.Crawl.Auchan.Merchandising
 
 import           Conduit hiding (connect)
 import           Control.Monad.Trans.Free.Church
-import           Drive.User
+import           Drive.Transaction
 
 import           Drive.Crawl.Auchan.Actions
 
@@ -70,6 +70,5 @@ auchanCrawl = crawlC [ShopChoicePage]
 makeTransaction :: Transaction -> IO ()
 makeTransaction t = do
   man <- newManager tlsManagerSettings
-
-  runNetCrawl man $ runConduit doTransaction
+  runNetCrawl man $ runConduit (doTransaction t)
   return ()

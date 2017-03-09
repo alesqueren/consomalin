@@ -144,9 +144,8 @@ insertProducts = doInsert ProductResource
 
 findProducts :: [Text] -> IO [Product]
 findProducts pids =
-  doSelect ProductResource mkQuery
-    where mkQuery = select ["_id" =: ["$in" =: pids]]
+  doSelect ProductResource (select ["_id" =: ["$in" =: pids]])
 
 searchProducts :: Text -> IO [Product]
-searchProducts search = doSelect ProductResource mkQuery
-    where mkQuery = select ["$text" =: ["$search" =: search]]
+searchProducts s = 
+  doSelect ProductResource (select ["$text" =: ["$search" =: s]])
