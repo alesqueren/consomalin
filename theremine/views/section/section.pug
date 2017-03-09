@@ -9,7 +9,7 @@ block content
         a(href='/users/signout') Sign Out
 
     div#wishes
-        wish-item(v-for="wish in wishesSelected" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish")
+        wish-item(v-for="wish in selectedWishes" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish")
         currentwish-item(v-bind:currentwish="currentWish")
         products-item(v-for="(product, productKey, productIndex) in currentWish.products" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:update_current_wish_product="bindCurrentWishWithProduct")
 
@@ -18,50 +18,57 @@ block content
 block append script
     script.
         function getFirstSelectedWish(){
-            var wishesSelected = [];
+            //on parcours le tableau ordonné pour chercher si le wish est dans l'objet pSelectedWishes
             for(var i = 0; i < wishGroups.length; i++ ) {
                 var wishGroup = wishGroups[i];
                 var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
                 for(var j = 0; j < wishGroupLength; j++ ) {
                     var wish = wishGroup.wishes[j];
-                    if( wish.selected ) {
+                    var selected = pSelectedWishes[wishGroup.id]?pSelectedWishes[wishGroup.id][wish.id]?true:false:false;
+                    if( selected ) {
                         wish.products = [];
                         wish.groupId = wishGroup.id;
+                        wish.groupId = wish.id;
                         wish.groupName = wishGroup.name;
-                        wish.id = j;
                         return wish;
                     }
                 }
             }
         }
         function getCurrentWishEntity( pCurrentWish ){
-            if ( pCurrentWish && wishGroups[pCurrentWish.groupId][pCurrentWish.wishid].selected ) {
-                var wish = wishGroups[pCurrentWish.groupId][pCurrentWish.wishid];
-                wish.products = [];
-                wish.groupId = pCurrentWish.groupId;
-                wish.groupName = wishGroups[pCurrentWish.groupId].name;
-                wish.id = j;
-                return wish;
-            }else{
-                return getFirstSelectedWish();
+            //si le wish courant existe et est dans le tableau de wish selectionné, alors on le renvoi. Dans les autres cas on renvoi le premier element selectionné.
+            if ( pCurrentWish ) {
+                var currentWishIsSelected = pSelectedWishes[pCurrentWish.groupId]?pSelectedWishes[pCurrentWish.groupId][pCurrentWish.wishId]?true:false:false;
+                if ( currentWishIsSelected ) {
+                    var wish = wishGroups[pCurrentWish.groupId][pCurrentWish.wishId];
+                    wish.products = [];
+                    wish.groupId = pCurrentWish.groupId;
+                    wish.wishId = pCurrentWish.wishId;
+                    wish.groupName = wishGroups[pCurrentWish.groupId].name;
+                    return wish;
+                }
             }
+            return getFirstSelectedWish();
         }
 
         //add some usefull fields for vuejs to watch them
+        //products et productsToMatch sont les listes des produits à chercher avec leur pid puis rattacher aux wishes
         var wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));
-        var productToMatch;
+        var pSelectedWishes = JSON.parse('#{ pSelectedWishes }'.replace(/&quot;/g,'"'));
+        var productsToMatch;
         var productsPids = [];
         var wishGroupsLength = wishGroups.length;
         for(var i = 0; i < wishGroupsLength; i++ ) {
             var wishGroup = wishGroups[i];
             var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
             for(var j = 0; j < wishGroupLength; j++ ) {
-                wish = wishGroups[i].wishes[j];
+                var wish = wishGroups[i].wishes[j];
                 wish.products = [];
                 wish.product = {};
                 wish.productInfos = {};
-                if( wish.selected && wish.product.id ) {
-                    productToMatch.push( { [wish.product.id] : { groupId:i, wishId:j } });
+                var selected = pSelectedWishes[wishGroup.id]?pSelectedWishes[wishGroup.id][wish.id]?true:false:false;
+                if( selected && wish.product.id ) {
+                    productsToMatch.push( { [wish.product.id] : { groupId:i, wishId:j } });
                     products.push( wish.product.id );
                 }
             }
@@ -84,8 +91,11 @@ block append script
                 //- self.maxProducts++;
             }
         });
+
         // pCurrentWish is partial current wish, it is an object with group id and wish id
         pCurrentWish = JSON.parse('#{ pCurrentWish }'.replace(/&quot;/g,'"'));
         var currentWish = getCurrentWishEntity( pCurrentWish );
+
+        //maximum produits affiché sur la page
         var maxProducts = 20;
     script(src="/javascripts/section.js")

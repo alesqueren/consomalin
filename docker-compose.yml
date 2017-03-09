@@ -28,6 +28,11 @@ services:
       - rabbitmq
       - mongo
 
+  metronome:
+    build:
+      context: ./haskell
+      dockerfile: ./metronome/Dockerfile
+
   mongo:
     image: mongo
     networks:

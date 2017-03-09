@@ -100,6 +100,16 @@ executable wendy
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
+executable metronome
+  hs-source-dirs:      metronome
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , drive
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
 test-suite byte-diver-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test

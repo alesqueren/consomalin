@@ -53,14 +53,16 @@ var app = new Vue({
     data: function() {
         return {
             wishGroups: wishGroups,
+            pSelectedWishes: pSelectedWishes,
             currentWish: currentWish,
             maxProducts: 20,
             wishName: ''
         }
     },
     created () {
+        //on ecoute le scroll pour augmenter le nombre de produits visibles
         window.addEventListener('scroll', this.handleScroll);
-        var wishesSelected = [];
+        var selectedWishes = [];
         for(var i = 0; i < wishGroups.length; i++ ) {
             var wishGroup = wishGroups[i];
             var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
@@ -70,7 +72,7 @@ var app = new Vue({
                     wish.groupId = wishGroup.id;
                     wish.groupName = wishGroup.name;
                     wish.id = j;
-                    wishesSelected.push(wish);
+                    selectedWishes.push(wish);
                 }
             }
         }
@@ -79,22 +81,23 @@ var app = new Vue({
         window.removeEventListener('scroll', this.handleScroll);
     },
     computed: {
-        wishesSelected: function () {
-            var wishesSelected = [];
+        selectedWishes: function () {
+            var selectedWishes = [];
             for(var i = 0; i < wishGroups.length; i++ ) {
                 var wishGroup = wishGroups[i];
                 var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
                 for(var j = 0; j < wishGroupLength; j++ ) {
                     var wish = wishGroup.wishes[j];
-                    if( wish.selected ) {
+                    var selected = pSelectedWishes[wishGroup.id]?pSelectedWishes[wishGroup.id][wish.id]?true:false:false;
+                    if( selected ) {
                         wish.groupId = wishGroup.id;
                         wish.groupName = wishGroup.name;
                         wish.id = j;
-                        wishesSelected.push(wish);
+                        selectedWishes.push(wish);
                     }
                 }
             }
-            return wishesSelected;
+            return selectedWishes;
         },
     },
     methods: {
@@ -118,7 +121,7 @@ var app = new Vue({
         bindCurrentWishWithProduct: function (key, product) {
             this.currentWish.productInfos = product;
             const groupId = this.currentWish.groupId;
-            const wishId = this.currentWish.id;
+            const wishId = this.currentWish.wishId;
             this.currentWish.product = key;
             $.ajax({
                 type: 'POST',
