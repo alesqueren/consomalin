@@ -6,7 +6,7 @@ Vue.component('wish-item', {
             <div >
                 {{wish.id}} : {{wish.name}} ( {{wish.groupId}}:{{wish.groupName}})
              </div>
-             <div v-if="wish.product.infos.name">
+             <div v-if="wish.product.infos.imageUrl">
                 {{wish.product.infos.name}} : <img style="width:75px;height:75px;" v-bind:src="wish.product.infos.imageUrl">
                 <input type="number" v-model.number="wish.product.quantity" step="1" value="0" min="1" max="64" v-on:change="changeQty" >
             </div>
@@ -76,7 +76,7 @@ var app = new Vue({
         }
     },
     mounted:function(){
-        this.newCurrentWish(this.currentWish);
+        this.searchProducts(this.currentWish);
     },
     created () {
         //on ecoute le scroll pour augmenter le nombre de produits visibles
@@ -137,14 +137,16 @@ var app = new Vue({
 
         newCurrentWish: function (wish) {
             var self = this;
-            this.currentWish = wish;
             this.maxProducts = 20;
             //on notifie le serveur du nouveau wish courrant
-            this.sendCurrentWish(this.currentWish);
-            //si on a aucun produit pour ce wish
-            if (wish.matchingProducts.length < 1) {
-                //on les recherches
-                this.searchProducts(this.currentWish);
+            if ( wish != this.currentWish ) {
+                this.currentWish = wish;
+                this.sendCurrentWish(this.currentWish);
+                //si on a aucun produit pour ce wish
+                if (wish.matchingProducts.length < 1) {
+                    //on les recherche
+                    this.searchProducts(this.currentWish);
+                }
             }
         },
 
