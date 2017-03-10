@@ -1,5 +1,4 @@
 extends layout
 
-block content
-    h1 Page d'accueil
-    a(href='/users/loginRegister') Page de Connexion Inscription
+block append header
+    a.connectRegister(href='/users/loginRegister') Se connecter S'inscrire

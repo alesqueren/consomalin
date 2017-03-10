@@ -1,8 +1,45 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
-  color: #00B7FF;
+  text-decoration:none;
+  color:black;
+}
+a:hover {
+  text-decoration:none;
+  color:black;
+}
+
+#header{
+	height:100px;
+	width:100%;
+	background-color:#8CC739;
+}
+#header .logo {
+  height:100px;
+  width:100px;
+}
+#header .brand {
+  font-size:20px;
+  font-weight:bold;
+}
+#header .connectRegister{
+	text-align:right;
+}
+#content{
+	padding : 50px;
+}
+
+#footer{
+	height:50px;
+	width:100%;
+	background-color:#8CC739;
+	position: absolute; 
+	bottom: 0;}
+}
+#footer .footer {
+  text-align:center;
+  font-weight:bold;
+  font-size	:bold;
 }

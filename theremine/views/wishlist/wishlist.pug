@@ -3,11 +3,11 @@ extends ../layout
 block append css
     link(rel='stylesheet', href='/stylesheets/wishlist.css')
 
+block append header
+    span #{user._id}
+    a(href='/users/signout') Sign Out
+
 block content
-    h1 WHISLIST PAGE
-    p Email : #{user._id}
-    p
-        a(href='/users/signout') Sign Out
 
     div#wishgroups
         wishgroup-item(v-for="(wishgroup, wishgroupIndex) in wishGroups" v-bind:wishgroups="wishGroups" v-bind:wishgroup="wishgroup" v-bind:wishgroupindex="wishgroupIndex" )
