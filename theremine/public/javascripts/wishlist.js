@@ -8,10 +8,18 @@ Vue.component('wishgroup-item', {
     template:
         `
             <div class="wishgroup list-group-item col-xs-6">
-                <button class="btn btn-danger" @click="removeWishGroup"><i class="fa fa-trash-o fa-lg"></i></button>
-                {{ wishgroup.name }}
-                <wish-item v-for="(wish, wishIndex) in wishgroup.wishes" v-bind:wishgroup="wishgroup" v-bind:wish="wish" v-bind:wishIndex="wishIndex" :key="wish.name"></wish-item>
-                <input v-model="newText" v-on:keyup.enter="addWish" placeholder="Add a wish"/>
+                <div>
+                    <button class="btn btn-danger right" @click="removeWishGroup"><i class="fa fa-trash-o fa-lg"></i></button>
+                </div>
+                <div>
+                    {{ wishgroup.name }}
+                </div>
+                <div>
+                    <wish-item v-for="(wish, wishIndex) in wishgroup.wishes" v-bind:wishgroup="wishgroup" v-bind:wish="wish" v-bind:wishIndex="wishIndex" :key="wish.name"></wish-item>
+                </div>
+                <div>
+                    <input v-model="newText" v-on:keyup.enter="addWish" placeholder="Add a wish"/>
+                </div>
             </div>
         `,
     methods: {

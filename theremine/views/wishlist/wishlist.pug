@@ -12,11 +12,16 @@ block append header
 
 block content
 
-    div#wishgroups
+    div#wishgroups Ma wishlist
         wishgroup-item(v-for="(wishgroup, wishgroupIndex) in wishGroups" v-bind:wishgroups="wishGroups" v-bind:wishgroup="wishgroup" v-bind:wishgroupindex="wishgroupIndex" )
         input(v-model="newText" v-on:keyup.enter="addWishGroup" placeholder="Add a wishGroup")
 
-    a(href='/section') Passer aux rayons
+    //- div#wishgroups Produits
+    //-     wishgroup-item(v-for="(wishgroup, wishgroupIndex) in wishGroups" v-bind:wishgroups="wishGroups" v-bind:wishgroup="wishgroup" v-bind:wishgroupindex="wishgroupIndex" )
+
+    a(href='/section')
+        button.btn.btn-success.right(type="button") Passer aux rayons
+         
 block append script
     script.
         wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));

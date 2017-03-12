@@ -13,7 +13,11 @@ block content
         currentwish-item(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
         products-item(v-for="(product, productKey, productIndex) in currentWish.matchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct")
 
-    a(href='/wishlist') Revenir a la wishlist
+    a(href='/wishlist')
+        button.btn.btn-primary.left(type="button") Revenir à la wishlist
+           
+    a(href='#')
+        button.btn.btn-success.right(type="button") Passer au panier
 
 block append script
     script.
