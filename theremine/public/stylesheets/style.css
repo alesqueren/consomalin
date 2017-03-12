@@ -12,13 +12,14 @@ a:hover {
 }
 
 #header{
-	height:100px;
+  line-height: 50px;
+	height:50px;
 	width:100%;
 	background-color:#8CC739;
 }
 #header .logo {
-  height:100px;
-  width:100px;
+  height:50px;
+  width:50px;
 }
 #header .brand {
   font-size:20px;
@@ -35,11 +36,21 @@ a:hover {
 	height:50px;
 	width:100%;
 	background-color:#8CC739;
-	position: absolute; 
-	bottom: 0;}
+	position: absolute;
+  text-align:center;
+	bottom: 0;
+  line-height:50px;
+}
 }
 #footer .footer {
   text-align:center;
   font-weight:bold;
   font-size	:bold;
+}
+
+.left{
+  float:left;
+}
+.right{
+  float:right;
 }

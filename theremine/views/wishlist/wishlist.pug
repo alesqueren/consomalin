@@ -4,8 +4,11 @@ block append css
     link(rel='stylesheet', href='/stylesheets/wishlist.css')
 
 block append header
-    span #{user._id}
-    a(href='/users/signout') Sign Out
+    div.right
+        span #{user._id}
+        a.btn.btn-info.btn-sm(href='/users/signout')
+            span.fa.fa-sign-out
+            span Log out
 
 block content
 
