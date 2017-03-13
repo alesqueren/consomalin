@@ -3,11 +3,14 @@ extends ../layout
 block append css
     link(rel='stylesheet', href='/stylesheets/section.css')
 
-block content
-    h1 RAYONS
-    p
-        a(href='/users/signout') Sign Out
+block append header
+    div.right
+        span #{user._id}
+        a.btn.btn-info.btn-sm(href='/users/signout')
+            span.fa.fa-sign-out
+            span Log out
 
+block content
     div#wishes
         wish-item(v-for="wish in selectedWishes" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish")
         currentwish-item(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
@@ -16,7 +19,7 @@ block content
     a(href='/wishlist')
         button.btn.btn-primary.left(type="button") Revenir à la wishlist
            
-    a(href='#')
+    a(href='/basket')
         button.btn.btn-success.right(type="button") Passer au panier
 
 block append script

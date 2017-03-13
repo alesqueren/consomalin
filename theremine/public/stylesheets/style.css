@@ -30,13 +30,14 @@ a:hover {
 }
 #content{
 	padding : 50px;
+  padding-bottom: 100px;
 }
 
 #footer{
 	height:50px;
 	width:100%;
 	background-color:#8CC739;
-	position: absolute;
+	position: fixed;
   text-align:center;
 	bottom: 0;
   line-height:50px;

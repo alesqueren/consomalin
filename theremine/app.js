@@ -56,6 +56,8 @@ const sectionControllers = require('./controllers/section')(passport);
 const productsControllers = require('./controllers/products')(passport);
 const groupsControllers = require('./controllers/groups')(passport);
 const wishesControllers = require('./controllers/wishes')(passport);
+const basketControllers = require('./controllers/basket')(passport);
+const withdrawControllers = require('./controllers/withdraw')(passport);
 
 app.use('/', controllers);
 app.use('/', userControllers);
@@ -64,6 +66,8 @@ app.use('/', wishListControllers);
 app.use('/', productsControllers);
 app.use('/', groupsControllers);
 app.use('/', wishesControllers);
+app.use('/', basketControllers);
+app.use('/', withdrawControllers);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next){

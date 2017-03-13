@@ -6,6 +6,7 @@ services:
     build: ./theremine
     networks:
       - kiva
+      - metronome
       - mongo
     ports:
       - 8080:80
@@ -32,6 +33,10 @@ services:
     build:
       context: ./haskell
       dockerfile: ./metronome/Dockerfile
+    networks:
+      - metronome
+    ports:
+      - "8082:80"
 
   mongo:
     image: mongo
@@ -54,3 +59,4 @@ networks:
   kiva:
   mongo:
   rabbitmq:
+  metronome:

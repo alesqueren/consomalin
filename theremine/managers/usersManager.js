@@ -30,7 +30,7 @@ function findUser(email, callback) {
 
 function setCurrentWish(email, groupId, wishId) {
   const users = db.get().collection('users');
-  const request = "currentWish";
+  const request = "currentBasket.currentWish";
   users.updateOne(
     { _id: email },
     {

@@ -1,5 +1,6 @@
 const router = require('express').Router();
-var request = require('request');
+const request = require('request');
+const KIVA_HOST = process.env.KIVA_HOST || 'http://localhost:8081';
 
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -11,7 +12,7 @@ function isAuthenticated(req, res, next) {
 
 module.exports = function init() {
   router.get('/products/search/:search_string', isAuthenticated, (req, res) => {
-    const search_url = 'http://localhost:8081/search?s=' + req.params.search_string;
+    const search_url = KIVA_HOST + '/search?s=' + req.params.search_string;
     res.setHeader('Content-Type', 'application/json');
 
     var products;
@@ -28,20 +29,19 @@ module.exports = function init() {
 
   // http://localhost:8081/details?pids=[%22271293%22]
   router.get('/products/details', isAuthenticated, (req, res) => {
-    console.log('ici');
-  	const details_url = 'http://localhost:8081/details?pids='+req.query.pids;
+    const details_url = KIVA_HOST + '/details?pids='+req.query.pids;
     res.setHeader('Content-Type', 'application/json');
 
     var products;
-  	request(details_url, function (error, response, body) {
-  		console.log('error:', error);
-  		console.log('statusCode:', response && response.statusCode);
-  		// console.log('body:', body);
-  		products = body;
-  		// console.log('body:', JSON.parse(products);
-  		res.send(products);
-  	});
-	// res.send(JSON.stringify(products));
+    request(details_url, function (error, response, body) {
+      console.log('error:', error);
+      console.log('statusCode:', response && response.statusCode);
+      // console.log('body:', body);
+      products = body;
+      // console.log('body:', JSON.parse(products);
+      res.send(products);
+    });
+  // res.send(JSON.stringify(products));
   });
 
   return router;
