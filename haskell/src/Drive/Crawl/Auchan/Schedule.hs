@@ -140,7 +140,7 @@ parseAvailableSlot _ = do
 
   case id of
     Nothing -> return Nothing
-    Just id2 -> return $ Just ((Just $ T.pack id2), tod, Available)
+    Just id2 -> return $ Just (Just $ T.pack id2, tod, Available)
 
     where 
       re = "[0-9][0-9]+$" :: String
@@ -177,7 +177,7 @@ getDay2 day = do
       return res
 
     where
-      dayUrl = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.changejour/" <> show day
+      dayUrl = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.changejour/" <> show day <> ""
       headers = [("X-Requested-With", "XMLHttpRequest")]
       httpData = "t%3Azoneid=forceAjax"
 
