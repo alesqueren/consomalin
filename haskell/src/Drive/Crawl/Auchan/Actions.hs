@@ -2,7 +2,7 @@
 {-# LANGUAGE TemplateHaskell     #-}
 {-# LANGUAGE DeriveGeneric #-}
 
-module Drive.Crawl.Auchan.Actions (doTransaction) where
+module Drive.Crawl.Auchan.Actions (doTransaction, doSchedule) where
 
 import           Protolude       hiding (Selector)
 import           Drive.Transaction
@@ -108,3 +108,11 @@ doTransaction t = do
   -- _ <- lift . fromF $ validatePayment
 
   return ()
+
+doSchedule :: (MonadFree CrawlF cr) => ConduitM () Void cr [SlotInfo]
+doSchedule = do
+  _ <- lift . fromF $ chooseDrive "Toulouse-954"
+  _ <- lift . fromF $ connect
+  _ <- lift . fromF $ getBasket
+  _ <- lift . fromF $ goSchedule
+  lift . fromF $ getSchedule

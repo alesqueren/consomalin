@@ -107,6 +107,12 @@ executable metronome
   build-depends:       base
                      , protolude
                      , drive
+                     , scotty
+                     , aeson
+                     , attoparsec
+                     , wai
+                     , warp
+                     , time
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 

@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
 
-module Drive.Crawl.Auchan (auchanCrawl, makeTransaction) where
+module Drive.Crawl.Auchan (auchanCrawl, makeTransaction, makeSchedule) where
 
 import           Protolude           hiding (Product)
 
@@ -12,6 +12,7 @@ import           Drive.Crawl.Auchan.ShopChoice
 import           Drive.Crawl.Auchan.Home
 import           Drive.Crawl.Auchan.Category
 import           Drive.Crawl.Auchan.Merchandising
+import           Drive.Crawl.Auchan.Schedule
 
 import           Conduit hiding (connect)
 import           Control.Monad.Trans.Free.Church
@@ -72,3 +73,8 @@ makeTransaction t = do
   man <- newManager tlsManagerSettings
   runNetCrawl man $ runConduit (doTransaction t)
   return ()
+
+makeSchedule :: IO [SlotInfo]
+makeSchedule = do
+  man <- newManager tlsManagerSettings
+  runNetCrawl man $ runConduit doSchedule
