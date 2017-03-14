@@ -14,8 +14,7 @@ Vue.component('wish-item', {
     `,
     methods: {
         setCurrentWish: function () {
-            var currentWish = this.wish;
-            this.$emit('new_current_wish', currentWish);
+            this.$emit('new_current_wish', this.wish);
         },
         changeQty: function () {
             $.ajax({
@@ -113,9 +112,9 @@ var app = new Vue({
                 data: {},
                 complete: function(responseObject) {
                     if ( responseObject.responseJSON == 'OK' ) {
-                        console.log('new current wish accepted')
+                        // console.log('new current wish ('+ wish.name + ') accepted')
                     }else{
-                        console.log('new current wish error')
+                        // console.log('new current wish ('+ wish.name + ') error')
                     }
 
                 }
@@ -139,14 +138,20 @@ var app = new Vue({
             var self = this;
             this.maxProducts = 20;
             //on notifie le serveur du nouveau wish courrant
-            if ( wish != this.currentWish ) {
+            if ( this.currentWish != wish ) {
                 this.currentWish = wish;
                 this.sendCurrentWish(this.currentWish);
                 //si on a aucun produit pour ce wish
-                if (wish.matchingProducts.length < 1) {
+                if (!Array.isArray(wish.matchingProducts) || wish.matchingProducts.length < 1) {
                     //on les recherche
                     this.searchProducts(this.currentWish);
+                }else{
+                    self.currentWish.matchingProducts = self.currentWish.matchingProducts;
+                    // console.log(wish.name + ' already have products');
+                    // console.log(wish.matchingProducts)
                 }
+            }else{
+                // console.log(wish.name + ' same wish as ' + this.currentWish.name);
             }
         },
 
@@ -161,11 +166,10 @@ var app = new Vue({
             var groupCurrentWish = currentWish.groupId;
             var wishCurrentWish = currentWish.id;
             //si la longueur du tableau est plus grande on passe au suivant, rien sinon
-            if ( this.selectedWishes.length > currentIndex) {
-                this.currentWish = this.selectedWishes[currentIndex+1];
-                this.newCurrentWish(this.currentWish);
+            if ( this.selectedWishes.length > currentIndex+1) {
+                this.newCurrentWish(this.selectedWishes[currentIndex+1]);
             }else{
-                console.log('on est au dernier wish')
+                // console.log(this.selectedWishes[currentIndex].name + ' est le dernier wish')
             }
         },
 
