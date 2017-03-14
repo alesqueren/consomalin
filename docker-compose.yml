@@ -8,6 +8,7 @@ services:
       - kiva
       - metronome
       - mongo
+      - rabbitmq
     ports:
       - 8080:80
 
