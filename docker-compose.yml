@@ -38,6 +38,13 @@ services:
     ports:
       - "8082:80"
 
+  mongo-express:
+    image: mongo-express
+    networks:
+      - mongo
+    ports:
+      - "8083:8081"
+
   mongo:
     image: mongo
     networks:

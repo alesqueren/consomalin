@@ -34,7 +34,7 @@ function addTransaction(_idUser, slotId, slotDateTime, wishes) {
   users.updateOne(
     { _id: _idUser },
     {
-      $push: {
+      $set: {
         [request]: value,
       },
     },
