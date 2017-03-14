@@ -17,8 +17,8 @@ module.exports = function init() {
 
     var products;
     request(search_url, function (error, response, body) {
-      console.log('error:', error);
-      console.log('statusCode:', response && response.statusCode);
+      // console.log('error:', error);
+      // console.log('statusCode:', response && response.statusCode);
       // console.log('body:', body);
       products = body;
       // console.log('body:', JSON.parse(products);
@@ -34,8 +34,8 @@ module.exports = function init() {
 
     var products;
     request(details_url, function (error, response, body) {
-      console.log('error:', error);
-      console.log('statusCode:', response && response.statusCode);
+      // console.log('error:', error);
+      // console.log('statusCode:', response && response.statusCode);
       // console.log('body:', body);
       products = body;
       // console.log('body:', JSON.parse(products);

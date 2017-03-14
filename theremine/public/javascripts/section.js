@@ -4,7 +4,7 @@ Vue.component('wish-item', {
     `
         <div class="wish list-group-item col-xs-6" @click="setCurrentWish()">
             <div >
-                {{wish.id}} : {{wish.name}} ( {{wish.groupId}}:{{wish.groupName}})
+                {{wish.name}} ( {{wish.groupName}})
              </div>
              <div v-if="wish.product.infos.imageUrl">
                 {{wish.product.infos.name}} : <img style="width:75px;height:75px;" v-bind:src="wish.product.infos.imageUrl">

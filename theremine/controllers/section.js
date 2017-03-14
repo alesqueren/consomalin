@@ -18,7 +18,7 @@ module.exports = function init() {
     // console.log('get whishlist/ req.user ' + req.user);
     var wishGroups = req.user.wishGroups?req.user.wishGroups:{};
     var selectedWishes = req.user.currentBasket?req.user.currentBasket.selectedWishes:{};
-    var pCurrentWish = req.user.currentBasket?req.user.currentBasket.currentWish:null;
+    var pCurrentWish = req.user.currentBasket?req.user.currentBasket.currentWish?req.user.currentBasket.currentWish:'false':'false';
     res.render('section/section', {
       user: req.user,
       wishGroups: JSON.stringify(wishGroups),

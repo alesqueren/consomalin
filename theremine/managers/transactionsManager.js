@@ -23,10 +23,13 @@ function addTransaction(_idUser, slotId, slotDateTime, wishes) {
     },
     wishGroups: wishes
   }
-  // for(var i = 0; i < wishes.length; i++ ){
-  //   var wish = wishes[i];
-  //   wishesManager.select(_idUser, wish.groupId, wish.id, 'false');
-  // }
+  for(var i = 0; i < wishes.length; i++ ){
+    var wishGroup = wishes[i];
+    for(var j = 0; j < wishGroup.wishes.length; j++ ) {
+      var wish = wishGroup.wishes[j];
+      wishesManager.select(_idUser, wishGroup.id, wish.id, 'false');
+    }
+  }
 
   users.updateOne(
     { _id: _idUser },

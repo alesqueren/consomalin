@@ -4,10 +4,10 @@ Vue.component('wish-item', {
     `
         <div class="wish list-group-item col-xs-6">
             <div >
-                {{wish.id}} : {{wish.name}} ( {{wish.groupId}}:{{wish.groupName}})
+                {{wish.name}} ( {{wish.groupName}})
              </div>
              <div v-if="wish.product.infos.imageUrl">
-                {{wish.product.infos.name}} : <img style="width:75px;height:75px;" v-bind:src="wish.product.infos.imageUrl">
+                {{wish.product.infos.name}} <img style="width:75px;height:75px;" v-bind:src="wish.product.infos.imageUrl">
                 <input type="number" v-model.number="wish.product.quantity" step="1" value="0" min="1" max="64" v-on:change="changeQty" >
             </div>
         </div>

@@ -37,8 +37,8 @@ module.exports = function init() {
 
     var slots;
     request(search_url, function (error, response, body) {
-      console.log('error:', error);
-      console.log('statusCode:', response && response.statusCode);
+      // console.log('error:', error);
+      // console.log('statusCode:', response && response.statusCode);
       slots = body;
       res.send(slots);
     });
@@ -65,10 +65,10 @@ module.exports = function init() {
             var wish = wishGroup.wishes[j];
             var product = pSelectedWishes[wishGroup.id]?pSelectedWishes[wishGroup.id][wish.id]?pSelectedWishes[wishGroup.id][wish.id].product:false:false;
             if( product ) {
-              console.log('product' )
-              console.log(product )
+              // console.log('product' )
+              // console.log(product )
                 var wishToInsert = {
-                  ud: wish.id, 
+                  id: wish.id, 
                   name: wish.name, 
                   product: {id: product.id}, 
                   quantity: product.quantity
@@ -81,14 +81,14 @@ module.exports = function init() {
     }
 
     const details_url = KIVA_HOST + '/details?pids='+JSON.stringify(productsToDetail);
-    console.log('details_url : ' + details_url);
+    // console.log('details_url : ' + details_url);
     var products;
     request(details_url, function (error, response, body) {
-      console.log('error:', error);
-      console.log('statusCode:', response && response.statusCode);
+      // console.log('error:', error);
+      // console.log('statusCode:', response && response.statusCode);
       // console.log('body:', body);
       products = JSON.parse(body);
-      console.log('body:', products);
+      // console.log('body:', products);
       for(var i = 0; i < wishGroupsToSave.length; i++ ) {
           var wishGroup = wishGroupsToSave[i];
           var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;

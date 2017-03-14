@@ -120,7 +120,7 @@ block append script
         });
 
         // pCurrentWish is partial current wish, it is an object with group id and wish id
-        pCurrentWish = JSON.parse('#{ pCurrentWish }'.replace(/&quot;/g,'"'));
+        var pCurrentWish = JSON.parse('#{ pCurrentWish }'.replace(/&quot;/g,'"'));
         var currentWish = getCurrentWishEntity( pCurrentWish );
 
         //maximum produits affiché sur la page
