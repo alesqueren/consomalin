@@ -11,7 +11,7 @@ data MongoException = DocNotFoundException
   deriving (Show, Typeable)
 instance Exception MongoException
 
-data MongoResource = UserResource | ProductResource
+data MongoResource = UserResource | ProductResource | AttendanceResource
 
 class Queryable a where
   getPath :: a -> (Text, Text)
@@ -19,6 +19,7 @@ class Queryable a where
 instance Queryable MongoResource where
   getPath UserResource = ("users", "user")
   getPath ProductResource = ("auchan", "product")
+  getPath AttendanceResource = ("auchan", "attendance")
 
 withMongoPipe :: Host -> (Pipe -> IO a) -> IO a
 withMongoPipe h = bracket (connect h) close

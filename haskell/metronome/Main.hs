@@ -9,12 +9,12 @@ import Web.Scotty
 import Network.Wai.Handler.Warp
 
 import Data.Attoparsec.Text
+import Data.Time
 
 import Drive.Crawl.Auchan
 import Drive.Crawl.Auchan.Schedule
 import Drive.Utils
-
-import Data.Time
+import Drive.Attendance
 
 data Response = Response 
   { slots :: [Slot]
@@ -31,6 +31,9 @@ main = do
 slotController :: ActionM ()
 slotController = do
   now <- liftIO getCurrentTime
+
+  att <- liftIO $ findAttendance "balma"
+  putStrLn (show att :: Text)
 
   si <- liftIO makeSchedule
   let s = map (makeSlot $ utctDay now) si
