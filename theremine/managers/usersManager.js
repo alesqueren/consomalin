@@ -17,7 +17,7 @@ function addUser(email, password, callback) {
 }
 
 function findUser(email, callback) {
-  const users = db.get().collection('users');
+  const users = db.get().collection('user');
   return users.findOne(
     {
       _id: email,
