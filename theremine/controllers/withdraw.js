@@ -68,16 +68,15 @@ module.exports = function init() {
               // console.log('product' )
               // console.log(product )
                 var wishToInsert = {
-                  id: wish.id, 
                   name: wish.name, 
                   product: {id: product.id}, 
-                  quantity: product.quantity
+                  quantity: parseInt(product.quantity, 10)
                 }
                 wishesToInsert.push(wishToInsert);
                 productsToDetail.push(product.id);
             }
         }
-        wishGroupsToSave.push({id : wishGroup.id, name: wishGroup.name, wishes : wishesToInsert});
+        wishGroupsToSave.push({name: wishGroup.name, wishes : wishesToInsert});
     }
 
     const details_url = KIVA_HOST + '/details?pids='+JSON.stringify(productsToDetail);

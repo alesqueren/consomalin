@@ -15,7 +15,7 @@ function addTransaction(_idUser, slotId, slotDateTime, wishes) {
 
   let value = {
     status: 'transferring',
-    value: '10',
+    value: 10,
     orderTime: Date.now(),
     slot: {
         id: slotId,
