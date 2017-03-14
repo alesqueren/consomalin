@@ -6,7 +6,7 @@ const ObjectID = mongo.ObjectID;
 const wishesManager = require('../managers/wishesManager');
 
 function addTransaction(_idUser, slotId, slotDateTime, wishes) {
-  const users = db.get().collection('users');
+  const users = db.get().collection('user');
   const secret = _idUser;
   const hash = crypto.createHmac('sha256', secret)
                    .update(slotId+Date.now().toString())

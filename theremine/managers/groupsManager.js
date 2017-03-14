@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const ObjectID = mongo.ObjectID;
 
 function addGroup(_idUser, groupName) {
-  const users = db.get().collection('users');
+  const users = db.get().collection('user');
   const secret = _idUser;
   const hash = crypto.createHmac('sha256', secret)
                    .update(groupName+Date.now().toString())
@@ -24,7 +24,7 @@ function addGroup(_idUser, groupName) {
 }
 
 function removeGroup(_idUser, groupId) {
-  const users = db.get().collection('users');
+  const users = db.get().collection('user');
   let request = "wishGroups."+groupId;
   console.log("req:" + request + _idUser);
   users.updateOne(

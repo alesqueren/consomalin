@@ -1,7 +1,7 @@
 const db = require('../db');
 
 function addUser(email, password, callback) {
-  const users = db.get().collection('users');
+  const users = db.get().collection('user');
   return users.insertOne(
     {
       _id: email,
@@ -29,7 +29,7 @@ function findUser(email, callback) {
 }
 
 function setCurrentWish(email, groupId, wishId) {
-  const users = db.get().collection('users');
+  const users = db.get().collection('user');
   const request = "currentBasket.currentWish";
   users.updateOne(
     { _id: email },
