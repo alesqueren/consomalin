@@ -26,6 +26,9 @@ services:
     build:
       context: ./haskell
       dockerfile: ./wendy/Dockerfile
+    environment:
+      - DRIVE_USER=goto.devnull@mailoo.org
+      - DRIVE_PASS=TTOjKLoXg1!
     networks:
       - rabbitmq
       - mongo
@@ -34,6 +37,9 @@ services:
     build:
       context: ./haskell
       dockerfile: ./metronome/Dockerfile
+    environment:
+      - DRIVE_USER=bitcoin.miner@mailoo.org
+      - DRIVE_PASS=hDDqSUGmY3!
     networks:
       - metronome
     ports:

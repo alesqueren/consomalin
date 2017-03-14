@@ -1,7 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Main where
 
-import Prelude (String)
 import Protolude hiding (get, exp)
 
 import Data.Aeson hiding (json)
@@ -9,12 +8,13 @@ import Web.Scotty
 import Network.Wai.Handler.Warp
 
 import Data.Attoparsec.Text
-
-import Drive.Crawl.Auchan
-import Drive.Crawl.Auchan.Schedule
-import Drive.Utils
-
 import Data.Time
+
+import Drive.Utils
+import Drive.Crawl.Auchan
+import Drive.Crawl.Account
+import Drive.Crawl.Auchan.Schedule
+
 
 data Response = Response 
   { slots :: [Slot]

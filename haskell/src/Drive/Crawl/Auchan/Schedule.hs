@@ -99,7 +99,7 @@ selectDay slotId = do
   $(logDebug) ""
   $(logDebug) ("selectDay " <> slotId)
 
-  _ <- takeWhileM (not . elem slotId) (map getDay [0..10])
+  _ <- takeWhileM (not . elem slotId) (map getDay [0..6])
 
   return ()
 
@@ -187,6 +187,6 @@ getSchedule = do
   $(logDebug) ""
   $(logDebug) $ "getSchedule"
 
-  slotsByDay <- mapM getDay2 [0..10]
+  slotsByDay <- mapM getDay2 [0..6]
 
   return $ concat slotsByDay

@@ -20,6 +20,7 @@ library
                        Drive.Crawl.Auchan.Merchandising
                        Drive.Crawl.Auchan.Schedule
                        Drive.Crawl.Auchan.Actions
+                       Drive.Crawl.Account
                        Drive.Product
                        Drive.Transaction
                        Drive.Mongo

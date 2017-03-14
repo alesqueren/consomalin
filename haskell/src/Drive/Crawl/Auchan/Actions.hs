@@ -5,21 +5,23 @@
 module Drive.Crawl.Auchan.Actions (doTransaction, doSchedule) where
 
 import           Protolude       hiding (Selector)
-import           Drive.Transaction
-import           Drive.Crawl
-import           Drive.Crawl.Auchan.ShopChoice
-import           Drive.Crawl.Auchan.Schedule
 import           Control.Monad.Trans.Free.Church
 import           Conduit hiding (connect)
 
-user :: Text
-user = "goto.devnull%40mailoo.org"
+import           Drive.Crawl
+import           Drive.Crawl.Auchan.ShopChoice
+import           Drive.Crawl.Auchan.Schedule
+import           Drive.Crawl.Account
+import           Drive.Transaction
 
-password :: Text
-password = "Auchan31!"
+-- user :: Text
+-- user = "goto.devnull%40mailoo.org"
+-- 
+-- password :: Text
+-- password = "Auchan31!"
 
-connect :: Crawl ()
-connect = do
+connect :: Account -> Crawl ()
+connect acc = do
   $(logDebug) ""
   $(logDebug) ""
   $(logDebug) "connect"
@@ -30,7 +32,7 @@ connect = do
   return ()
     where
       url = "https://www.auchandrive.fr/drive/client/identification.formidentification"
-      httpData = "t%3Aformdata=H4sIAAAAAAAAAFvzloG1XJVBOTknMzWvRN8zBUhmpmUmJ5Zk5udZpeYmZuaUJeZkpiSWpBYXMZjmF6XrJRYkJmek6pUkFqQWlxRVmuol5xel5mQm6SUlFqfqOSYBBROTS9wyU3NSVIJTS0oLVEMPcz8UPf6HiYHRh4E7OT%2BvpCg%2Fxy8xN7WEQcgnK7EsUT8nMS9dP7ikKDMv3bqioISBF2xxGNRi4t3nSKr7Aoryk1OLi4NLk3Izi4uBRh5el2KS9m3eOSYGhoqCcg0GNewWFyQWF5fnF6XA7S5kqGNgKGEQgEnA3U60ESATWMvlGGSwKy8GObEE6EcHvH5Mzs8tyM8D6izWA3uqBNOLM4M%2FSW7d0uLMxMDkw8ABsc0zBWQ9KHpSc1JzgQKg6AELgaKDA2J5vCGCaQAALR8OljkCAAA%3D&emailValidate=" <> user <> "&passwordValidate=" <> password <> "&t%3Asubmit=%5B%22submit_1%22%2C%22submit_0%22%5D&t%3Azoneid=identification"
+      httpData = "t%3Aformdata=H4sIAAAAAAAAAFvzloG1XJVBOTknMzWvRN8zBUhmpmUmJ5Zk5udZpeYmZuaUJeZkpiSWpBYXMZjmF6XrJRYkJmek6pUkFqQWlxRVmuol5xel5mQm6SUlFqfqOSYBBROTS9wyU3NSVIJTS0oLVEMPcz8UPf6HiYHRh4E7OT%2BvpCg%2Fxy8xN7WEQcgnK7EsUT8nMS9dP7ikKDMv3bqioISBF2xxGNRi4t3nSKr7Aoryk1OLi4NLk3Izi4uBRh5el2KS9m3eOSYGhoqCcg0GNewWFyQWF5fnF6XA7S5kqGNgKGEQgEnA3U60ESATWMvlGGSwKy8GObEE6EcHvH5Mzs8tyM8D6izWA3uqBNOLM4M%2FSW7d0uLMxMDkw8ABsc0zBWQ9KHpSc1JzgQKg6AELgaKDA2J5vCGCaQAALR8OljkCAAA%3D&emailValidate=" <> driveUser acc <> "&passwordValidate=" <> drivePass acc <> "&t%3Asubmit=%5B%22submit_1%22%2C%22submit_0%22%5D&t%3Azoneid=identification"
       header = [("User-Agent", "curl/7.53.1" )
                , ("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
                , ("X-Requested-With", "XMLHttpRequest")
@@ -95,11 +97,11 @@ validatePayment = do
 
 
 
-doTransaction :: (MonadFree CrawlF cr) => Transaction -> ConduitM () Void cr ()
-doTransaction t = do
+doTransaction :: (MonadFree CrawlF cr) => Account -> Transaction -> ConduitM () Void cr ()
+doTransaction acc t = do
 
   _ <- lift . fromF $ chooseDrive "Toulouse-954"
-  _ <- lift . fromF $ connect
+  _ <- lift . fromF $ connect acc
   _ <- mapM (lift . fromF . addToBasket) $ basket t
   _ <- lift . fromF $ getBasket
   _ <- lift . fromF $ goSchedule
@@ -109,10 +111,10 @@ doTransaction t = do
 
   return ()
 
-doSchedule :: (MonadFree CrawlF cr) => ConduitM () Void cr [SlotInfo]
-doSchedule = do
+doSchedule :: (MonadFree CrawlF cr) => Account -> ConduitM () Void cr [SlotInfo]
+doSchedule acc = do
   _ <- lift . fromF $ chooseDrive "Toulouse-954"
-  _ <- lift . fromF $ connect
+  _ <- lift . fromF $ connect acc
   _ <- lift . fromF $ getBasket
   _ <- lift . fromF $ goSchedule
   lift . fromF $ getSchedule
