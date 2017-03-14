@@ -110,7 +110,7 @@ function setProductQty(_idUser, groupId, wishId, qty) {
     { _id: _idUser },
     {
       $set: {
-        [request]: qty
+        [request]: parseInt(qty, 10)
       },
     }
   );

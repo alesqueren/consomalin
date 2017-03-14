@@ -30,8 +30,7 @@ Vue.component('slot-item', {
         initiateTransaction: function () {
             var data = {
                 slot_id : this.pickupslot.id,
-                slot_dateTime : this.pickupslot.day + this.pickupslot.time,
-                wishes : this.selectedWishes
+                slot_dateTime : this.pickupslot.day + this.pickupslot.time
             }
             var self = this;
             $.ajax({
