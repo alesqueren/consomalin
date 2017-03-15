@@ -15,11 +15,16 @@ import           Conduit hiding (connect)
 user :: Text
 user = "goto.devnull%40mailoo.org"
 
+<<<<<<< Updated upstream
 password :: Text
 password = "Auchan31!"
 
 connect :: Crawl ()
 connect = do
+=======
+connect :: Account -> Crawl ()
+connect acc = do
+>>>>>>> Stashed changes
   $(logDebug) ""
   $(logDebug) ""
   $(logDebug) "connect"

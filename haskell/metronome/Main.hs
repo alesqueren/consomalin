@@ -28,6 +28,13 @@ main = do
   port <- fromEnvOr "SERVER_PORT" decimal 80 :: IO Int
   startSrv port
 
+startSrv :: Port -> IO()
+startSrv port = do
+  putStrLn $ "Listening on port " ++ show port
+  scotty port $ 
+    get "/" slotController
+
+
 slotController :: ActionM ()
 slotController = do
   now <- liftIO getCurrentTime
@@ -38,12 +45,8 @@ slotController = do
   si <- liftIO makeSchedule
   let s = map (makeSlot $ utctDay now) si
 
-  let exp = addUTCTime (60*5) now
-
-  json $ Response s exp
-
-startSrv :: Port -> IO()
-startSrv port = do
-  putStrLn $ "Listening on port " ++ show port
-  scotty port $ 
-    get "/" slotController
+  if null s
+    then raise "no slot found"
+    else do
+      let exp = addUTCTime (60*5) now
+      json $ Response s exp
