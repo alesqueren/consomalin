@@ -7,7 +7,7 @@ import           Database.MongoDB
 import           Drive.Mongo
 
 data TStatus = Transferring | Done
-  deriving (Typeable, Eq, Generic, Show)
+  deriving (Typeable, Show, Eq, Generic)
 
 mongoShow :: TStatus -> Text
 mongoShow Transferring = "transferring"
@@ -65,12 +65,14 @@ findTransaction uid tid = do
   return $ head ts
     where
       query = [ [ "$match" =: [ "_id" =: uid ] ]
-              , [ "$project" =: [ "transaction" =: "$transactions." <> tid 
+              , [ "$unwind" =: ("$transactions" :: Text)]
+              , [ "$match" =: [ "transactions.id" =: tid ] ]
+              , [ "$project" =: [ "transaction" =: ("$transactions" :: Text)
                                 , "password" =: ("$password" :: Text) ] ] ]
 
 changeStatus :: Text -> Text -> TStatus -> IO ()
 changeStatus uid tid st =
   doModify UserResource [(sel, doc, [])]
     where 
-      sel = [ "_id" =: uid ]
-      doc = [ "$set" =: [ "transactions." <> tid <> ".status" =: mongoShow st] ]
+      sel = [ "_id" =: uid, "transactions.id" =: tid ]
+      doc = [ "$set" =: [ "transactions.$.status" =: mongoShow st] ]

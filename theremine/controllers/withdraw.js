@@ -119,7 +119,7 @@ module.exports = function init() {
          "transaction": transaction_id
       }
       //comment when dev
-      // rabbitMQ.send(JSON.stringify(data), null);
+      rabbitMQ.send(JSON.stringify(data), null);
 
       res.setHeader('Content-Type', 'application/json');
       res.send(JSON.stringify('OK'));
