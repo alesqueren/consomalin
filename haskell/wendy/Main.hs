@@ -11,8 +11,10 @@ main = do
   forever $ threadDelay 100000000
 
 processTransactionMessage :: TransactionMessage -> IO ()
-processTransactionMessage tm = do
-  mt <- findTransaction (user tm) (transaction tm)
+processTransactionMessage (TransactionMessage uid tid) = do
+  mt <- findTransaction uid tid
   case mt of
-    Just t -> makeTransaction t
+    Just t -> do
+      makeTransaction t
+      changeStatus uid tid Done
     Nothing -> putStrLn ("Error: no transaction found" :: Text)

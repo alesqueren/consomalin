@@ -1,16 +1,33 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Drive.Transaction (Transaction(..), findTransaction) where
+module Drive.Transaction (Transaction(..), TStatus(..), findTransaction, changeStatus) where
 
 import           Protolude hiding (Product, product)
 import           Database.MongoDB
 import           Drive.Mongo
 
+data TStatus = Transferring | Done
+  deriving (Typeable, Show, Eq, Generic)
+
+mongoShow :: TStatus -> Text
+mongoShow Transferring = "transferring"
+mongoShow Done = "done"
+-- instance Show TStatus where
+--   show Transferring = (show "transferring" :: Text)
+--  show Done = "done"
+
+instance Val TStatus where
+  val _ = val ([] :: [Text])
+  cast' (String "transferring") = Just Transferring
+  cast' (String "done") = Just Done
+  cast' _ = Nothing
+
+
 data Transaction = Transaction
   { driveUsername :: !Text
   , drivePassword :: !Text
   , slot :: !Text
-  , status :: !Text 
+  , status :: TStatus
   , basket :: [(Text, Int64)]
   }
   deriving (Typeable, Show, Eq, Generic)
@@ -30,7 +47,7 @@ instance Val Transaction where
     p <- lookup "password" doc :: Maybe Text
 
     t <- lookup "transaction" doc
-    s <- lookup "status" t :: Maybe Text
+    s <- lookup "status" t :: Maybe TStatus
 
     sl <- lookup "slot" t
     slId <- lookup "id" sl :: Maybe Text
@@ -48,5 +65,14 @@ findTransaction uid tid = do
   return $ head ts
     where
       query = [ [ "$match" =: [ "_id" =: uid ] ]
-              , [ "$project" =: [ "transaction" =: "$transactions." <> tid 
+              , [ "$unwind" =: ("$transactions" :: Text)]
+              , [ "$match" =: [ "transactions.id" =: tid ] ]
+              , [ "$project" =: [ "transaction" =: ("$transactions" :: Text)
                                 , "password" =: ("$password" :: Text) ] ] ]
+
+changeStatus :: Text -> Text -> TStatus -> IO ()
+changeStatus uid tid st =
+  doModify UserResource [(sel, doc, [])]
+    where 
+      sel = [ "_id" =: uid, "transactions.id" =: tid ]
+      doc = [ "$set" =: [ "transactions.$.status" =: mongoShow st] ]

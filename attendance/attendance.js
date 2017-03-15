@@ -8,15 +8,6 @@ document.getElementsByTagName('head')[0].appendChild(jq);
 //jQuery.noConflict();
 
 
-// Constants
-var weekday=new Array(7);
-weekday[0]="Monday";
-weekday[1]="Tuesday";
-weekday[2]="Wednesday";
-weekday[3]="Thursday";
-weekday[4]="Friday";
-weekday[5]="Saturday";
-weekday[6]="Sunday";
 var hour=new Array(17);
 hour[0] = "06:00:00"
 hour[1] = "07:00:00"
@@ -40,20 +31,22 @@ hour[17] = "23:00:00"
 
 function parse() {
 
-    var res = {}
-    var sel = $("div.lubh-bar:eq(0)").parent()[0].classList[0]
-    var max = $("div." + sel + ":eq(0)").innerHeight()
-    $("div." + sel).each(function (i, elem) {
-        $(elem).find("div").each(function (j, elem) {
-            var value = $(this).innerHeight() / max || null;
-            if (! res[weekday[i]]) {
-                res[weekday[i]] = {};
-            }
-            res[weekday[i]][hour[j]] = value;
-        });
+  var res = {}
+  var sel = $("div.lubh-bar:eq(0)").parent()[0].classList[0]
+  var max = $("div." + sel + ":eq(0)").innerHeight()
+  $("div." + sel).each(function (i, elem) {
+    $(elem).find("div").each(function (j, elem) {
+      var value = $(this).innerHeight() / max;
+      if (value) {
+        if (! res[i+1]) {
+          res[i+1] = {};
+        }
+        res[i+1][hour[j]] = value;
+      }
     });
+  });
 
-    console.log("db.attendance.insert({_id: \"balma\", " + JSON.stringify(res).substring(1) + ")");
+  console.log("db.attendance.insert({_id: \"balma\", " + JSON.stringify(res).substring(1) + ")");
 }
 
 setTimeout(parse, 500);

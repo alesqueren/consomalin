@@ -21,6 +21,7 @@ library
                        Drive.Crawl.Auchan.Schedule
                        Drive.Crawl.Auchan.Actions
                        Drive.Crawl.Account
+                       Drive.Attendance
                        Drive.Product
                        Drive.Transaction
                        Drive.Mongo
@@ -62,6 +63,8 @@ library
                      , wai
                      , warp
                      , amqp
+                     , containers
+                     , cgi
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 

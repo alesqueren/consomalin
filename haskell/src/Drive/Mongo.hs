@@ -1,4 +1,4 @@
-module Drive.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doAggregate) where
+module Drive.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doModify, doAggregate) where
 
 import           Protolude                    hiding (Product, (<>), find, sort, Selector)
 import           Database.MongoDB
@@ -11,7 +11,7 @@ data MongoException = DocNotFoundException
   deriving (Show, Typeable)
 instance Exception MongoException
 
-data MongoResource = UserResource | ProductResource
+data MongoResource = UserResource | ProductResource | AttendanceResource
 
 class Queryable a where
   getPath :: a -> (Text, Text)
@@ -19,6 +19,7 @@ class Queryable a where
 instance Queryable MongoResource where
   getPath UserResource = ("users", "user")
   getPath ProductResource = ("auchan", "product")
+  getPath AttendanceResource = ("auchan", "attendance")
 
 withMongoPipe :: Host -> (Pipe -> IO a) -> IO a
 withMongoPipe h = bracket (connect h) close
@@ -59,6 +60,17 @@ doInsert r values = do
       docs = map (typed . val) values
       action = insertMany_ colName docs
       doWithPipe pipe = access pipe master dbName action
+
+doModify :: (Queryable r) => r -> [(Selector, Document, [UpdateOption])] -> IO ()
+doModify r query = do
+  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
+  _ <- withMongoPipe (host $ T.unpack h) doWithPipe
+  return ()
+
+  where
+    (dbName, colName) = getPath r 
+    action = updateMany colName query
+    doWithPipe pipe = access pipe master dbName action
 
 doAggregate :: (Queryable r, Val v) => r -> [Document] -> IO [v]
 doAggregate r query = doAction doWithPipe

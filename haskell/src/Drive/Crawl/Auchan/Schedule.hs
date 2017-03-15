@@ -7,6 +7,7 @@ module Drive.Crawl.Auchan.Schedule (getSchedule, selectSchedule, Slot, SlotInfo,
 import           Protolude       hiding (Selector, inits)
 import           Prelude                    (String)
 import           Drive.Crawl
+import           Drive.Attendance
 import           Drive.Utils
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Text       as T
@@ -15,6 +16,7 @@ import           Text.Regex.TDFA
 import           Text.HTML.TagSoup
 
 import Data.Time
+import Data.Time.Calendar.WeekDate
 
 data SlotStatus = Past | Available | Busy
   deriving (Show, Generic)
@@ -25,13 +27,13 @@ data Slot = Slot
   , day :: Day
   , time :: TimeOfDay
   , status :: SlotStatus
-  , attendanceLevel :: Float
+  , attendanceLevel :: Maybe Float
   }
   deriving (Show, Generic)
 instance ToJSON Slot
 
 data SlotInfo = SlotInfo 
-  { sid :: Maybe Text
+  { sId :: Maybe Text
   , sDayFromNow :: Integer
   , sTime :: TimeOfDay
   , sStatus :: SlotStatus
@@ -42,14 +44,22 @@ instance ToJSON SlotInfo
 type ParsedSlotInfo = (Maybe Text, TimeOfDay, SlotStatus)
 
 makeSlotInfo :: Integer -> ParsedSlotInfo -> SlotInfo
-makeSlotInfo day (id, time, status) =
-  SlotInfo id day time status
+makeSlotInfo d (i,t,s) = SlotInfo i d t s
 
-makeSlot :: Day -> SlotInfo -> Slot
-makeSlot currDay si =
-  Slot (sid si) d (sTime si) (sStatus si) 0
+skipSunday :: Day -> Integer -> Day
+skipSunday currDay n =
+  if wd + fromIntegral n >= 7
+    then addDays (n+1) currDay
+    else addDays n currDay
+  where
+    (_,_,wd) = toWeekDate currDay
+
+makeSlot :: Attendance -> Day -> SlotInfo -> Slot
+makeSlot att currDay si =
+  Slot (sId si) d t (sStatus si) (getAttendance d t att)
     where 
-      d = addDays (sDayFromNow si) currDay
+      t = sTime si
+      d = skipSunday currDay (sDayFromNow si)
 
 
 newtype Link = Link { url :: Text }

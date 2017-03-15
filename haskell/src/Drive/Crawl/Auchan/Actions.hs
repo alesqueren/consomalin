@@ -14,12 +14,6 @@ import           Drive.Crawl.Auchan.Schedule
 import           Drive.Crawl.Account
 import           Drive.Transaction
 
--- user :: Text
--- user = "goto.devnull%40mailoo.org"
--- 
--- password :: Text
--- password = "Auchan31!"
-
 connect :: Account -> Crawl ()
 connect acc = do
   $(logDebug) ""

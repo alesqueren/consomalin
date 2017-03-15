@@ -13,7 +13,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(favicon('public/images/favicon.ico'));
-app.use(logger('dev'));
+//app.use(logger('dev'));
+app.use(logger('tiny'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
