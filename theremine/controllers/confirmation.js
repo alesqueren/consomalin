@@ -9,9 +9,10 @@ function isAuthenticated(req, res, next) {
 }
 
 module.exports = function init() {
-  // login && default page
   router.get('/confirmation', isAuthenticated, (req, res) => {
-    res.render('confirmation/confirmation', {});
+    const transactionDateTime = new Date(req.user.transactions[req.user.transactions.length -1].slot.dateTime);
+    console.log(transactionDateTime);
+    res.render('confirmation/confirmation', {transactionDateTime : transactionDateTime});
   });
 
   return router;

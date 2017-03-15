@@ -2,13 +2,17 @@ Vue.component('wish-item', {
     props: ['wish'],
     template:
     `
-        <div class="wish list-group-item col-xs-6" @click="setCurrentWish()">
-            <div >
-                {{wish.name}} ( {{wish.groupName}})
-             </div>
-             <div v-if="wish.product.infos.imageUrl">
-                {{wish.product.infos.name}} : <img style="width:75px;height:75px;" v-bind:src="wish.product.infos.imageUrl">
-                <input type="number" v-model.number="wish.product.quantity" step="1" value="0" min="1" max="64" v-on:change="changeQty" >
+        <div class="wish list-group-item" style="padding:5px" @click="setCurrentWish()">
+            <div>
+                <span style="font-weight:bold">{{wish.groupName}}</span> {{wish.name}}
+            </div>
+            <div v-if="wish.product.infos.imageUrl">
+                <div>
+                    {{wish.product.infos.name}}
+                </div>
+                <img class="col-md-6" style="width:50px;" v-bind:src="wish.product.infos.imageUrl">
+                <input class="col-md-6" type="number" v-model.number="wish.product.quantity" step="1" value="0" min="1" max="64" v-on:change="changeQty" >
+
             </div>
         </div>
     `,
@@ -31,7 +35,14 @@ Vue.component('currentwish-item', {
     props: ['currentwish'],
     template:
     `
-        <input v-model.sync="currentwish.name" v-on:keyup.enter="rename" >
+        <div class="input-group stylish-input-group">
+            <input type="text" class="form-control" v-model.sync="currentwish.name" v-on:keyup.enter="rename" >
+            <span class="input-group-addon">
+                <button type="submit">
+                    <span class="fa fa-search"></span>
+                </button>  
+            </span>
+        </div>
     `,
     methods: {
         rename: function(){
@@ -51,9 +62,10 @@ Vue.component('products-item', {
     props: ['wish', 'productkey', 'product'],
     template:
     `
-        <div class="product list-group-item col-xs-6" @click="selectProduct()">
-             {{product.name}}
+        <div class="product-item list-group-item col-md-2" @click="selectProduct()">
              <img style="width:75px;height:75px;" v-bind:src="product.imageUrl">
+             <span class="name">{{product.name}}</span>
+             <span class="price">Prix : {{product.price}}€</span>
         </div>
     `,
     methods: {
@@ -70,7 +82,7 @@ var app = new Vue({
             wishGroups: wishGroups,
             pSelectedWishes: pSelectedWishes,
             currentWish: currentWish,
-            maxProducts: 20,
+            maxProducts: 40,
             wishName: ''
         }
     },
@@ -103,6 +115,11 @@ var app = new Vue({
             }
             return selectedWishes;
         },
+        total: function(){
+            return this.selectedWishes.reduce(function(prev, product){
+              return prev + product.product.infos.price; 
+            },0);
+        }
     },
     methods: {
         sendCurrentWish : function (wish) {
@@ -136,7 +153,7 @@ var app = new Vue({
 
         newCurrentWish: function (wish) {
             var self = this;
-            this.maxProducts = 20;
+            this.maxProducts = 40;
             //on notifie le serveur du nouveau wish courrant
             if ( this.currentWish != wish ) {
                 this.currentWish = wish;

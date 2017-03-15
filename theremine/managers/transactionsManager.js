@@ -18,10 +18,10 @@ function addTransaction(_idUser, slotId, slotDateTime, wishes) {
     id: hash,
     status: 'transferring',
     value: 10,
-    orderTime: Date.now(),
+    orderTime: new Date(),
     slot: {
         id: slotId,
-        dateTime: slotDateTime
+        dateTime:  new Date(slotDateTime)
     },
     wishGroups: wishes
   }

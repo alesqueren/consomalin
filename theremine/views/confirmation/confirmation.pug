@@ -5,6 +5,10 @@ block append css
 
 block content
 
-    span Felicitation, vous pouvez allez retirer votre commande a Auchan Balma à xxx heures
+    span Felicitation, vous pouvez allez retirer votre commande a Auchan Balma le :
+    div.retrait 
 
 block append script
+    script.
+        var date = new Date('#{transactionDateTime}');
+        $('.retrait').text(date);

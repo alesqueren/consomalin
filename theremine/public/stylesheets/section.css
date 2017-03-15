@@ -6,3 +6,19 @@
 .wishgroup {
   color: #00B7FF;
 }
+.search-input-group .input-group-addon{
+    background: white !important; 
+}
+.search-input-group .form-control{
+    border-right:0; 
+    box-shadow:0 0 0; 
+    border-color:#ccc;
+}
+.search-input-group button{
+    border:0;
+    background:transparent;
+}
+.product-item.name{
+    text-transform: lowercase;
+    text-align: center;
+}

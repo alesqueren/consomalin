@@ -61,8 +61,8 @@ module.exports = function init() {
   router.post('/withdraw/confirm', isAuthenticated, (req, res) => {
     const slot_id = req.user.currentBasket.currentSlot.slot_id;
     const slot_dateTime = req.user.currentBasket.currentSlot.slot_dateTime;
-    console.log('slotid : ' + slot_id)
-    console.log('slotid : ' + slot_dateTime)
+    // console.log('slotid : ' + slot_id)
+    // console.log('slot_dateTime : ' + slot_dateTime)
 
 
     var wishGroups = req.user.wishGroups;

@@ -4,27 +4,33 @@ Vue.component('day-item', {
     `
         <div class="col-md-2" v-if="day.name" >
             <h2> {{day.name}}</h2>
-            <slot-item v-for="pickupslot in day.slots" v-bind:pickupslot="pickupslot" :key="daykey">
+            <slot-item v-for="pickupslot in day.slots" v-bind:pickupslot="pickupslot" :key="daykey" v-on:select_slot="selectSlot">
                 // <span> {{daykey}}</span>
                 // <span> {{dayindex}}</span>
                 // <span> {{day.slots}}</span>
             </slot-item>
         </div>
-    `
+    `,
+    methods: {
+        selectSlot: function (slotId) {
+            this.$emit('select_slot', slotId);
+        }
+    }
 });
 Vue.component('slot-item', {
     props: ['pickupslot'],
     template:
     `
-        <div class="" @click="selectSlot()" >
+        <div v-bind:class="{ active: pickupslot.selected }" @click="selectSlot()" >
             {{pickupslot.status}} ({{pickupslot.time}})
         </div>
     `,
     methods: {
         selectSlot: function () {
+            this.$emit('select_slot', this.pickupslot.id);
             var data = {
                 slot_id : this.pickupslot.id,
-                slot_dateTime : this.pickupslot.day + this.pickupslot.time
+                slot_dateTime : this.pickupslot.day + ' ' + this.pickupslot.time
             }
             $.ajax({
                 type: 'POST',
@@ -41,9 +47,9 @@ var app = new Vue({
     el: '#slots',
     data: function() {
         return {
-            slots: null,
+            daySlots: null,
             loading: true,
-            selectedSlot: null
+            selectedSlot: null,
         }
     },
     mounted: function () {
@@ -52,7 +58,7 @@ var app = new Vue({
             method: 'GET',
             url: '/withdraw/search',
             success: function (data) {
-                self.slots = organizeSlotsPerDay(data.slots);
+                self.daySlots = organizeSlotsPerDay(data.slots);
                 // console.log(self.slots)
                 self.loading = false;
             },
@@ -72,6 +78,18 @@ var app = new Vue({
                     window.location.href = "/confirmation";
                 }
             });
+        },
+        selectSlot: function (slotId) {
+            for( var i = 0; i < this.daySlots.length; i++) {
+                var day = this.daySlots[i];
+                for(var j=0; j < day.slots.length;  j++){
+                    var slot = day.slots[j];
+                    slot.selected = false;
+                    if ( slot.id == slotId ) {
+                        slot.selected = true;
+                    }
+                }
+            }
         }
     }
 });
@@ -82,6 +100,7 @@ function organizeSlotsPerDay(slots){
     var daySlots = [];
     for(var i = 0; i < slots.length; i++){
         slot = slots[i];
+        slot.selected = false;
 
         var d = new Date(slot.day);
         if ( dayName != days[d.getDay()] || i+1 == slots.length && !i == 0) {

@@ -1,7 +1,7 @@
 extends ../layout
 
 block append css
-    link(rel='stylesheet', href='/stylesheets/section.css')
+    link(rel='stylesheet', href='/stylesheets/withdraw.css')
 
 block content
 
@@ -10,7 +10,7 @@ block content
         <i v-show="loading" class="text-center" style="width: 100%;display: inline-block;">Nous chargeons les horaires de retraits disponibles</i>
         .container
             .row
-                day-item(v-for="(day, dayKey, dayIndex) in slots" v-bind:day="day" v-bind:daykey="dayKey" v-bind:dayindex="dayIndex")
+                day-item(v-for="(day, dayKey, dayIndex) in daySlots" v-bind:day="day" v-bind:daykey="dayKey" v-bind:dayindex="dayIndex" v-on:select_slot="selectSlot")
 
 
         a(href='/basket')
