@@ -19,6 +19,7 @@ import           Control.Monad.Trans.Free.Church
 import           Drive.Transaction
 
 import           Drive.Crawl.Auchan.Actions
+import           Drive.Crawl.Account
 
 data CrawlElement = ShopChoicePage
                   | HomePage TextURI
@@ -70,11 +71,13 @@ auchanCrawl = crawlC [ShopChoicePage]
 
 makeTransaction :: Transaction -> IO ()
 makeTransaction t = do
+  acc <- makeAccount
   man <- newManager tlsManagerSettings
-  runNetCrawl man $ runConduit (doTransaction t)
+  runNetCrawl man $ runConduit (doTransaction acc t)
   return ()
 
 makeSchedule :: IO [SlotInfo]
 makeSchedule = do
+  acc <- makeAccount
   man <- newManager tlsManagerSettings
-  runNetCrawl man $ runConduit doSchedule
+  runNetCrawl man $ runConduit (doSchedule acc)

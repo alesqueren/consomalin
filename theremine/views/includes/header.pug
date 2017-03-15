@@ -2,3 +2,16 @@ div.left
     a(href='/')
         img.logo(src="/images/car.jpg")
         span.brand Consomalin
+        if user
+            a.title(href="/wishlist") Ma liste de course
+            a.title(href="/section") Les rayons
+            a.title(href="/basket") Mon panier
+            a.title(href="/withdraw") Retrait
+div.right
+    if !user
+        a.connectRegister(href='/users/loginRegister') Se connecter S'inscrire
+    else
+        span #{user._id}
+        a.btn.btn-info.btn-sm(href='/users/signout')
+            span.fa.fa-sign-out
+            span Log out

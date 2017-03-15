@@ -3,7 +3,6 @@
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE TemplateHaskell            #-}
---{-# LANGUAGE OverlappingInstances       #-}
 
 module Drive.Crawl
   ( module Drive.Crawl

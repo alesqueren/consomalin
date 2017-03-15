@@ -2,3 +2,4 @@ state/
 *.log
 *.swp
 *.swo
+npm-debug.log

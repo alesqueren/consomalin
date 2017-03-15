@@ -6,6 +6,8 @@ ADD ./bin/wendy wendy
 ENV MONGO_HOST=mongo \
     AMQP_HOST=rabbitmq \
     AMQP_USER=guest \
-    AMQP_PASS=guest
+    AMQP_PASS=guest \
+    DRIVE_USER=user \
+    DRIVE_PASS=pass
 
 CMD ./wendy

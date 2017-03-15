@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
+
 module Main where
 
-import Prelude (String)
 import Protolude hiding (get, exp)
 
 import Data.Aeson hiding (json)
@@ -11,9 +11,9 @@ import Network.Wai.Handler.Warp
 import Data.Attoparsec.Text
 import Data.Time
 
+import Drive.Utils
 import Drive.Crawl.Auchan
 import Drive.Crawl.Auchan.Schedule
-import Drive.Utils
 import Drive.Attendance
 
 data Response = Response 
@@ -40,10 +40,9 @@ slotController = do
   now <- liftIO getCurrentTime
 
   att <- liftIO $ findAttendance "balma"
-  putStrLn (show att :: Text)
 
   si <- liftIO makeSchedule
-  let s = map (makeSlot $ utctDay now) si
+  let s = map (makeSlot att $ utctDay now) si
 
   if null s
     then raise "no slot found"

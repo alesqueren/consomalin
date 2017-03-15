@@ -6,7 +6,9 @@ services:
     build: ./theremine
     networks:
       - kiva
+      - metronome
       - mongo
+      - rabbitmq
     ports:
       - 8080:80
 
@@ -24,6 +26,9 @@ services:
     build:
       context: ./haskell
       dockerfile: ./wendy/Dockerfile
+    environment:
+      - DRIVE_USER=goto.devnull@mailoo.org
+      - DRIVE_PASS=TTOjKLoXg1!
     networks:
       - rabbitmq
       - mongo
@@ -32,6 +37,20 @@ services:
     build:
       context: ./haskell
       dockerfile: ./metronome/Dockerfile
+    environment:
+      - DRIVE_USER=bitcoin.miner@mailoo.org
+      - DRIVE_PASS=hDDqSUGmY3!
+    networks:
+      - metronome
+    ports:
+      - "8082:80"
+
+  mongo-express:
+    image: mongo-express
+    networks:
+      - mongo
+    ports:
+      - "8083:8081"
 
   mongo:
     image: mongo
@@ -54,3 +73,4 @@ networks:
   kiva:
   mongo:
   rabbitmq:
+  metronome:

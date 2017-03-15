@@ -6,6 +6,7 @@
     "start": "node ./bin/www.js"
   },
   "dependencies": {
+    "amqplib": "*",
     "request": "*",
     "bcrypt-nodejs": "*",
     "body-parser": "~1.0.0",
