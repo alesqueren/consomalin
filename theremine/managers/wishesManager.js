@@ -16,7 +16,7 @@ function addWish(_idUser, groupId, wishName) {
     { "wishGroups.id": groupId },
     {
       $push: {
-        [request]: { id : hash, name: wishName, product: {}}
+        [request]: { id : hash, name: wishName}
       },
     },
     (err) => {

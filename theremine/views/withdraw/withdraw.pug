@@ -3,70 +3,22 @@ extends ../layout
 block append css
     link(rel='stylesheet', href='/stylesheets/section.css')
 
-
-block append header
-    div.right
-        span #{user._id}
-        a.btn.btn-info.btn-sm(href='/users/signout')
-            span.fa.fa-sign-out
-            span Log out
-
 block content
 
     div#slots
-        slot-item(v-for="pickupslot in slots" v-bind:pickupslot="pickupslot")
+        <i v-show="loading" class="text-center fa fa-spinner fa-spin fa-5x" style="width: 100%;"></i>
+        <i v-show="loading" class="text-center" style="width: 100%;display: inline-block;">Nous chargeons les horaires de retraits disponibles</i>
+        .container
+            .row
+                day-item(v-for="(day, dayKey, dayIndex) in slots" v-bind:day="day" v-bind:daykey="dayKey" v-bind:dayindex="dayIndex")
 
-    a(href='/basket')
-        button.btn.btn-primary.left(type="button") Revenir au panier
-           
-    a(href='/validatePayment')
-        button.btn.btn-success.right(type="button") Valider ma commande
+
+        a(href='/basket')
+            button.btn.btn-primary.left(type="button") Revenir au panier
+        a(href='#' @click="confirmSlot")
+            button.btn.btn-success.right(type="button") Valider ma commande
 
 block append script
     script.
-        var wishGroups = JSON.parse('#{ wishGroups }'.replace(/&quot;/g,'"'));
-        var pSelectedWishes = JSON.parse('#{ pSelectedWishes }'.replace(/&quot;/g,'"'));var productsToMatch = [];
-        var productsPids = [];
-        var psw = pSelectedWishes;
-        var wgs = wishGroups;
-        var wgsLength = wgs.length;
-        for(var i = 0; i < wgsLength; i++ ) {
-            var wg = wgs[i]; // wishGroup
-            var wgLength = wg.wishes?wg.wishes.length:0;
-            for(var j = 0; j < wgLength; j++ ) {
-                var w = wgs[i].wishes[j]; // wish
-                w.product = {id:w.product, infos:{}, quantity : 0};
-                w.matchingProducts = [];
-                var selected = psw[wg.id]?psw[wg.id][w.id]?true:false:false;
-                if( selected && psw[wg.id][w.id].product && psw[wg.id][w.id].product.id) {
-                    var productId = psw[wg.id][w.id].product.id;
-                    productsToMatchAlreadyExist = productsToMatch.hasOwnProperty(productId);
-                    if ( !productsToMatchAlreadyExist ) {
-                        productsToMatch[productId] = [{ groupPosition:i, wishPosition:j }];
-                    }else{
-                        productsToMatch[productId].push({ groupPosition:i, wishPosition:j });
-                    }
-                    productsPids.push( productId );
-                }
-            }
-        }
-        $.ajax({
-            type: 'GET',
-            url : '/products/details/',
-            data: { pids :JSON.stringify(productsPids)},
-            complete: function(responseObject) {
-                var retreivedProducts = responseObject.responseJSON;
-                try {
-                    for(var product in productsToMatch) {
-                        var infos = retreivedProducts[product];
-                        for(var wishIndex in productsToMatch[product]) {
-                            var wish = productsToMatch[product][wishIndex];
-                            wishGroups[wish.groupPosition].wishes[wish.wishPosition].product.infos = infos;
-                        }
-                    }
-                } catch (e) {
-                    console.log('une erreur à la recuperation des details est survenue : ' +e)
-                }
-            }
-        });
+      
     script(src="/javascripts/withdraw.js")

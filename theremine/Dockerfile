@@ -9,7 +9,6 @@ ENV SERVER_PORT=80 \
     MONGO_URI=mongodb://mongo \
     KIVA_HOST=http://kiva \
     METRONOME_HOST=http://metronome \
-    MONGO_DB_NAME='users' \
     RABBIT_URI=amqp://rabbitmq:5672
     
 CMD npm start

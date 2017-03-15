@@ -58,6 +58,7 @@ const groupsControllers = require('./controllers/groups')(passport);
 const wishesControllers = require('./controllers/wishes')(passport);
 const basketControllers = require('./controllers/basket')(passport);
 const withdrawControllers = require('./controllers/withdraw')(passport);
+const confirmationControllers = require('./controllers/confirmation')(passport);
 
 app.use(function(req, res, next) {
     res.locals.user = req.user;
@@ -73,6 +74,7 @@ app.use('/', groupsControllers);
 app.use('/', wishesControllers);
 app.use('/', basketControllers);
 app.use('/', withdrawControllers);
+app.use('/', confirmationControllers);
 
 
 // catch 404 and forward to error handler
