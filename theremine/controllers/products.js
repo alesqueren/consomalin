@@ -12,16 +12,16 @@ function isAuthenticated(req, res, next) {
 
 module.exports = function init() {
   router.get('/products/search/:search_string', isAuthenticated, (req, res) => {
-    const search_url = KIVA_HOST + '/search?s=' + req.params.search_string;
+    const search_url = KIVA_HOST + '/search?s=' + encodeURIComponent(req.params.search_string);
     res.setHeader('Content-Type', 'application/json');
 
     var products;
+      // console.log('search_url:', search_url);
     request(search_url, function (error, response, body) {
-      // console.log('error:', error);
       // console.log('statusCode:', response && response.statusCode);
       // console.log('body:', body);
       products = body;
-      // console.log('body:', JSON.parse(products);
+      // console.log('body:', JSON.parse(products));
       res.send(products);
     });
   // res.send(JSON.stringify(products));

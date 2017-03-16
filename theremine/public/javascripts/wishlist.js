@@ -15,7 +15,7 @@ Vue.component('wishgroup-item', {
                     {{ wishgroup.name }}
                 </div>
                 <div>
-                    <wish-item v-for="(wish, wishIndex) in wishgroup.wishes" v-bind:wishgroup="wishgroup" v-bind:wish="wish" v-bind:wishIndex="wishIndex" :key="wish.name"></wish-item>
+                    <wish-item v-for="(wish, wishIndex) in wishgroup.wishes" v-bind:wishgroups="wishgroups"  v-bind:wishgroup="wishgroup" v-bind:wish="wish" v-bind:wishIndex="wishIndex" :key="wish.name"></wish-item>
                 </div>
                 <div>
                     <input v-model="newText" v-on:keyup.enter="addWish" placeholder="Add a wish"/>
@@ -51,10 +51,11 @@ Vue.component('wishgroup-item', {
     }
 });
 Vue.component('wish-item', {
-    props: ['wishgroup', 'wish', 'wishIndex'],
+    props: ['wishgroups', 'wishgroup', 'wish', 'wishIndex'],
     template:
     `
         <div class="wish list-group-item col-xs-6">
+            <button class="btn btn-danger right" @click="removeWish"><i class="fa fa-trash-o fa-lg"></i></button>
             {{ wish.name }}
             <input type="checkbox" v-model="wish.selected" v-on:change="selectWish">
         </div>
@@ -69,6 +70,27 @@ Vue.component('wish-item', {
                 data: { selected: self.wish.selected},
                 complete: function(responseObject) {
                     self.$parent.wishgroup.wishes[self.wishIndex].selected = self.wish.selected;
+                }
+            });
+        },
+
+        removeWish: function () {
+            var self = this;
+            // console.log(' gid : ' + gid)
+            $.ajax({
+                type: 'DELETE',
+                url : '/wishlist/groups/'+this.wishgroup.id+'/wishes/'+this.wish.id,
+                data: {},
+                complete: function(responseObject) {
+                    for(var i=0;i<self.wishgroups.length;i++){
+                        var wishGroup = self.wishgroups[i];
+                        for(var j=0;j<wishGroup.wishes.length;j++){
+                            var wish = wishGroup.wishes[j];
+                            if( wish.id == self.wish.id ){
+                                self.wishgroups[i].wishes.splice(j, 1);
+                            }
+                        }
+                    }
                 }
             });
         }

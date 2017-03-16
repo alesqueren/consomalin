@@ -60,7 +60,6 @@ function selectWish(_idUser, groupId, wishId, selected) {
 
 function renameWish(_idUser, groupId, wishId, newName) {
   const users = db.get().collection('user');
-  let request = "wishGroups."+groupId+".wishes."+wishId+".name";
   users.findOne({_id: _idUser}, function(err, document) {
     var wishGroups = document.wishGroups;
     for(var i = 0; i < wishGroups.length; i++ ) {
@@ -82,13 +81,32 @@ function renameWish(_idUser, groupId, wishId, newName) {
       }
     );
   });
-  // users.find({ _id: _idUser },
-  //   {
-  //     $set: {
-  //       [request]: newName
-  //     },
-  //   }
-  // );
+}
+
+function removeWish(_idUser, groupId, wishId) {
+  const users = db.get().collection('user');
+  users.findOne({_id: _idUser}, function(err, document) {
+    var wishGroups = document.wishGroups;
+    for(var i = 0; i < wishGroups.length; i++ ) {
+        var wishGroup = wishGroups[i];
+        var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
+        for(var j = 0; j < wishGroupLength; j++ ) {
+            var wish = wishGroup.wishes[j];
+            if( wishGroup.id == groupId && wish.id == wishId ) {
+                wishGroup.wishes.splice(j, 1);
+                break;
+            }
+        }
+    }
+    users.updateOne(
+      { _id: _idUser },
+      {
+        $set: {
+          "wishGroups": wishGroups
+        },
+      }
+    );
+  });
 }
 
 function setProduct(_idUser, groupId, wishId, productId) {
@@ -120,6 +138,7 @@ module.exports = {
   add: addWish,
   select: selectWish,
   rename: renameWish,
+  remove: removeWish,
   setProduct: setProduct,
   setProductQty: setProductQty,
 };

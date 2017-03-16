@@ -21,10 +21,18 @@ module.exports = function init() {
     res.send(JSON.stringify(groupId));
   });
 
-  //delete a group
-  router.delete('/wishlist/groups/:gid', (req, res) => {
+  //rename a group
+  router.put('/wishlist/groups/:gid/rename', isAuthenticated, (req, res) => {
     let groupId = req.params.gid;
-    groupsManager.remove("az@hotmail.fr", groupId);
+    groupsManager.rename(req.user._id, groupId);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify('OK'));
+  });
+
+  //delete a group
+  router.delete('/wishlist/groups/:gid', isAuthenticated, (req, res) => {
+    let groupId = req.params.gid;
+    groupsManager.remove(req.user._id, groupId);
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify('OK'));
   });

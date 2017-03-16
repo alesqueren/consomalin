@@ -16,17 +16,26 @@ function addGroup(_idUser, groupName) {
       $push: {
         wishGroups: { id : hash, name: groupName, wishes: [] },
       },
-    },
-    (err) => {
-      console.log(`err: ${err}`);
     });
   return hash;
+}
+
+function renameGroup(_idUser, groupId, newName) {
+  const users = db.get().collection('user');
+  let request = "wishGroups."+groupId+".name";
+  users.updateOne(
+    { _id: _idUser },
+    {
+      $set : {
+        [request] : newName
+      }
+    }
+  );
 }
 
 function removeGroup(_idUser, groupId) {
   const users = db.get().collection('user');
   let request = "wishGroups."+groupId;
-  console.log("req:" + request + _idUser);
   users.updateOne(
     { _id: _idUser },
     {

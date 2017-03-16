@@ -44,6 +44,15 @@ module.exports = function init() {
     res.send(JSON.stringify('OK'));
   });
 
+  //delete a wish
+  router.delete('/wishlist/groups/:gid/wishes/:wid', (req, res) => {
+    let groupId = req.params.gid;
+    let wishId = req.params.wid;
+    wishesManager.remove(req.user._id, groupId, wishId);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify('OK'));
+  });
+
   //set a product
   router.post('/wishlist/groups/:gid/wishes/:wid/product', isAuthenticated, (req, res) => {
     let groupId = req.params.gid;

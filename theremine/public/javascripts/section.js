@@ -2,7 +2,7 @@ Vue.component('wish-item', {
     props: ['wish'],
     template:
     `
-        <div class="wish list-group-item" v-bind:class="{active:wish.selected}" style="padding:5px" @click="setCurrentWish($event)">
+        <div class="wish list-group-item" v-bind:class="{active:wish.current}" style="padding:5px" @click="setCurrentWish($event)">
             <span class="fa fa-remove" @click="removeWish($event)"></span>
             <div>
                 <span style="font-weight:bold">{{wish.groupName}}</span> {{wish.name}}
@@ -167,6 +167,23 @@ var app = new Vue({
                 data: {},
                 complete: function(responseObject) {
                     var products = JSON.parse(responseObject.responseText);
+                    // test de sort
+                    // function compare(a,b) {
+                    //   if (a.price < b.price)
+                    //     return -1;
+                    //   if (a.price > b.price)
+                    //     return 1;
+                    //   return 0;
+                    // }
+                    // var sortedKeyProducts = Object.keys(products).sort( function(keyA, keyB) {
+                    //     return products[keyA].price - products[keyB].price;
+                    // });
+                    // var sortedProducts = [];
+                    // for(vari=0;i<sortedKeyProducts.length;i++){
+                    //     sortedProducts[sortedKeyProducts[i]] = products[sortedKeyProducts[i]];
+                    // }
+                    // console.log(sortedProducts)
+                    // self.currentWish.matchingProducts = sortedProducts;
                     self.currentWish.matchingProducts = products;
                 }
             });
@@ -192,18 +209,17 @@ var app = new Vue({
                 //toujours le meme wish (reclick ou dernier de la liste)
             }
             for (i = 0; i < this.selectedWishes.length; i += 1) {
-                this.selectedWishes[i].selected = false;
+                this.selectedWishes[i].current = false;
                 if (this.selectedWishes[i] === this.currentWish) {
-                    console.log('select')
-                    console.log(this.selectedWishes[i])
-                    this.selectedWishes[i].selected = true;
+                    this.selectedWishes[i].current = true;
                 }
             }
         },
 
         removeWish: function (pWish) {
             // console.log('here')
-            if ( pWish.selected ) {
+            if ( pWish.current ) {
+                this.pSelectedWishes[pWish.groupId][pWish.id] = false;
                 this.removeCurrentWish();
                 this.setCurrentWishToNext();
             }
@@ -220,7 +236,7 @@ var app = new Vue({
         removeCurrentWish: function () {
             if ( this.currentWish ) {
                 for (i = 0; i < this.selectedWishes.length; i += 1) {
-                    this.selectedWishes[i].selected = false;
+                    this.selectedWishes[i].current = false;
                 }
                 this.currentWish = null;
                 $.ajax({
@@ -247,6 +263,7 @@ var app = new Vue({
 
         //on attache le produit (selectionné) au wish en cours
         bindCurrentWishWithProduct: function (key, product) {
+            console.log('cou')
             var self = this;
             if ( self.currentWish ) {
                 this.currentWish.product.id = key;
@@ -283,8 +300,8 @@ function getFirstUnmatchedSelectedWish(selectedWishes){
     // var wgs = wishGroups;
     for(var i = 0; i < psw.length; i++ ) {
         var wish = psw[i];
-        if(  !wish.product.id) {
-            wish.selected = true;
+        if( !wish.product.id) {
+            wish.current = true;
             return wish;
         }
     }

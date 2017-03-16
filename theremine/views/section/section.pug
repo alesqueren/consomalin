@@ -12,6 +12,13 @@ block content
                     .container(v-if="currentWish")
                         .row
                             products-item(v-for="(product, productKey, productIndex) in currentWish.matchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct")
+                    .container(v-else-if="matchedWishes == selectedWishes.length")
+                        .row
+                            div
+                                span Votre liste de course est complète ! Vous pouvez 
+                                a(href='/basket')
+                                    button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
+                                span  pour finaliser la commande.
                 .col-md-2
                     wish-item(v-for="wish in selectedWishes" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish" v-on:remove_wish="removeWish")
                     div Total : {{total}} €
@@ -40,7 +47,7 @@ block append script
                         //- console.log('w.product.id');
                         //- console.log(w.product.id);
                         //- console.log(w.product.id);
-                        wish.selected = true;
+                        wish.current = true;
                         return wish;
                     }
                 }
@@ -62,7 +69,7 @@ block append script
                             var w = wg.wishes[j]; // wish
                             var selected = psw[wg.id]?psw[wg.id][w.id]?true:false:false;
                             if( w.groupId == pcw.groupId && w.id == pcw.wish ) {
-                                w.selected = true;
+                                w.current = true;
                                 return w;
                             }
                         }
@@ -90,11 +97,15 @@ block append script
                 //- console.log(w.product);
                 w.product = {id:w.product, infos:{}, quantity : 0};
                 w.matchingProducts = [];
-                w.selected = false;
+                w.current = false;
                 var selected = psw[wg.id]?psw[wg.id][w.id]?true:false:false;
+                w.product.id = null;
                 if( selected && psw[wg.id][w.id].product && psw[wg.id][w.id].product.id) {
-                    var productId = psw[wg.id][w.id].product.id;
+                    var productId = psw[wg.id][w.id].product?psw[wg.id][w.id].product.id:null;
                     w.product.id = productId;
+                    //- console.log( psw[wg.id][w.id]);
+                    //- console.log( psw[wg.id][w.id].product);
+                    //- console.log(productId);
                     productsToMatchAlreadyExist = productsToMatch.hasOwnProperty(productId);
                     if ( !productsToMatchAlreadyExist ) {
                         productsToMatch[productId] = [{ groupPosition:i, wishPosition:j }];
