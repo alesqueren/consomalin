@@ -128,7 +128,7 @@ summarize :: Product -> ProductSummary
 summarize p =
   ProductSummary {
     psId              = pid p
-  , psName            = nameShort p
+  , psName            = name p
   , psPrice           = price p
   , psImageUrl        = imageUrl p
   , psPriceByQuantity = priceByQuantity p
