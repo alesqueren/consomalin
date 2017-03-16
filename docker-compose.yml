@@ -4,11 +4,7 @@ services:
 
   theremine:
     build: ./theremine
-    networks:
-      - kiva
-      - metronome
-      - mongo
-      - rabbitmq
+    networks: [big]
     ports:
       - 8080:80
 
@@ -16,9 +12,7 @@ services:
     build: 
       context: ./haskell
       dockerfile: ./kiva/Dockerfile
-    networks:
-      - kiva
-      - mongo
+    networks: [big]
     ports:
       - "8081:80"
 
@@ -29,9 +23,7 @@ services:
     environment:
       - DRIVE_USER=goto.devnull@mailoo.org
       - DRIVE_PASS=TTOjKLoXg1!
-    networks:
-      - rabbitmq
-      - mongo
+    networks: [big]
 
   metronome:
     build:
@@ -40,22 +32,19 @@ services:
     environment:
       - DRIVE_USER=bitcoin.miner@mailoo.org
       - DRIVE_PASS=hDDqSUGmY3!
-    networks:
-      - metronome
+    networks: [big]
     ports:
       - "8082:80"
 
   mongo-express:
     image: mongo-express
-    networks:
-      - mongo
+    networks: [big]
     ports:
       - "8083:8081"
 
   mongo:
     image: mongo
-    networks:
-      - mongo
+    networks: [big]
     volumes:
       - ./state/mongo:/data/db
     ports:
@@ -63,14 +52,10 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.5.5-management
-    networks:
-      - rabbitmq
+    networks: [big]
     ports:
       - "5672:5672"
       - "15672:15672"
 
 networks:
-  kiva:
-  mongo:
-  rabbitmq:
-  metronome:
+  big:
