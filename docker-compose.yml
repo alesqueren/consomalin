@@ -5,6 +5,8 @@ services:
   theremine:
     build: ./theremine
     networks: [big]
+    environment:
+      - METRONOME_HOST=http://metronome-cache
     ports:
       - 8080:80
 
@@ -24,6 +26,13 @@ services:
       - DRIVE_USER=goto.devnull@mailoo.org
       - DRIVE_PASS=TTOjKLoXg1!
     networks: [big]
+
+  metronome-cache:
+    image: consomalin/nginx-ldap
+    networks: [big]
+    volumes:
+      - ./nginx/conf:/app/conf/:ro
+      - ./nginx/cache:/app/cache/
 
   metronome:
     build:

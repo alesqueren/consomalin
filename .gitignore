@@ -3,3 +3,4 @@ state/
 *.swp
 *.swo
 npm-debug.log
+nginx/cache
