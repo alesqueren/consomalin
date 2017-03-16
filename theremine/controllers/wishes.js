@@ -68,6 +68,11 @@ module.exports = function init() {
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify('OK'));
   });
+  router.put('/wishlist/removeCurrent', isAuthenticated, (req, res) => {
+    usersManager.removeCurrentWish(req.user._id);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify('OK'));
+  });
 
   return router;
 };

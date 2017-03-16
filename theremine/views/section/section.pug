@@ -9,14 +9,15 @@ block content
             .row
                 .col-md-10
                     currentwish-item(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
-                    .container
+                    .container(v-if="currentWish")
                         .row
                             products-item(v-for="(product, productKey, productIndex) in currentWish.matchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct")
                 .col-md-2
-                    wish-item(v-for="wish in selectedWishes" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish")
-                    span Total : {{total}}
+                    wish-item(v-for="wish in selectedWishes" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish" v-on:remove_wish="removeWish")
+                    div Total : {{total}} €
+                    div Produits au panier : {{matchedWishes}}/{{selectedWishes.length}}
                     a(href='/basket')
-                        button.btn.btn-success.right(type="button") Passer au panier
+                        button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier
 
     a(href='/wishlist')
         button.btn.btn-primary.left(type="button") Revenir à la wishlist
@@ -25,7 +26,7 @@ block content
 
 block append script
     script.
-        function getFirstSelectedWish(){
+        function getFirstUnmatchedSelectedWish(){
             //on parcours le tableau ordonné pour chercher si le wish est dans l'objet pSelectedWishes
             var psw = pSelectedWishes;
             var wgs = wishGroups;
@@ -35,11 +36,16 @@ block append script
                 for(var j = 0; j < wgLength; j++ ) {
                     var wish = wg.wishes[j];
                     var selected = psw[wg.id]?psw[wg.id][wish.id]?true:false:false;
-                    if( selected ) {
+                    if( selected && !wish.product.id) {
+                        //- console.log('w.product.id');
+                        //- console.log(w.product.id);
+                        //- console.log(w.product.id);
+                        wish.selected = true;
                         return wish;
                     }
                 }
             }
+            return null;
         }
         function getCurrentWishEntity( pCurrentWish ){
             //si le wish courant existe et est dans le tableau de wish selectionné, alors on le renvoi. Dans les autres cas on renvoi le premier element selectionné.
@@ -56,13 +62,14 @@ block append script
                             var w = wg.wishes[j]; // wish
                             var selected = psw[wg.id]?psw[wg.id][w.id]?true:false:false;
                             if( w.groupId == pcw.groupId && w.id == pcw.wish ) {
+                                w.selected = true;
                                 return w;
                             }
                         }
                     }
                 }
             }
-            return getFirstSelectedWish();
+            return getFirstUnmatchedSelectedWish();
         }
 
         //add some usefull fields for vuejs to watch them
@@ -80,11 +87,14 @@ block append script
             var wgLength = wg.wishes?wg.wishes.length:0;
             for(var j = 0; j < wgLength; j++ ) {
                 var w = wgs[i].wishes[j]; // wish
+                //- console.log(w.product);
                 w.product = {id:w.product, infos:{}, quantity : 0};
                 w.matchingProducts = [];
+                w.selected = false;
                 var selected = psw[wg.id]?psw[wg.id][w.id]?true:false:false;
                 if( selected && psw[wg.id][w.id].product && psw[wg.id][w.id].product.id) {
                     var productId = psw[wg.id][w.id].product.id;
+                    w.product.id = productId;
                     productsToMatchAlreadyExist = productsToMatch.hasOwnProperty(productId);
                     if ( !productsToMatchAlreadyExist ) {
                         productsToMatch[productId] = [{ groupPosition:i, wishPosition:j }];

@@ -42,6 +42,19 @@ function setCurrentWish(email, groupId, wishId) {
   );
 }
 
+function removeCurrentWish(email, groupId, wishId) {
+  const users = db.get().collection(userCollectionName);
+  const request = "currentBasket.currentWish";
+  users.updateOne(
+    { _id: email },
+    {
+      $set: {
+        [request]: {}
+      },
+    }
+  );
+}
+
 function setCurrentSlot(email, slot) {
   const users = db.get().collection(userCollectionName);
   const request = "currentBasket.currentSlot";
@@ -59,5 +72,6 @@ module.exports = {
   add: addUser,
   find: findUser,
   setCurrentWish: setCurrentWish,
+  removeCurrentWish: removeCurrentWish,
   setCurrentSlot: setCurrentSlot,
 };

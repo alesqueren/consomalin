@@ -22,3 +22,7 @@
     text-transform: lowercase;
     text-align: center;
 }
+
+.wish.acive{
+    background-color: blue;
+}

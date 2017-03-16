@@ -2,7 +2,8 @@ Vue.component('wish-item', {
     props: ['wish'],
     template:
     `
-        <div class="wish list-group-item" style="padding:5px" @click="setCurrentWish()">
+        <div class="wish list-group-item" v-bind:class="{active:wish.selected}" style="padding:5px" @click="setCurrentWish($event)">
+            <span class="fa fa-remove" @click="removeWish($event)"></span>
             <div>
                 <span style="font-weight:bold">{{wish.groupName}}</span> {{wish.name}}
             </div>
@@ -17,8 +18,17 @@ Vue.component('wish-item', {
         </div>
     `,
     methods: {
-        setCurrentWish: function () {
-            this.$emit('new_current_wish', this.wish);
+        removeWish: function () {
+            this.$emit('remove_wish', this.wish);
+        },
+        setCurrentWish: function (event) {
+            if (event) {
+                // console.log(event.target.tagName)
+                var currentClass = event.target.tagName;
+                if ( event.target.tagName != 'SPAN' ) {
+                    this.$emit('new_current_wish', this.wish);
+                }
+            }
         },
         changeQty: function () {
             $.ajax({
@@ -35,7 +45,7 @@ Vue.component('currentwish-item', {
     props: ['currentwish'],
     template:
     `
-        <div class="input-group stylish-input-group">
+        <div v-if="currentwish" class="input-group stylish-input-group">
             <input type="text" class="form-control" v-model.sync="currentwish.name" v-on:keyup.enter="rename" >
             <span class="input-group-addon">
                 <button type="submit">
@@ -82,12 +92,13 @@ var app = new Vue({
             wishGroups: wishGroups,
             pSelectedWishes: pSelectedWishes,
             currentWish: currentWish,
-            maxProducts: 40,
-            wishName: ''
+            maxProducts: 40
         }
     },
     mounted:function(){
-        this.searchProducts(this.currentWish);
+        if ( this.currentWish ) {
+            this.searchProducts(this.currentWish);
+        }
     },
     created () {
         //on ecoute le scroll pour augmenter le nombre de produits visibles
@@ -115,10 +126,26 @@ var app = new Vue({
             }
             return selectedWishes;
         },
+        matchedWishes: function () {
+            var matchedWishes = 0;
+            for (i = 0; i < this.selectedWishes.length; i += 1) {
+                matchedWishes += this.selectedWishes[i].product.id?1:0;
+            }
+            return matchedWishes;
+        },
         total: function(){
             return this.selectedWishes.reduce(function(prev, product){
-              return prev + product.product.infos.price; 
-            },0);
+                var priceProduct = product.product.infos.price?product.product.infos.price * product.product.quantity:0;
+                return prev + priceProduct; 
+            },0).toFixed(2);
+        },
+        nextInfos: function(){
+            var classButtonNext = this.selectedWishes.length == this.matchedWishes?'btn-outline-success':'btn-outline-warning';
+            var textLabelNext = classButtonNext=='active'?'':'Il reste des produits à ajouter';
+            return {
+                class : classButtonNext,
+                text : textLabelNext
+            }
         }
     },
     methods: {
@@ -128,12 +155,6 @@ var app = new Vue({
                 url : '/wishlist/groups/'+wish.groupId+'/wishes/'+wish.id+'/current',
                 data: {},
                 complete: function(responseObject) {
-                    if ( responseObject.responseJSON == 'OK' ) {
-                        // console.log('new current wish ('+ wish.name + ') accepted')
-                    }else{
-                        // console.log('new current wish ('+ wish.name + ') error')
-                    }
-
                 }
             });
         },
@@ -168,46 +189,83 @@ var app = new Vue({
                     // console.log(wish.matchingProducts)
                 }
             }else{
-                // console.log(wish.name + ' same wish as ' + this.currentWish.name);
+                //toujours le meme wish (reclick ou dernier de la liste)
+            }
+            for (i = 0; i < this.selectedWishes.length; i += 1) {
+                this.selectedWishes[i].selected = false;
+                if (this.selectedWishes[i] === this.currentWish) {
+                    console.log('select')
+                    console.log(this.selectedWishes[i])
+                    this.selectedWishes[i].selected = true;
+                }
+            }
+        },
+
+        removeWish: function (pWish) {
+            // console.log('here')
+            if ( pWish.selected ) {
+                this.removeCurrentWish();
+                this.setCurrentWishToNext();
+            }
+            var psw = this.selectedWishes;
+            for(var i = 0; i < psw.length; i++ ) {
+                var wish = psw[i];
+                if ( wish.id == pWish.id) {
+                    this.pSelectedWishes[wish.groupId][wish.id] = false;
+                }
+            }
+            unselectWish(pWish);
+        },
+
+        removeCurrentWish: function () {
+            if ( this.currentWish ) {
+                for (i = 0; i < this.selectedWishes.length; i += 1) {
+                    this.selectedWishes[i].selected = false;
+                }
+                this.currentWish = null;
+                $.ajax({
+                    type: 'PUT',
+                    url : '/wishlist/removeCurrent',
+                    data: {},
+                    complete: function(responseObject) {
+
+                    }
+                });
             }
         },
 
         setCurrentWishToNext: function () {
-            //on recupere l'index du wish courrant
-            var currentIndex;
-            for (i = 0; i < this.selectedWishes.length; i += 1) {
-                if (this.selectedWishes[i] === this.currentWish) {
-                    currentIndex = i;
-                }
-            }
-            var groupCurrentWish = currentWish.groupId;
-            var wishCurrentWish = currentWish.id;
-            //si la longueur du tableau est plus grande on passe au suivant, rien sinon
-            if ( this.selectedWishes.length > currentIndex+1) {
-                this.newCurrentWish(this.selectedWishes[currentIndex+1]);
+            //si il reste un wish non lié a un produit, on passe a celui ci, sinon on supprime le currentwish et on envoi la requet de remove au serveur
+            var nextCurrentWish = getFirstUnmatchedSelectedWish(this.selectedWishes);
+            if ( nextCurrentWish ) {
+                this.newCurrentWish(nextCurrentWish);
             }else{
+                this.removeCurrentWish();
                 // console.log(this.selectedWishes[currentIndex].name + ' est le dernier wish')
             }
         },
 
         //on attache le produit (selectionné) au wish en cours
         bindCurrentWishWithProduct: function (key, product) {
-            this.currentWish.product.id = key;
-            this.currentWish.product.infos = product;
-            this.currentWish.product.quantity = 1;
-            const groupId = this.currentWish.groupId;
-            const wishId = this.currentWish.id;
-            $.ajax({
-                type: 'POST',
-                url : '/wishlist/groups/'+groupId+'/wishes/'+wishId+'/product',
-                data: {'pid' : key },
-                complete: function(responseObject) {
-                    var products = JSON.parse(responseObject.responseText);
-                    self.currentWish.matchingProducts = products;
-                    self.maxProducts++;
-                }
-            });
-            this.setCurrentWishToNext();
+            var self = this;
+            if ( self.currentWish ) {
+                this.currentWish.product.id = key;
+                this.currentWish.product.infos = product;
+                this.currentWish.product.quantity = 1;
+                const groupId = this.currentWish.groupId;
+                const wishId = this.currentWish.id;
+                $.ajax({
+                    type: 'POST',
+                    url : '/wishlist/groups/'+groupId+'/wishes/'+wishId+'/product',
+                    data: {'pid' : key },
+                    complete: function(responseObject) {
+                        var products = JSON.parse(responseObject.responseText);
+                        self.currentWish.matchingProducts = products;
+                        self.maxProducts++;
+                        self.setCurrentWishToNext();
+                    }
+                });
+            }
         },
 
         //lazyloading
@@ -220,3 +278,28 @@ var app = new Vue({
     },
 
 });
+function getFirstUnmatchedSelectedWish(selectedWishes){
+    var psw = selectedWishes;
+    // var wgs = wishGroups;
+    for(var i = 0; i < psw.length; i++ ) {
+        var wish = psw[i];
+        if(  !wish.product.id) {
+            wish.selected = true;
+            return wish;
+        }
+    }
+    return null;
+}
+
+
+function unselectWish (wish) {
+    var self = this;
+    var gid = wish.groupId;
+    $.ajax({
+        type: 'PUT',
+        url : '/wishlist/groups/'+gid+'/wishes/'+wish.id,
+        data: { selected: false},
+        complete: function(responseObject) {
+        }
+    });
+}
