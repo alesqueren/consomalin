@@ -7,7 +7,7 @@ const wishesManager = require('../managers/wishesManager');
 const usersManager = require('../managers/usersManager');
 const transactionsManager = require('../managers/transactionsManager');
 const METRONOME_HOST = process.env.METRONOME_HOST || 'http://localhost:3000/tests/attendance.json';
-const rabbitMQ = require('../rabbitMQ');
+const rabbitMQ = require('../bs/rabbitMQ');
 const KIVA_HOST = process.env.KIVA_HOST || 'http://localhost:8081';
 
 function isAuthenticated(req, res, next) {

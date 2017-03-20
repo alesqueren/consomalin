@@ -1,8 +1,8 @@
-const db = require('../db');
+const mongo = require('../bs/mongo');
 const userCollectionName = 'user'
 
 function addUser(email, password, callback) {
-  const users = db.get().collection(userCollectionName);
+  const users = mongo.get().collection(userCollectionName);
   return users.insertOne(
     {
       _id: email,
@@ -18,7 +18,7 @@ function addUser(email, password, callback) {
 }
 
 function findUser(email, callback) {
-  const users = db.get().collection(userCollectionName);
+  const users = mongo.get().collection(userCollectionName);
   return users.findOne(
     {
       _id: email,
@@ -30,7 +30,7 @@ function findUser(email, callback) {
 }
 
 function setCurrentWish(email, groupId, wishId) {
-  const users = db.get().collection(userCollectionName);
+  const users = mongo.get().collection(userCollectionName);
   const request = "currentBasket.currentWish";
   users.updateOne(
     { _id: email },
@@ -43,7 +43,7 @@ function setCurrentWish(email, groupId, wishId) {
 }
 
 function removeCurrentWish(email, groupId, wishId) {
-  const users = db.get().collection(userCollectionName);
+  const users = mongo.get().collection(userCollectionName);
   const request = "currentBasket.currentWish";
   users.updateOne(
     { _id: email },
@@ -56,7 +56,7 @@ function removeCurrentWish(email, groupId, wishId) {
 }
 
 function setCurrentSlot(email, slot) {
-  const users = db.get().collection(userCollectionName);
+  const users = mongo.get().collection(userCollectionName);
   const request = "currentBasket.currentSlot";
   users.updateOne(
     { _id: email },

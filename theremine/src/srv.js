@@ -1,11 +1,9 @@
-const debug = require('debug')('drive');
-const mongoConfig = require('../mongoConfig');
-const app = require('../app');
-const db = require('../db');
+const mongo = require('./bs/mongo');
+const app = require('./app');
 
 app.set('port', process.env.SERVER_PORT || 3000);
 
-db.connect(mongoConfig.url, function(err) {
+mongo.connect(mongo.url, function(err) {
   if (err) {
     console.log('Unable to connect to Mongo.')
     process.exit(1)

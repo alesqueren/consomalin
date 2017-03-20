@@ -1,5 +1,8 @@
 const MongoClient = require('mongodb').MongoClient;
 
+const mongoDB = 'users';
+const mongoURL = process.env.MONGO_URI || 'mongodb://localhost:27017';
+
 const state = {
   db: null,
 };
@@ -37,6 +40,7 @@ function close(callback) {
 
 module.exports = {
   connect,
-  get : get,
+  get,
   close,
+  url: mongoURL + '/' + mongoDB,
 };

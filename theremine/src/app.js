@@ -4,12 +4,12 @@ const favicon = require('static-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const mongoConfig = require('./mongoConfig');
+const mongo = require('./bs/mongo');
 
 const app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('../views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(favicon('public/images/favicon.ico'));
@@ -33,11 +33,10 @@ app.use(expressSession({
       },
     store:
       new MongoStore({
-        url: mongoConfig.url
+        url: mongo.url
       })
 }));
 app.use(passport.initialize());
-// console.log('mongoConfig.url : ' + mongoConfig.url);
 app.use(passport.session());
 
  // Using the flash middleware

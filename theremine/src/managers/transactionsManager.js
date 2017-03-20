@@ -1,13 +1,11 @@
 "use strict"
-const db = require('../db');
-const mongo = require('mongodb');
+const mongo = require('../bs/mongo');
 const crypto = require('crypto');
-const ObjectID = mongo.ObjectID;
 const wishesManager = require('../managers/wishesManager');
 const userCollectionName = 'user'
 
 function addTransaction(_idUser, slotId, slotDateTime, wishes) {
-  const users = db.get().collection(userCollectionName);
+  const users = mongo.get().collection(userCollectionName);
   const secret = _idUser;
   const hash = crypto.createHmac('sha256', secret)
                    .update(slotId+Date.now().toString())
@@ -50,7 +48,7 @@ function addTransaction(_idUser, slotId, slotDateTime, wishes) {
 }
 
 function removeCurrentselectedWishes(_idUser) {
-  const users = db.get().collection(userCollectionName);
+  const users = mongo.get().collection(userCollectionName);
   let request = "currentBasket.selectedWishes";
 
   users.updateOne(
@@ -66,7 +64,7 @@ function removeCurrentselectedWishes(_idUser) {
 }
 
 function removeCurrentWish(_idUser) {
-  const users = db.get().collection(userCollectionName);
+  const users = mongo.get().collection(userCollectionName);
   let request = "currentBasket.currentWish";
 
   users.updateOne(
@@ -82,7 +80,7 @@ function removeCurrentWish(_idUser) {
 }
 
 function removeCurrentSlot(_idUser) {
-  const users = db.get().collection(userCollectionName);
+  const users = mongo.get().collection(userCollectionName);
   let request = "currentBasket.currentSlot";
 
   users.updateOne(
