@@ -3,9 +3,13 @@
     img(src="../assets/logo.png")
     div
       router-link(to="/") Go to home
+    div
       router-link(to="/login") Go to login
     div
+      router-link(to="/profile") Go to profile
+    div
       span counter: {{ count }}
+    div
       button(@click="add()") add
       router-view
 </template>
