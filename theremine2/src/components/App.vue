@@ -1,14 +1,13 @@
-<template>
-  <div id="app">
-    <img src="../assets/logo.png">
-    <div>
-      <router-link to="/">Go to home</router-link>
-      <router-link to="/login">Go to login</router-link>
-    </div>
-    <div> counter: {{ count }} </div>
-    <button @click="add()">add</button>
-    <router-view></router-view>
-  </div>
+<template lang="pug">
+  #app
+    img(src="../assets/logo.png")
+    div
+      router-link(to="/") Go to home
+      router-link(to="/login") Go to login
+    div
+      span counter: {{ count }}
+      button(@click="add()") add
+      router-view
 </template>
 
 <script>
