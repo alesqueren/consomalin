@@ -1,19 +1,22 @@
 const router = require('express').Router();
 
-/*
 const isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
   res.redirect('/');
 }
-*/
 
 module.exports = function init(passport) {
   // login && registration page
-  router.get('/users/loginregister', (req, res) => {
-    res.render('users/loginRegister', { message: req.flash('message') });
-  });
+  // router.get('/users/loginregister', (req, res) => {
+  //   res.render('users/loginRegister', { message: req.flash('message') });
+  // });
+  router.get('/user', isAuthenticated, 
+      (req, res) => {
+        res.send(JSON.stringify(req.user.id));
+      }
+  );
 
   router.post('/users/login',
     passport.authenticate('login'),
