@@ -2,13 +2,21 @@ version: "3"
 
 services:
 
+  nginx:
+    image: consomalin/nginx-ldap
+    networks: [big]
+    volumes:
+      - ./nginx2/conf:/app/conf/:ro
+    ports:
+      - "9000:80"
+
   theremine:
     build: ./theremine
     networks: [big]
     environment:
       - METRONOME_HOST=http://metronome-cache
     ports:
-      - 8080:80
+      - "8080:80"
 
   kiva:
     build: 

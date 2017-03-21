@@ -5,6 +5,7 @@ import Login from '@/components/Login';
 import Profile from '@/components/Profile';
 
 Vue.use(Router);
+Vue.router = new Router({});
 
 export default new Router({
   routes: [

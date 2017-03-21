@@ -11,7 +11,8 @@
       span counter: {{ count }}
     div
       button(@click="add()") add
-      router-view
+    hr
+    router-view
 </template>
 
 <script>
