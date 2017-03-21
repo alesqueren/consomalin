@@ -5,5 +5,5 @@ Vue.use(VueResource);
 
 export default {
   user: Vue.resource('/api/users/login'),
-  wishlist: Vue.resource('/api/wishlist'),
+  wishGroups: Vue.resource('/api/wishlist'),
 };

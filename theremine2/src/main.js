@@ -1,9 +1,7 @@
 import Vue from 'vue';
-import VueResource from 'vue-resource';
 import App from './components/App';
 import router from './router';
 import store from './store';
-import resources from './resources';
 
 // TODO: move to router
 router.beforeEach((to, _, next) => {

@@ -3,9 +3,9 @@
     div#header
       div.container-fluid
         div#navbar.row.no-gutter
-          div
+          div 
             a(href='/')
-              img.logo(src="/assets/images/car.jpg")
+              img.logo(src="../assets/images/car.jpg")
               span.brand Consomalin
               div(v-if='user')
                 a.title(href="/wishlist") Ma liste de course
@@ -13,7 +13,6 @@
                 a.title(href="/basket") Mon panier
                 a.title(href="/withdraw") Retrait
           div(v-if='!user')
-            span.fa.fa-sign-out
             router-link.connectRegister(to='/users/loginRegister') Se connecter S'inscrire
           div(v-else)
             span {{user._id}}
@@ -57,6 +56,7 @@ export default {
 </script>
 
 <style>
+@import '../static/plugins/font-awesome-4.7.0/css/font-awesome.min.css';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

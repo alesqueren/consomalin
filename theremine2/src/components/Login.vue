@@ -35,10 +35,10 @@ export default {
         {
           username: this.username,
           password: this.password,
-        }).then((response) => {
+        }).then(() => {
           this.$store.dispatch('setUser', this.username);
-          this.$router.replace('/');
-        }, (response) => {
+          this.$router.replace('/wishlist');
+        }, () => {
           this.error = true;
         });
     },
