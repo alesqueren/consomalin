@@ -37,7 +37,6 @@
       router-view
     div#footer
       div.footer consomalin 2017
-    
 </template>
 
 <script>
