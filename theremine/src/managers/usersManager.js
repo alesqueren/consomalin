@@ -8,12 +8,12 @@ function addUser(email, password, callback) {
       _id: email,
       password
     },
-    (err, user) => {
-      console.log('user contents', JSON.stringify(user, null, 4));
-      console.log('user inserted', JSON.stringify(user.ops[0], null, 4));
-      // console.log(userCollectionName);
-      // console.log(user[0]);
-      callback(user.ops[0]);
+    (err, cursor) => {
+      if (!err) {
+        callback(cursor.ops[0]);
+      } else {
+        callback(false);
+      }
     });
 }
 

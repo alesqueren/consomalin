@@ -6,7 +6,7 @@
           .panel-body
             .row
               .col-lg-12
-                form#login-form(@submit.prevent='login', role='form', style='display: block;')
+                form#login-form(@submit.prevent='register', role='form', style='display: block;')
                   .form-group
                     input#username.form-control(v-model="username" type='text', name='username', tabindex='1', placeholder='Email', value='')
                   .form-group
@@ -14,7 +14,7 @@
                   .form-group
                     .row
                       .col-sm-6.col-sm-offset-3
-                        input#login-submit.form-control.btn.btn-login(type='submit', name='login-submit', tabindex='4', value='Se connecter')
+                        input#login-submit.form-control.btn.btn-login(type='submit', name='login-submit', tabindex='4', value='S\'enregistrer')
 </template>
 
 <script>
@@ -26,8 +26,8 @@ export default {
     };
   },
   methods: {
-    login() {
-      const user = this.$resource('http://localhost:9000/api/users/login');
+    register() {
+      const user = this.$resource('http://localhost:9000/api/users/register');
 
       user.save({},
         {
@@ -58,3 +58,4 @@ a {
   color: #42b983;
 }
 </style>
+

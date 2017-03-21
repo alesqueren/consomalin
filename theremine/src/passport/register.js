@@ -11,18 +11,20 @@ function createHash(password) {
 
 module.exports = function init(passport) {
   passport.use('register',
-      new LocalStrategy({
-        passReqToCallback: true, // allows us to pass back the entire request to the callback
-      },
-      (req, username, password, callback) => {
-        const email = username;
-        const hashedPw = createHash(password);
 
-        usersManager.add(email, hashedPw, (newuser) => {
+    new LocalStrategy({
+      passReqToCallback: true, // allows us to pass back the entire request to the callback
+    },
+
+    (req, username, password, callback) => {
+      const email = username;
+      const hashedPw = createHash(password);
+
+      usersManager.add(email, hashedPw, (newuser) => {
+        if (newuser) {
           groupsManager.add(email, 'default');
-          // console.log('newuser : ' + newuser);
-          // console.log('newuser.email : ' + newuser.email);
-          callback(null, newuser);
-        });
-      }));
+        }
+        callback(null, newuser);
+      });
+    }));
 };

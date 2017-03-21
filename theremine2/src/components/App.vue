@@ -1,10 +1,11 @@
 <template lang="pug">
   #app
-    img(src="../assets/logo.png")
     div
       router-link(to="/") Go to home
     div
       router-link(to="/login") Go to login
+    div
+      router-link(to="/register") Go to register
     div
       router-link(to="/profile") Go to profile
     div
