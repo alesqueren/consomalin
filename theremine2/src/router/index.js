@@ -4,6 +4,7 @@ import Hello from '@/components/Hello';
 import Login from '@/components/Login';
 import Register from '@/components/Register';
 import Profile from '@/components/Profile';
+import Wishlist from '@/components/Wishlist';
 
 Vue.use(Router);
 Vue.router = new Router({});
@@ -21,6 +22,10 @@ export default new Router({
     {
       path: '/register',
       component: Register,
+    },
+    {
+      path: '/wishlist',
+      component: Wishlist,
     },
     {
       path: '/profile',

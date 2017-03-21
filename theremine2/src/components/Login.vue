@@ -1,5 +1,6 @@
 <template lang='pug'>
   .container
+    p(v-if="error") Username or password not valid
     .row
       .col-md-6.offset-md-3
         .panel.panel-login
@@ -18,21 +19,27 @@
 </template>
 
 <script>
+import resources from '../resources';
+
 export default {
   data() {
     return {
       username: '',
       password: '',
+      error: false,
     };
   },
   methods: {
     login() {
-      const user = this.$resource('http://localhost:9000/api/users/login');
-
-      user.save({},
+      resources.user.save({},
         {
           username: this.username,
           password: this.password,
+        }).then((response) => {
+          this.$store.dispatch('setUser', this.username);
+          this.$router.replace('/');
+        }, (response) => {
+          this.error = true;
         });
     },
   },

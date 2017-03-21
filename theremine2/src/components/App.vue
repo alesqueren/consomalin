@@ -7,6 +7,8 @@
     div
       router-link(to="/register") Go to register
     div
+      router-link(to="/wishlist") Go to wishlist
+    div
       router-link(to="/profile") Go to profile
     div
       span counter: {{ count }}
