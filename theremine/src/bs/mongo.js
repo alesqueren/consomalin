@@ -40,7 +40,7 @@ function close(callback) {
 
 module.exports = {
   connect,
-  get,
+  get : get,
   close,
   url: mongoURL + '/' + mongoDB,
 };
