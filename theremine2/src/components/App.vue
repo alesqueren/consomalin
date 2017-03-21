@@ -7,18 +7,7 @@
             a(href='/')
               img.logo(src="../assets/images/car.jpg")
               span.brand Consomalin
-              div(v-if='user')
-                a.title(href="/wishlist") Ma liste de course
-                a.title(href="/section") Les rayons
-                a.title(href="/basket") Mon panier
-                a.title(href="/withdraw") Retrait
-          div(v-if='!user')
-            router-link.connectRegister(to='/users/loginRegister') Se connecter S'inscrire
-          div(v-else)
-            span {{user._id}}
-            a.btn.btn-info.btn-sm(href='/users/signout')
-            span.fa.fa-sign-out
-            span Log out
+          Usercard
     div#content
       div
         router-link(to="/") Go to home
@@ -28,10 +17,6 @@
         router-link(to="/register") Go to register
       div
         router-link(to="/profile") Go to profile
-      div
-        span counter: {{ count }}
-      div
-        button(@click="add()") add
       hr
       router-view
     div#footer
@@ -41,17 +26,10 @@
 <script>
 
 import { mapState } from 'vuex';
+import Usercard from './Usercard';
 
 export default {
-  name: 'app',
-  computed: mapState([
-    'count',
-  ]),
-  methods: {
-    add() {
-      this.$store.dispatch('incrementA');
-    },
-  },
+  components: { Usercard },
 };
 </script>
 

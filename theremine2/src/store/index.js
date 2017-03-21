@@ -6,7 +6,6 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    count: 0,
     user: null,
     wishgroups: null,
   },
@@ -39,11 +38,11 @@ export default new Vuex.Store({
         console.log('error');
       });
     },
-    setUser({ commit }, user) {
-      commit('setUser', user);
-    },
-    incrementA({ commit }) {
-      commit('increment');
+    fetchUser({ commit }) {
+      resources.userTmp.get().then((res) => {
+        const user = JSON.parse(res.body);
+        commit('setUser', user);
+      });
     },
   },
   mutations: {
@@ -52,9 +51,6 @@ export default new Vuex.Store({
     },
     setUser(state, user) {
       state.user = user;
-    },
-    increment(state) {
-      state.count += 1;
     },
   },
   strict: true,

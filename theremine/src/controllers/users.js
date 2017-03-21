@@ -14,7 +14,7 @@ module.exports = function init(passport) {
   // });
   router.get('/user', isAuthenticated, 
       (req, res) => {
-        res.send(JSON.stringify(req.user.id));
+        res.send(JSON.stringify(req.user._id));
       }
   );
 
