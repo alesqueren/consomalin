@@ -1,8 +1,8 @@
 // import router from '../router';
 
-const API_URL = 'http://localhost:8080/';
-const LOGIN_URL = API_URL + 'sessions/create/';
-const SIGNUP_URL = API_URL + 'users/';
+// const API_URL = 'http://localhost:8080/';
+// const LOGIN_URL = API_URL + 'sessions/create/';
+// const SIGNUP_URL = API_URL + 'users/';
 
 export default {
 
