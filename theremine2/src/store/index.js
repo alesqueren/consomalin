@@ -3,6 +3,8 @@ import Vuex from 'vuex';
 import resources from '../resources';
 
 Vue.use(Vuex);
+// TODO: add vuex-router-sync
+// https://github.com/vuejs/vuex-router-sync
 
 export default new Vuex.Store({
   state: {
@@ -38,10 +40,24 @@ export default new Vuex.Store({
         console.log('error');
       });
     },
+    login({ commit }, { data, success, fail }) {
+      resources.user.save({}, data)
+        .then((response) => {
+          commit('setUser', data.username);
+          success();
+        }, fail);
+    },
+    logout({ commit }) {
+      resources.logout.get().then((res) => {
+        commit('setUser', false);
+      });
+    },
     fetchUser({ commit }) {
       resources.userTmp.get().then((res) => {
         const user = JSON.parse(res.body);
         commit('setUser', user);
+      }, (res) => {
+        commit('setUser', false);
       });
     },
   },

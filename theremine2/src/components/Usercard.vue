@@ -3,10 +3,11 @@
     p .....
   div(v-else-if='user === false')
     span.fa.fa-sign-out
-    router-link.connectRegister(to='/users/loginRegister') Se connecter S'inscrire
+    router-link(to="/login") Se connecter
+    router-link(to="/register") S'enregistrer
   div(v-else)
     span {{ user }}
-    a.btn.btn-info.btn-sm(href='/users/signout')
+    a.btn.btn-info.btn-sm(@click.prevent='logout')
     span.fa.fa-sign-out
     span Log out
 </template>
@@ -18,6 +19,12 @@ export default {
   computed: mapState([
     'user',
   ]),
+  methods: {
+    logout() {
+      this.$store.dispatch('logout');
+      this.$router.replace('/');
+    },
+  },
   mounted() {
     this.$store.dispatch('fetchUser');
   },

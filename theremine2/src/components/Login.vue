@@ -30,17 +30,23 @@ export default {
     };
   },
   methods: {
+    loginFail() {
+      this.error = true;
+    },
+    loginSucceed() {
+      this.$router.replace('/');
+    },
     login() {
-      resources.user.save({},
-        {
-          username: this.username,
-          password: this.password,
-        }).then(() => {
-          this.$store.dispatch('setUser', this.username);
-          this.$router.replace('/wishlist');
-        }, () => {
-          this.error = true;
-        });
+      const self = this;
+      const data = {
+        username: this.username,
+        password: this.password,
+      };
+      this.$store.dispatch('login', {
+        data,
+        fail: this.loginFail,
+        success: this.loginSucceed,
+      });
     },
   },
 };

@@ -8,42 +8,42 @@
 </template>
 
 <script>
-import wishgroupItem from './wishlist/wishgroupItem'
 import { mapState } from 'vuex';
+import WishGroupItem from './Wishlist/WishGroupItem';
 
 export default {
-  el: '#wishgroups',
-  data: {
-      newText: '',
-  },
+  // data: () => {
+  //   return {
+  //     newText: '',
+  //   };
+  // },
   computed: mapState([
     'wishgroups',
   ]),
   methods: {
-    addWishGroup: function (e) {
-      var self = this;
-      $.ajax({
-        type: 'POST',
-        url : '/wishlist/groups',
-        data: { name : self.newText},
-        complete: function(responseObject) {
-          // console.log(responseObject);
-          self.wishgroups.push({
-              id:responseObject.responseJSON, 
-              name:self.newText,
-              wishes: []
-          });
-          self.newText = '';
-        }
-      });
-    }
+    // addWishGroup: function (e) {
+    //   var self = this;
+    //   $.ajax({
+    //     type: 'POST',
+    //     url : '/wishlist/groups',
+    //     data: { name : self.newText},
+    //     complete: function(responseObject) {
+    //       // console.log(responseObject);
+    //       self.wishgroups.push({
+    //           id:responseObject.responseJSON,
+    //           name:self.newText,
+    //           wishes: []
+    //       });
+    //       self.newText = '';
+    //     },
+    //   });
+    // },
   },
   mounted() {
     this.$store.dispatch('setWishGroups');
   },
-  components: { wishGroupItem },
+  components: { WishGroupItem },
 };
-
 </script>
 
 <style scoped>
