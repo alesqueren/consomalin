@@ -21,10 +21,11 @@ function addWish(_idUser, groupId, wishName) {
       console.log(`err: ${err}`);
     });
   selectWish(_idUser, groupId, hash, true);
+  return hash;
 }
 
 function selectWish(_idUser, groupId, wishId, selected) {
-  var select = selected=='false'?false:true;
+  var select = selected;
   const users = mongo.get().collection('user');
   const request = "currentBasket.selectedWishes."+groupId+"."+wishId;
   if ( select ) {
@@ -82,6 +83,7 @@ function renameWish(_idUser, groupId, wishId, newName) {
 }
 
 function removeWish(_idUser, groupId, wishId) {
+  //il faut aussi supprimer le wish des selectedWish si il y est.
   const users = mongo.get().collection('user');
   users.findOne({_id: _idUser}, function(err, document) {
     var wishGroups = document.wishGroups;

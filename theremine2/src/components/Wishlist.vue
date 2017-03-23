@@ -1,53 +1,54 @@
 <template lang='pug'>
-  div#wishgroups Ma wishlist
-    wishgroupItem(v-for="(wishgroup, wishgroupIndex) in wishgroups" v-bind:wishgroups="wishgroups" v-bind:wishgroup="wishgroup" v-bind:wishgroupindex="wishgroupIndex" )
-      input(v-model="newText" v-on:keyup.enter="addWishGroup" placeholder="Add a wishGroup")
+  div#wishlist Ma wishlist
+    WishGroupItem(v-for="(wishgroup, wishgroupIndex) in wishlist" v-bind:wishlist="wishlist" v-bind:wishgroup="wishgroup" v-bind:wishgroupindex="wishgroupIndex" v-bind:key="wishgroupIndex")
+    input(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Add a wishGroup")
 
     a(href='/section')
       button.btn.btn-success.right(type="button") Passer aux rayons
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import WishGroupItem from './Wishlist/WishGroupItem';
 
 export default {
-  // data: () => {
-  //   return {
-  //     newText: '',
-  //   };
+  data() {
+    return {
+      newGroupName: '',
+    };
+  },
+  computed: {
+    // mapState(['wishGroups']),
+    wishGroups() {
+      return this.$store.state.wishGroups;
+    },
+    // ...mapGetters({ wishlist: 'getWishlist' }),
+    wishlist() {
+      return this.$store.getters.getWishlist;
+    },
+  },
+  // watch: {
+  //   wishGroups() {
+  //     console.log('watch');
+  //     // this.wishlist;
+  //   },
   // },
-  computed: mapState([
-    'wishgroups',
-  ]),
   methods: {
-    // addWishGroup: function (e) {
-    //   var self = this;
-    //   $.ajax({
-    //     type: 'POST',
-    //     url : '/wishlist/groups',
-    //     data: { name : self.newText},
-    //     complete: function(responseObject) {
-    //       // console.log(responseObject);
-    //       self.wishgroups.push({
-    //           id:responseObject.responseJSON,
-    //           name:self.newText,
-    //           wishes: []
-    //       });
-    //       self.newText = '';
-    //     },
-    //   });
-    // },
+    addWishGroup: () => {
+      this.$store.dispatch('addWishGroup', this.newGroupName);
+      this.newGroupName = '';
+    },
   },
   mounted() {
-    this.$store.dispatch('setWishGroups');
+    this.$store.dispatch('updateWishGroupsAndCurrentBasket');
+    // console.log('mount');
+    // this.wishlist;
   },
   components: { WishGroupItem },
 };
 </script>
 
 <style scoped>
-#wishgroups {
+#wishlist {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }

@@ -16,7 +16,7 @@
       div
         router-link(to="/register") Go to register
       div
-        router-link(to="/profile") Go to profile
+        router-link(to="/wishlist") Ma wishlist
       hr
       router-view
     div#footer
@@ -25,7 +25,6 @@
 
 <script>
 
-import { mapState } from 'vuex';
 import Usercard from './Usercard';
 
 export default {

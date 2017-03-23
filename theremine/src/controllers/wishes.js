@@ -31,6 +31,8 @@ module.exports = function init() {
     let groupId = req.params.gid;
     let wishId = req.params.wid;
     wishesManager.select(req.user._id, groupId, wishId, req.body.selected);
+    console.log('req.body.selected');
+    console.log(req.body.selected);
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify('OK'));
   });
@@ -77,6 +79,8 @@ module.exports = function init() {
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify('OK'));
   });
+
+  //remove current wish
   router.put('/wishlist/removeCurrent', isAuthenticated, (req, res) => {
     usersManager.removeCurrentWish(req.user._id);
     res.setHeader('Content-Type', 'application/json');

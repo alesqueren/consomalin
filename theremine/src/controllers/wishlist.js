@@ -18,10 +18,10 @@ module.exports = function init() {
     // console.log(req.user);
     // res.send("done");
 
-    var selectedWishes = req.user.currentBasket?req.user.currentBasket.selectedWishes:{};
+    var currentBasket = req.user.currentBasket?req.user.currentBasket:{};
     res.send(JSON.stringify({
       wishGroups: req.user.wishGroups,
-      selectedWishes: selectedWishes
+      currentBasket: currentBasket
     }));
 
     // res.render('wishlist/wishlist', {

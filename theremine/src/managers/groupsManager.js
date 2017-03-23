@@ -20,9 +20,9 @@ function addGroup(_idUser, groupName) {
 
 function renameGroup(_idUser, groupId, newName) {
   const users = mongo.get().collection('user');
-  let request = "wishGroups."+groupId+".name";
+  let request = "wishGroups.$.name";
   users.updateOne(
-    { _id: _idUser },
+    { "wishGroups.id": groupId },
     {
       $set : {
         [request] : newName
@@ -33,9 +33,11 @@ function renameGroup(_idUser, groupId, newName) {
 
 function removeGroup(_idUser, groupId) {
   const users = mongo.get().collection('user');
-  let request = "wishGroups."+groupId;
+  console.log('want delete');
+  console.log(groupId);
+  let request = "wishGroups.$";
   users.updateOne(
-    { _id: _idUser },
+    { "wishGroups.id": groupId },
     {
       $unset : {
         [request] : 1

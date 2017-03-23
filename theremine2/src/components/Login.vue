@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import resources from '../resources';
 
 export default {
   data() {
@@ -37,7 +36,6 @@ export default {
       this.$router.replace('/');
     },
     login() {
-      const self = this;
       const data = {
         username: this.username,
         password: this.password,

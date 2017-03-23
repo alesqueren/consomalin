@@ -6,44 +6,32 @@
     div
       span {{ wishgroup.name }}
     div
-      wishItem(v-for="(wish, wishIndex) in wishgroup.wishes" v-bind:wishgroups="wishgroups"  v-bind:wishgroup="wishgroup" v-bind:wish="wish" v-bind:wishIndex="wishIndex")
+      wishItem(v-for="(wish, wishIndex) in wishgroup.wishes" v-bind:wish="wish" v-bind:wishIndex="wishIndex" v-bind:key="wishIndex")
     div
-      input(v-model="newText" v-on:keyup.enter="addWish" placeholder="Add a wish")
+      input(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Add a wish")
 </template>
 
 <script>
 import wishItem from './WishItem';
 
 export default {
+  props: ['wishlist', 'wishgroup', 'wishgroupindex'],
+  data() {
+    return {
+      newWishName: '',
+    };
+  },
   methods: {
-    addWish: () => {
-      // var self = this;
-      // $.ajax({
-      //   type: 'POST',
-      //   url: '/wishlist/groups/' + self.wishgroup.id + '/wishes/bulk',
-      //   data: { names: [self.newText] },
-      //   complete: (responseObject) => {
-      //     self.wishgroup.wishes.push({
-      //       id: responseObject.responseJSON,
-      //       name: self.newText,
-      //       selected: true,
-      //     });
-      //     self.newText = '';
-      //   },
-      // });
+    addWish() {
+      this.$store.dispatch('addWish', {
+        group: this.wishgroup,
+        name: this.newWishName,
+      });
+      this.newWishName = '';
     },
 
-    removeWishGroup: () => {
-      // var self = this;
-      // console.log(' gid : ' + gid)
-      // $.ajax({
-      //   type: 'DELETE',
-      //   url: '/wishlist/groups/' + self.wishgroupindex,
-      //   data: {},
-      //   complete: (responseObject) => {
-      //     self.wishgroups.splice(self.wishgroupindex, 1);
-      //   },
-      // });
+    removeWishGroup() {
+      this.$store.dispatch('removeWishGroup', this.wishgroup.id);
     },
   },
   components: { wishItem },

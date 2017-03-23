@@ -8,8 +8,8 @@
   div(v-else)
     span {{ user }}
     a.btn.btn-info.btn-sm(@click.prevent='logout')
-    span.fa.fa-sign-out
-    span Log out
+      span.fa.fa-sign-out
+      span Log out
 </template>
 <script>
 
