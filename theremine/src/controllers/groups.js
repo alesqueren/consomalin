@@ -1,52 +1,62 @@
-"use strict"
-
 const router = require('express').Router();
-const groupsManager = require('../managers/groupsManager');
-const wishesManager = require('../managers/wishesManager');
+const isAuthenticated = require('../passport/auth');
+const groupsManager = require('../managers/groups');
+const wishesManager = require('../managers/wishes');
 
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    next();
-    return;
-  }
-  res.redirect('/');
-}
+router.post('/',
+  isAuthenticated,
+  ({ body, user }, res) => {
+    const name = body.name;
+    if (!name) {
+      res.send(400);
+    } else {
+      const groupId = groupsManager.add(user._id, name);
+      res.json(groupId);
+    }
+  },
+);
+
+router.put('/:gid',
+  isAuthenticated,
+  ({ params, body, user }, res) => {
+  // (req, res) => {
+    // const params = req.params;
+    // const body = req.body;
+    // const user = req.user;
+    // const send = res.send;
+    // console.log(req);
+    // console.log(res);
+    // console.log(res.send);
+    // console.log(res.send(200));
+
+    const gid = params.gid;
+
+    if (!body.selected && !body.name) {
+      res.send(400);
+      return;
+    }
+
+    if (body.selected) {
+      for (const wid in user.wishGroups[gid]) {
+        const wishId = user.wishGroups[gid][wid];
+        wishesManager.select(user._id, gid, wishId, body.selected);
+      }
+    }
+    if (body.name) {
+      groupsManager.rename(user._id, gid, body.name);
+    }
+    res.json('OK');
+  },
+);
+
+router.delete('/:gid',
+  isAuthenticated,
+  (req, res) => {
+    groupsManager.remove(req.user._id, req.params.gid);
+    res.json('OK');
+  },
+);
 
 module.exports = function init() {
-
-  //create a group
-  router.post('/wishlist/groups', isAuthenticated, (req, res) => {
-    const groupId = groupsManager.add(req.user._id, req.body.name);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(groupId));
-  });
-
-  //rename a group
-  router.put('/wishlist/groups/:gid/rename', isAuthenticated, (req, res) => {
-    let groupId = req.params.gid;
-    groupsManager.rename(req.user._id, groupId);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify('OK'));
-  });
-
-  //delete a group
-  router.delete('/wishlist/groups/:gid', isAuthenticated, (req, res) => {
-    let groupId = req.params.gid;
-    groupsManager.remove(req.user._id, groupId);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify('OK'));
-  });
-
-  //select a group
-  router.put('/wishlist/groups/:gid', isAuthenticated, (req, res) => {
-    let groupId = req.params.gid;
-    for(let id in req.user.wishGroups[groupId]) {
-      wishesManager.select(req.user._id, groupId, req.user.wishGroups[groupId][id], req.body.selected);
-    }
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify('OK'));
-  });
-
-
   return router;
 };

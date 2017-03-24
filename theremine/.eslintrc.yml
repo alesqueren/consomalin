@@ -3,4 +3,11 @@ installedESLint: true
 plugins:
   - import
 rules:
-  import/no-unresolved: 0
+  no-param-reassign: 'off'
+  prefer-template: 'off'
+  no-plusplus: 'off'
+  no-unused-vars: 'warn'
+  no-console: 'off'
+  no-underscore-dangle: 'off'
+  guard-for-in: 'off'
+  no-restricted-syntax: 'off'

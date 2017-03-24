@@ -1,1 +1,2 @@
-public/javascripts/jQuery.slim.min.js
+node_modules/
+nodemon.js

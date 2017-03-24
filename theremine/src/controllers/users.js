@@ -1,39 +1,36 @@
+const passport = require('passport');
 const router = require('express').Router();
+const isAuthenticated = require('../passport/auth');
 
-const isAuthenticated = function (req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.send(401, 'Unauthorized');
-}
+// TODO: allow not logged users
+router.get('/me',
+  isAuthenticated,
+  (req, res) => {
+    res.send(req.user._id);
+  },
+);
 
-module.exports = function init(passport) {
+router.post('/login',
+  passport.authenticate('login'),
+  (req, res) => {
+    res.json('success');
+  },
+);
 
-  // TODO: allow not logged users
-  router.get('/user', isAuthenticated, 
-      (req, res) => {
-        res.send(JSON.stringify(req.user._id));
-      }
-  );
+router.post('/register',
+  passport.authenticate('register'),
+  (req, res) => {
+    res.json('success');
+  },
+);
 
-  router.post('/users/login',
-    passport.authenticate('login'),
-      (req, res) => {
-        res.send("success");
-      }
-  );
-
-  router.post('/users/register', 
-      passport.authenticate('register'),
-      (req, res) => {
-        res.send("success");
-      }
-  );
-
-  router.get('/users/signout', (req, res) => {
+router.get('/signout',
+  (req, res) => {
     req.logout();
-    res.send("success");
-  });
+    res.json('success');
+  },
+);
 
+module.exports = function init() {
   return router;
 };

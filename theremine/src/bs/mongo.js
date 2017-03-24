@@ -1,46 +1,20 @@
 const MongoClient = require('mongodb').MongoClient;
 
 const mongoDB = 'users';
-const mongoURL = process.env.MONGO_URI || 'mongodb://localhost:27017';
+const mongoURL = process.env.MONGO_URI || 'mongodb://localhost:27017/';
 
-const state = {
-  db: null,
-};
-
-function connect(url, callback) {
-  if (state.db) {
-    callback();
-    return;
-  }
-
-  MongoClient.connect(url, {db : 'drive_web'}, (err, db) => {
-    if (err) {
-      callback(err);
-      return;
-    }
-    state.db = db
-    callback()
-  });
-}
-
-function get() {
-  return state.db;
-}
-
-
-function close(callback) {
-  if (state.db) {
-    state.db.close((err) => {
-      state.db = null;
-      state.mode = null;
-      callback(err);
+function connect(resolve, reject) {
+  MongoClient.connect(mongoURL + mongoDB, {},
+    (err, db) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(db);
     });
-  }
 }
 
 module.exports = {
-  connect,
-  get : get,
-  close,
-  url: mongoURL + '/' + mongoDB,
+  setConnection: new Promise(connect),
+  url: mongoURL + mongoDB,
+  db: null,
 };
