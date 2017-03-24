@@ -19,9 +19,9 @@ router.put('/groups/:gid',
   mid.checkGroup,
   ({ params, data, user }, res) => {
     const gid = params.gid;
+    // TODO: tester
     if (data.selected) {
       for (const wid in user.wishGroups[gid]) {
-        // TODO: test
         // console.log(user.wishGroups[gid]);
         // console.log(user.wishGroups[gid][wid]);
         // console.log(wid);

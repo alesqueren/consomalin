@@ -371,8 +371,8 @@ function add(uid, gid, wishName) {
 
 function rename(uid, gid, wid, newName) {
   var users = mongo.db.collection('user');
-  users.findOne({ _id: uid }, function (err, document) {
-    var wishGroups = document.wishGroups;
+  users.findOne({ _id: uid }, function (err, doc) {
+    var wishGroups = doc.wishGroups;
     for (var i = 0; i < wishGroups.length; i++) {
       var wishGroup = wishGroups[i];
       var wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
@@ -389,10 +389,32 @@ function rename(uid, gid, wid, newName) {
   });
 }
 
+function move(uid, gid, wid, newIndex) {
+  var users = mongo.db.collection('user');
+  users.findOne({ _id: uid }, function (err, doc) {
+    var wishGroups = doc.wishGroups;
+    for (var i = 0; i < wishGroups.length; i++) {
+      var wishGroup = wishGroups[i];
+      var wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
+      for (var j = 0; j < wishGroupLength; j++) {
+        var wish = wishGroup.wishes[j];
+        if (wishGroup.id === gid && wish.id === wid) {
+          wishGroup.wishes.splice(newIndex, 0, wishGroup.wishes.splice(j, 1)[0]);
+
+          break;
+        }
+      }
+    }
+    users.updateOne({ _id: uid }, {
+      $set: { wishGroups: wishGroups }
+    });
+  });
+}
+
 function remove(uid, gid, wid) {
   var users = mongo.db.collection('user');
-  users.findOne({ _id: uid }, function (err, document) {
-    var wishGroups = document.wishGroups;
+  users.findOne({ _id: uid }, function (err, doc) {
+    var wishGroups = doc.wishGroups;
     for (var i = 0; i < wishGroups.length; i++) {
       var wishGroup = wishGroups[i];
       var wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
@@ -408,10 +430,6 @@ function remove(uid, gid, wid) {
       $set: { wishGroups: wishGroups }
     });
   });
-}
-
-function move(uid, gid, wid, index) {
-  console.log(index);
 }
 
 module.exports = {

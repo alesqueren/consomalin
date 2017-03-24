@@ -1,7 +1,7 @@
 const mongo = require('../bs/mongo');
 const crypto = require('crypto');
 
-function addGroup(uid, groupName) {
+function add(uid, groupName) {
   const users = mongo.db.collection('user');
   const secret = uid;
   const hash = crypto.createHmac('sha256', secret)
@@ -21,7 +21,7 @@ function addGroup(uid, groupName) {
   return hash;
 }
 
-function renameGroup(uid, groupId, newName) {
+function rename(uid, groupId, newName) {
   const users = mongo.db.collection('user');
   const path = 'wishGroups.$.name';
   users.updateOne(
@@ -34,7 +34,7 @@ function renameGroup(uid, groupId, newName) {
   );
 }
 
-function removeGroup(uid, groupId) {
+function remove(uid, groupId) {
   const users = mongo.db.collection('user');
   const path = 'wishGroups.$';
   users.updateOne(
@@ -56,7 +56,7 @@ function removeGroup(uid, groupId) {
 }
 
 module.exports = {
-  add: addGroup,
-  rename: renameGroup,
-  remove: removeGroup,
+  add,
+  rename,
+  remove,
 };
