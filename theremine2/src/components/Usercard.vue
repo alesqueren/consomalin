@@ -16,9 +16,9 @@
 import { mapState } from 'vuex';
 
 export default {
-  computed: mapState([
-    'user',
-  ]),
+  computed: mapState({
+    user: state => state.User.user,
+  }),
   methods: {
     logout() {
       this.$store.dispatch('logout');

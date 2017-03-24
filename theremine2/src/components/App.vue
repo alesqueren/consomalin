@@ -7,17 +7,13 @@
             a(href='/')
               img.logo(src="../assets/images/car.jpg")
               span.brand Consomalin
+
+          router-link.title(to="/wishlist") Ma liste de course
+          router-link.title(to="/section") Les rayons
+          router-link.title(to="/basket") Mon panier
+          router-link.title(to="/withdraw") Retrait
           Usercard
     div#content
-      div
-        router-link(to="/") Go to home
-      div
-        router-link(to="/login") Go to login
-      div
-        router-link(to="/register") Go to register
-      div
-        router-link(to="/wishlist") Ma wishlist
-      hr
       router-view
     div#footer
       div.footer consomalin 2017

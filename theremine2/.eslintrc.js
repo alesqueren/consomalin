@@ -38,6 +38,8 @@ module.exports = {
     'no-param-reassign': 'off',
     'prefer-template': 'off',
     'no-plusplus': 'off',
-    'no-unused-vars': 'warn'
+    'no-unused-vars': 'warn',
+    'no-restricted-syntax': 'off',
+    'guard-for-in': 'off'
   }
 }
