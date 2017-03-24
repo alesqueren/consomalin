@@ -1,48 +1,44 @@
 const router = require('express').Router();
-const request = require('request');
-const KIVA_HOST = process.env.KIVA_HOST || 'http://localhost:8081';
+const mid = require('../middlewares');
+const productManager = require('../managers/products');
 
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    next();
-    return;
-  }
-  res.redirect('/');
-}
+router.post('/groups/:gid/wishes/:wid/product',
+  mid.isAuthenticated,
+  mid.checkWish,
+  mid.parseData({
+    productId: {
+      required: true,
+    },
+    quantity: {
+      required: false,
+      type: 'int',
+    },
+  }),
+  ({ params, data, user }, res) => {
+    productManager.set(user._id, params.gid, params.wid, data.productId);
+    if (data.quantity) {
+      productManager.setQuantity(user._id, params.gid, params.wid, data.quantity);
+    }
+    res.json('OK');
+  },
+);
+
+router.put('/groups/:gid/wishes/:wid/product',
+  mid.isAuthenticated,
+  ({ params, data, user }, res) => {
+    productManager.setProductQty(user._id, params.gid, params.wid, data.quantity);
+    res.json('OK');
+  },
+);
+
+router.delete('/groups/:gid/wishes/:wid/product',
+  mid.isAuthenticated,
+  ({ params, data, user }, res) => {
+    productManager.remove(user._id, params.gid, params.wid);
+    res.json('OK');
+  },
+);
 
 module.exports = function init() {
-  router.get('/products/search/:search_string', isAuthenticated, (req, res) => {
-    const search_url = KIVA_HOST + '/search?s=' + encodeURIComponent(req.params.search_string);
-    res.setHeader('Content-Type', 'application/json');
-
-    var products;
-      // console.log('search_url:', search_url);
-    request(search_url, function (error, response, body) {
-      // console.log('statusCode:', response && response.statusCode);
-      // console.log('body:', body);
-      products = body;
-      // console.log('body:', JSON.parse(products));
-      res.send(products);
-    });
-  // res.send(JSON.stringify(products));
-  });
-
-  // http://localhost:8081/details?pids=[%22271293%22]
-  router.get('/products/details', isAuthenticated, (req, res) => {
-    const details_url = KIVA_HOST + '/details?pids='+req.query.pids;
-    res.setHeader('Content-Type', 'application/json');
-
-    var products;
-    request(details_url, function (error, response, body) {
-      // console.log('error:', error);
-      // console.log('statusCode:', response && response.statusCode);
-      // console.log('body:', body);
-      products = body;
-      // console.log('body:', JSON.parse(products);
-      res.send(products);
-    });
-  // res.send(JSON.stringify(products));
-  });
-
   return router;
 };

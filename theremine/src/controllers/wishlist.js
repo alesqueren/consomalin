@@ -1,35 +1,32 @@
-"use strict"
-
 const router = require('express').Router();
-const groupsManager = require('../managers/groupsManager');
-const wishesManager = require('../managers/wishesManager');
+const mid = require('../middlewares');
 
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    next();
-    return;
-  }
-  res.redirect('/');
-}
+router.get('/',
+  mid.isAuthenticated,
+  ({ user }, res) => {
+    const currentBasket = user.currentBasket ? user.currentBasket.selectedWishes : {};
+    const resp = JSON.stringify({
+      wishGroups: user.wishGroups,
+      currentBasket,
+    });
+    res.json(resp);
+  },
+);
+
+router.post('/autoFill',
+  mid.isAuthenticated,
+  ({ user }, res) => {
+    res.send('not implemented yet');
+  },
+);
+
+router.post('/order',
+  mid.isAuthenticated,
+  ({ user }, res) => {
+    res.send('not implemented yet');
+  },
+);
 
 module.exports = function init() {
-  router.get('/wishlist', isAuthenticated, (req, res) => {
-    
-    // console.log(req.user);
-    // res.send("done");
-
-    var currentBasket = req.user.currentBasket?req.user.currentBasket:{};
-    res.send(JSON.stringify({
-      wishGroups: req.user.wishGroups,
-      currentBasket: currentBasket
-    }));
-
-    // res.render('wishlist/wishlist', {
-    //   user: req.user,
-    //   wishGroups: JSON.stringify(req.user.wishGroups),
-    //   selectedWishes: JSON.stringify(selectedWishes)
-    // });
-  });
-
   return router;
 };

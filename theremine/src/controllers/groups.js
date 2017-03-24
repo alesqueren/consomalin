@@ -1,52 +1,41 @@
-"use strict"
-
 const router = require('express').Router();
-const groupsManager = require('../managers/groupsManager');
-const wishesManager = require('../managers/wishesManager');
+const mid = require('../middlewares');
+const groupsManager = require('../managers/groups');
+const wishesManager = require('../managers/wishes');
 
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    next();
-    return;
-  }
-  res.redirect('/');
-}
+router.post('/groups',
+  mid.isAuthenticated,
+  mid.parseData({
+    name: { required: true },
+  }),
+  ({ data, user }, res) => {
+    const groupId = groupsManager.add(user._id, data.name);
+    res.json(groupId);
+  },
+);
+
+router.put('/groups/:gid',
+  mid.isAuthenticated,
+  mid.checkGroup,
+  ({ params, data, user }, res) => {
+    const gid = params.gid;
+    // TODO: tester
+    if (data.selected) {
+      for (const wid in user.wishGroups[gid]) {
+        // console.log(user.wishGroups[gid]);
+        // console.log(user.wishGroups[gid][wid]);
+        // console.log(wid);
+        const wishId = user.wishGroups[gid][wid];
+        wishesManager.select(user._id, gid, wishId, data.selected);
+      }
+    }
+    if (data.name) {
+      groupsManager.rename(user._id, gid, data.name);
+    }
+    res.json('OK');
+  },
+);
 
 module.exports = function init() {
-
-  //create a group
-  router.post('/wishlist/groups', isAuthenticated, (req, res) => {
-    const groupId = groupsManager.add(req.user._id, req.body.name);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(groupId));
-  });
-
-  //rename a group
-  router.put('/wishlist/groups/:gid/rename', isAuthenticated, (req, res) => {
-    let groupId = req.params.gid;
-    groupsManager.rename(req.user._id, groupId);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify('OK'));
-  });
-
-  //delete a group
-  router.delete('/wishlist/groups/:gid', isAuthenticated, (req, res) => {
-    let groupId = req.params.gid;
-    groupsManager.remove(req.user._id, groupId);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify('OK'));
-  });
-
-  //select a group
-  router.put('/wishlist/groups/:gid', isAuthenticated, (req, res) => {
-    let groupId = req.params.gid;
-    for(let id in req.user.wishGroups[groupId]) {
-      wishesManager.select(req.user._id, groupId, req.user.wishGroups[groupId][id], req.body.selected);
-    }
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify('OK'));
-  });
-
-
   return router;
 };

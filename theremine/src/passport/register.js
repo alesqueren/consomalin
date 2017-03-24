@@ -1,8 +1,7 @@
 const LocalStrategy = require('passport-local').Strategy;
 const bCrypt = require('bcrypt-nodejs');
-// const groupsManager = require('../managers/groupsManager');
-const usersManager = require('../managers/usersManager');
-const groupsManager = require('../managers/groupsManager');
+const usersManager = require('../managers/users');
+const groupsManager = require('../managers/groups');
 
 // Generates hash using bCrypt
 function createHash(password) {

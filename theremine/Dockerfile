@@ -5,6 +5,8 @@ WORKDIR /app
 ADD package.json package.json
 RUN npm install
 
+RUN node_modules/eslint/bin/eslint.js .
+
 ENV SERVER_PORT=80 \
     MONGO_URI=mongodb://mongo \
     KIVA_HOST=http://kiva \
