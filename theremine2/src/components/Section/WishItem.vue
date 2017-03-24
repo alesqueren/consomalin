@@ -4,8 +4,8 @@
   div
     span(style='font-weight:bold') {{wish.groupName}}
     |  {{wish.name}}
-  div(v-if='wish.product.infos.imageUrl')
-    div  {{wish.product.infos.name}}
+  div(v-if='wish.productInfos.imageUrl')
+    div  {{wish.productInfos.name}}
     |  
     img.col-md-6(style='width:50px;', v-bind:src='wish.product.infos.imageUrl')
     |  

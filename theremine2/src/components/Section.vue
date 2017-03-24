@@ -108,8 +108,8 @@ export default {
     },
     matchedWishes() {
       let matchedWishes = 0;
-      for (let i = 0; i < this.$store.getters.getBasket.length; i += 1) {
-        matchedWishes += this.$store.getters.getBasket[i].product.id ? 1 : 0;
+      for (let i = 0; i < this.basket.length; i += 1) {
+        matchedWishes += this.basket[i].product.id ? 1 : 0;
       }
       return matchedWishes;
     },

@@ -61,7 +61,6 @@ export default new Vuex.Store({
         for (let i = 0; i < state.wishGroups.length; i++) {
           const wishgroup = state.wishGroups[i];
           const wishGroupLength = wishgroup.wishes ? wishgroup.wishes.length : 0;
-          const wishes = [];
           for (let j = 0; j < wishGroupLength; j++) {
             const wish = state.wishGroups[i].wishes[j];
             const partWishGroupSelect = selectedWishes[wishgroup.id];
@@ -75,22 +74,22 @@ export default new Vuex.Store({
                 productInfos: {},
                 selected: true,
               };
-              wishes.push(newWish);
+              basket.push(newWish);
             }
           }
-          if (wishes.length) {
-            const newWishGroup = {
-              id: wishgroup.id,
-              name: wishgroup.name,
-              wishes,
-              selected: true,
-            };
-            basket.push(newWishGroup);
-          }
+          // if (wishes.length) {
+          //   const newWishGroup = {
+          //     id: wishgroup.id,
+          //     name: wishgroup.name,
+          //     wishes,
+          //     selected: true,
+          //   };
+          //   basket.push(newWishGroup);
+          // }
         }
       }
-      console.log('basket');
-      console.log(basket);
+      // console.log('basket');
+      // console.log(basket);
       return basket;
     },
   },
