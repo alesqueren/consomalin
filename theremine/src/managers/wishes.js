@@ -1,30 +1,29 @@
 const mongo = require('../bs/mongo');
-const crypto = require('crypto');
+const utils = require('../utils');
 
-function selectWish(idUser, groupId, wishId, selected) {
-  const select = selected;
+function select(uid, gid, wid, selected) {
   const users = mongo.db.collection('user');
-  const request = `currentBasket.selectedWishes.${groupId}.${wishId}`;
-  if (select) {
+  const path = `currentBasket.selectedWishes.${gid}.${wid}`;
+  if (selected) {
     users.updateOne(
-      { _id: idUser },
+      { _id: uid },
       {
         $set: {
-          [request]: {},
+          [path]: {},
         },
       },
     );
   } else {
     users.updateOne(
-      { _id: idUser },
+      { _id: uid },
       {
         $unset: {
-          [request]: 1,
+          [path]: 1,
         },
       },
     );
     users.updateOne(
-      { _id: idUser },
+      { _id: uid },
       {
         $pull: {
           'currentBasket.selectedWishes': null,
@@ -34,48 +33,42 @@ function selectWish(idUser, groupId, wishId, selected) {
   }
 }
 
-function addWish(idUser, groupId, wishName) {
+function add(uid, gid, wishName) {
   const users = mongo.db.collection('user');
-  const secret = idUser;
-  const hash = crypto.createHmac('sha256', secret)
-    .update(wishName + Date.now().toString())
-    .digest('hex');
-  const request = 'wishGroups.$.wishes';
+  const hash = utils.randHash(uid, wishName);
+  const path = 'wishGroups.$.wishes';
   users.updateOne(
-    { 'wishGroups.id': groupId },
+    { 'wishGroups.id': gid },
     {
       $push: {
-        [request]: {
+        [path]: {
           id: hash,
           name: wishName,
         },
       },
     },
-    (err) => {
-      console.log(`err: ${err}`);
-    },
   );
-  selectWish(idUser, groupId, hash, true);
+  select(uid, gid, hash, true);
   return hash;
 }
 
-function renameWish(idUser, groupId, wishId, newName) {
+function rename(uid, gid, wid, newName) {
   // TODO: merge with removeWish
   const users = mongo.db.collection('user');
-  users.findOne({ _id: idUser }, (err, document) => {
+  users.findOne({ _id: uid }, (err, document) => {
     const wishGroups = document.wishGroups;
     for (let i = 0; i < wishGroups.length; i++) {
       const wishGroup = wishGroups[i];
       const wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
       for (let j = 0; j < wishGroupLength; j++) {
         const wish = wishGroup.wishes[j];
-        if (wishGroup.id === groupId && wish.id === wishId) {
+        if (wishGroup.id === gid && wish.id === wid) {
           wish.name = newName;
         }
       }
     }
     users.updateOne(
-      { _id: idUser },
+      { _id: uid },
       {
         $set: { wishGroups },
       },
@@ -83,10 +76,10 @@ function renameWish(idUser, groupId, wishId, newName) {
   });
 }
 
-function removeWish(idUser, groupId, wishId) {
+function remove(uid, gid, wid) {
   // il faut aussi supprimer le wish des selectedWish si il y est.
   const users = mongo.db.collection('user');
-  users.findOne({ _id: idUser },
+  users.findOne({ _id: uid },
     (err, document) => {
       const wishGroups = document.wishGroups;
       for (let i = 0; i < wishGroups.length; i++) {
@@ -94,14 +87,14 @@ function removeWish(idUser, groupId, wishId) {
         const wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
         for (let j = 0; j < wishGroupLength; j++) {
           const wish = wishGroup.wishes[j];
-          if (wishGroup.id === groupId && wish.id === wishId) {
+          if (wishGroup.id === gid && wish.id === wid) {
             wishGroup.wishes.splice(j, 1);
             break;
           }
         }
       }
       users.updateOne(
-        { _id: idUser },
+        { _id: uid },
         {
           $set: { wishGroups },
         },
@@ -110,40 +103,14 @@ function removeWish(idUser, groupId, wishId) {
   );
 }
 
-function setProduct(idUser, groupId, wishId, productId) {
-  const users = mongo.db.collection('user');
-  const request = `currentBasket.selectedWishes.${groupId}.${wishId}.product`;
-  users.updateOne(
-    { _id: idUser },
-    {
-      $set: {
-        [request]: {
-          id: productId,
-          quantity: 1,
-        },
-      },
-    },
-  );
-}
-
-function setProductQty(idUser, groupId, wishId, qty) {
-  const users = mongo.db.collection('user');
-  const request = `currentBasket.selectedWishes.${groupId}.${wishId}.product.quantity`;
-  users.updateOne(
-    { _id: idUser },
-    {
-      $set: {
-        [request]: parseInt(qty, 10),
-      },
-    },
-  );
+function move(uid, gid, wid, index) {
+  console.log(index);
 }
 
 module.exports = {
-  add: addWish,
-  select: selectWish,
-  rename: renameWish,
-  remove: removeWish,
-  setProduct,
-  setProductQty,
+  add,
+  select,
+  rename,
+  move,
+  remove,
 };

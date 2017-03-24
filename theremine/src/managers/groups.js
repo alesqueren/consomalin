@@ -1,14 +1,14 @@
 const mongo = require('../bs/mongo');
 const crypto = require('crypto');
 
-function addGroup(idUser, groupName) {
+function addGroup(uid, groupName) {
   const users = mongo.db.collection('user');
-  const secret = idUser;
+  const secret = uid;
   const hash = crypto.createHmac('sha256', secret)
     .update(groupName + Date.now().toString())
     .digest('hex');
   users.updateOne(
-    { _id: idUser },
+    { _id: uid },
     {
       $push: {
         wishGroups: {
@@ -21,32 +21,32 @@ function addGroup(idUser, groupName) {
   return hash;
 }
 
-function renameGroup(idUser, groupId, newName) {
+function renameGroup(uid, groupId, newName) {
   const users = mongo.db.collection('user');
-  const request = 'wishGroups.$.name';
+  const path = 'wishGroups.$.name';
   users.updateOne(
     { 'wishGroups.id': groupId },
     {
       $set: {
-        [request]: newName,
+        [path]: newName,
       },
     },
   );
 }
 
-function removeGroup(idUser, groupId) {
+function removeGroup(uid, groupId) {
   const users = mongo.db.collection('user');
-  const request = 'wishGroups.$';
+  const path = 'wishGroups.$';
   users.updateOne(
     { 'wishGroups.id': groupId },
     {
       $unset: {
-        [request]: 1,
+        [path]: 1,
       },
     },
   );
   users.updateOne(
-    { _id: idUser },
+    { _id: uid },
     {
       $pull: {
         wishGroups: null,

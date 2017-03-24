@@ -1,58 +1,37 @@
 const router = require('express').Router();
-const isAuthenticated = require('../passport/auth');
+const mid = require('../middlewares');
 const groupsManager = require('../managers/groups');
 const wishesManager = require('../managers/wishes');
 
-router.post('/',
-  isAuthenticated,
-  ({ body, user }, res) => {
-    const name = body.name;
-    if (!name) {
-      res.send(400);
-    } else {
-      const groupId = groupsManager.add(user._id, name);
-      res.json(groupId);
-    }
+router.post('/groups',
+  mid.isAuthenticated,
+  mid.parseData({
+    name: { required: true },
+  }),
+  ({ data, user }, res) => {
+    const groupId = groupsManager.add(user._id, data.name);
+    res.json(groupId);
   },
 );
 
-router.put('/:gid',
-  isAuthenticated,
-  ({ params, body, user }, res) => {
-  // (req, res) => {
-    // const params = req.params;
-    // const body = req.body;
-    // const user = req.user;
-    // const send = res.send;
-    // console.log(req);
-    // console.log(res);
-    // console.log(res.send);
-    // console.log(res.send(200));
-
+router.put('/groups/:gid',
+  mid.isAuthenticated,
+  mid.checkGroup,
+  ({ params, data, user }, res) => {
     const gid = params.gid;
-
-    if (!body.selected && !body.name) {
-      res.send(400);
-      return;
-    }
-
-    if (body.selected) {
+    if (data.selected) {
       for (const wid in user.wishGroups[gid]) {
+        // TODO: test
+        // console.log(user.wishGroups[gid]);
+        // console.log(user.wishGroups[gid][wid]);
+        // console.log(wid);
         const wishId = user.wishGroups[gid][wid];
-        wishesManager.select(user._id, gid, wishId, body.selected);
+        wishesManager.select(user._id, gid, wishId, data.selected);
       }
     }
-    if (body.name) {
-      groupsManager.rename(user._id, gid, body.name);
+    if (data.name) {
+      groupsManager.rename(user._id, gid, data.name);
     }
-    res.json('OK');
-  },
-);
-
-router.delete('/:gid',
-  isAuthenticated,
-  (req, res) => {
-    groupsManager.remove(req.user._id, req.params.gid);
     res.json('OK');
   },
 );

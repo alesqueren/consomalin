@@ -79,13 +79,13 @@ module.exports = require("express");
 "use strict";
 
 
-var _promise = __webpack_require__(27);
+var _promise = __webpack_require__(31);
 
 var _promise2 = _interopRequireDefault(_promise);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var MongoClient = __webpack_require__(28).MongoClient;
+var MongoClient = __webpack_require__(32).MongoClient;
 
 var mongoDB = 'users';
 var mongoURL = process.env.MONGO_URI || 'mongodb://localhost:27017/';
@@ -112,7 +112,82 @@ module.exports = {
 "use strict";
 
 
-var _defineProperty2 = __webpack_require__(4);
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.send(401, 'Unauthorized\n');
+  return null;
+}
+
+function checkGroup(_ref, res, next) {
+  var params = _ref.params,
+      user = _ref.user;
+
+  if (user.wishGroups.filter(function (wg) {
+    return wg.id === params.gid;
+  }).length > 0) {
+    return next();
+  }
+  res.send(422);
+  return null;
+}
+
+function checkWish(_ref2, res, next) {
+  var params = _ref2.params,
+      user = _ref2.user;
+
+  return next();
+}
+
+function isInt(value) {
+  return !isNaN(value) && parseInt(Number(value), 10) == value && !isNaN(parseInt(value, 10));
+}
+
+var parseData = function parseData(fields) {
+  return function (req, res, next) {
+    req.data = {};
+    for (var field in fields) {
+      var value = req.body[field];
+      if (fields[field].required && !value) {
+        return res.send(400);
+      }
+      if (fields[field].type === 'int' && !isInt(value)) {
+        return res.send(400);
+      }
+      if (value) {
+        try {
+          req.data[field] = JSON.parse(value);
+        } catch (e) {
+          return res.send(400);
+        }
+      }
+    }
+    return next();
+  };
+};
+
+module.exports = {
+  isAuthenticated: isAuthenticated,
+  checkGroup: checkGroup,
+  checkWish: checkWish,
+  parseData: parseData
+};
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/defineProperty");
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _defineProperty2 = __webpack_require__(3);
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
@@ -147,9 +222,9 @@ function findUser(email, callback) {
 
 function setCurrentWish(email, groupId, wishId) {
   var users = mongo.db.collection(userCollectionName);
-  var request = 'currentBasket.currentWish';
+  var path = 'currentBasket.currentWish';
   users.updateOne({ _id: email }, {
-    $set: (0, _defineProperty3.default)({}, request, {
+    $set: (0, _defineProperty3.default)({}, path, {
       group: groupId,
       wish: wishId
     })
@@ -158,17 +233,17 @@ function setCurrentWish(email, groupId, wishId) {
 
 function removeCurrentWish(email) {
   var users = mongo.db.collection(userCollectionName);
-  var request = 'currentBasket.currentWish';
+  var path = 'currentBasket.currentWish';
   users.updateOne({ _id: email }, {
-    $set: (0, _defineProperty3.default)({}, request, {})
+    $set: (0, _defineProperty3.default)({}, path, {})
   });
 }
 
 function setCurrentSlot(email, slot) {
   var users = mongo.db.collection(userCollectionName);
-  var request = 'currentBasket.currentSlot';
+  var path = 'currentBasket.currentSlot';
   users.updateOne({ _id: email }, {
-    $set: (0, _defineProperty3.default)({}, request, slot)
+    $set: (0, _defineProperty3.default)({}, path, slot)
   });
 }
 
@@ -179,29 +254,6 @@ module.exports = {
   removeCurrentWish: removeCurrentWish,
   setCurrentSlot: setCurrentSlot
 };
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.send(401, 'Unauthorized\n');
-  return null;
-}
-
-module.exports = isAuthenticated;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/defineProperty");
 
 /***/ }),
 /* 5 */
@@ -216,7 +268,7 @@ module.exports = require("passport");
 "use strict";
 
 
-var _defineProperty2 = __webpack_require__(4);
+var _defineProperty2 = __webpack_require__(3);
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
@@ -225,11 +277,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mongo = __webpack_require__(1);
 var crypto = __webpack_require__(9);
 
-function addGroup(idUser, groupName) {
+function addGroup(uid, groupName) {
   var users = mongo.db.collection('user');
-  var secret = idUser;
+  var secret = uid;
   var hash = crypto.createHmac('sha256', secret).update(groupName + Date.now().toString()).digest('hex');
-  users.updateOne({ _id: idUser }, {
+  users.updateOne({ _id: uid }, {
     $push: {
       wishGroups: {
         id: hash,
@@ -241,21 +293,21 @@ function addGroup(idUser, groupName) {
   return hash;
 }
 
-function renameGroup(idUser, groupId, newName) {
+function renameGroup(uid, groupId, newName) {
   var users = mongo.db.collection('user');
-  var request = 'wishGroups.$.name';
+  var path = 'wishGroups.$.name';
   users.updateOne({ 'wishGroups.id': groupId }, {
-    $set: (0, _defineProperty3.default)({}, request, newName)
+    $set: (0, _defineProperty3.default)({}, path, newName)
   });
 }
 
-function removeGroup(idUser, groupId) {
+function removeGroup(uid, groupId) {
   var users = mongo.db.collection('user');
-  var request = 'wishGroups.$';
+  var path = 'wishGroups.$';
   users.updateOne({ 'wishGroups.id': groupId }, {
-    $unset: (0, _defineProperty3.default)({}, request, 1)
+    $unset: (0, _defineProperty3.default)({}, path, 1)
   });
-  users.updateOne({ _id: idUser }, {
+  users.updateOne({ _id: uid }, {
     $pull: {
       wishGroups: null
     }
@@ -270,9 +322,105 @@ module.exports = {
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("babel-runtime/core-js/json/stringify");
+"use strict";
+
+
+var _defineProperty2 = __webpack_require__(3);
+
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mongo = __webpack_require__(1);
+var utils = __webpack_require__(29);
+
+function select(uid, gid, wid, selected) {
+  var users = mongo.db.collection('user');
+  var path = 'currentBasket.selectedWishes.' + gid + '.' + wid;
+  if (selected) {
+    users.updateOne({ _id: uid }, {
+      $set: (0, _defineProperty3.default)({}, path, {})
+    });
+  } else {
+    users.updateOne({ _id: uid }, {
+      $unset: (0, _defineProperty3.default)({}, path, 1)
+    });
+    users.updateOne({ _id: uid }, {
+      $pull: {
+        'currentBasket.selectedWishes': null
+      }
+    });
+  }
+}
+
+function add(uid, gid, wishName) {
+  var users = mongo.db.collection('user');
+  var hash = utils.randHash(uid, wishName);
+  var path = 'wishGroups.$.wishes';
+  users.updateOne({ 'wishGroups.id': gid }, {
+    $push: (0, _defineProperty3.default)({}, path, {
+      id: hash,
+      name: wishName
+    })
+  });
+  select(uid, gid, hash, true);
+  return hash;
+}
+
+function rename(uid, gid, wid, newName) {
+  var users = mongo.db.collection('user');
+  users.findOne({ _id: uid }, function (err, document) {
+    var wishGroups = document.wishGroups;
+    for (var i = 0; i < wishGroups.length; i++) {
+      var wishGroup = wishGroups[i];
+      var wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
+      for (var j = 0; j < wishGroupLength; j++) {
+        var wish = wishGroup.wishes[j];
+        if (wishGroup.id === gid && wish.id === wid) {
+          wish.name = newName;
+        }
+      }
+    }
+    users.updateOne({ _id: uid }, {
+      $set: { wishGroups: wishGroups }
+    });
+  });
+}
+
+function remove(uid, gid, wid) {
+  var users = mongo.db.collection('user');
+  users.findOne({ _id: uid }, function (err, document) {
+    var wishGroups = document.wishGroups;
+    for (var i = 0; i < wishGroups.length; i++) {
+      var wishGroup = wishGroups[i];
+      var wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
+      for (var j = 0; j < wishGroupLength; j++) {
+        var wish = wishGroup.wishes[j];
+        if (wishGroup.id === gid && wish.id === wid) {
+          wishGroup.wishes.splice(j, 1);
+          break;
+        }
+      }
+    }
+    users.updateOne({ _id: uid }, {
+      $set: { wishGroups: wishGroups }
+    });
+  });
+}
+
+function move(uid, gid, wid, index) {
+  console.log(index);
+}
+
+module.exports = {
+  add: add,
+  select: select,
+  rename: rename,
+  move: move,
+  remove: remove
+};
 
 /***/ }),
 /* 8 */
@@ -299,9 +447,9 @@ module.exports = require("passport-local");
 "use strict";
 
 
-var login = __webpack_require__(25);
-var register = __webpack_require__(26);
-var usersManager = __webpack_require__(2);
+var login = __webpack_require__(27);
+var register = __webpack_require__(28);
+var usersManager = __webpack_require__(4);
 
 module.exports = function init(passport) {
   passport.serializeUser(function (user, callback) {
@@ -326,10 +474,11 @@ module.exports = function init(passport) {
 
 
 var router = __webpack_require__(0).Router();
-var userControllers = __webpack_require__(22)();
-var wishListControllers = __webpack_require__(23)();
+var userControllers = __webpack_require__(23)();
+var wishListControllers = __webpack_require__(25)();
 var groupsControllers = __webpack_require__(21)();
-
+var wishesControllers = __webpack_require__(24)();
+var productsControllers = __webpack_require__(22)();
 
 var port = process.env.SERVER_PORT || 3000;
 
@@ -340,7 +489,9 @@ var notFound = router.get('*', function (req, res) {
 var server = function server(app) {
   app.use('/users/', userControllers);
   app.use('/wishlist/', wishListControllers);
-  app.use('/groups/', groupsControllers);
+  app.use('/wishlist/', groupsControllers);
+  app.use('/wishlist/', wishesControllers);
+  app.use('/wishlist/', productsControllers);
   app.use('/', notFound);
 
   app.listen(port, function () {
@@ -453,51 +604,36 @@ mongo.setConnection.then(function (newdb) {
 
 
 var router = __webpack_require__(0).Router();
-var isAuthenticated = __webpack_require__(3);
+var mid = __webpack_require__(2);
 var groupsManager = __webpack_require__(6);
-var wishesManager = __webpack_require__(24);
+var wishesManager = __webpack_require__(7);
 
-router.post('/', isAuthenticated, function (_ref, res) {
-  var body = _ref.body,
+router.post('/groups', mid.isAuthenticated, mid.parseData({
+  name: { required: true }
+}), function (_ref, res) {
+  var data = _ref.data,
       user = _ref.user;
 
-  var name = body.name;
-  if (!name) {
-    res.send(400);
-  } else {
-    var groupId = groupsManager.add(user._id, name);
-    res.json(groupId);
-  }
+  var groupId = groupsManager.add(user._id, data.name);
+  res.json(groupId);
 });
 
-router.put('/:gid', isAuthenticated, function (_ref2, res) {
+router.put('/groups/:gid', mid.isAuthenticated, mid.checkGroup, function (_ref2, res) {
   var params = _ref2.params,
-      body = _ref2.body,
+      data = _ref2.data,
       user = _ref2.user;
 
-
   var gid = params.gid;
-
-  if (!body.selected && !body.name) {
-    res.send(400);
-    return;
-  }
-
-  if (body.selected) {
+  if (data.selected) {
     for (var wid in user.wishGroups[gid]) {
       var wishId = user.wishGroups[gid][wid];
-      wishesManager.select(user._id, gid, wishId, body.selected);
+      wishesManager.select(user._id, gid, wishId, data.selected);
     }
   }
-  if (body.name) {
-    groupsManager.rename(user._id, gid, body.name);
+  if (data.name) {
+    groupsManager.rename(user._id, gid, data.name);
   }
-  res.send('OK');
-});
-
-router.delete('/:gid', isAuthenticated, function (req, res) {
-  groupsManager.remove(req.user._id, req.params.gid);
-  res.send('OK');
+  res.json('OK');
 });
 
 module.exports = function init() {
@@ -511,31 +647,46 @@ module.exports = function init() {
 "use strict";
 
 
-var _stringify = __webpack_require__(7);
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var passport = __webpack_require__(5);
 var router = __webpack_require__(0).Router();
-var isAuthenticated = __webpack_require__(3);
+var mid = __webpack_require__(2);
+var productManager = __webpack_require__(26);
 
-router.get('/me', isAuthenticated, function (req, res) {
-  res.send((0, _stringify2.default)(req.user._id));
+router.post('/groups/:gid/wishes/:wid/product', mid.isAuthenticated, mid.checkWish, mid.parseData({
+  productId: {
+    required: true
+  },
+  quantity: {
+    required: false,
+    type: 'int'
+  }
+}), function (_ref, res) {
+  var params = _ref.params,
+      data = _ref.data,
+      user = _ref.user;
+
+  productManager.set(user._id, params.gid, params.wid, data.productId);
+  if (data.quantity) {
+    productManager.setQuantity(user._id, params.gid, params.wid, data.quantity);
+  }
+  res.json('OK');
 });
 
-router.post('/login', passport.authenticate('login'), function (req, res) {
-  res.send('success');
+router.put('/groups/:gid/wishes/:wid/product', mid.isAuthenticated, function (_ref2, res) {
+  var params = _ref2.params,
+      data = _ref2.data,
+      user = _ref2.user;
+
+  productManager.setProductQty(user._id, params.gid, params.wid, data.quantity);
+  res.json('OK');
 });
 
-router.post('/register', passport.authenticate('register'), function (req, res) {
-  res.send('success');
-});
+router.delete('/groups/:gid/wishes/:wid/product', mid.isAuthenticated, function (_ref3, res) {
+  var params = _ref3.params,
+      data = _ref3.data,
+      user = _ref3.user;
 
-router.get('/signout', function (req, res) {
-  req.logout();
-  res.send('success');
+  productManager.remove(user._id, params.gid, params.wid);
+  res.json('OK');
 });
 
 module.exports = function init() {
@@ -549,36 +700,25 @@ module.exports = function init() {
 "use strict";
 
 
-var _stringify = __webpack_require__(7);
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+var passport = __webpack_require__(5);
 var router = __webpack_require__(0).Router();
-var isAuthenticated = __webpack_require__(3);
+var mid = __webpack_require__(2);
 
-router.get('/', isAuthenticated, function (_ref, res) {
-  var user = _ref.user;
-
-  var currentBasket = user.currentBasket ? user.currentBasket.selectedWishes : {};
-  var resp = (0, _stringify2.default)({
-    wishGroups: user.wishGroups,
-    currentBasket: currentBasket
-  });
-  res.json(resp);
+router.get('/me', mid.isAuthenticated, function (req, res) {
+  res.json(req.user._id);
 });
 
-router.post('/autoFill', isAuthenticated, function (_ref2, res) {
-  var user = _ref2.user;
-
-  res.send('not implemented yet');
+router.post('/login', passport.authenticate('login'), function (req, res) {
+  res.json('OK');
 });
 
-router.post('/order', isAuthenticated, function (_ref3, res) {
-  var user = _ref3.user;
+router.post('/register', passport.authenticate('register'), function (req, res) {
+  res.json('OK');
+});
 
-  res.send('not implemented yet');
+router.get('/signout', function (req, res) {
+  req.logout();
+  res.json('OK');
 });
 
 module.exports = function init() {
@@ -592,119 +732,48 @@ module.exports = function init() {
 "use strict";
 
 
-var _defineProperty2 = __webpack_require__(4);
+var router = __webpack_require__(0).Router();
+var mid = __webpack_require__(2);
+var wishesManager = __webpack_require__(7);
 
-var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+router.post('/groups/:gid/wishes/bulk', mid.isAuthenticated, mid.checkGroup, mid.parseData({
+  names: { required: true }
+}), function (_ref, res) {
+  var params = _ref.params,
+      data = _ref.data,
+      user = _ref.user;
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var mongo = __webpack_require__(1);
-var crypto = __webpack_require__(9);
-
-function selectWish(idUser, groupId, wishId, selected) {
-  var select = selected;
-  var users = mongo.db.collection('user');
-  var request = 'currentBasket.selectedWishes.' + groupId + '.' + wishId;
-  if (select) {
-    users.updateOne({ _id: idUser }, {
-      $set: (0, _defineProperty3.default)({}, request, {})
-    });
-  } else {
-    users.updateOne({ _id: idUser }, {
-      $unset: (0, _defineProperty3.default)({}, request, 1)
-    });
-    users.updateOne({ _id: idUser }, {
-      $pull: {
-        'currentBasket.selectedWishes': null
-      }
-    });
+  var resp = [];
+  for (var i = 0; i < data.names.length; i += 1) {
+    resp.push(wishesManager.add(user._id, params.gid, data.names[i]));
   }
-}
+  res.json(resp);
+});
 
-function addWish(idUser, groupId, wishName) {
-  var users = mongo.db.collection('user');
-  var secret = idUser;
-  var hash = crypto.createHmac('sha256', secret).update(wishName + Date.now().toString()).digest('hex');
-  var request = 'wishGroups.$.wishes';
-  users.updateOne({ 'wishGroups.id': groupId }, {
-    $push: (0, _defineProperty3.default)({}, request, {
-      id: hash,
-      name: wishName
-    })
-  }, function (err) {
-    console.log('err: ' + err);
-  });
-  selectWish(idUser, groupId, hash, true);
-  return hash;
-}
+router.post('/groups/:gid/wishes/:wid/move', mid.isAuthenticated, mid.checkWish, mid.parseData({
+  index: {
+    required: 'mandatory',
+    type: 'int'
+  }
+}), function (_ref2, res) {
+  var params = _ref2.params,
+      data = _ref2.data,
+      user = _ref2.user;
 
-function renameWish(idUser, groupId, wishId, newName) {
-  var users = mongo.db.collection('user');
-  users.findOne({ _id: idUser }, function (err, document) {
-    var wishGroups = document.wishGroups;
-    for (var i = 0; i < wishGroups.length; i++) {
-      var wishGroup = wishGroups[i];
-      var wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
-      for (var j = 0; j < wishGroupLength; j++) {
-        var wish = wishGroup.wishes[j];
-        if (wishGroup.id === groupId && wish.id === wishId) {
-          wish.name = newName;
-        }
-      }
-    }
-    users.updateOne({ _id: idUser }, {
-      $set: { wishGroups: wishGroups }
-    });
-  });
-}
+  wishesManager.move(user._id, params.gid, params.wid, data.index);
+  res.json('OK');
+});
 
-function removeWish(idUser, groupId, wishId) {
-  var users = mongo.db.collection('user');
-  users.findOne({ _id: idUser }, function (err, document) {
-    var wishGroups = document.wishGroups;
-    for (var i = 0; i < wishGroups.length; i++) {
-      var wishGroup = wishGroups[i];
-      var wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
-      for (var j = 0; j < wishGroupLength; j++) {
-        var wish = wishGroup.wishes[j];
-        if (wishGroup.id === groupId && wish.id === wishId) {
-          wishGroup.wishes.splice(j, 1);
-          break;
-        }
-      }
-    }
-    users.updateOne({ _id: idUser }, {
-      $set: { wishGroups: wishGroups }
-    });
-  });
-}
+router.delete('/groups/:gid/wishes/:wid', mid.isAuthenticated, mid.checkWish, function (_ref3, res) {
+  var params = _ref3.params,
+      user = _ref3.user;
 
-function setProduct(idUser, groupId, wishId, productId) {
-  var users = mongo.db.collection('user');
-  var request = 'currentBasket.selectedWishes.' + groupId + '.' + wishId + '.product';
-  users.updateOne({ _id: idUser }, {
-    $set: (0, _defineProperty3.default)({}, request, {
-      id: productId,
-      quantity: 1
-    })
-  });
-}
+  wishesManager.remove(user._id, params.gid, params.wid);
+  res.json('OK');
+});
 
-function setProductQty(idUser, groupId, wishId, qty) {
-  var users = mongo.db.collection('user');
-  var request = 'currentBasket.selectedWishes.' + groupId + '.' + wishId + '.product.quantity';
-  users.updateOne({ _id: idUser }, {
-    $set: (0, _defineProperty3.default)({}, request, parseInt(qty, 10))
-  });
-}
-
-module.exports = {
-  add: addWish,
-  select: selectWish,
-  rename: renameWish,
-  remove: removeWish,
-  setProduct: setProduct,
-  setProductQty: setProductQty
+module.exports = function init() {
+  return router;
 };
 
 /***/ }),
@@ -714,9 +783,91 @@ module.exports = {
 "use strict";
 
 
+var _stringify = __webpack_require__(30);
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var router = __webpack_require__(0).Router();
+var mid = __webpack_require__(2);
+
+router.get('/', mid.isAuthenticated, function (_ref, res) {
+  var user = _ref.user;
+
+  var currentBasket = user.currentBasket ? user.currentBasket.selectedWishes : {};
+  var resp = (0, _stringify2.default)({
+    wishGroups: user.wishGroups,
+    currentBasket: currentBasket
+  });
+  res.json(resp);
+});
+
+router.post('/autoFill', mid.isAuthenticated, function (_ref2, res) {
+  var user = _ref2.user;
+
+  res.send('not implemented yet');
+});
+
+router.post('/order', mid.isAuthenticated, function (_ref3, res) {
+  var user = _ref3.user;
+
+  res.send('not implemented yet');
+});
+
+module.exports = function init() {
+  return router;
+};
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _defineProperty2 = __webpack_require__(3);
+
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mongo = __webpack_require__(1);
+
+function set(uid, gid, wid, pid) {
+  var users = mongo.db.collection('user');
+  var path = 'currentBasket.selectedWishes.' + gid + '.' + wid;
+  users.updateOne({ _id: uid }, {
+    $set: (0, _defineProperty3.default)({}, path, {
+      pid: pid,
+      quantity: 1
+    })
+  });
+}
+
+function setQuantity(uid, gid, wid, qty) {
+  var users = mongo.db.collection('user');
+  var path = 'currentBasket.selectedWishes.' + gid + '.' + wid + '.product.quantity';
+  users.updateOne({ _id: uid }, {
+    $set: (0, _defineProperty3.default)({}, path, qty)
+  });
+}
+
+module.exports = {
+  set: set,
+  setQuantity: setQuantity
+};
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var LocalStrategy = __webpack_require__(10).Strategy;
 var bCrypt = __webpack_require__(8);
-var usersManager = __webpack_require__(2);
+var usersManager = __webpack_require__(4);
 
 function isValidPassword(user, password) {
   return bCrypt.compareSync(password, user.password);
@@ -738,7 +889,7 @@ module.exports = function init(passport) {
 };
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -746,7 +897,7 @@ module.exports = function init(passport) {
 
 var LocalStrategy = __webpack_require__(10).Strategy;
 var bCrypt = __webpack_require__(8);
-var usersManager = __webpack_require__(2);
+var usersManager = __webpack_require__(4);
 var groupsManager = __webpack_require__(6);
 
 function createHash(password) {
@@ -769,13 +920,37 @@ module.exports = function init(passport) {
 };
 
 /***/ }),
-/* 27 */
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var crypto = __webpack_require__(9);
+
+function randHash(x, y) {
+  var s = x + Date.now().toString();
+  return crypto.createHmac('sha256', y).update(s).digest('hex');
+}
+
+module.exports = {
+  randHash: randHash
+};
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/core-js/json/stringify");
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/promise");
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, exports) {
 
 module.exports = require("mongodb");

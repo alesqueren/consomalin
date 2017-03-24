@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const isAuthenticated = require('../passport/auth');
+const mid = require('../middlewares');
 
 router.get('/',
-  isAuthenticated,
+  mid.isAuthenticated,
   ({ user }, res) => {
     const currentBasket = user.currentBasket ? user.currentBasket.selectedWishes : {};
     const resp = JSON.stringify({
@@ -14,14 +14,14 @@ router.get('/',
 );
 
 router.post('/autoFill',
-  isAuthenticated,
+  mid.isAuthenticated,
   ({ user }, res) => {
     res.send('not implemented yet');
   },
 );
 
 router.post('/order',
-  isAuthenticated,
+  mid.isAuthenticated,
   ({ user }, res) => {
     res.send('not implemented yet');
   },

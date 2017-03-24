@@ -31,12 +31,12 @@ function findUser(email, callback) {
 
 function setCurrentWish(email, groupId, wishId) {
   const users = mongo.db.collection(userCollectionName);
-  const request = 'currentBasket.currentWish';
+  const path = 'currentBasket.currentWish';
   users.updateOne(
     { _id: email },
     {
       $set: {
-        [request]: {
+        [path]: {
           group: groupId,
           wish: wishId,
         },
@@ -47,12 +47,12 @@ function setCurrentWish(email, groupId, wishId) {
 
 function removeCurrentWish(email) {
   const users = mongo.db.collection(userCollectionName);
-  const request = 'currentBasket.currentWish';
+  const path = 'currentBasket.currentWish';
   users.updateOne(
     { _id: email },
     {
       $set: {
-        [request]: {},
+        [path]: {},
       },
     },
   );
@@ -60,12 +60,12 @@ function removeCurrentWish(email) {
 
 function setCurrentSlot(email, slot) {
   const users = mongo.db.collection(userCollectionName);
-  const request = 'currentBasket.currentSlot';
+  const path = 'currentBasket.currentSlot';
   users.updateOne(
     { _id: email },
     {
       $set: {
-        [request]: slot,
+        [path]: slot,
       },
     },
   );
