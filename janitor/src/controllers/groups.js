@@ -17,20 +17,25 @@ router.post('/groups',
 router.put('/groups/:gid',
   mid.isAuthenticated,
   mid.checkGroup,
+  mid.parseData({
+    name: {},
+    selected: {},
+  }),
   ({ params, data, user }, res) => {
     const gid = params.gid;
+
+    if (data.name) {
+      groupsManager.rename(user._id, gid, data.name);
+    }
     // TODO: tester
     if (data.selected) {
       for (const wid in user.wishGroups[gid]) {
-        // console.log(user.wishGroups[gid]);
-        // console.log(user.wishGroups[gid][wid]);
-        // console.log(wid);
+        console.log(user.wishGroups[gid]);
+        console.log(user.wishGroups[gid][wid]);
+        console.log(wid);
         const wishId = user.wishGroups[gid][wid];
         wishesManager.select(user._id, gid, wishId, data.selected);
       }
-    }
-    if (data.name) {
-      groupsManager.rename(user._id, gid, data.name);
     }
     res.json('OK');
   },

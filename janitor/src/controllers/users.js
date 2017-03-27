@@ -25,6 +25,7 @@ router.post('/register',
 );
 
 router.get('/signout',
+  mid.isAuthenticated,
   (req, res) => {
     req.logout();
     res.json('OK');

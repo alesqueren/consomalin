@@ -27,18 +27,24 @@ function isInt(value) {
 }
 
 const parseData = fields => (req, res, next) => {
+  console.log(req.body);
   req.data = {};
   for (const field in fields) {
+    const fieldInfo = fields[field];
     const value = req.body[field];
-    if (fields[field].required && !value) {
+    if (fieldInfo.required && !value) {
       return res.send(400);
     }
-    if (fields[field].type === 'int' && !isInt(value)) {
+    if (fieldInfo.type === 'int' && !isInt(value)) {
       return res.send(400);
     }
     if (value) {
       try {
-        req.data[field] = JSON.parse(value);
+        if (fieldInfo.json) {
+          req.data[field] = JSON.parse(value);
+        } else {
+          req.data[field] = value;
+        }
       } catch (e) {
         return res.send(400);
       }
@@ -47,23 +53,9 @@ const parseData = fields => (req, res, next) => {
   return next();
 };
 
-// const parseInt = field => ({ data }, res, next) => {
-//   if (data[field]) {
-//     try {
-//       const value = parseInt(data[field], 10);
-//       data[field] = value;
-//       return next();
-//     } catch (e) {
-//       return res.send(400);
-//     }
-//   }
-//   return next();
-// };
-
 module.exports = {
   isAuthenticated,
   checkGroup,
   checkWish,
   parseData,
-  // parseInt,
 };

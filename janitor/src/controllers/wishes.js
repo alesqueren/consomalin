@@ -6,9 +6,13 @@ router.post('/groups/:gid/wishes/bulk',
   mid.isAuthenticated,
   mid.checkGroup,
   mid.parseData({
-    names: { required: true },
+    names: {
+      required: true,
+      json: true,
+    },
   }),
   ({ params, data, user }, res) => {
+    console.log('coucou');
     const resp = [];
     for (let i = 0; i < data.names.length; i += 1) {
       resp.push(wishesManager.add(user._id, params.gid, data.names[i]));
@@ -22,12 +26,30 @@ router.post('/groups/:gid/wishes/:wid/move',
   mid.checkWish,
   mid.parseData({
     index: {
-      required: 'mandatory',
+      required: true,
       type: 'int',
     },
   }),
   ({ params, data, user }, res) => {
     wishesManager.move(user._id, params.gid, params.wid, data.index);
+    res.json('OK');
+  },
+);
+
+router.put('/groups/:gid/wishes/:wid',
+  mid.isAuthenticated,
+  mid.checkWish,
+  mid.parseData({
+    name: {},
+    selected: {},
+  }),
+  ({ params, data, user }, res) => {
+    if (data.name) {
+      wishesManager.rename(user._id, params.gid, params.wid, data.name);
+    }
+    if (data.selected) {
+      wishesManager.select(user._id, params.gid, params.wid, data.selected);
+    }
     res.json('OK');
   },
 );
