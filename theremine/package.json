@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "node build/dev-server.js",
-    "start": "node src/app.js",
+    "start": "node bin/app.bundle.js",
     "make": "./node_modules/webpack/bin/webpack.js --config build/webpack.conf.js"
   },
   "dependencies": {
