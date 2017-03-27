@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+
+  byte-diver:
+    build:
+      context: ./haskell
+      dockerfile: ./byte-diver/Dockerfile
+    networks:
+      - mongo
+
+networks:
+  mongo:

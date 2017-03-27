@@ -1,8 +1,8 @@
-state/
+/docker/state/
+/docker-compose.yml
+/commands.yml
+/docker_dev
+npm-debug.log
 *.log
 *.swp
 *.swo
-npm-debug.log
-docker-compose.yml
-commands.yml
-docker_dev/
