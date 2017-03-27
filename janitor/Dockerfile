@@ -14,4 +14,5 @@ ENV SERVER_PORT=80 \
     RABBIT_URI=amqp://rabbitmq:5672
     
 ADD . .
-CMD npm start
+CMD npm run build && \
+    npm run start

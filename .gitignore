@@ -3,4 +3,6 @@ state/
 *.swp
 *.swo
 npm-debug.log
-nginx/cache
+docker-compose.yml
+commands.yml
+docker_dev/

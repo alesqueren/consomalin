@@ -6,7 +6,7 @@ const mid = require('../middlewares');
 router.get('/me',
   mid.isAuthenticated,
   (req, res) => {
-    res.json(req.user._id);
+    res.json({ id: req.user._id });
   },
 );
 
