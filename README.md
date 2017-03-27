@@ -11,9 +11,10 @@ A simple drive website
 ## Install
 ```bash
 git clone ssh://git@git.consomalin.ovh:2222/drive/drive.git
-cd drive
-git clone ssh://git@git.consomalin.ovh:2222/drive/state.git
+git clone ssh://git@git.consomalin.ovh:2222/drive/state.git drive/docker/state
 
+cd drive/
+cp docker/docker-compose.yml .
 docker-compose -f haskell/compiler/docker-compose.yml up
 docker-compose up -d
 ```

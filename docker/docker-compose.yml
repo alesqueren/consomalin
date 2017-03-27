@@ -6,17 +6,23 @@ services:
     image: consomalin/nginx-ldap
     networks: [big]
     volumes:
-      - ./nginx2/conf:/app/conf/:ro
+      - ./docker/nginx/:/app/conf/:ro
     ports:
-      - "9000:80"
+      - "8080:80" 
 
   theremine:
     build: ./theremine
     networks: [big]
+    ports:
+      - "8081:80"
+
+  janitor:
+    build: ./janitor
+    networks: [big]
     environment:
       - METRONOME_HOST=http://metronome-cache
     ports:
-      - "8080:80"
+      - "8082:80"
 
   kiva:
     build: 
@@ -24,7 +30,7 @@ services:
       dockerfile: ./kiva/Dockerfile
     networks: [big]
     ports:
-      - "8081:80"
+      - "8083:80"
 
   wendy:
     build:
@@ -39,8 +45,8 @@ services:
     image: consomalin/nginx-ldap
     networks: [big]
     volumes:
-      - ./nginx/conf:/app/conf/:ro
-      - ./nginx/cache:/app/cache/
+      - ./docker/metronome-cache/conf:/app/conf/:ro
+      - ./docker/metronome-cache/cache:/app/cache/
 
   metronome:
     build:
@@ -51,19 +57,19 @@ services:
       - DRIVE_PASS=hDDqSUGmY3!
     networks: [big]
     ports:
-      - "8082:80"
+      - "8084:80"
 
   mongo-express:
     image: mongo-express
     networks: [big]
     ports:
-      - "8083:8081"
+      - "8085:8081"
 
   mongo:
     image: mongo
     networks: [big]
     volumes:
-      - ./state/mongo:/data/db
+      - ./docker/state/mongo:/data/db
     ports:
       - "27017:27017"
 
