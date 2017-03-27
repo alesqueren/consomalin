@@ -2,10 +2,10 @@
   div.wishgroup.list-group-item.col-3(v-bind:class="{'bg-info' : selected}" @click="select")
     input(type="checkbox" v-model="selected")
     div
-      button.btn.btn-danger.topright(@click.cancelBubble="remove")
+      button.btn.btn-danger.topright(@click.stop="remove")
         i.fa.fa-trash-o.fa-sm
     div
-      button.btn.btn-primary.bottomright(@click.cancelBubble="editName")
+      button.btn.btn-primary.bottomright(@click.stop="editName")
         i.fa.fa-pencil.fa-sm
     div
       span.groupName <strong>{{ wishgroup.name }}</strong>
@@ -17,6 +17,43 @@
 
 <script>
 import wishItem from './WishItem';
+
+function selectWish(context, selected) {
+  const groupId = context.wishgroup.id;
+  const store = context.$store.state;
+  const currentBasket = store.currentBasket;
+  const selectedWishes = currentBasket.selectedWishes;
+  if (currentBasket && currentBasket.selectedWishes && !selected) {
+    const selectedGroup = selectedWishes[groupId];
+    // console.log('component:wishGroupItem:computed:set: deselection');
+    for (const selectedWish in selectedGroup) {
+      // console.log('component:wishGroupItem:computed:set: selectWish :');
+      // console.log(selectedWish);
+      context.$store.dispatch('selectWish', {
+        groupId,
+        wishId: selectedWish,
+        selected,
+      });
+    }
+  } else {
+    // console.log('component:wishGroupItem:computed:set: selection');
+    for (let i = 0; i < store.wishGroups.length; i++) {
+      const wishgroup = store.wishGroups[i];
+      if (wishgroup.id === groupId) {
+        for (let j = 0; j < wishgroup.wishes.length; j++) {
+          const wish = wishgroup.wishes[j];
+          // console.log('component:wishGroupItem:computed:set: wish.id :');
+          // console.log(wish.id);
+          context.$store.dispatch('selectWish', {
+            groupId,
+            wishId: wish.id,
+            selected,
+          });
+        }
+      }
+    }
+  }
+}
 
 export default {
   props: ['wishlist', 'wishgroup', 'wishgroupindex'],
@@ -36,79 +73,14 @@ export default {
         return wishGroupIsSelected;
       },
       set(selected) {
-        const groupId = this.wishgroup.id;
-        const store = this.$store.state;
-        const selectedGroup = store.currentBasket.selectedWishes[groupId];
-        if (!selected) {
-          // console.log('component:wishGroupItem:computed:set: deselection');
-          for (const selectedWish in selectedGroup) {
-            // console.log('component:wishGroupItem:computed:set: selectWish :');
-            // console.log(selectedWish);
-            this.$store.dispatch('selectWish', {
-              groupId,
-              wishId: selectedWish,
-              selected,
-            });
-          }
-        } else {
-          // console.log('component:wishGroupItem:computed:set: selection');
-          for (let i = 0; i < store.wishGroups.length; i++) {
-            const wishgroup = store.wishGroups[i];
-            if (wishgroup.id === groupId) {
-              for (let j = 0; j < wishgroup.wishes.length; j++) {
-                const wish = wishgroup.wishes[j];
-                // console.log('component:wishGroupItem:computed:set: wish.id :');
-                // console.log(wish.id);
-                this.$store.dispatch('selectWish', {
-                  groupId,
-                  wishId: wish.id,
-                  selected,
-                });
-              }
-            }
-          }
-        }
+        selectWish(this, selected);
       },
     },
   },
   methods: {
     select() {
-      // console.log('');
-      // console.log('component:wishGroupItem:method:select: wishGroup.id');
-      // console.log(this.wishgroup.id);
-      const groupId = this.wishgroup.id;
       const selected = !this.wishgroup.selected;
-      const store = this.$store.state;
-      const selectedGroup = store.currentBasket.selectedWishes[groupId];
-      if (!selected) {
-        // console.log('component:wishGroupItem:method:select: deselection');
-        for (const selectedWish in selectedGroup) {
-          // console.log('component:wishGroupItem:method:select: selectWish :');
-          // console.log(selectedWish);
-          this.$store.dispatch('selectWish', {
-            groupId,
-            wishId: selectedWish,
-            selected,
-          });
-        }
-      } else {
-        // console.log('component:wishGroupItem:method:select: selection');
-        for (let i = 0; i < store.wishGroups.length; i++) {
-          const wishgroup = store.wishGroups[i];
-          if (wishgroup.id === groupId) {
-            for (let j = 0; j < wishgroup.wishes.length; j++) {
-              const wish = wishgroup.wishes[j];
-              // console.log('component:wishGroupItem:method:select: wish.id :');
-              // console.log(wish.id);
-              this.$store.dispatch('selectWish', {
-                groupId,
-                wishId: wish.id,
-                selected,
-              });
-            }
-          }
-        }
-      }
+      selectWish(this, selected);
     },
     addWish() {
       this.$store.dispatch('addWish', {

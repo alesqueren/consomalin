@@ -18,8 +18,8 @@ export default new Vuex.Store({
     // },
   getters: {
     isSelectedWishGroup: state => ({ groupId }) => {
-      const response = (state.currentBasket.selectedWishes[groupId] && true);
-      return response;
+      const selectedWishes = state.currentBasket.selectedWishes;
+      return (selectedWishes && selectedWishes[groupId]);
     },
     getWishlist: (state) => {
       const wishlist = [];
@@ -42,10 +42,12 @@ export default new Vuex.Store({
               groupId: wishgroup.id,
               selected: false,
             };
-            const partWishGroupSelect = selectedWishes[newWish.groupId];
-            if (partWishGroupSelect && selectedWishes[newWish.groupId][newWish.id]) {
-              newWish.selected = true;
-              newWishGroup.selected = true;
+            if (selectedWishes) {
+              const wishGroupSelect = selectedWishes[newWish.groupId];
+              if (wishGroupSelect && wishGroupSelect[newWish.id]) {
+                newWish.selected = true;
+                newWishGroup.selected = true;
+              }
             }
             newWishGroup.wishes.push(newWish);
           }
@@ -56,22 +58,25 @@ export default new Vuex.Store({
     },
     getBasket: (state) => {
       const basket = [];
-      if (state.wishGroups) {
+      if (state.wishGroups && state.currentBasket.selectedWishes) {
         const selectedWishes = state.currentBasket.selectedWishes;
         for (let i = 0; i < state.wishGroups.length; i++) {
           const wishgroup = state.wishGroups[i];
           const wishGroupLength = wishgroup.wishes ? wishgroup.wishes.length : 0;
           for (let j = 0; j < wishGroupLength; j++) {
             const wish = state.wishGroups[i].wishes[j];
-            const partWishGroupSelect = selectedWishes[wishgroup.id];
-            if (partWishGroupSelect && selectedWishes[wishgroup.id][wish.id]) {
+            const wishGroupSelect = selectedWishes[wishgroup.id];
+            if (wishGroupSelect && selectedWishes[wishgroup.id][wish.id]) {
+              const selectedWish = selectedWishes[wishgroup.id][wish.id];
               const newWish = {
                 id: wish.id,
                 name: wish.name,
                 groupId: wishgroup.id,
-                products: [],
-                product: {},
-                productInfos: {},
+                matchingProducts: [],
+                product: {
+                  id: selectedWish.pid,
+                  quantity: selectedWish.quantity,
+                },
                 selected: true,
               };
               basket.push(newWish);
@@ -100,8 +105,12 @@ export default new Vuex.Store({
           {},
           {},
         ).then((response) => {
-          const wishGroups = response.data.wishGroups;
-          const currentBasket = response.data.currentBasket;
+          const data = JSON.parse(response.data);
+          const wishGroups = data.wishGroups;
+          const currentBasket = data.currentBasket;
+          if (!currentBasket.selectedWishes) {
+            currentBasket.selectedWishes = {};
+          }
           commit('setWishGroupsAndCurrentBasket', { wishGroups, currentBasket });
         }, () => {
           // console.log('error');

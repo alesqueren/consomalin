@@ -4,10 +4,10 @@
   div
     span(style='font-weight:bold') {{wish.groupName}}
     |  {{wish.name}}
-  div(v-if='wish.productInfos.imageUrl')
-    div  {{wish.productInfos.name}}
+  div(v-if='wish.product.imageUrl')
+    div  {{wish.product.name}}
     |  
-    img.col-md-6(style='width:50px;', v-bind:src='wish.product.infos.imageUrl')
+    img.col-md-6(style='width:50px;', v-bind:src='wish.product.imageUrl')
     |  
     input.col-md-6(type='number', v-model.number='wish.product.quantity', step='1', value='0', min='1', max='64', v-on:change='changeQty')
 

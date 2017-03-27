@@ -30,18 +30,16 @@ import WishItem from './Section/WishItem';
 import CurrentWish from './Section/CurrentWish';
 import ProductItem from './Section/ProductItem';
 
-// function getFirstUnmatchedSelectedWish(selectedWishes){
-  // var psw = selectedWishes;
-  // // var wgs = wishGroups;
-  // for(var i = 0; i < psw.length; i++ ) {
-  //   var wish = psw[i];
-  //   if( !wish.product.id) {
-  //     wish.current = true;
-  //     return wish;
-  //   }
-  // }
-  // return null;
-// }
+function getFirstUnmatchedSelectedWish(basket) {
+  for (let i = 0; i < basket.length; i++) {
+    const wish = basket[i];
+    if (!wish.product.id) {
+      wish.current = true;
+      return wish;
+    }
+  }
+  return null;
+}
 
 // function unselectWish(wish) {
   // var self = this;
@@ -62,8 +60,6 @@ export default {
       // pSelectedWishes: pSelectedWishes,
       // currentWish: currentWish,
       // maxProducts: 40,
-      wishGroups: null,
-      pSelectedWishes: null,
       currentWish: null,
       maxProducts: 40,
     };
@@ -86,26 +82,6 @@ export default {
       const basket = this.$store.getters.getBasket;
       return basket;
     },
-    selectedWishes: () => {
-      // var selectedWishes = [];
-      // for(var i = 0; i < wishGroups.length; i++ ) {
-      //   var wishGroup = wishGroups[i];
-      //   var wishGroupLength = wishGroup.wishes?wishGroup.wishes.length:0;
-      //   for(var j = 0; j < wishGroupLength; j++ ) {
-      //     var wish = wishGroup.wishes[j];
-      //     var wishGroup = pSelectedWishes[wishGroup.id];
-      // var selected = wishGroup?wishGroup[wish.id]?true:false:false;
-      //     if( selected ) {
-      //       wish.groupId = wishGroup.id;
-      //       wish.groupName = wishGroup.name;
-      //        var product = pSelectedWishes[wishGroup.id][wish.id].product;
-      //       wish.product.quantity = product?product.quantity:0;
-      //       selectedWishes.push(wish);
-      //     }
-      //   }
-      // }
-      // return selectedWishes;
-    },
     matchedWishes() {
       let matchedWishes = 0;
       for (let i = 0; i < this.basket.length; i += 1) {
@@ -113,12 +89,15 @@ export default {
       }
       return matchedWishes;
     },
-    total: () => {
-      // return this.selectedWishes.reduce(function(prev, product){
-      //    var price = product.product.infos.price;
-      //   var priceProduct = price?price * product.product.quantity:0;
-      //   return prev + priceProduct;
-      // },0).toFixed(2);
+    total() {
+      return this.basket.reduce((prev, wish) => {
+        if (wish.product && wish.product.price) {
+          const price = wish.product.price;
+          const priceProduct = price ? price * wish.product.quantity : 0;
+          return prev + priceProduct;
+        }
+        return prev;
+      }, 0).toFixed(2);
     },
     nextInfos() {
       const length = this.basket.length;
@@ -144,63 +123,61 @@ export default {
       // });
     },
 
-    searchProducts: () => {
-    // searchProducts: (wish) => {
-      // var self = this;
-      // $.ajax({
-      //   type: 'GET',
-      //   url : '/products/search/'+wish.name,
-      //   data: {},
-      //   complete: function(responseObject) {
-      //     var products = JSON.parse(responseObject.responseText);
-      //     // test de sort
-      //     // function compare(a,b) {
-      //     //   if (a.price < b.price)
-      //     //     return -1;
-      //     //   if (a.price > b.price)
-      //     //     return 1;
-      //     //   return 0;
-      //     // }
-      //     // var sortedKeyProducts = Object.keys(products).sort( function(keyA, keyB) {
-      //     //     return products[keyA].price - products[keyB].price;
-      //     // });
-      //     // var sortedProducts = [];
-      //     // for(vari=0;i<sortedKeyProducts.length;i++){
-      //     //     sortedProducts[sortedKeyProducts[i]] = products[sortedKeyProducts[i]];
-      //     // }
-      //     // console.log(sortedProducts)
-      //     // self.currentWish.matchingProducts = sortedProducts;
-      //     self.currentWish.matchingProducts = products;
-      //   }
-      // });
+    searchProducts: (wish) => {
+      const self = this;
+      $.ajax({
+        type: 'GET',
+        url : '/products/search/'+wish.name,
+        data: {},
+        complete: function(responseObject) {
+          var products = JSON.parse(responseObject.responseText);
+          // test de sort
+          // function compare(a,b) {
+          //   if (a.price < b.price)
+          //     return -1;
+          //   if (a.price > b.price)
+          //     return 1;
+          //   return 0;
+          // }
+          // var sortedKeyProducts = Object.keys(products).sort( function(keyA, keyB) {
+          //     return products[keyA].price - products[keyB].price;
+          // });
+          // var sortedProducts = [];
+          // for(vari=0;i<sortedKeyProducts.length;i++){
+          //     sortedProducts[sortedKeyProducts[i]] = products[sortedKeyProducts[i]];
+          // }
+          // console.log(sortedProducts)
+          // self.currentWish.matchingProducts = sortedProducts;
+          self.currentWish.matchingProducts = products;
+        }
+      });
     },
 
-    newCurrentWish: () => {
-    // newCurrentWish: (wish) => {
-      // var self = this;
-      // this.maxProducts = 40;
-      // //on notifie le serveur du nouveau wish courrant
-      // if ( this.currentWish != wish ) {
-      //   this.currentWish = wish;
-      //   this.sendCurrentWish(this.currentWish);
-      //   //si on a aucun produit pour ce wish
-      //   if (!Array.isArray(wish.matchingProducts) || wish.matchingProducts.length < 1) {
-      //     //on les recherche
-      //     this.searchProducts(this.currentWish);
-      //   }else{
-      //     self.currentWish.matchingProducts = self.currentWish.matchingProducts;
-      //     // console.log(wish.name + ' already have products');
-      //     // console.log(wish.matchingProducts)
-      //   }
-      // }else{
-      //   //toujours le meme wish (reclick ou dernier de la liste)
-      // }
-      // for (i = 0; i < this.selectedWishes.length; i += 1) {
-      //   this.selectedWishes[i].current = false;
-      //   if (this.selectedWishes[i] === this.currentWish) {
-      //     this.selectedWishes[i].current = true;
-      //   }
-      // }
+    newCurrentWish: (wish) => {
+      const self = this;
+      this.maxProducts = 40;
+      // on notifie le serveur du nouveau wish courrant
+      if (this.currentWish !== wish) {
+        this.currentWish = wish;
+        this.sendCurrentWish(this.currentWish);
+        // si on a aucun produit pour ce wish
+        if (!Array.isArray(wish.matchingProducts) || wish.matchingProducts.length < 1) {
+          // on les recherche
+          this.searchProducts(this.currentWish);
+        } else {
+          self.currentWish.matchingProducts = self.currentWish.matchingProducts;
+          // console.log(wish.name + ' already have products');
+          // console.log(wish.matchingProducts)
+        }
+      } else {
+        // toujours le meme wish (reclick ou dernier de la liste)
+      }
+      for (let i = 0; i < this.selectedWishes.length; i += 1) {
+        this.selectedWishes[i].current = false;
+        if (this.selectedWishes[i] === this.currentWish) {
+          this.selectedWishes[i].current = true;
+        }
+      }
     },
 
     removeWish: () => {
@@ -222,32 +199,32 @@ export default {
     },
 
     removeCurrentWish: () => {
-      // if ( this.currentWish ) {
-      //   for (i = 0; i < this.selectedWishes.length; i += 1) {
-      //     this.selectedWishes[i].current = false;
-      //   }
-      //   this.currentWish = null;
-      //   $.ajax({
-      //     type: 'PUT',
-      //     url : '/wishlist/removeCurrent',
-      //     data: {},
-      //     complete: function(responseObject) {
+      if (this.currentWish) {
+        for (let i = 0; i < this.selectedWishes.length; i += 1) {
+          this.selectedWishes[i].current = false;
+        }
+        this.currentWish = null;
+        // $.ajax({
+        //   type: 'PUT',
+        //   url : '/wishlist/removeCurrent',
+        //   data: {},
+        //   complete: function(responseObject) {
 
-      //     }
-      //   });
-      // }
+        //   }
+        // });
+      }
     },
 
     setCurrentWishToNext: () => {
       // si il reste un wish non lié a un produit, on passe a celui ci
       // sinon on supprime le currentwish et on envoi la requet de remove au serveur
-      // var nextCurrentWish = getFirstUnmatchedSelectedWish(this.selectedWishes);
-      // if ( nextCurrentWish ) {
-      //   this.newCurrentWish(nextCurrentWish);
-      // }else{
-      //   this.removeCurrentWish();
-      //   // console.log(this.selectedWishes[currentIndex].name + ' est le dernier wish')
-      // }
+      const nextCurrentWish = getFirstUnmatchedSelectedWish(this.basket);
+      if (nextCurrentWish) {
+        this.newCurrentWish(nextCurrentWish);
+      } else {
+        this.removeCurrentWish();
+        // console.log(this.selectedWishes[currentIndex].name + ' est le dernier wish')
+      }
     },
 
     // on attache le produit (selectionné) au wish en cours

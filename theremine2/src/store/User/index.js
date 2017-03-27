@@ -15,7 +15,8 @@ const actions = {
   },
   fetchUser: ({ commit }) => {
     resources.userTmp.get().then((res) => {
-      const user = JSON.parse(res.body);
+      // console.log(res.body);
+      const user = res.body;
       commit('setUser', user);
     }, () => {
       commit('setUser', false);

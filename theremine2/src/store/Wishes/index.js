@@ -16,6 +16,9 @@ const getters = {
   },
   isSelectedWish: (state, commit, rootState) => ({ groupId, wishId }) => {
     const sw = rootState.currentBasket.selectedWishes;
+    if (!sw) {
+      sw.selectedWishes = {};
+    }
     // console.log('isSelectedWish return');
     const hasGrpIdP = Object.prototype.hasOwnProperty.call(sw, groupId);
     // console.log((hasGrpIdP && Object.prototype.hasOwnProperty.call(sw[groupId], wishId)));

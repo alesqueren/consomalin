@@ -176,28 +176,16 @@ module.exports = {
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
-
-module.exports = require("babel-runtime/helpers/defineProperty");
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _defineProperty2 = __webpack_require__(3);
-
-var _defineProperty3 = _interopRequireDefault(_defineProperty2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 var mongo = __webpack_require__(1);
 
 var userCollectionName = 'user';
 
-function addUser(email, password, callback) {
+function add(email, password, callback) {
   var users = mongo.db.collection(userCollectionName);
   return users.insertOne({
     _id: email,
@@ -211,7 +199,7 @@ function addUser(email, password, callback) {
   });
 }
 
-function findUser(email, callback) {
+function find(email, callback) {
   var users = mongo.db.collection(userCollectionName);
   return users.findOne({
     _id: email
@@ -220,40 +208,16 @@ function findUser(email, callback) {
   });
 }
 
-function setCurrentWish(email, groupId, wishId) {
-  var users = mongo.db.collection(userCollectionName);
-  var path = 'currentBasket.currentWish';
-  users.updateOne({ _id: email }, {
-    $set: (0, _defineProperty3.default)({}, path, {
-      group: groupId,
-      wish: wishId
-    })
-  });
-}
-
-function removeCurrentWish(email) {
-  var users = mongo.db.collection(userCollectionName);
-  var path = 'currentBasket.currentWish';
-  users.updateOne({ _id: email }, {
-    $set: (0, _defineProperty3.default)({}, path, {})
-  });
-}
-
-function setCurrentSlot(email, slot) {
-  var users = mongo.db.collection(userCollectionName);
-  var path = 'currentBasket.currentSlot';
-  users.updateOne({ _id: email }, {
-    $set: (0, _defineProperty3.default)({}, path, slot)
-  });
-}
-
 module.exports = {
-  add: addUser,
-  find: findUser,
-  setCurrentWish: setCurrentWish,
-  removeCurrentWish: removeCurrentWish,
-  setCurrentSlot: setCurrentSlot
+  add: add,
+  find: find
 };
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/defineProperty");
 
 /***/ }),
 /* 5 */
@@ -268,7 +232,7 @@ module.exports = require("passport");
 "use strict";
 
 
-var _defineProperty2 = __webpack_require__(3);
+var _defineProperty2 = __webpack_require__(4);
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
@@ -277,7 +241,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mongo = __webpack_require__(1);
 var crypto = __webpack_require__(9);
 
-function addGroup(uid, groupName) {
+function add(uid, groupName) {
   var users = mongo.db.collection('user');
   var secret = uid;
   var hash = crypto.createHmac('sha256', secret).update(groupName + Date.now().toString()).digest('hex');
@@ -293,7 +257,7 @@ function addGroup(uid, groupName) {
   return hash;
 }
 
-function renameGroup(uid, groupId, newName) {
+function rename(uid, groupId, newName) {
   var users = mongo.db.collection('user');
   var path = 'wishGroups.$.name';
   users.updateOne({ 'wishGroups.id': groupId }, {
@@ -301,7 +265,7 @@ function renameGroup(uid, groupId, newName) {
   });
 }
 
-function removeGroup(uid, groupId) {
+function remove(uid, groupId) {
   var users = mongo.db.collection('user');
   var path = 'wishGroups.$';
   users.updateOne({ 'wishGroups.id': groupId }, {
@@ -315,9 +279,9 @@ function removeGroup(uid, groupId) {
 }
 
 module.exports = {
-  add: addGroup,
-  rename: renameGroup,
-  remove: removeGroup
+  add: add,
+  rename: rename,
+  remove: remove
 };
 
 /***/ }),
@@ -327,7 +291,7 @@ module.exports = {
 "use strict";
 
 
-var _defineProperty2 = __webpack_require__(3);
+var _defineProperty2 = __webpack_require__(4);
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
@@ -400,7 +364,6 @@ function move(uid, gid, wid, newIndex) {
         var wish = wishGroup.wishes[j];
         if (wishGroup.id === gid && wish.id === wid) {
           wishGroup.wishes.splice(newIndex, 0, wishGroup.wishes.splice(j, 1)[0]);
-
           break;
         }
       }
@@ -467,7 +430,7 @@ module.exports = require("passport-local");
 
 var login = __webpack_require__(27);
 var register = __webpack_require__(28);
-var usersManager = __webpack_require__(4);
+var usersManager = __webpack_require__(3);
 
 module.exports = function init(passport) {
   passport.serializeUser(function (user, callback) {
@@ -642,6 +605,7 @@ router.put('/groups/:gid', mid.isAuthenticated, mid.checkGroup, function (_ref2,
       user = _ref2.user;
 
   var gid = params.gid;
+
   if (data.selected) {
     for (var wid in user.wishGroups[gid]) {
       var wishId = user.wishGroups[gid][wid];
@@ -768,23 +732,39 @@ router.post('/groups/:gid/wishes/bulk', mid.isAuthenticated, mid.checkGroup, mid
   res.json(resp);
 });
 
+router.put('/groups/:gid/wishes/:wid', mid.isAuthenticated, mid.checkWish, function (_ref2, res) {
+  var params = _ref2.params,
+      body = _ref2.body,
+      user = _ref2.user;
+
+  var wid = params.wid;
+  var gid = params.gid;
+  if (body.selected) {
+    wishesManager.select(user._id, gid, wid, body.selected);
+  }
+  if (body.name) {
+    wishesManager.rename(user._id, gid, wid, body.name);
+  }
+  res.json('OK');
+});
+
 router.post('/groups/:gid/wishes/:wid/move', mid.isAuthenticated, mid.checkWish, mid.parseData({
   index: {
     required: 'mandatory',
     type: 'int'
   }
-}), function (_ref2, res) {
-  var params = _ref2.params,
-      data = _ref2.data,
-      user = _ref2.user;
+}), function (_ref3, res) {
+  var params = _ref3.params,
+      data = _ref3.data,
+      user = _ref3.user;
 
   wishesManager.move(user._id, params.gid, params.wid, data.index);
   res.json('OK');
 });
 
-router.delete('/groups/:gid/wishes/:wid', mid.isAuthenticated, mid.checkWish, function (_ref3, res) {
-  var params = _ref3.params,
-      user = _ref3.user;
+router.delete('/groups/:gid/wishes/:wid', mid.isAuthenticated, mid.checkWish, function (_ref4, res) {
+  var params = _ref4.params,
+      user = _ref4.user;
 
   wishesManager.remove(user._id, params.gid, params.wid);
   res.json('OK');
@@ -813,7 +793,7 @@ var mid = __webpack_require__(2);
 router.get('/', mid.isAuthenticated, function (_ref, res) {
   var user = _ref.user;
 
-  var currentBasket = user.currentBasket ? user.currentBasket.selectedWishes : {};
+  var currentBasket = user.currentBasket ? user.currentBasket : {};
   var resp = (0, _stringify2.default)({
     wishGroups: user.wishGroups,
     currentBasket: currentBasket
@@ -844,7 +824,7 @@ module.exports = function init() {
 "use strict";
 
 
-var _defineProperty2 = __webpack_require__(3);
+var _defineProperty2 = __webpack_require__(4);
 
 var _defineProperty3 = _interopRequireDefault(_defineProperty2);
 
@@ -885,7 +865,7 @@ module.exports = {
 
 var LocalStrategy = __webpack_require__(10).Strategy;
 var bCrypt = __webpack_require__(8);
-var usersManager = __webpack_require__(4);
+var usersManager = __webpack_require__(3);
 
 function isValidPassword(user, password) {
   return bCrypt.compareSync(password, user.password);
@@ -915,7 +895,7 @@ module.exports = function init(passport) {
 
 var LocalStrategy = __webpack_require__(10).Strategy;
 var bCrypt = __webpack_require__(8);
-var usersManager = __webpack_require__(4);
+var usersManager = __webpack_require__(3);
 var groupsManager = __webpack_require__(6);
 
 function createHash(password) {
