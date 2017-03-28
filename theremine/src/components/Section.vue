@@ -30,6 +30,17 @@ import WishItem from './Section/WishItem';
 import CurrentWish from './Section/CurrentWish';
 import ProductItem from './Section/ProductItem';
 
+function getFirstUnmatchedSelectedWish(basket) {
+  for (let i = 0; i < basket.length; i++) {
+    const wish = basket[i];
+    if (!wish.product.id) {
+      wish.current = true;
+      return { groupid: wish.groupId, wishid: wish.id };
+    }
+  }
+  return null;
+}
+
 /*eslint-disable */
 function debouncer(a,b,c){var d;return function(){var e=this,f=arguments,g=function(){d=null,c||a.apply(e,f)},h=c&&!d;clearTimeout(d),d=setTimeout(g,b),h&&a.apply(e,f)}}
 function getScrollXY(){var a=0,b=0;return"number"==typeof window.pageYOffset?(b=window.pageYOffset,a=window.pageXOffset):document.body&&(document.body.scrollLeft||document.body.scrollTop)?(b=document.body.scrollTop,a=document.body.scrollLeft):document.documentElement&&(document.documentElement.scrollLeft||document.documentElement.scrollTop)&&(b=document.documentElement.scrollTop,a=document.documentElement.scrollLeft),[a,b]}

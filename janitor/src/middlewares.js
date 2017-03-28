@@ -38,17 +38,18 @@ const parseData = fields => (req, res, next) => {
     if (fieldInfo.type === 'int' && !isInt(value)) {
       return res.send(400);
     }
-    if (value) {
-      try {
-        if (fieldInfo.json) {
-          req.data[field] = JSON.parse(value);
-        } else {
-          req.data[field] = value;
-        }
-      } catch (e) {
-        return res.send(400);
-      }
-    }
+    req.data[field] = value;
+    // if (value) {
+    //   try {
+    //     if (fieldInfo.json) {
+    //       req.data[field] = JSON.parse(value);
+    //     } else {
+    //       req.data[field] = value;
+    //     }
+    //   } catch (e) {
+    //     return res.send(400);
+    //   }
+    // }
   }
   return next();
 };

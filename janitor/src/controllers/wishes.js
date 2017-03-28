@@ -6,10 +6,7 @@ router.post('/groups/:gid/wishes/bulk',
   mid.isAuthenticated,
   mid.checkGroup,
   mid.parseData({
-    names: {
-      required: true,
-      json: true,
-    },
+    names: { required: true },
   }),
   ({ params, data, user }, res) => {
     console.log('coucou');
