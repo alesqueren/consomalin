@@ -4,7 +4,7 @@ const mid = require('../middlewares');
 router.get('/',
   mid.isAuthenticated,
   ({ user }, res) => {
-    const currentBasket = user.currentBasket ? user.currentBasket.selectedWishes : {};
+    const currentBasket = user.currentBasket ? user.currentBasket : {};
     const resp = JSON.stringify({
       wishGroups: user.wishGroups,
       currentBasket,

@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import resources from '../resources';
+
 export default {
   data() {
     return {
@@ -27,9 +29,7 @@ export default {
   },
   methods: {
     register() {
-      const user = this.$resource('http://localhost:9000/api/users/register');
-
-      user.save({},
+      resources.register.save({},
         {
           username: this.username,
           password: this.password,

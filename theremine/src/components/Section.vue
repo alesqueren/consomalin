@@ -3,8 +3,8 @@
     .container
       .row
         .col-md-10
-          currentWish(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
-          .container(v-if="currentWish")
+          currentWish(v-bind:currentwish="basket.currentWish" v-on:new_name="searchProducts(basket.currentWish)")
+          .container(v-if="basket.currentWish")
             .row
               products-item(v-for="(product, productKey, productIndex) in currentWish.matchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct" v-bind:key="productIndex")
           .container(v-else-if="matchedWishes == basket.length")
@@ -30,17 +30,11 @@ import WishItem from './Section/WishItem';
 import CurrentWish from './Section/CurrentWish';
 import ProductItem from './Section/ProductItem';
 
-function getFirstUnmatchedSelectedWish(basket) {
-  for (let i = 0; i < basket.length; i++) {
-    const wish = basket[i];
-    if (!wish.product.id) {
-      wish.current = true;
-      return wish;
-    }
-  }
-  return null;
-}
-
+/*eslint-disable */
+function debouncer(a,b,c){var d;return function(){var e=this,f=arguments,g=function(){d=null,c||a.apply(e,f)},h=c&&!d;clearTimeout(d),d=setTimeout(g,b),h&&a.apply(e,f)}}
+function getScrollXY(){var a=0,b=0;return"number"==typeof window.pageYOffset?(b=window.pageYOffset,a=window.pageXOffset):document.body&&(document.body.scrollLeft||document.body.scrollTop)?(b=document.body.scrollTop,a=document.body.scrollLeft):document.documentElement&&(document.documentElement.scrollLeft||document.documentElement.scrollTop)&&(b=document.documentElement.scrollTop,a=document.documentElement.scrollLeft),[a,b]}
+function getDocHeight(){var a=document;return Math.max(a.body.scrollHeight,a.documentElement.scrollHeight,a.body.offsetHeight,a.documentElement.offsetHeight,a.body.clientHeight,a.documentElement.clientHeight)}
+/*eslint-enable */
 // function unselectWish(wish) {
   // var self = this;
   // var gid = wish.groupId;
@@ -60,22 +54,19 @@ export default {
       // pSelectedWishes: pSelectedWishes,
       // currentWish: currentWish,
       // maxProducts: 40,
-      currentWish: null,
       maxProducts: 40,
     };
   },
   mounted() {
-    // if (this.currentWish) {
-    //   this.searchProducts(this.currentWish);
-    // }
     this.$store.dispatch('updateWishGroupsAndCurrentBasket');
   },
   created() {
     // on ecoute le scroll pour augmenter le nombre de produits visibles
-    // window.addEventListener('scroll', this.handleScroll);
+    // document.addEventListener('scroll',CheckIfScrollBottom);
   },
   destroyed() {
     // window.removeEventListener('scroll', this.handleScroll);
+    // document.removeEventListener('scroll',CheckIfScrollBottom);
   },
   computed: {
     basket() {
@@ -123,14 +114,15 @@ export default {
       // });
     },
 
-    searchProducts: (wish) => {
-      const self = this;
-      $.ajax({
-        type: 'GET',
-        url : '/products/search/'+wish.name,
-        data: {},
-        complete: function(responseObject) {
-          var products = JSON.parse(responseObject.responseText);
+    searchProducts: () => {
+    // searchProducts: (wish) => {
+      // const self = this;
+      // $.ajax({
+      //   type: 'GET',
+      //   url : '/products/search/'+wish.name,
+      //   data: {},
+      //   complete: function(responseObject) {
+      //     var products = JSON.parse(responseObject.responseText);
           // test de sort
           // function compare(a,b) {
           //   if (a.price < b.price)
@@ -148,24 +140,24 @@ export default {
           // }
           // console.log(sortedProducts)
           // self.currentWish.matchingProducts = sortedProducts;
-          self.currentWish.matchingProducts = products;
-        }
-      });
+      //     self.currentWish.matchingProducts = products;
+      //   }
+      // });
     },
 
     newCurrentWish: (wish) => {
       const self = this;
       this.maxProducts = 40;
       // on notifie le serveur du nouveau wish courrant
-      if (this.currentWish !== wish) {
-        this.currentWish = wish;
-        this.sendCurrentWish(this.currentWish);
+      if (this.basket.currentWish !== wish) {
+        this.basket.currentWish = wish;
+        this.sendCurrentWish(this.basket.currentWish);
         // si on a aucun produit pour ce wish
         if (!Array.isArray(wish.matchingProducts) || wish.matchingProducts.length < 1) {
           // on les recherche
-          this.searchProducts(this.currentWish);
+          this.searchProducts(this.basket.currentWish);
         } else {
-          self.currentWish.matchingProducts = self.currentWish.matchingProducts;
+          self.currentWish.basket.matchingProducts = self.basket.currentWish.matchingProducts;
           // console.log(wish.name + ' already have products');
           // console.log(wish.matchingProducts)
         }
@@ -199,11 +191,11 @@ export default {
     },
 
     removeCurrentWish: () => {
-      if (this.currentWish) {
+      if (this.basket.currentWish) {
         for (let i = 0; i < this.selectedWishes.length; i += 1) {
           this.selectedWishes[i].current = false;
         }
-        this.currentWish = null;
+        this.basket.currentWish = null;
         // $.ajax({
         //   type: 'PUT',
         //   url : '/wishlist/removeCurrent',
@@ -255,6 +247,12 @@ export default {
     // lazyloading
     // lorsqu'on atteint le bas de la page a 100px pret on augmente le nombre de produits affichable
     handleScroll: () => {
+      // const footerEl = document.getElementById('footer');
+      // const CheckIfScrollBottom = debouncer(function() {
+      //   if(getDocHeight() == getScrollXY()[1] + window.innerHeight) {
+      //      this.maxProducts += 20;
+      //   }
+      // },500);
       // if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
       //    this.maxProducts += 20;
       // }

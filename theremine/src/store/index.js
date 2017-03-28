@@ -1,8 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import resources from '../resources';
 import User from './User/index';
 import Wishes from './Wishes/index';
+import WishGroups from './WishGroups/index';
+import Wishlist from './Wishlist/index';
+import Basket from './Basket/index';
 
 Vue.use(Vuex);
 // TODO: add vuex-router-sync
@@ -13,125 +15,12 @@ export default new Vuex.Store({
     wishGroups: null,
     currentBasket: null,
   },
-    // getWish: state => ({ groupId, wishId }) => {
-    //   return state.currentBasket.selectedWishes[groupId][wishId];
-    // },
+  // getWish: state => ({ groupId, wishId }) => {
+  //   return state.currentBasket.selectedWishes[groupId][wishId];
+  // },
   getters: {
-    isSelectedWishGroup: state => ({ groupId }) => {
-      const selectedWishes = state.currentBasket.selectedWishes;
-      return (selectedWishes && selectedWishes[groupId]);
-    },
-    getWishlist: (state) => {
-      const wishlist = [];
-      if (state.wishGroups) {
-        const selectedWishes = state.currentBasket.selectedWishes;
-        for (let i = 0; i < state.wishGroups.length; i++) {
-          const wishgroup = state.wishGroups[i];
-          const newWishGroup = {
-            id: wishgroup.id,
-            name: wishgroup.name,
-            wishes: [],
-            selected: false,
-          };
-          const wishGroupLength = wishgroup.wishes ? wishgroup.wishes.length : 0;
-          for (let j = 0; j < wishGroupLength; j++) {
-            const wish = state.wishGroups[i].wishes[j];
-            const newWish = {
-              id: wish.id,
-              name: wish.name,
-              groupId: wishgroup.id,
-              selected: false,
-            };
-            if (selectedWishes) {
-              const wishGroupSelect = selectedWishes[newWish.groupId];
-              if (wishGroupSelect && wishGroupSelect[newWish.id]) {
-                newWish.selected = true;
-                newWishGroup.selected = true;
-              }
-            }
-            newWishGroup.wishes.push(newWish);
-          }
-          wishlist.push(newWishGroup);
-        }
-      }
-      return wishlist;
-    },
-    getBasket: (state) => {
-      const basket = [];
-      if (state.wishGroups && state.currentBasket.selectedWishes) {
-        const selectedWishes = state.currentBasket.selectedWishes;
-        for (let i = 0; i < state.wishGroups.length; i++) {
-          const wishgroup = state.wishGroups[i];
-          const wishGroupLength = wishgroup.wishes ? wishgroup.wishes.length : 0;
-          for (let j = 0; j < wishGroupLength; j++) {
-            const wish = state.wishGroups[i].wishes[j];
-            const wishGroupSelect = selectedWishes[wishgroup.id];
-            if (wishGroupSelect && selectedWishes[wishgroup.id][wish.id]) {
-              const selectedWish = selectedWishes[wishgroup.id][wish.id];
-              const newWish = {
-                id: wish.id,
-                name: wish.name,
-                groupId: wishgroup.id,
-                matchingProducts: [],
-                product: {
-                  id: selectedWish.pid,
-                  quantity: selectedWish.quantity,
-                },
-                selected: true,
-              };
-              basket.push(newWish);
-            }
-          }
-          // if (wishes.length) {
-          //   const newWishGroup = {
-          //     id: wishgroup.id,
-          //     name: wishgroup.name,
-          //     wishes,
-          //     selected: true,
-          //   };
-          //   basket.push(newWishGroup);
-          // }
-        }
-      }
-      // console.log('basket');
-      // console.log(basket);
-      return basket;
-    },
   },
   actions: {
-    updateWishGroupsAndCurrentBasket: ({ commit, state }) => {
-      if (!state.wishGroups) {
-        resources.wishlist.get(
-          {},
-          {},
-        ).then((response) => {
-          const data = JSON.parse(response.data);
-          const wishGroups = data.wishGroups;
-          const currentBasket = data.currentBasket;
-          if (!currentBasket.selectedWishes) {
-            currentBasket.selectedWishes = {};
-          }
-          commit('setWishGroupsAndCurrentBasket', { wishGroups, currentBasket });
-        }, () => {
-          // console.log('error');
-        });
-      }
-    },
-    addWishGroup: ({ commit }, name) => {
-      resources.wishgroup.save({}, { name }).then((response) => {
-        commit('addWishGroup', { id: response.body, name, wishes: [] });
-      }, () => {
-        // console.log('error');
-      });
-    },
-    removeWishGroup: ({ commit }, groupId) => {
-      resources.wishgroup.delete({ groupid: groupId }, {}).then(() => {
-        commit('removeWishGroup', { groupId });
-      }, () => {
-        // console.log('error');
-      });
-      commit('selectWishGroup', { groupId, selected: false });
-    },
   },
   mutations: {
     addWishGroup: (state, { id, name, wishes }) => {
@@ -161,6 +50,9 @@ export default new Vuex.Store({
     },
     setWishlist: (state, wishlist) => {
       state.wishlist = wishlist;
+    },
+    setCurrentWish: (state, groupid, wishid) => {
+      state.currentBasket.currentWish = { groupid, wishid };
     },
     addWish: (state, { groupId, id, name }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
@@ -211,5 +103,8 @@ export default new Vuex.Store({
   modules: {
     User,
     Wishes,
+    WishGroups,
+    Wishlist,
+    Basket,
   },
 });
