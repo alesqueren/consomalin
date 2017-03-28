@@ -30,13 +30,19 @@ router.put('/groups/:gid',
     // TODO: tester
     if (data.selected) {
       for (const wid in user.wishGroups[gid]) {
-        console.log(user.wishGroups[gid]);
-        console.log(user.wishGroups[gid][wid]);
-        console.log(wid);
         const wishId = user.wishGroups[gid][wid];
         wishesManager.select(user._id, gid, wishId, data.selected);
       }
     }
+    res.json('OK');
+  },
+);
+
+router.delete('/groups/:gid',
+  mid.isAuthenticated,
+  mid.checkGroup,
+  ({ params, user }, res) => {
+    groupsManager.remove(user._id, params.gid);
     res.json('OK');
   },
 );

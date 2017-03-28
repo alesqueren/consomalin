@@ -6,7 +6,7 @@
     router-link(to="/login") Se connecter
     router-link(to="/register") S'enregistrer
   div(v-else)
-    span {{ user.id }}
+    span {{ user }}
     a.btn.btn-info.btn-sm(@click.prevent='logout')
       span.fa.fa-sign-out
       span Log out

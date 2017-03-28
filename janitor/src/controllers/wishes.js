@@ -44,7 +44,7 @@ router.put('/groups/:gid/wishes/:wid',
     if (data.name) {
       wishesManager.rename(user._id, params.gid, params.wid, data.name);
     }
-    if (data.selected) {
+    if (data.selected !== undefined) {
       wishesManager.select(user._id, params.gid, params.wid, data.selected);
     }
     res.json('OK');
