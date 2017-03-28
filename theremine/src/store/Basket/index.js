@@ -49,25 +49,24 @@ const actions = {
       resources.wishlist.get(
         {},
         {},
-      ).then((response) => {
-        const data = JSON.parse(response.data);
+      ).then(({ data }) => {
         const wishGroups = data.wishGroups;
         const currentBasket = data.currentBasket;
         if (!currentBasket.selectedWishes) {
           currentBasket.selectedWishes = {};
         }
-        if (!rootState.currentBasket.currentWish) {
-          const currentWish = getFirstUnmatchedSelectedWish(this.basket);
-          console.log('1');
-          if (currentWish) {
-            console.log('2');
-            dispatch('setCurrentWish', { currentWish });
-          }
-        }
-        if (rootState.currentBasket.currentWish) {
-          dispatch('searchProductsForWish', { wish: rootState.currentBasket.currentWish });
-          this.searchProducts(this.basket.currentWish);
-        }
+        // if (!rootState.currentBasket.currentWish) {
+        //   const currentWish = getFirstUnmatchedSelectedWish(this.basket);
+        //   console.log('1');
+        //   if (currentWish) {
+        //     console.log('2');
+        //     dispatch('setCurrentWish', { currentWish });
+        //   }
+        // }
+        // if (rootState.currentBasket.currentWish) {
+        //   dispatch('searchProductsForWish', { wish: rootState.currentBasket.currentWish });
+        //   this.searchProducts(this.basket.currentWish);
+        // }
         commit('setWishGroupsAndCurrentBasket', { wishGroups, currentBasket });
       }, () => {
         // console.log('error');
