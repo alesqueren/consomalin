@@ -8,6 +8,13 @@ const actions = {
         success();
       }, fail);
   },
+  register: ({ commit }, { data, success, fail }) => {
+    resources.userRegister.save({}, data)
+      .then(() => {
+        commit('setUser', data.username);
+        success();
+      }, fail);
+  },
   logout: ({ commit }) => {
     resources.logout.get().then(() => {
       commit('setUser', false);
@@ -15,9 +22,7 @@ const actions = {
   },
   fetchUser: ({ commit }) => {
     resources.userTmp.get().then((res) => {
-      // console.log(res.body);
-      const user = res.body;
-      commit('setUser', user);
+      commit('setUser', res.body.id);
     }, () => {
       commit('setUser', false);
     });

@@ -5,10 +5,10 @@ router.get('/',
   mid.isAuthenticated,
   ({ user }, res) => {
     const currentBasket = user.currentBasket ? user.currentBasket : {};
-    const resp = JSON.stringify({
+    const resp = {
       wishGroups: user.wishGroups,
       currentBasket,
-    });
+    };
     res.json(resp);
   },
 );

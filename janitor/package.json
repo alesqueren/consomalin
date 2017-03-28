@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "./node_modules/webpack/bin/webpack.js --config build/webpack.conf.js",
-    "start": "node bin/app.bundle.js",
+    "start": "npm run build && node bin/app.bundle.js",
     "dev": "node build/dev-server.js"
   },
   "dependencies": {

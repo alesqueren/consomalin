@@ -1,5 +1,6 @@
 <template lang='pug'>
   .container
+    p(v-if="error") Username already exists
     .row
       .col-md-6.offset-md-3
         .panel.panel-login
@@ -25,15 +26,26 @@ export default {
     return {
       username: '',
       password: '',
+      error: false,
     };
   },
   methods: {
+    fail() {
+      this.error = true;
+    },
+    succeed() {
+      this.$router.replace('/');
+    },
     register() {
-      resources.register.save({},
-        {
-          username: this.username,
-          password: this.password,
-        });
+      const data = {
+        username: this.username,
+        password: this.password,
+      };
+      this.$store.dispatch('register', {
+        data,
+        fail: this.fail,
+        success: this.succeed,
+      });
     },
   },
 };

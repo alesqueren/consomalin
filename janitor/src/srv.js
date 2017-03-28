@@ -6,11 +6,11 @@ const groupsControllers = require('./controllers/groups')();
 const wishesControllers = require('./controllers/wishes')();
 const productsControllers = require('./controllers/products')();
 
-const port = process.env.SERVER_PORT || 3000;
+const port = process.env.SERVER_PORT || 3001;
 
 const notFound = router.get('*',
   (req, res) => {
-    res.send('Not found\n');
+    res.send(404, 'Not found\n');
   });
 
 const server = (app) => {
