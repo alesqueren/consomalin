@@ -14,6 +14,22 @@ const getters = {
     }
     return wishFound;
   },
+  getCurrentWish: (state, commit, rootState) => {
+    let wishFound = null;
+    if (rootState.currentBasket) {
+      const currentWish = rootState.currentBasket.currentWish;
+      for (let i = 0; i < rootState.wishGroups.length; i++) {
+        const wishGroup = rootState.wishGroups[i];
+        for (let j = 0; j < wishGroup.wishes.length; j++) {
+          const wish = wishGroup.wishes[j];
+          if (wish.id === currentWish.wishid) {
+            wishFound = wish;
+          }
+        }
+      }
+    }
+    return wishFound;
+  },
   isSelectedWish: (state, commit, rootState) => ({ groupId, wishId }) => {
     const sw = rootState.currentBasket.selectedWishes;
     if (!sw) {

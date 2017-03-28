@@ -1,26 +1,17 @@
 import resources from '../../resources';
 
-function getFirstUnmatchedSelectedWish(basket) {
-  for (let i = 0; i < basket.length; i++) {
-    const wish = basket[i];
-    if (!wish.product.id) {
-      wish.current = true;
-      return { groupid: wish.groupId, wishid: wish.id };
-    }
-  }
-  return null;
-}
-
 const getters = {
   getBasket: (state, commit, rootState) => {
     const basket = [];
-    if (rootState.wishGroups && rootState.currentBasket.selectedWishes) {
-      const selectedWishes = rootState.currentBasket.selectedWishes;
-      for (let i = 0; i < rootState.wishGroups.length; i++) {
-        const wishgroup = rootState.wishGroups[i];
+    const currentBasket = rootState.currentBasket;
+    const wishGroups = rootState.wishGroups;
+    if (wishGroups && currentBasket.selectedWishes) {
+      const selectedWishes = currentBasket.selectedWishes;
+      for (let i = 0; i < wishGroups.length; i++) {
+        const wishgroup = wishGroups[i];
         const wishGroupLength = wishgroup.wishes ? wishgroup.wishes.length : 0;
         for (let j = 0; j < wishGroupLength; j++) {
-          const wish = rootState.wishGroups[i].wishes[j];
+          const wish = wishGroups[i].wishes[j];
           const wishGroupSelect = selectedWishes[wishgroup.id];
           if (wishGroupSelect && selectedWishes[wishgroup.id][wish.id]) {
             const selectedWish = selectedWishes[wishgroup.id][wish.id];
@@ -33,8 +24,14 @@ const getters = {
                 id: selectedWish.pid,
                 quantity: selectedWish.quantity,
               },
-              selected: true,
             };
+            const sameGroup = currentBasket.currentWish.groupid === wishgroup.id;
+            // console.log('currentBasket.currentWish.groupid');
+            // console.log(currentBasket.currentWish.groupid);
+            const sameWish = currentBasket.currentWish.wishid === wish.id;
+            if (sameGroup && sameWish) {
+              newWish.current = true;
+            }
             basket.push(newWish);
           }
         }
@@ -44,41 +41,14 @@ const getters = {
   },
 };
 const actions = {
-  updateWishGroupsAndCurrentBasket: ({ dispatch, commit, rootState }) => {
-    if (!rootState.wishGroups) {
-      resources.wishlist.get(
-        {},
-        {},
-      ).then(({ data }) => {
-        const wishGroups = data.wishGroups;
-        const currentBasket = data.currentBasket;
-        if (!currentBasket.selectedWishes) {
-          currentBasket.selectedWishes = {};
-        }
-        // if (!rootState.currentBasket.currentWish) {
-        //   const currentWish = getFirstUnmatchedSelectedWish(this.basket);
-        //   console.log('1');
-        //   if (currentWish) {
-        //     console.log('2');
-        //     dispatch('setCurrentWish', { currentWish });
-        //   }
-        // }
-        // if (rootState.currentBasket.currentWish) {
-        //   dispatch('searchProductsForWish', { wish: rootState.currentBasket.currentWish });
-        //   this.searchProducts(this.basket.currentWish);
-        // }
-        commit('setWishGroupsAndCurrentBasket', { wishGroups, currentBasket });
-      }, () => {
-        // console.log('error');
-      });
-    }
-  },
   searchProductsForWish: ({ commit }, { wish }) => {
-    resources.currentWish.save({}, { pid: wish.product.id }).then((response) => {
-      // commit('setCurrentWish', { id: response.body, name, wishes: [] });
-    }, () => {
-      // console.log('error');
-    });
+    // resources.currentWish.save({}, { pid: wish.product.id }).then((response) => {
+    // console.log('response');
+    // console.log(response);
+    // commit('setMatchingProducts', { wish, response });
+    // }, () => {
+    //  console.log('error');
+    // });
   },
   setCurrentWish: ({ commit }, { groupid, wishid }) => {
     // resources.currentWish.save({}, { groupid, wishid }).then((response) => {

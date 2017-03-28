@@ -3,8 +3,8 @@
     .container
       .row
         .col-md-10
-          currentWish(v-bind:currentwish="basket.currentWish" v-on:new_name="searchProducts(basket.currentWish)")
-          .container(v-if="basket.currentWish")
+          currentWish(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
+          .container(v-if="currentWish")
             .row
               products-item(v-for="(product, productKey, productIndex) in currentWish.matchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct" v-bind:key="productIndex")
           .container(v-else-if="matchedWishes == basket.length")
@@ -69,7 +69,12 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch('updateWishGroupsAndCurrentBasket');
+    this.$store
+      .dispatch('updateWishGroupsAndCurrentBasket')
+      .then(() => {
+        this.$store
+          .dispatch('processCurrentWish');
+      });
   },
   created() {
     // on ecoute le scroll pour augmenter le nombre de produits visibles
@@ -80,6 +85,15 @@ export default {
     // document.removeEventListener('scroll',CheckIfScrollBottom);
   },
   computed: {
+    currentBasket() {
+      return this.$store.state.currentBasket;
+    },
+    currentWish() {
+      // if (this.$store.state.currentBasket) {
+      return this.$store.getters.getCurrentWish;
+      // }
+      // return null;
+    },
     basket() {
       const basket = this.$store.getters.getBasket;
       return basket;
