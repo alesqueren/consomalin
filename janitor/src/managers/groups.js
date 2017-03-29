@@ -18,11 +18,11 @@ function add(uid, groupName) {
   return hash;
 }
 
-function rename(uid, groupId, newName) {
+function rename(uid, gid, newName) {
   const users = mongo.db.collection('user');
   const path = 'wishGroups.$.name';
   users.updateOne(
-    { 'wishGroups.id': groupId },
+    { 'wishGroups.id': gid },
     {
       $set: {
         [path]: newName,
@@ -31,14 +31,51 @@ function rename(uid, groupId, newName) {
   );
 }
 
-function remove(uid, groupId) {
+function select(uid, wishGroups, gid) {
+  const selectWishes = {};
+  for (const i in wishGroups) {
+    const group = wishGroups[i];
+    if (group.id === gid) {
+      for (const j in group.wishes) {
+        const wish = group.wishes[j];
+        selectWishes[wish.id] = {};
+      }
+    }
+  }
+
+  const users = mongo.db.collection('user');
+  const path = `currentBasket.selectedWishes.${gid}`;
+  users.update(
+    { _id: uid },
+    {
+      $set: {
+        [path]: selectWishes,
+      },
+    },
+  );
+}
+
+function unselect(uid, gid) {
+  const users = mongo.db.collection('user');
+  const path = `currentBasket.selectedWishes.${gid}`;
+  users.update(
+    { _id: uid },
+    {
+      $unset: {
+        [path]: '',
+      },
+    },
+  );
+}
+
+function remove(uid, gid) {
   const users = mongo.db.collection('user');
   users.updateOne(
-    { id: uid },
+    { _id: uid },
     {
       $pull: {
         wishGroups: {
-          id: groupId,
+          id: gid,
         },
       },
     },
@@ -48,5 +85,7 @@ function remove(uid, groupId) {
 module.exports = {
   add,
   rename,
+  select,
+  unselect,
   remove,
 };

@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const mid = require('../middlewares');
 const groupsManager = require('../managers/groups');
-const wishesManager = require('../managers/wishes');
 
 router.post('/groups',
   mid.isAuthenticated,
@@ -27,10 +26,11 @@ router.put('/groups/:gid',
     if (data.name) {
       groupsManager.rename(user._id, gid, data.name);
     }
-    if (data.selected) {
-      for (const wid in user.wishGroups[gid]) {
-        const wishId = user.wishGroups[gid][wid];
-        wishesManager.select(user._id, gid, wishId, data.selected);
+    if (data.selected !== undefined) {
+      if (data.selected) {
+        groupsManager.select(user._id, user.wishGroups, gid);
+      } else {
+        groupsManager.unselect(user._id, gid);
       }
     }
     res.json('OK');

@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import resources from '../resources';
-
 export default {
   data() {
     return {
@@ -34,7 +32,7 @@ export default {
       this.error = true;
     },
     succeed() {
-      this.$router.replace('/');
+      this.$router.replace('/wishlist');
     },
     register() {
       const data = {

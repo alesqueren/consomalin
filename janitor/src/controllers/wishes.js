@@ -47,7 +47,7 @@ router.put('/groups/:gid/wishes/:wid',
     if (data.selected !== undefined) {
       if (!data.selected &&
           Object.keys(user.currentBasket.selectedWishes[params.gid]).length <= 1) {
-        groupsManager.remove(user._id, params.gid);
+        groupsManager.unselect(user._id, params.gid);
       } else {
         wishesManager.select(user._id, params.gid, params.wid, data.selected);
       }
@@ -60,6 +60,7 @@ router.delete('/groups/:gid/wishes/:wid',
   mid.isAuthenticated,
   mid.checkWish,
   ({ params, user }, res) => {
+    wishesManager.select(user._id, params.gid, params.wid, false);
     wishesManager.remove(user._id, params.gid, params.wid);
     res.json('OK');
   },
