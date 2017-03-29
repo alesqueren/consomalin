@@ -1,6 +1,8 @@
 <template lang='pug'>
-  div.wishgroup.list-group-item.col-3(v-bind:class="{'bg-info' : selected}" @click="select")
-    input(type="checkbox" v-model="selected")
+  div.wishgroup.list-group-item.col-3(v-bind:class="{'bg-info': selected}" @click="select")
+    input(type="checkbox" v-model="selected" onclick="event.stopPropagation()")
+    div
+      span.groupName <strong>{{ wishgroup.name }}</strong>
     div
       button.btn.btn-danger.topright(@click.stop="remove")
         i.fa.fa-trash-o.fa-sm
@@ -8,11 +10,9 @@
       button.btn.btn-primary.bottomright(@click.stop="editName")
         i.fa.fa-pencil.fa-sm
     div
-      span.groupName <strong>{{ wishgroup.name }}</strong>
-    div
       wishItem(v-for="wish in wishgroup.wishes" v-bind:wish="wish" v-bind:key="wish")
     div
-      input(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Add a wish" onclick="event.cancelBubble=true;")
+      input(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Add a wish" onclick="event.stopPropagation()")
 </template>
 
 <script>
@@ -25,10 +25,7 @@ function selectWish(context, selected) {
   const selectedWishes = currentBasket.selectedWishes;
   if (currentBasket && currentBasket.selectedWishes && !selected) {
     const selectedGroup = selectedWishes[groupId];
-    // console.log('component:wishGroupItem:computed:set: deselection');
     for (const selectedWish in selectedGroup) {
-      // console.log('component:wishGroupItem:computed:set: selectWish :');
-      // console.log(selectedWish);
       context.$store.dispatch('selectWish', {
         groupId,
         wishId: selectedWish,
@@ -36,14 +33,11 @@ function selectWish(context, selected) {
       });
     }
   } else {
-    // console.log('component:wishGroupItem:computed:set: selection');
     for (let i = 0; i < store.wishGroups.length; i++) {
       const wishgroup = store.wishGroups[i];
       if (wishgroup.id === groupId) {
         for (let j = 0; j < wishgroup.wishes.length; j++) {
           const wish = wishgroup.wishes[j];
-          // console.log('component:wishGroupItem:computed:set: wish.id :');
-          // console.log(wish.id);
           context.$store.dispatch('selectWish', {
             groupId,
             wishId: wish.id,
@@ -68,14 +62,16 @@ export default {
         return this.$store.getters.isSelectedWishGroup(this.wishgroup.id);
       },
       set(selected) {
-        selectWish(this, selected);
+        this.select();
       },
     },
   },
   methods: {
     select() {
-      const selected = !this.wishgroup.selected;
-      selectWish(this, selected);
+      this.$store.dispatch('selectWishGroup', {
+        groupId: this.wishgroup.id,
+        selected: !this.wishgroup.selected,
+      });
     },
     addWish() {
       this.$store.dispatch('addWish', {

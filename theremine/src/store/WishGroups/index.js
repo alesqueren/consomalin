@@ -13,11 +13,17 @@ const actions = {
       commit('addWishGroup', { id: response.body, name, wishes: [] });
     });
   },
+  selectWishGroup: ({ commit }, { groupId, selected }) => {
+    console.log('action selectWishGroup ' + groupId + ' ' + selected);
+    resources.wishgroup.update({ groupid: groupId }, { selected });
+    // resources.wishgroup.delete({ groupid: groupId }, {}).then(() => {
+    //   commit('selectWishGroup', { groupId });
+    // });
+  },
   removeWishGroup: ({ commit }, groupId) => {
     resources.wishgroup.delete({ groupid: groupId }, {}).then(() => {
       commit('removeWishGroup', { groupId });
     });
-    commit('selectWishGroup', { groupId, selected: false });
   },
 };
 
