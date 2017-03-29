@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import resources from '../resources';
-
 export default {
   data() {
     return {

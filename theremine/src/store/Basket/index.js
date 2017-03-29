@@ -1,4 +1,4 @@
-import resources from '../../resources';
+// import resources from '../../resources';
 
 const getters = {
   getBasket: (state, commit, rootState) => {
@@ -41,7 +41,7 @@ const getters = {
   },
 };
 const actions = {
-  searchProductsForWish: ({ commit }, { wish }) => {
+  searchProductsForWish: () => {
     // resources.currentWish.save({}, { pid: wish.product.id }).then((response) => {
     // console.log('response');
     // console.log(response);

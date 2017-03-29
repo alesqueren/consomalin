@@ -87,7 +87,6 @@ export default new Vuex.Store({
       });
     },
     removeWishGroup: (state, { groupId }) => {
-      this.unselectGroup();
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishgroup = state.wishGroups[i];
         if (wishgroup.id === groupId) {

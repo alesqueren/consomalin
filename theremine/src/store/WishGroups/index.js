@@ -3,7 +3,7 @@ import resources from '../../resources';
 const getters = {
   isSelectedWishGroup: (state, commit, rootState) => (groupId) => {
     const selectedWishes = rootState.currentBasket.selectedWishes;
-    return (selectedWishes && selectedWishes[groupId]);
+    return Boolean(selectedWishes && selectedWishes[groupId]);
   },
 };
 
@@ -14,15 +14,13 @@ const actions = {
     });
   },
   selectWishGroup: ({ commit }, { groupId, selected }) => {
+    const commitName = selected ? 'selectGroup' : 'unselectGroup';
+    commit(commitName, { groupId });
     resources.wishgroup.update({ groupid: groupId }, { selected });
-    if (selected) {
-      commit('selectGroup', { groupId });
-    } else {
-      commit('unselectGroup', { groupId });
-    }
   },
   removeWishGroup: ({ commit }, groupId) => {
     resources.wishgroup.delete({ groupid: groupId }, {}).then(() => {
+      commit('unselectGroup', { groupId });
       commit('removeWishGroup', { groupId });
     });
   },
