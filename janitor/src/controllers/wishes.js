@@ -60,6 +60,7 @@ router.delete('/groups/:gid/wishes/:wid',
   mid.isAuthenticated,
   mid.checkWish,
   ({ params, user }, res) => {
+    wishesManager.select(user._id, params.gid, params.wid, false);
     wishesManager.remove(user._id, params.gid, params.wid);
     res.json('OK');
   },

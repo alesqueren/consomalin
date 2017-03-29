@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const mid = require('../middlewares');
 const groupsManager = require('../managers/groups');
-const wishesManager = require('../managers/wishes');
 
 router.post('/groups',
   mid.isAuthenticated,
