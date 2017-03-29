@@ -14,11 +14,12 @@ const actions = {
     });
   },
   selectWishGroup: ({ commit }, { groupId, selected }) => {
-    console.log('action selectWishGroup ' + groupId + ' ' + selected);
     resources.wishgroup.update({ groupid: groupId }, { selected });
-    // resources.wishgroup.delete({ groupid: groupId }, {}).then(() => {
-    //   commit('selectWishGroup', { groupId });
-    // });
+    if (selected) {
+      commit('selectGroup', { groupId });
+    } else {
+      commit('unselectGroup', { groupId });
+    }
   },
   removeWishGroup: ({ commit }, groupId) => {
     resources.wishgroup.delete({ groupid: groupId }, {}).then(() => {

@@ -18,37 +18,6 @@
 <script>
 import wishItem from './WishItem';
 
-function selectWish(context, selected) {
-  const groupId = context.wishgroup.id;
-  const store = context.$store.state;
-  const currentBasket = store.currentBasket;
-  const selectedWishes = currentBasket.selectedWishes;
-  if (currentBasket && currentBasket.selectedWishes && !selected) {
-    const selectedGroup = selectedWishes[groupId];
-    for (const selectedWish in selectedGroup) {
-      context.$store.dispatch('selectWish', {
-        groupId,
-        wishId: selectedWish,
-        selected,
-      });
-    }
-  } else {
-    for (let i = 0; i < store.wishGroups.length; i++) {
-      const wishgroup = store.wishGroups[i];
-      if (wishgroup.id === groupId) {
-        for (let j = 0; j < wishgroup.wishes.length; j++) {
-          const wish = wishgroup.wishes[j];
-          context.$store.dispatch('selectWish', {
-            groupId,
-            wishId: wish.id,
-            selected,
-          });
-        }
-      }
-    }
-  }
-}
-
 export default {
   props: ['wishlist', 'wishgroup', 'wishgroupindex'],
   data() {
