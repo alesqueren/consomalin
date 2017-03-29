@@ -25,6 +25,8 @@ export default new Vuex.Store({
   state: {
     wishGroups: null,
     currentBasket: null,
+    searchs: {},
+    productInfos: {},
   },
   // getWish: state => ({ groupId, wishId }) => {
   //   return state.currentBasket.selectedWishes[groupId][wishId];
@@ -58,16 +60,21 @@ export default new Vuex.Store({
     },
     processCurrentWish: ({ dispatch, getters, commit, state }) => {
       // console.log('store basket processCurrentWish');
-      const currentWish = state.currentBasket.currentWish;
+      let currentWish = state.currentBasket.currentWish;
       if (!currentWish.groupid && getters.getBasket) {
         const newCurrentWish = getFirstUnmatchedSelectedWish(getters.getBasket);
         if (newCurrentWish) {
-          // console.log(newCurrentWish);
-          commit('setCurrentWish', { groupid: newCurrentWish.groupid, wishid: newCurrentWish.wishid });
+          currentWish = getters.getWish(newCurrentWish.wishid);
+          const groupId = currentWish.groupId;
+          const wishId = currentWish.id;
+          resources.currentWish.save({}, { groupId, wishId }).then((response) => {
+            commit('setCurrentWish', { groupid: currentWish.groupId, wishid: currentWish.id });
+          });
         }
       }
-      if (currentWish) {
-        dispatch('searchProductsForWish', { wish: currentWish });
+      if (currentWish.id && !state.searchs.name) {
+        const name = currentWish.name;
+        dispatch('searchProductsForName', { name });
         // this.searchProducts(this.basket.currentWish);
       }
 
@@ -112,9 +119,17 @@ export default new Vuex.Store({
     },
     setCurrentWish: (state, { groupid, wishid }) => {
       // console.log('groupid : ' + groupid);
-      Vue.set(state.currentBasket.currentWish, 'groupid', groupid);
-      Vue.set(state.currentBasket.currentWish, 'wishid', wishid);
+      Vue.set(state.currentBasket.currentWish, 'groupId', groupid);
+      Vue.set(state.currentBasket.currentWish, 'wishId', wishid);
       // state.currentBasket.currentWish = { groupid, wishid };
+    },
+    addSearchs: (state, { name, products }) => {
+      // console.log('store index mutation addSearchs');
+      Vue.set(state.searchs, name, products);
+    },
+    addProductInfos: (state, { pid, infos }) => {
+      console.log('store index mutation addProductInfos');
+      Vue.set(state.productInfos, pid, infos);
     },
     addWish: (state, { groupId, id, name }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
@@ -127,14 +142,19 @@ export default new Vuex.Store({
         }
       }
     },
+    setProduct: (state, { groupId, wishId, pid, quantity }) => {
+      const entity = state.currentBasket.selectedWishes[groupId][wishId];
+      Vue.set(entity, 'pid', pid);
+      Vue.set(entity, 'quantity', quantity);
+    },
     setMatchingProducts: (state, { wish, products }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishgroup = state.wishGroups[i];
         if (wishgroup.id === wish.groupId) {
-          for (let j = 0; j < wishgroup.length; j++) {
-            const tmpWish = wishgroup[j];
+          for (let j = 0; j < wishgroup.wishes.length; j++) {
+            const tmpWish = wishgroup.wishes[j];
             if (tmpWish.id === wish.id) {
-              wish.matchingProducts = products;
+              Vue.set(state.wishGroups[i].wishes[j], 'matchingProducts', products);
             }
           }
         }

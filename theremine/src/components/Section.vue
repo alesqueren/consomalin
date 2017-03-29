@@ -5,8 +5,8 @@
         .col-md-10
           currentWish(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
           .container(v-if="currentWish")
-            .row
-              products-item(v-for="(product, productKey, productIndex) in currentWish.matchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct" v-bind:key="productIndex")
+            .row(v-if="currentWishHasMatchingProducts")
+                product-item(v-for="(product, productKey, productIndex) in currentWishHasMatchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct" v-bind:key="productIndex" v-bind:currentWish="currentWish")
           .container(v-else-if="matchedWishes == basket.length")
             .row
               div
@@ -85,8 +85,14 @@ export default {
     // document.removeEventListener('scroll',CheckIfScrollBottom);
   },
   computed: {
+    searchs() {
+      return this.$store.state.searchs;
+    },
     currentBasket() {
       return this.$store.state.currentBasket;
+    },
+    currentWishHasMatchingProducts() {
+      return this.currentWish && this.searchs[this.currentWish.name];
     },
     currentWish() {
       // if (this.$store.state.currentBasket) {
@@ -283,7 +289,7 @@ export default {
       // }
     },
   },
-  components: { WishItem, CurrentWish, ProductItem },
+  components: { CurrentWish, WishItem, ProductItem },
 };
 </script>
 

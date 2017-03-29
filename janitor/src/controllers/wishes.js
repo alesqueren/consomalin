@@ -65,20 +65,6 @@ router.delete('/groups/:gid/wishes/:wid',
   },
 );
 
-
-// //set current wish
-// router.put('/wishlist/groups/:gid/wishes/:wid/current', isAuthenticated, (req, res) => {
-//   usersManager.setCurrentWish(req.user._id, req.params.gid, req.params.wid);
-//   res.setHeader('Content-Type', 'application/json');
-//   res.send(JSON.stringify('OK'));
-// });
-// //remove current wish
-// router.put('/wishlist/removeCurrent', isAuthenticated, (req, res) => {
-//   usersManager.removeCurrentWish(req.user._id);
-//   res.setHeader('Content-Type', 'application/json');
-//   res.send(JSON.stringify('OK'));
-// });
-
 module.exports = function init() {
   return router;
 };

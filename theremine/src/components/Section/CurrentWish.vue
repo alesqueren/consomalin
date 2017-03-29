@@ -1,28 +1,48 @@
 <template lang='pug'>
-  div.input-group.stylish-input-group(v-if="currentwish")
-    input.form-control(type="text" v-model.sync="currentwish.name" v-on:keyup.enter="rename")
-    span.input-group-addon
-      button(type="submit")
-        span.fa.fa-search
+  div(v-if="currentwish")
+    div Liste <b>{{ currentwish.groupName }}</b>
+    div.input-group.stylish-input-group
+      input.form-control(type="text" v-model="currentwish.name" v-on:keyup="rename")
+      span.input-group-addon
+        button(type="submit")
+          span.fa.fa-search
 </template>
 
 <script>
 export default {
   props: ['currentwish'],
+  data() {
+    return {
+      delayTimer: null,
+    };
+  },
+  computed: {
+    name: {
+      get() {
+        return this.$store.getters.getCurrentWish.name;
+      },
+      set() {
+        // set(name) {
+        // this.$store.dispatch('renameWish', {
+        //   groupId: this.currentwish.groupId,
+        //   wishId: this.currentwish.id,
+        //   name,
+        // });
+      },
+    },
+  },
   methods: {
-    rename: {
-      // var currentgroupId = this.currentwish.groupId;
-      // var currentwishId = this.currentwish.groupId;
-      // var url = '/wishlist/groups/'+currentgroupId+'/wishes/'+currentwishId+'/rename';
-      // var self = this;
-      // $.ajax({
-      //   type: 'PUT',
-      //   url : url,
-      //   data: {'name' : this.currentwish.name },
-      //   complete: function(responseObject) {
-      //     self.$emit('new_name', self.currentwish.name);
-      //   }
-      // });
+    rename() {
+      clearTimeout(this.delayTimer);
+      this.delayTimer = setTimeout(() => {
+        const name = this.currentwish.name;
+        this.$store.dispatch('renameWish', {
+          groupId: this.currentwish.groupId,
+          wishId: this.currentwish.id,
+          name,
+        });
+        this.$store.dispatch('searchProductsForName', { name });
+      }, 200);
     },
   },
 };

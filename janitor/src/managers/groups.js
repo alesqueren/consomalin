@@ -1,12 +1,9 @@
 const mongo = require('../bs/mongo');
-const crypto = require('crypto');
+const utils = require('../utils');
 
 function add(uid, groupName) {
   const users = mongo.db.collection('user');
-  const secret = uid;
-  const hash = crypto.createHmac('sha256', secret)
-    .update(groupName + Date.now().toString())
-    .digest('hex');
+  const hash = utils.randHash(uid, groupName);
   users.updateOne(
     { _id: uid },
     {

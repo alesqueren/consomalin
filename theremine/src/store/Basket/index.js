@@ -15,14 +15,17 @@ const getters = {
           const wishGroupSelect = selectedWishes[wishgroup.id];
           if (wishGroupSelect && selectedWishes[wishgroup.id][wish.id]) {
             const selectedWish = selectedWishes[wishgroup.id][wish.id];
+            const productInfos = rootState.productInfos[selectedWish.pid];
+            console.log('productInfos : ' + selectedWish.pid);
+            console.log(productInfos);
             const newWish = {
               id: wish.id,
               name: wish.name,
               groupId: wishgroup.id,
-              matchingProducts: [],
               product: {
                 id: selectedWish.pid,
                 quantity: selectedWish.quantity,
+                infos: productInfos,
               },
             };
             const sameGroup = currentBasket.currentWish.groupid === wishgroup.id;
@@ -41,21 +44,30 @@ const getters = {
   },
 };
 const actions = {
-  searchProductsForWish: ({ commit }, { wish }) => {
-    // resources.currentWish.save({}, { pid: wish.product.id }).then((response) => {
-    // console.log('response');
-    // console.log(response);
-    // commit('setMatchingProducts', { wish, response });
-    // }, () => {
-    //  console.log('error');
-    // });
+  searchProductsForName: ({ commit, rootState }, { name }) => {
+    if (!rootState.searchs.name) {
+      const uri = 'search?s=' + name;
+      resources.kiva.get({ uri }, {}).then((response) => {
+        const products = JSON.parse(response.body);
+        commit('addSearchs', { name, products });
+      });
+    }
+  },
+  updateProductInfos: ({ commit, rootState }, { pid, name, imageUrl, price }) => {
+    const infos = {
+      name,
+      imageUrl,
+      price,
+    };
+    if (!rootState.productInfos[pid]) {
+      commit('addProductInfos', { pid, infos });
+    }
   },
   setCurrentWish: ({ commit }, { groupid, wishid }) => {
-    // resources.currentWish.save({}, { groupid, wishid }).then((response) => {
-    commit('setCurrentWish', { groupid, wishid });
-    // }, () => {
-      // console.log('error');
-    // });
+    // console.log('store basket actions setCurrentWish');
+    resources.currentWish.save({}, { groupid, wishid }).then((response) => {
+      commit('setCurrentWish', { groupid, wishid });
+    });
   },
 };
 

@@ -15,7 +15,8 @@ export default {
   wishlist: Vue.resource('/api/wishlist'),
   wishgroup: Vue.resource('/api/wishlist/groups{/groupid}'),
   wish: Vue.resource('/api/wishlist/groups/{groupid}/wishes{/wishid}'),
+  wishProduct: Vue.resource('/api/wishlist/groups/{groupId}/wishes/{wishId}/product'),
   wishes: Vue.resource('/api/wishlist/groups/{groupid}/wishes/bulk'),
   currentWish: Vue.resource('/api/wishlist/basket/currentWish'),
-  product: Vue.resource('/api/products'),
+  kiva: Vue.resource('/api/products/{uri}'),
 };

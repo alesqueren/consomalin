@@ -6,11 +6,11 @@ router.post('/groups/:gid/wishes/:wid/product',
   mid.isAuthenticated,
   mid.checkWish,
   mid.parseData({
-    productId: { required: true },
+    pid: { required: true },
     quantity: { type: 'int' },
   }),
   ({ params, data, user }, res) => {
-    productManager.set(user._id, params.gid, params.wid, data.productId);
+    productManager.set(user._id, params.gid, params.wid, data.pid);
     if (data.quantity) {
       productManager.setQuantity(user._id, params.gid, params.wid, data.quantity);
     }
@@ -22,12 +22,12 @@ router.put('/groups/:gid/wishes/:wid/product',
   mid.isAuthenticated,
   mid.checkWish,
   mid.parseData({
-    productId: {},
+    pid: {},
     quantity: { type: 'int' },
   }),
   ({ params, data, user }, res) => {
     if (data.name) {
-      productManager.set(user._id, params.gid, params.wid, data.productId);
+      productManager.set(user._id, params.gid, params.wid, data.pid);
     }
     if (data.quantity) {
       productManager.setQuantity(user._id, params.gid, params.wid, data.quantity);

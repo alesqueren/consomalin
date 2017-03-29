@@ -7,11 +7,26 @@
 
 <script>
 export default {
-  props: ['currentwish'],
+  props: ['product', 'productkey', 'currentWish'],
   methods: {
-    selectProduct: () => {
-      // var product = this.product;
-      // this.$emit('select_product', this.productkey, product);
+    selectProduct() {
+      this.$store.dispatch('updateProductInfos',
+        {
+          pid: this.productkey,
+          name: this.product.name,
+          price: this.product.price,
+          imageUrl: this.product.imageUrl,
+        },
+      );
+      this.$store.dispatch('setProduct',
+        {
+          groupId: this.currentWish.groupId,
+          wishId: this.currentWish.id,
+          pid: this.productkey,
+          quantity: 1,
+        },
+      );
+      this.$store.dispatch('processCurrentWish');
     },
   },
 };
