@@ -10,7 +10,7 @@
     div
       span.groupName <strong>{{ wishgroup.name }}</strong>
     div
-      wishItem(v-for="(wish, wishIndex) in wishgroup.wishes" v-bind:wish="wish" v-bind:wishIndex="wishIndex" v-bind:key="wishIndex")
+      wishItem(v-for="wish in wishgroup.wishes" v-bind:wish="wish" v-bind:key="wish")
     div
       input(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Add a wish" onclick="event.cancelBubble=true;")
 </template>
@@ -65,12 +65,7 @@ export default {
   computed: {
     selected: {
       get() {
-        const wishGroupIsSelected = this.$store.getters.isSelectedWishGroup(
-          {
-            groupId: this.wishgroup.id,
-          },
-        );
-        return wishGroupIsSelected;
+        return this.$store.getters.isSelectedWishGroup(this.wishgroup.id);
       },
       set(selected) {
         selectWish(this, selected);

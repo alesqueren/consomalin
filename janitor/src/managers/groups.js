@@ -36,23 +36,16 @@ function rename(uid, groupId, newName) {
 
 function remove(uid, groupId) {
   const users = mongo.db.collection('user');
-  const path = 'wishGroups.$';
   users.updateOne(
-    { 'wishGroups.id': groupId },
-    {
-      $unset: {
-        [path]: 1,
-      },
-    },
-  );
-  users.updateOne(
-    { _id: uid },
+    { id: uid },
     {
       $pull: {
-        wishGroups: null,
+        wishGroups: {
+          id: groupId,
+        },
       },
     },
-  );
+    { multi: true });
 }
 
 module.exports = {

@@ -27,7 +27,6 @@ function isInt(value) {
 }
 
 const parseData = fields => (req, res, next) => {
-  console.log(req.body);
   req.data = {};
   for (const field in fields) {
     const fieldInfo = fields[field];

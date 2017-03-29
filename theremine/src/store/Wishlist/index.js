@@ -1,6 +1,7 @@
 const getters = {
   getWishlist: (state, commit, rootState) => {
     const wishlist = [];
+    console.log(rootState.wishGroups);
     if (rootState.wishGroups) {
       const selectedWishes = rootState.currentBasket.selectedWishes;
       for (let i = 0; i < rootState.wishGroups.length; i++) {
