@@ -70,6 +70,14 @@ const actions = {
     });
     commit('selectWish', { groupId, wishId, selected: false });
   },
+  renameWish: ({ commit }, { groupId, wishId, name }) => {
+    resources.wish.update({ groupid: groupId, wishid: wishId, name }, {}).then(() => {
+      commit('renameWish', { wishId, name });
+    }, () => {
+      // console.log('error');
+    });
+    commit('selectWish', { groupId, wishId, selected: false });
+  },
   selectWish: ({ commit }, { groupId, wishId, selected }) => {
     // console.log('store:action:selectWish: wishId');
     resources.wish.update(

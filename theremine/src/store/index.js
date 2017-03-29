@@ -32,9 +32,9 @@ export default new Vuex.Store({
   getters: {
   },
   actions: {
-    updateWishGroupsAndCurrentBasket({ commit, rootState }) {
+    updateWishGroupsAndCurrentBasket({ commit, state }) {
       return new Promise((resolve, reject) => {
-        if (!rootState.wishGroups) {
+        if (!state.wishGroups) {
           resources.wishlist.get(
             {},
             {},
@@ -56,9 +56,9 @@ export default new Vuex.Store({
         // console.log('store basket updateblalba');
       });
     },
-    processCurrentWish: ({ dispatch, getters, commit, rootState }) => {
+    processCurrentWish: ({ dispatch, getters, commit, state }) => {
       // console.log('store basket processCurrentWish');
-      const currentWish = rootState.currentBasket.currentWish;
+      const currentWish = state.currentBasket.currentWish;
       if (!currentWish.groupid && getters.getBasket) {
         const newCurrentWish = getFirstUnmatchedSelectedWish(getters.getBasket);
         if (newCurrentWish) {
@@ -147,6 +147,17 @@ export default new Vuex.Store({
           const wish = wishGroup.wishes[j];
           if (wish.id === wishId) {
             state.wishGroups[i].wishes.splice(j, 1);
+          }
+        }
+      }
+    },
+    renameWish: (state, { wishId, name }) => {
+      for (let i = 0; i < state.wishGroups.length; i++) {
+        const wishGroup = state.wishGroups[i];
+        for (let j = 0; j < wishGroup.wishes.length; j++) {
+          const wish = wishGroup.wishes[j];
+          if (wish.id === wishId) {
+            wish.name = name;
           }
         }
       }
