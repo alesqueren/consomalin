@@ -27,7 +27,6 @@ router.put('/groups/:gid',
     if (data.name) {
       groupsManager.rename(user._id, gid, data.name);
     }
-    // TODO: tester
     if (data.selected) {
       for (const wid in user.wishGroups[gid]) {
         const wishId = user.wishGroups[gid][wid];

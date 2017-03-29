@@ -65,12 +65,7 @@ export default {
   computed: {
     selected: {
       get() {
-        const wishGroupIsSelected = this.$store.getters.isSelectedWishGroup(
-          {
-            groupId: this.wishgroup.id,
-          },
-        );
-        return wishGroupIsSelected;
+        return this.$store.getters.isSelectedWishGroup(this.wishgroup.id);
       },
       set(selected) {
         selectWish(this, selected);

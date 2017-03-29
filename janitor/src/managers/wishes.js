@@ -18,15 +18,7 @@ function select(uid, gid, wid, selected) {
       { _id: uid },
       {
         $unset: {
-          [path]: 1,
-        },
-      },
-    );
-    users.updateOne(
-      { _id: uid },
-      {
-        $pull: {
-          'currentBasket.selectedWishes': null,
+          [path]: '',
         },
       },
     );
