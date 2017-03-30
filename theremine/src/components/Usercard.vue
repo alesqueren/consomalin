@@ -25,7 +25,9 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch('fetchUser');
+    if (this.user === null) {
+      this.$store.dispatch('fetchUser');
+    }
   },
 };
 </script>

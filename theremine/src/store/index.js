@@ -76,7 +76,6 @@ export default new Vuex.Store({
       });
     },
     nextCurrentWish: ({ dispatch, getters, commit, state }) => {
-      // console.log('store basket nextCurrentWish');
       const currentWish = state.currentBasket.currentWish;
       if (getters.getBasket) {
         const newCurrentWish = getFirstUnmatchedSelectedWish(getters.getBasket);
@@ -123,7 +122,6 @@ export default new Vuex.Store({
       }
     },
     setWishGroupsAndCurrentBasket(state, { wishGroups, currentBasket }) {
-      // console.log('mutate setWishGroupsAndCurrentBasket');
       return new Promise((resolve) => {
         state.wishGroups = wishGroups;
         // attention, on voudra toujours que current basket contienne selectedWish
@@ -138,17 +136,14 @@ export default new Vuex.Store({
       Vue.set(state.currentBasket, 'currentWish', {});
     },
     setCurrentWish: (state, { gid, wid }) => {
-      // console.log('gid : ' + gid);
       Vue.set(state.currentBasket.currentWish, 'gid', gid);
       Vue.set(state.currentBasket.currentWish, 'wid', wid);
       // state.currentBasket.currentWish = { gid, wid };
     },
     addSearchs: (state, { name, products }) => {
-      // console.log('store index mutation addSearchs');
       Vue.set(state.searchs, name, products);
     },
     addProductInfos: (state, { pid, infos }) => {
-      // console.log('store index mutation addProductInfos');
       Vue.set(state.productInfos, pid, infos);
     },
     addWish: (state, { gid, id, name }) => {

@@ -32,7 +32,7 @@ export default {
       this.error = true;
     },
     succeed() {
-      this.$router.replace('{ name: "wishlist" }');
+      this.$router.push({ name: 'wishlist' });
     },
     register() {
       const data = {
