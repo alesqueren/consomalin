@@ -1,4 +1,4 @@
-// import resources from '../../resources';
+import resources from '../../resources';
 
 const getters = {
   getBasket: (state, commit, rootState) => {
