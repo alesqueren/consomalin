@@ -159,16 +159,13 @@ export default {
           // for(vari=0;i<sortedKeyProducts.length;i++){
           //     sortedProducts[sortedKeyProducts[i]] = products[sortedKeyProducts[i]];
           // }
-          // console.log(sortedProducts)
           // self.currentWish.matchingProducts = sortedProducts;
       //     self.currentWish.matchingProducts = products;
       //   }
       // });
     },
-
     removeWish: () => {
     // removeWish: (pWish) => {
-      // console.log('here')
       // if ( pWish.current ) {
       //   this.pSelectedWishes[pWish.gid][pWish.id] = false;
       //   this.removeCurrentWish();

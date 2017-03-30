@@ -21,11 +21,17 @@ const actions = {
       commit('resetStore', false);
     });
   },
-  fetchUser: ({ commit }) => {
+  fetchUser: ({ commit }, callback) => {
     resources.userTmp.get().then((res) => {
       commit('setUser', res.body.id);
+      if (callback) {
+        callback();
+      }
     }, () => {
       commit('setUser', false);
+      if (callback) {
+        callback();
+      }
     });
   },
 };

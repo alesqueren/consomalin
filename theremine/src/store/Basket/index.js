@@ -16,8 +16,6 @@ const getters = {
           if (wishGroupSelect && selectedWishes[wishgroup.id][wish.id]) {
             const selectedWish = selectedWishes[wishgroup.id][wish.id];
             const productInfos = rootState.productInfos[selectedWish.pid];
-            // console.log('productInfos : ' + selectedWish.pid);
-            // console.log(productInfos);
             const newWish = {
               id: wish.id,
               name: wish.name,
@@ -29,8 +27,6 @@ const getters = {
               },
             };
             const sameGroup = currentBasket.currentWish.gid === wishgroup.id;
-            // console.log('currentBasket.currentWish.gid');
-            // console.log(currentBasket.currentWish.gid);
             const sameWish = currentBasket.currentWish.wid === wish.id;
             if (sameGroup && sameWish) {
               newWish.current = true;
@@ -80,7 +76,6 @@ const actions = {
     }
   },
   setCurrentWish: ({ commit }, { gid, wid }) => {
-    // console.log('store basket actions setCurrentWish');
     resources.currentWish.save({}, { gid, wid }).then(() => {
       commit('setCurrentWish', { gid, wid });
     });
