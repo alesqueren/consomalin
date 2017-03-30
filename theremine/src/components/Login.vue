@@ -33,7 +33,7 @@ export default {
       this.error = true;
     },
     loginSucceed() {
-      this.$router.replace('/wishlist');
+      this.$router.push({ name: 'wishlist' });
     },
     login() {
       const data = {

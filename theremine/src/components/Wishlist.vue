@@ -1,6 +1,6 @@
 <template lang='pug'>
   div#wishlist.container-fluid
-    a(href='/section')
+    router-link(:to='{ name: "section" }')
       button.btn.btn-success.right(type="button") Passer aux rayons
     div.row.no-gutter
       div.row.no-gutter
@@ -10,7 +10,7 @@
     div.row.no-gutter
       div.row.no-gutter
         WishGroupItem(v-for="(wishgroup, wishgroupIndex) in wishlist" v-bind:wishgroup="wishgroup" v-bind:key="wishgroupIndex")
-    a(href='/section')
+    router-link(:to='{ name: "section" }')
       button.btn.btn-success.right(type="button") Passer aux rayons
 </template>
 

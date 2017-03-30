@@ -32,7 +32,7 @@ export default {
       this.error = true;
     },
     succeed() {
-      this.$router.replace('/wishlist');
+      this.$router.replace('{ name: "wishlist" }');
     },
     register() {
       const data = {

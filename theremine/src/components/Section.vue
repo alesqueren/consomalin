@@ -11,17 +11,17 @@
             .row
               div
                 span Votre liste de course est complète ! Vous pouvez 
-                  a(href='/basket')
+                  router-link(:to='{ name: "basket" }')
                     button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
                 span  pour finaliser la commande.
         .col-md-2
             wish-item(v-for="wish in basket" v-bind:wish="wish" v-on:remove_wish="removeWish" v-bind:key="wish.id")
             div Total : {{total}} €
             div Produits au panier : {{matchedWishes}}/{{basket.length}}
-            a(href='/basket')
+            router-link(:to='{ name: "basket" }')
               button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier
 
-    a(href='/wishlist')
+    router-link(:to='{ name: "wishlist" }')
       button.btn.btn-primary.left(type="button") Revenir à la wishlist
 </template>
 

@@ -4,14 +4,14 @@
       div.container-fluid
         div#navbar.row.no-gutter
           div 
-            a(href='/')
+            router-link.title(:to="{ name: 'home' }")
               img.logo(src="../assets/images/car.jpg")
               span.brand Consomalin
 
-          router-link.title(to="/wishlist") Ma liste de course
-          router-link.title(to="/section") Les rayons
-          router-link.title(to="/basket") Mon panier
-          router-link.title(to="/withdraw") Retrait
+          router-link.title(:to="{ name: 'wishlist' }") Ma liste de course
+          router-link.title(:to="{ name: 'section' }") Les rayons
+          router-link.title(:to="{ name: 'basket' }") Mon panier
+          router-link.title(:to="{ name: 'withdraw' }") Retrait
           Usercard
     div#content
       router-view
