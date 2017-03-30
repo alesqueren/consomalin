@@ -1,7 +1,13 @@
 <template lang='pug'>
   div.wishgroup.list-group-item.col-3(v-bind:class="{'bg-info': selected}")
     div
-      wishItem(v-for="wish in wishgroup.wishes" v-bind:wish="wish" v-bind:key="wish")
+      wishItem(
+        v-for="wish in wishgroup.wishes" 
+        v-bind:id="wish.id" 
+        v-bind:gid="wish.gid" 
+        v-bind:name="wish.name" 
+        v-bind:selected="wish.selected" 
+        v-bind:key="wish")
     div
       input(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Add a wish" onclick="event.stopPropagation()")
 </template>

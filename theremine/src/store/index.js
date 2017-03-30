@@ -31,6 +31,7 @@ export default new Vuex.Store({
     },
     searchs: {},
     productInfos: {},
+    inlineEdition: null,
   },
   // getWish: state => ({ gid, wid }) => {
   //   return state.currentBasket.selectedWishes[gid][wid];
@@ -38,6 +39,7 @@ export default new Vuex.Store({
   getters: {
   },
   actions: {
+
     updateWishGroupsAndCurrentBasket({ dispatch, commit, state }) {
       return new Promise((resolve, reject) => {
         if (!state.wishGroups) {
@@ -78,6 +80,7 @@ export default new Vuex.Store({
         }
       });
     },
+
     nextCurrentWish: ({ dispatch, getters, commit, state }) => {
       const currentWish = state.currentBasket.currentWish;
       if (getters.getBasket) {
@@ -98,10 +101,17 @@ export default new Vuex.Store({
         }
       }
     },
+
+    setInlineEdition: ({ commit }, id) => {
+      commit('setInlineEdition', { id });
+    },
+
+    resetStore: ({ commit }) => {
+      commit('resetStore');
+    },
+
   },
-  resetStore: ({ commit }) => {
-    commit('resetStore');
-  },
+
   mutations: {
     resetStore: (state) => {
       Vue.set(state, 'wishGroups', null);
@@ -109,6 +119,7 @@ export default new Vuex.Store({
       Vue.set(state, 'searchs', null);
       Vue.set(state, 'productInfos', null);
     },
+
     addWishGroup: (state, { id, name, wishes }) => {
       state.wishGroups.push({
         id,
@@ -116,6 +127,7 @@ export default new Vuex.Store({
         wishes,
       });
     },
+
     removeWishGroup: (state, { gid }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishgroup = state.wishGroups[i];
@@ -124,6 +136,7 @@ export default new Vuex.Store({
         }
       }
     },
+
     setWishGroupsAndCurrentBasket(state, { wishGroups, currentBasket }) {
       return new Promise((resolve) => {
         state.wishGroups = wishGroups;
@@ -132,23 +145,29 @@ export default new Vuex.Store({
         resolve();
       });
     },
+
     setWishlist: (state, wishlist) => {
       state.wishlist = wishlist;
     },
+
     removeCurrentWish: (state) => {
       Vue.set(state.currentBasket, 'currentWish', {});
     },
+
     setCurrentWish: (state, { gid, wid }) => {
       Vue.set(state.currentBasket.currentWish, 'gid', gid);
       Vue.set(state.currentBasket.currentWish, 'wid', wid);
       // state.currentBasket.currentWish = { gid, wid };
     },
+
     addSearchs: (state, { name, products }) => {
       Vue.set(state.searchs, name, products);
     },
+
     addProductInfos: (state, { pid, infos }) => {
       Vue.set(state.productInfos, pid, infos);
     },
+
     addWish: (state, { gid, id, name }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishgroup = state.wishGroups[i];
@@ -160,11 +179,13 @@ export default new Vuex.Store({
         }
       }
     },
+
     setProduct: (state, { gid, wid, pid, quantity }) => {
       const entity = state.currentBasket.selectedWishes[gid][wid];
       Vue.set(entity, 'pid', pid);
       Vue.set(entity, 'quantity', quantity);
     },
+
     setMatchingProducts: (state, { wish, products }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishgroup = state.wishGroups[i];
@@ -178,6 +199,7 @@ export default new Vuex.Store({
         }
       }
     },
+
     removeWish: (state, { wid }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishGroup = state.wishGroups[i];
@@ -189,6 +211,7 @@ export default new Vuex.Store({
         }
       }
     },
+
     renameWish: (state, { wid, name }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishGroup = state.wishGroups[i];
@@ -200,6 +223,17 @@ export default new Vuex.Store({
         }
       }
     },
+
+    renameWishGroup: (state, { gid, name }) => {
+      for (let i = 0; i < state.wishGroups.length; i++) {
+        const wishGroup = state.wishGroups[i];
+        if (wishGroup.id === gid) {
+          wishGroup.name = name;
+          break;
+        }
+      }
+    },
+
     selectWish: (state, { gid, wid, selected }) => {
       const selectedWishes = state.currentBasket.selectedWishes;
       // si on deselectionne un wish
@@ -246,6 +280,10 @@ export default new Vuex.Store({
         Vue.set(state.currentBasket.selectedWishes, gid, null);
         delete state.currentBasket.selectedWishes[gid];
       }
+    },
+
+    setInlineEdition: (state, { id }) => {
+      state.inlineEdition = id;
     },
 
   },

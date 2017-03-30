@@ -21,6 +21,10 @@ const actions = {
     commit(commitName, { gid });
     resources.wishgroup.update({ gid }, { selected });
   },
+  renameWishGroup: ({ commit }, { gid, name }) => {
+    commit('renameWishGroup', { gid });
+    resources.wishgroup.update({ gid }, { name });
+  },
   removeWishGroup: ({ commit }, gid) => {
     resources.wishgroup.delete({ gid }, {}).then(() => {
       commit('unselectGroup', { gid });
