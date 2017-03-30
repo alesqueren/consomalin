@@ -25,7 +25,10 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     wishGroups: null,
-    currentBasket: null,
+    currentBasket: {
+      currentWish: null,
+      selectedWishes: null,
+    },
     searchs: {},
     productInfos: {},
   },
@@ -198,25 +201,29 @@ export default new Vuex.Store({
       }
     },
     selectWish: (state, { gid, wid, selected }) => {
+      const selectedWishes = state.currentBasket.selectedWishes;
       // si on deselectionne un wish
-
       if (!selected) {
-        Vue.set(state.currentBasket.selectedWishes[gid], wid, false);
-        delete state.currentBasket.selectedWishes[gid][wid];
+        if (selectedWishes[gid]) {
+          delete selectedWishes[gid][wid];
 
-        // si on a supprimé le dernier wish, on supprime le groupe de l'objet
-        if (!Object.keys(state.currentBasket.selectedWishes[gid]).length) {
-          Vue.set(state.currentBasket.selectedWishes, gid, false);
-          delete state.currentBasket.selectedWishes[gid];
+          Vue.set(selectedWishes[gid], 'tmp', {});
+          delete selectedWishes[gid].tmp;
+
+          // si on a supprimé le dernier wish, on supprime le groupe de l'objet
+          if (!Object.keys(selectedWishes[gid]).length) {
+            Vue.set(selectedWishes, gid, null);
+            delete selectedWishes[gid];
+          }
         }
         // si on selectionne un wish
       } else {
         // si le groupe n'existe pas, on le crée
-        if (!state.currentBasket.selectedWishes[gid]) {
-          Vue.set(state.currentBasket.selectedWishes, gid, {});
+        if (!selectedWishes[gid]) {
+          Vue.set(selectedWishes, gid, {});
         }
         // dans tous les cas on rajoute le wish a son group
-        Vue.set(state.currentBasket.selectedWishes[gid], wid, true);
+        Vue.set(selectedWishes[gid], wid, {});
       }
     },
 
@@ -236,7 +243,7 @@ export default new Vuex.Store({
 
     unselectGroup: (state, { gid }) => {
       if (state.currentBasket.selectedWishes[gid]) {
-        Vue.set(state.currentBasket.selectedWishes, gid, false);
+        Vue.set(state.currentBasket.selectedWishes, gid, null);
         delete state.currentBasket.selectedWishes[gid];
       }
     },

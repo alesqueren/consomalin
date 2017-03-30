@@ -61,9 +61,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.auth && !store.state.User.user) {
-    console.log('fetch user');
     store.dispatch('fetchUser', () => {
-      console.log('cb');
       if (to.meta.auth && !store.state.User.user) {
         next('/login');
       } else {

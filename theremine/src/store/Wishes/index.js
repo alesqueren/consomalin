@@ -78,37 +78,21 @@ const actions = {
     });
   },
   removeWish: ({ commit }, { gid, wid }) => {
-    resources.wish.delete(
-      {
-        gid,
-        wid,
-      }, {}).then(() => {
-        commit('removeWish', { wid });
-      },
-    );
+    resources.wish.delete({ gid, wid }, {}).then(() => {
+      commit('removeWish', { wid });
+    });
     commit('selectWish', { gid, wid, selected: false });
   },
   renameWish: ({ commit }, { gid, wid, name }) => {
     commit('renameWish', { wid, name });
-    resources.wish.update(
-      {
-        gid,
-        wid,
-      }, { name }).then(() => {
-        // commit('renameWish', { wid, name });
-      },
-    );
+    resources.wish.update({ gid, wid }, { name }).then(() => {
+      // commit('renameWish', { wid, name });
+    });
   },
   selectWish: ({ commit }, { gid, wid, selected }) => {
-    resources.wish.update(
-      {
-        gid,
-        wid,
-      },
-      { selected }).then(() => {
-        commit('selectWish', { gid, wid, selected });
-      },
-    );
+    resources.wish.update({ gid, wid }, { selected }).then(() => {
+      commit('selectWish', { gid, wid, selected });
+    });
   },
 };
 

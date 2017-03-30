@@ -20,11 +20,11 @@ export default {
       return this.$store.state.wishGroups.filter(e => (e.id === this.id))[0].wishes.length;
     },
     selectedWishesNb() {
-      const obj = this.$store.state.currentBasket.selectedWishes[this.id];
-      if (obj) {
-        return Object.keys(obj).length;
+      try {
+        return Object.keys(this.$store.state.currentBasket.selectedWishes[this.id]).length;
+      } catch (e) {
+        return 0;
       }
-      return 0;
     },
   },
   methods: {
