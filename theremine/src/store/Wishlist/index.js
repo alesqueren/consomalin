@@ -17,11 +17,11 @@ const getters = {
           const newWish = {
             id: wish.id,
             name: wish.name,
-            groupId: wishgroup.id,
+            gid: wishgroup.id,
             selected: false,
           };
           if (selectedWishes) {
-            const wishGroupSelect = selectedWishes[newWish.groupId];
+            const wishGroupSelect = selectedWishes[newWish.gid];
             if (wishGroupSelect && wishGroupSelect[newWish.id]) {
               newWish.selected = true;
               newWishGroup.selected = true;

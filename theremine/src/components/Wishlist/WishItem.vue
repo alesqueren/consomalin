@@ -18,16 +18,16 @@ export default {
       get() {
         const wishIsSelected = this.$store.getters.isSelectedWish(
           {
-            groupId: this.wish.groupId,
-            wishId: this.wish.id,
+            gid: this.wish.gid,
+            wid: this.wish.id,
           },
         );
         return wishIsSelected;
       },
       set(selected) {
         this.$store.dispatch('selectWish', {
-          groupId: this.wish.groupId,
-          wishId: this.wish.id,
+          gid: this.wish.gid,
+          wid: this.wish.id,
           selected,
         });
       },
@@ -36,16 +36,16 @@ export default {
   methods: {
     select() {
       this.$store.dispatch('selectWish', {
-        groupId: this.wish.groupId,
-        wishId: this.wish.id,
+        gid: this.wish.gid,
+        wid: this.wish.id,
         selected: !this.wish.selected,
       });
     },
 
     remove() {
       this.$store.dispatch('removeWish', {
-        groupId: this.wish.groupId,
-        wishId: this.wish.id,
+        gid: this.wish.gid,
+        wid: this.wish.id,
       });
     },
   },

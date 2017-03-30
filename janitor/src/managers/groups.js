@@ -1,16 +1,16 @@
 const mongo = require('../bs/mongo');
 const utils = require('../utils');
 
-function add(uid, groupName) {
+function add(uid, gname) {
   const users = mongo.db.collection('user');
-  const hash = utils.randHash(uid, groupName);
+  const hash = utils.randHash(uid, gname);
   users.updateOne(
     { _id: uid },
     {
       $push: {
         wishGroups: {
           id: hash,
-          name: groupName,
+          name: gname,
           wishes: [],
         },
       },

@@ -1,9 +1,9 @@
 import resources from '../../resources';
 
 const getters = {
-  isSelectedWishGroup: (state, commit, rootState) => (groupId) => {
+  isSelectedWishGroup: (state, commit, rootState) => (gid) => {
     const selectedWishes = rootState.currentBasket.selectedWishes;
-    return Boolean(selectedWishes && selectedWishes[groupId]);
+    return Boolean(selectedWishes && selectedWishes[gid]);
   },
 };
 
@@ -13,15 +13,15 @@ const actions = {
       commit('addWishGroup', { id: response.body, name, wishes: [] });
     });
   },
-  selectWishGroup: ({ commit }, { groupId, selected }) => {
+  selectWishGroup: ({ commit }, { gid, selected }) => {
     const commitName = selected ? 'selectGroup' : 'unselectGroup';
-    commit(commitName, { groupId });
-    resources.wishgroup.update({ groupid: groupId }, { selected });
+    commit(commitName, { gid });
+    resources.wishgroup.update({ gid }, { selected });
   },
-  removeWishGroup: ({ commit }, groupId) => {
-    resources.wishgroup.delete({ groupid: groupId }, {}).then(() => {
-      commit('unselectGroup', { groupId });
-      commit('removeWishGroup', { groupId });
+  removeWishGroup: ({ commit }, gid) => {
+    resources.wishgroup.delete({ gid }, {}).then(() => {
+      commit('unselectGroup', { gid });
+      commit('removeWishGroup', { gid });
     });
   },
 };

@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div(v-if="currentwish")
+  div(v-if="currentwish.id")
     div Liste <b>{{ currentwish.groupName }}</b>
     div.input-group.stylish-input-group
       input.form-control(type="text" v-model="currentwish.name" v-on:keyup="rename")
@@ -24,8 +24,8 @@ export default {
       set() {
         // set(name) {
         // this.$store.dispatch('renameWish', {
-        //   groupId: this.currentwish.groupId,
-        //   wishId: this.currentwish.id,
+        //   gid: this.currentwish.gid,
+        //   wid: this.currentwish.id,
         //   name,
         // });
       },
@@ -37,11 +37,11 @@ export default {
       this.delayTimer = setTimeout(() => {
         const name = this.currentwish.name;
         this.$store.dispatch('renameWish', {
-          groupId: this.currentwish.groupId,
-          wishId: this.currentwish.id,
+          gid: this.currentwish.gid,
+          wid: this.currentwish.id,
           name,
         });
-        this.$store.dispatch('searchProductsForName', { name });
+        this.$store.dispatch('searchProductsWithName', { name });
       }, 200);
     },
   },

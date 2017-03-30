@@ -8,8 +8,8 @@ router.post('/groups',
     name: { required: true },
   }),
   ({ data, user }, res) => {
-    const groupId = groupsManager.add(user._id, data.name);
-    res.json(groupId);
+    const gid = groupsManager.add(user._id, data.name);
+    res.json(gid);
   },
 );
 

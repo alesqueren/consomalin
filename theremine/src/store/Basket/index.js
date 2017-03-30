@@ -1,4 +1,4 @@
-// import resources from '../../resources';
+import resources from '../../resources';
 
 const getters = {
   getBasket: (state, commit, rootState) => {
@@ -16,22 +16,22 @@ const getters = {
           if (wishGroupSelect && selectedWishes[wishgroup.id][wish.id]) {
             const selectedWish = selectedWishes[wishgroup.id][wish.id];
             const productInfos = rootState.productInfos[selectedWish.pid];
-            console.log('productInfos : ' + selectedWish.pid);
-            console.log(productInfos);
+            // console.log('productInfos : ' + selectedWish.pid);
+            // console.log(productInfos);
             const newWish = {
               id: wish.id,
               name: wish.name,
-              groupId: wishgroup.id,
+              gid: wishgroup.id,
               product: {
                 id: selectedWish.pid,
                 quantity: selectedWish.quantity,
                 infos: productInfos,
               },
             };
-            const sameGroup = currentBasket.currentWish.groupid === wishgroup.id;
-            // console.log('currentBasket.currentWish.groupid');
-            // console.log(currentBasket.currentWish.groupid);
-            const sameWish = currentBasket.currentWish.wishid === wish.id;
+            const sameGroup = currentBasket.currentWish.gid === wishgroup.id;
+            // console.log('currentBasket.currentWish.gid');
+            // console.log(currentBasket.currentWish.gid);
+            const sameWish = currentBasket.currentWish.wid === wish.id;
             if (sameGroup && sameWish) {
               newWish.current = true;
             }
@@ -44,7 +44,7 @@ const getters = {
   },
 };
 const actions = {
-  searchProductsForName: ({ commit, rootState }, { name }) => {
+  searchProductsWithName: ({ commit, rootState }, { name }) => {
     if (!rootState.searchs.name) {
       const uri = 'search?s=' + name;
       resources.kiva.get({ uri }, {}).then((response) => {
@@ -52,6 +52,22 @@ const actions = {
         commit('addSearchs', { name, products });
       });
     }
+  },
+  detailProductsWithId: ({ commit, rootState }, { ids }) => {
+    const uri = 'details?pids=' + JSON.stringify(ids);
+    resources.kiva.get({ uri }, {}).then((response) => {
+      const products = JSON.parse(response.body);
+      Object.keys(products).map((pid) => {
+        const product = products[pid];
+        const infos = {
+          name: product.name,
+          imageUrl: product.imageUrl,
+          price: product.price,
+        };
+        commit('addProductInfos', { pid, infos });
+        return null;
+      });
+    });
   },
   updateProductInfos: ({ commit, rootState }, { pid, name, imageUrl, price }) => {
     const infos = {
@@ -63,10 +79,10 @@ const actions = {
       commit('addProductInfos', { pid, infos });
     }
   },
-  setCurrentWish: ({ commit }, { groupid, wishid }) => {
+  setCurrentWish: ({ commit }, { gid, wid }) => {
     // console.log('store basket actions setCurrentWish');
-    resources.currentWish.save({}, { groupid, wishid }).then((response) => {
-      commit('setCurrentWish', { groupid, wishid });
+    resources.currentWish.save({}, { gid, wid }).then(() => {
+      commit('setCurrentWish', { gid, wid });
     });
   },
 };

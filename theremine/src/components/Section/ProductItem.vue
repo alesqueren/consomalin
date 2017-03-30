@@ -20,13 +20,13 @@ export default {
       );
       this.$store.dispatch('setProduct',
         {
-          groupId: this.currentWish.groupId,
-          wishId: this.currentWish.id,
+          gid: this.currentWish.gid,
+          wid: this.currentWish.id,
           pid: this.productkey,
           quantity: 1,
         },
       );
-      this.$store.dispatch('processCurrentWish');
+      this.$store.dispatch('nextCurrentWish');
     },
   },
 };

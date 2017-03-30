@@ -1,18 +1,18 @@
 import resources from '../../resources';
 
 const getters = {
-  getWish: (state, commit, rootState) => (wishId) => {
+  getWish: (state, commit, rootState) => (wid) => {
     let wishFound = null;
     for (let i = 0; i < rootState.wishGroups.length; i++) {
       const wishGroup = rootState.wishGroups[i];
       for (let j = 0; j < wishGroup.wishes.length; j++) {
         const wish = wishGroup.wishes[j];
-        if (wish.id === wishId) {
+        if (wish.id === wid) {
           wishFound = {
             id: wish.id,
             name: wish.name,
-            groupId: wishGroup.id,
-            groupName: wishGroup.name,
+            gid: wishGroup.id,
+            gname: wishGroup.name,
           };
         }
       }
@@ -27,12 +27,12 @@ const getters = {
         const wishGroup = rootState.wishGroups[i];
         for (let j = 0; j < wishGroup.wishes.length; j++) {
           const wish = wishGroup.wishes[j];
-          if (wish.id === currentWish.wishId) {
+          if (wish.id === currentWish.wid) {
             wishFound = {
               id: wish.id,
               name: wish.name,
-              groupId: wishGroup.id,
-              groupName: wishGroup.name,
+              gid: wishGroup.id,
+              gname: wishGroup.name,
             };
           }
         }
@@ -40,74 +40,73 @@ const getters = {
     }
     return wishFound;
   },
-  isSelectedWish: (state, commit, rootState) => ({ groupId, wishId }) => {
+  isSelectedWish: (state, commit, rootState) => ({ gid, wid }) => {
     const sw = rootState.currentBasket.selectedWishes;
     if (!sw) {
       sw.selectedWishes = {};
     }
-    const hasGrpIdP = Object.prototype.hasOwnProperty.call(sw, groupId);
+    const hasGrpIdP = Object.prototype.hasOwnProperty.call(sw, gid);
     if (hasGrpIdP) {
-      return Object.prototype.hasOwnProperty.call(sw[groupId], wishId);
+      return Object.prototype.hasOwnProperty.call(sw[gid], wid);
     }
     return false;
   },
 };
 const actions = {
-  setProduct: ({ commit }, { groupId, wishId, pid, quantity }) => {
-    resources.wishProduct.save({ groupId, wishId }, { pid, quantity }).then((response) => {
-      commit('setProduct', {
-        groupId,
-        wishId,
-        pid,
-        quantity,
-      });
+  setProduct: ({ commit }, { gid, wid, pid, quantity }) => {
+    commit('setProduct', {
+      gid,
+      wid,
+      pid,
+      quantity,
     });
+    resources.wishProduct.save({ gid, wid }, { pid, quantity });
   },
   addWish: ({ commit }, { group, name }) => {
-    const groupid = group.id;
-    resources.wishes.save({ groupid }, { names: [name] }).then((response) => {
+    const gid = group.id;
+    resources.wishes.save({ gid }, { names: [name] }).then((response) => {
       commit('addWish', {
-        groupId: group.id,
+        gid: group.id,
         id: response.body,
         name,
       });
       commit('selectWish', {
-        groupId: group.id,
-        wishId: response.body,
+        gid: group.id,
+        wid: response.body,
         selected: true,
       });
     });
   },
-  removeWish: ({ commit }, { groupId, wishId }) => {
+  removeWish: ({ commit }, { gid, wid }) => {
     resources.wish.delete(
       {
-        groupid: groupId,
-        wishid: wishId,
+        gid,
+        wid,
       }, {}).then(() => {
-        commit('removeWish', { wishId });
+        commit('removeWish', { wid });
       },
     );
-    commit('selectWish', { groupId, wishId, selected: false });
+    commit('selectWish', { gid, wid, selected: false });
   },
-  renameWish: ({ commit }, { groupId, wishId, name }) => {
-    commit('renameWish', { wishId, name });
+  renameWish: ({ commit }, { gid, wid, name }) => {
+    commit('renameWish', { wid, name });
     resources.wish.update(
       {
-        groupid: groupId,
-        wishid: wishId,
+        gid,
+        wid,
       }, { name }).then(() => {
-        // commit('renameWish', { wishId, name });
+        // commit('renameWish', { wid, name });
       },
     );
   },
-  selectWish: ({ commit }, { groupId, wishId, selected }) => {
+  selectWish: ({ commit }, { gid, wid, selected }) => {
     resources.wish.update(
       {
-        groupid: groupId,
-        wishid: wishId,
+        gid,
+        wid,
       },
       { selected }).then(() => {
-        commit('selectWish', { groupId, wishId, selected });
+        commit('selectWish', { gid, wid, selected });
       },
     );
   },

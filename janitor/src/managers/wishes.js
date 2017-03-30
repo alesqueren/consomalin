@@ -25,9 +25,9 @@ function select(uid, gid, wid, selected) {
   }
 }
 
-function add(uid, gid, wishName) {
+function add(uid, gid, wname) {
   const users = mongo.db.collection('user');
-  const hash = utils.randHash(uid, wishName);
+  const hash = utils.randHash(uid, wname);
   const path = 'wishGroups.$.wishes';
   users.updateOne(
     { 'wishGroups.id': gid },
@@ -35,7 +35,7 @@ function add(uid, gid, wishName) {
       $push: {
         [path]: {
           id: hash,
-          name: wishName,
+          name: wname,
         },
       },
     },

@@ -6,7 +6,7 @@
           currentWish(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
           .container(v-if="currentWish")
             .row(v-if="currentWishHasMatchingProducts")
-                product-item(v-for="(product, productKey, productIndex) in currentWishHasMatchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-on:select_product="bindCurrentWishWithProduct" v-bind:key="productIndex" v-bind:currentWish="currentWish")
+                product-item(v-for="(product, productKey, productIndex) in currentWishHasMatchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-bind:key="productIndex" v-bind:currentWish="currentWish")
           .container(v-else-if="matchedWishes == basket.length")
             .row
               div
@@ -15,7 +15,7 @@
                     button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
                 span  pour finaliser la commande.
         .col-md-2
-            wish-item(v-for="wish in basket" v-bind:wish="wish" v-on:new_current_wish="newCurrentWish" v-on:remove_wish="removeWish" v-bind:key="wish.id")
+            wish-item(v-for="wish in basket" v-bind:wish="wish" v-on:remove_wish="removeWish" v-bind:key="wish.id")
             div Total : {{total}} €
             div Produits au panier : {{matchedWishes}}/{{basket.length}}
             a(href='/basket')
@@ -35,7 +35,7 @@ function getFirstUnmatchedSelectedWish(basket) {
     const wish = basket[i];
     if (!wish.product.id) {
       wish.current = true;
-      return { groupid: wish.groupId, wishid: wish.id };
+      return { gid: wish.gid, wid: wish.id };
     }
   }
   return null;
@@ -48,7 +48,7 @@ function getDocHeight(){var a=document;return Math.max(a.body.scrollHeight,a.doc
 /*eslint-enable */
 // function unselectWish(wish) {
   // var self = this;
-  // var gid = wish.groupId;
+  // var gid = wish.gid;
   // $.ajax({
   //   type: 'PUT',
   //   url : '/wishlist/groups/'+gid+'/wishes/'+wish.id,
@@ -72,8 +72,9 @@ export default {
     this.$store
       .dispatch('updateWishGroupsAndCurrentBasket')
       .then(() => {
-        this.$store
-          .dispatch('processCurrentWish');
+        if (!this.$store.state.currentBasket.currentWish.id) {
+          this.$store.dispatch('nextCurrentWish');
+        }
       });
   },
   created() {
@@ -134,17 +135,6 @@ export default {
     },
   },
   methods: {
-    sendCurrentWish: () => {
-    // sendCurrentWish: (wish) => {
-      // $.ajax({
-      //   type: 'PUT',
-      //   url : '/wishlist/groups/'+wish.groupId+'/wishes/'+wish.id+'/current',
-      //   data: {},
-      //   complete: function(responseObject) {
-      //   }
-      // });
-    },
-
     searchProducts: () => {
     // searchProducts: (wish) => {
       // const self = this;
@@ -176,38 +166,11 @@ export default {
       // });
     },
 
-    newCurrentWish: (wish) => {
-      const self = this;
-      this.maxProducts = 40;
-      // on notifie le serveur du nouveau wish courrant
-      if (this.basket.currentWish !== wish) {
-        this.basket.currentWish = wish;
-        this.sendCurrentWish(this.basket.currentWish);
-        // si on a aucun produit pour ce wish
-        if (!Array.isArray(wish.matchingProducts) || wish.matchingProducts.length < 1) {
-          // on les recherche
-          this.searchProducts(this.basket.currentWish);
-        } else {
-          self.currentWish.basket.matchingProducts = self.basket.currentWish.matchingProducts;
-          // console.log(wish.name + ' already have products');
-          // console.log(wish.matchingProducts)
-        }
-      } else {
-        // toujours le meme wish (reclick ou dernier de la liste)
-      }
-      for (let i = 0; i < this.selectedWishes.length; i += 1) {
-        this.selectedWishes[i].current = false;
-        if (this.selectedWishes[i] === this.currentWish) {
-          this.selectedWishes[i].current = true;
-        }
-      }
-    },
-
     removeWish: () => {
     // removeWish: (pWish) => {
       // console.log('here')
       // if ( pWish.current ) {
-      //   this.pSelectedWishes[pWish.groupId][pWish.id] = false;
+      //   this.pSelectedWishes[pWish.gid][pWish.id] = false;
       //   this.removeCurrentWish();
       //   this.setCurrentWishToNext();
       // }
@@ -215,64 +178,10 @@ export default {
       // for(var i = 0; i < psw.length; i++ ) {
       //   var wish = psw[i];
       //   if ( wish.id == pWish.id) {
-      //     this.pSelectedWishes[wish.groupId][wish.id] = false;
+      //     this.pSelectedWishes[wish.gid][wish.id] = false;
       //   }
       // }
       // unselectWish(pWish);
-    },
-
-    removeCurrentWish: () => {
-      if (this.basket.currentWish) {
-        for (let i = 0; i < this.selectedWishes.length; i += 1) {
-          this.selectedWishes[i].current = false;
-        }
-        this.basket.currentWish = null;
-        // $.ajax({
-        //   type: 'PUT',
-        //   url : '/wishlist/removeCurrent',
-        //   data: {},
-        //   complete: function(responseObject) {
-
-        //   }
-        // });
-      }
-    },
-
-    setCurrentWishToNext: () => {
-      // si il reste un wish non lié a un produit, on passe a celui ci
-      // sinon on supprime le currentwish et on envoi la requet de remove au serveur
-      const nextCurrentWish = getFirstUnmatchedSelectedWish(this.basket);
-      if (nextCurrentWish) {
-        this.newCurrentWish(nextCurrentWish);
-      } else {
-        this.removeCurrentWish();
-        // console.log(this.selectedWishes[currentIndex].name + ' est le dernier wish')
-      }
-    },
-
-    // on attache le produit (selectionné) au wish en cours
-    bindCurrentWishWithProduct: () => {
-    // bindCurrentWishWithProduct: (key, product) => {
-      // console.log('cou')
-      // var self = this;
-      // if ( self.currentWish ) {
-      //   this.currentWish.product.id = key;
-      //   this.currentWish.product.infos = product;
-      //   this.currentWish.product.quantity = 1;
-      //   const groupId = this.currentWish.groupId;
-      //   const wishId = this.currentWish.id;
-      //   $.ajax({
-      //     type: 'POST',
-      //     url : '/wishlist/groups/'+groupId+'/wishes/'+wishId+'/product',
-      //     data: {'pid' : key },
-      //     complete: function(responseObject) {
-      //       var products = JSON.parse(responseObject.responseText);
-      //       self.currentWish.matchingProducts = products;
-      //       self.maxProducts++;
-      //       self.setCurrentWishToNext();
-      //     }
-      //   });
-      // }
     },
 
     // lazyloading

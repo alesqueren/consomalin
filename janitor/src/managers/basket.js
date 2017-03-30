@@ -2,7 +2,7 @@ const mongo = require('../bs/mongo');
 
 const userCollectionName = 'user';
 
-function setCurrentWish(email, groupId, wishId) {
+function setCurrentWish(email, gid, wid) {
   const users = mongo.db.collection(userCollectionName);
   const path = 'currentBasket.currentWish';
   users.updateOne(
@@ -10,8 +10,8 @@ function setCurrentWish(email, groupId, wishId) {
     {
       $set: {
         [path]: {
-          groupId,
-          wishId,
+          gid,
+          wid,
         },
       },
     },

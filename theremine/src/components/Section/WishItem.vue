@@ -40,7 +40,7 @@ export default {
     changeQty: () => {
       // $.ajax({
       //   type: 'PUT',
-      //   url : '/wishlist/groups/'+this.wish.groupId+'/wishes/'+this.wish.id+'/product',
+      //   url : '/wishlist/groups/'+this.wish.gid+'/wishes/'+this.wish.id+'/product',
       //   data: {'qty' : this.wish.product.quantity },
       //   complete: function(responseObject) {
       //   }

@@ -30,7 +30,7 @@ export default {
   methods: {
     select() {
       this.$store.dispatch('selectWishGroup', {
-        groupId: this.id,
+        gid: this.id,
         selected: !this.selected,
       });
     },

@@ -18,6 +18,7 @@ const actions = {
   logout: ({ commit }) => {
     resources.logout.get().then(() => {
       commit('setUser', false);
+      commit('resetStore', false);
     });
   },
   fetchUser: ({ commit }) => {

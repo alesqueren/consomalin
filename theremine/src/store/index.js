@@ -11,7 +11,8 @@ function getFirstUnmatchedSelectedWish(basket) {
   for (let i = 0; i < basket.length; i++) {
     const wish = basket[i];
     if (!wish.product.id) {
-      return { groupid: wish.groupId, wishid: wish.id };
+      // console.log('gid:' + wish.gid + ', wid:' + wish.id);
+      return { gid: wish.gid, wid: wish.id };
     }
   }
   return null;
@@ -28,13 +29,13 @@ export default new Vuex.Store({
     searchs: {},
     productInfos: {},
   },
-  // getWish: state => ({ groupId, wishId }) => {
-  //   return state.currentBasket.selectedWishes[groupId][wishId];
+  // getWish: state => ({ gid, wid }) => {
+  //   return state.currentBasket.selectedWishes[gid][wid];
   // },
   getters: {
   },
   actions: {
-    updateWishGroupsAndCurrentBasket({ commit, state }) {
+    updateWishGroupsAndCurrentBasket({ dispatch, commit, state }) {
       return new Promise((resolve, reject) => {
         if (!state.wishGroups) {
           resources.wishlist.get(
@@ -49,43 +50,63 @@ export default new Vuex.Store({
             if (!currentBasket.currentWish) {
               currentBasket.currentWish = {};
             }
+            const idsWithoutDetail = [];
+            Object.keys(currentBasket.selectedWishes).map((wishgroupId) => {
+              const wishGroup = currentBasket.selectedWishes[wishgroupId];
+              Object.keys(wishGroup).map((wishId) => {
+                const wish = wishGroup[wishId];
+                if (wish.pid) {
+                  idsWithoutDetail.push(wish.pid);
+                }
+                return null;
+              });
+              return null;
+            });
+            if (idsWithoutDetail.length) {
+              dispatch('detailProductsWithId', { ids: idsWithoutDetail });
+            }
             commit('setWishGroupsAndCurrentBasket', { wishGroups, currentBasket });
             resolve();
           }, () => {
             reject();
           });
+        } else {
+          resolve();
         }
-        // console.log('store basket updateblalba');
       });
     },
-    processCurrentWish: ({ dispatch, getters, commit, state }) => {
-      // console.log('store basket processCurrentWish');
-      let currentWish = state.currentBasket.currentWish;
-      if (!currentWish.groupid && getters.getBasket) {
+    nextCurrentWish: ({ dispatch, getters, commit, state }) => {
+      // console.log('store basket nextCurrentWish');
+      const currentWish = state.currentBasket.currentWish;
+      if (getters.getBasket) {
         const newCurrentWish = getFirstUnmatchedSelectedWish(getters.getBasket);
         if (newCurrentWish) {
-          currentWish = getters.getWish(newCurrentWish.wishid);
-          const groupId = currentWish.groupId;
-          const wishId = currentWish.id;
-          resources.currentWish.save({}, { groupId, wishId }).then((response) => {
-            commit('setCurrentWish', { groupid: currentWish.groupId, wishid: currentWish.id });
+          const currentWish2 = getters.getWish(newCurrentWish.wid);
+          const gid = currentWish2.gid;
+          const wid = currentWish2.id;
+          resources.currentWish.save({}, { gid, wid }).then(() => {
+            commit('setCurrentWish', { gid: currentWish2.gid, wid: currentWish2.id });
+            const currentWishComplete = getters.getCurrentWish;
+            if (currentWishComplete.name && !state.searchs[currentWishComplete.name]) {
+              dispatch('searchProductsWithName', { name: currentWishComplete.name });
+            }
           });
+        } else {
+          commit('removeCurrentWish');
         }
       }
-      if (currentWish.id && !state.searchs.name) {
-        const name = currentWish.name;
-        dispatch('searchProductsForName', { name });
-        // this.searchProducts(this.basket.currentWish);
-      }
-
-      // resources.currentWish.save({}, { groupid, wishid }).then((response) => {
-      // commit('setCurrentWish', { groupid, wishid });
-      // }, () => {
-        // console.log('error');
-      // });
     },
   },
+  resetStore: ({ commit }) => {
+    commit('resetStore');
+  },
   mutations: {
+    resetStore: (state) => {
+      Vue.set(state, 'wishGroups', null);
+      Vue.set(state, 'currentBasket', null);
+      Vue.set(state, 'searchs', null);
+      Vue.set(state, 'productInfos', null);
+    },
     addWishGroup: (state, { id, name, wishes }) => {
       state.wishGroups.push({
         id,
@@ -93,10 +114,10 @@ export default new Vuex.Store({
         wishes,
       });
     },
-    removeWishGroup: (state, { groupId }) => {
+    removeWishGroup: (state, { gid }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishgroup = state.wishGroups[i];
-        if (wishgroup.id === groupId) {
+        if (wishgroup.id === gid) {
           state.wishGroups.splice(i, 1);
         }
       }
@@ -113,24 +134,27 @@ export default new Vuex.Store({
     setWishlist: (state, wishlist) => {
       state.wishlist = wishlist;
     },
-    setCurrentWish: (state, { groupid, wishid }) => {
-      // console.log('groupid : ' + groupid);
-      Vue.set(state.currentBasket.currentWish, 'groupId', groupid);
-      Vue.set(state.currentBasket.currentWish, 'wishId', wishid);
-      // state.currentBasket.currentWish = { groupid, wishid };
+    removeCurrentWish: (state) => {
+      Vue.set(state.currentBasket, 'currentWish', {});
+    },
+    setCurrentWish: (state, { gid, wid }) => {
+      // console.log('gid : ' + gid);
+      Vue.set(state.currentBasket.currentWish, 'gid', gid);
+      Vue.set(state.currentBasket.currentWish, 'wid', wid);
+      // state.currentBasket.currentWish = { gid, wid };
     },
     addSearchs: (state, { name, products }) => {
       // console.log('store index mutation addSearchs');
       Vue.set(state.searchs, name, products);
     },
     addProductInfos: (state, { pid, infos }) => {
-      console.log('store index mutation addProductInfos');
+      // console.log('store index mutation addProductInfos');
       Vue.set(state.productInfos, pid, infos);
     },
-    addWish: (state, { groupId, id, name }) => {
+    addWish: (state, { gid, id, name }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishgroup = state.wishGroups[i];
-        if (wishgroup.id === groupId) {
+        if (wishgroup.id === gid) {
           wishgroup.wishes.push({
             id,
             name,
@@ -138,15 +162,15 @@ export default new Vuex.Store({
         }
       }
     },
-    setProduct: (state, { groupId, wishId, pid, quantity }) => {
-      const entity = state.currentBasket.selectedWishes[groupId][wishId];
+    setProduct: (state, { gid, wid, pid, quantity }) => {
+      const entity = state.currentBasket.selectedWishes[gid][wid];
       Vue.set(entity, 'pid', pid);
       Vue.set(entity, 'quantity', quantity);
     },
     setMatchingProducts: (state, { wish, products }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishgroup = state.wishGroups[i];
-        if (wishgroup.id === wish.groupId) {
+        if (wishgroup.id === wish.gid) {
           for (let j = 0; j < wishgroup.wishes.length; j++) {
             const tmpWish = wishgroup.wishes[j];
             if (tmpWish.id === wish.id) {
@@ -156,69 +180,69 @@ export default new Vuex.Store({
         }
       }
     },
-    removeWish: (state, { wishId }) => {
+    removeWish: (state, { wid }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishGroup = state.wishGroups[i];
         for (let j = 0; j < wishGroup.wishes.length; j++) {
           const wish = wishGroup.wishes[j];
-          if (wish.id === wishId) {
+          if (wish.id === wid) {
             state.wishGroups[i].wishes.splice(j, 1);
           }
         }
       }
     },
-    renameWish: (state, { wishId, name }) => {
+    renameWish: (state, { wid, name }) => {
       for (let i = 0; i < state.wishGroups.length; i++) {
         const wishGroup = state.wishGroups[i];
         for (let j = 0; j < wishGroup.wishes.length; j++) {
           const wish = wishGroup.wishes[j];
-          if (wish.id === wishId) {
+          if (wish.id === wid) {
             wish.name = name;
           }
         }
       }
     },
-    selectWish: (state, { groupId, wishId, selected }) => {
+    selectWish: (state, { gid, wid, selected }) => {
       // si on deselectionne un wish
 
       if (!selected) {
-        Vue.set(state.currentBasket.selectedWishes[groupId], wishId, false);
-        delete state.currentBasket.selectedWishes[groupId][wishId];
+        Vue.set(state.currentBasket.selectedWishes[gid], wid, false);
+        delete state.currentBasket.selectedWishes[gid][wid];
 
         // si on a supprimé le dernier wish, on supprime le groupe de l'objet
-        if (!Object.keys(state.currentBasket.selectedWishes[groupId]).length) {
-          Vue.set(state.currentBasket.selectedWishes, groupId, false);
-          delete state.currentBasket.selectedWishes[groupId];
+        if (!Object.keys(state.currentBasket.selectedWishes[gid]).length) {
+          Vue.set(state.currentBasket.selectedWishes, gid, false);
+          delete state.currentBasket.selectedWishes[gid];
         }
         // si on selectionne un wish
       } else {
         // si le groupe n'existe pas, on le crée
-        if (!state.currentBasket.selectedWishes[groupId]) {
-          Vue.set(state.currentBasket.selectedWishes, groupId, {});
+        if (!state.currentBasket.selectedWishes[gid]) {
+          Vue.set(state.currentBasket.selectedWishes, gid, {});
         }
         // dans tous les cas on rajoute le wish a son group
-        Vue.set(state.currentBasket.selectedWishes[groupId], wishId, true);
+        Vue.set(state.currentBasket.selectedWishes[gid], wid, true);
       }
     },
 
-    selectGroup: (state, { groupId }) => {
+    selectGroup: (state, { gid }) => {
       const selectWishes = {};
       for (const i in state.wishGroups) {
         const group = state.wishGroups[i];
-        if (group.id === groupId) {
+        if (group.id === gid) {
           for (const j in group.wishes) {
             const wish = group.wishes[j];
             selectWishes[wish.id] = {};
           }
         }
       }
-      Vue.set(state.currentBasket.selectedWishes, groupId, selectWishes);
+      Vue.set(state.currentBasket.selectedWishes, gid, selectWishes);
     },
 
-    unselectGroup: (state, { groupId }) => {
-      if (state.currentBasket.selectedWishes[groupId]) {
-        Vue.set(state.currentBasket.selectedWishes, groupId, false);
-        delete state.currentBasket.selectedWishes[groupId];
+    unselectGroup: (state, { gid }) => {
+      if (state.currentBasket.selectedWishes[gid]) {
+        Vue.set(state.currentBasket.selectedWishes, gid, false);
+        delete state.currentBasket.selectedWishes[gid];
       }
     },
 

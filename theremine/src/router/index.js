@@ -11,6 +11,7 @@ Vue.use(Router);
 Vue.router = new Router({});
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
