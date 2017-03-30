@@ -6,6 +6,7 @@
     |  {{wish.name}}
   div(v-if='wish.product.infos')
     div  {{wish.product.infos.name}}
+    div  {{wish.product.infos.price}}
     |  
     img.col-md-6(style='width:50px;', v-bind:src='wish.product.infos.imageUrl')
     |  

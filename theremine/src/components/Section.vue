@@ -3,11 +3,11 @@
     .container
       .row
         .col-md-10
-          currentWish(v-bind:currentwish="currentWish" v-on:new_name="searchProducts(currentWish)")
-          .container(v-if="currentWish")
+          currentWish(v-bind:currentwish="currentWish")
+          .container(v-if="!currentWishIsEmpty")
             .row(v-if="currentWishHasMatchingProducts")
                 product-item(v-for="(product, productKey, productIndex) in currentWishHasMatchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-bind:key="productIndex" v-bind:currentWish="currentWish")
-          .container(v-else-if="matchedWishes == basket.length")
+          .container(v-else-if="basketFull")
             .row
               div
                 span Votre liste de course est complète ! Vous pouvez 
@@ -15,7 +15,7 @@
                     button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
                 span  pour finaliser la commande.
         .col-md-2
-            wish-item(v-for="wish in basket" v-bind:wish="wish" v-on:remove_wish="removeWish" v-bind:key="wish.id")
+            wish-item(v-for="wish in basket" v-bind:wish="wish" v-bind:key="wish.id")
             div Total : {{total}} €
             div Produits au panier : {{matchedWishes}}/{{basket.length}}
             router-link(:to='{ name: "basket" }')
@@ -96,10 +96,10 @@ export default {
       return this.currentWish && this.searchs[this.currentWish.name];
     },
     currentWish() {
-      // if (this.$store.state.currentBasket) {
       return this.$store.getters.getCurrentWish;
-      // }
-      // return null;
+    },
+    currentWishIsEmpty() {
+      return !Object.keys(this.$store.getters.getCurrentWish).length;
     },
     basket() {
       const basket = this.$store.getters.getBasket;
@@ -112,10 +112,13 @@ export default {
       }
       return matchedWishes;
     },
+    basketFull() {
+      return this.matchedWishes === this.basket.length;
+    },
     total() {
       return this.basket.reduce((prev, wish) => {
-        if (wish.product && wish.product.price) {
-          const price = wish.product.price;
+        if (wish.product && wish.product.infos && wish.product.infos.price) {
+          const price = wish.product.infos.price;
           const priceProduct = price ? price * wish.product.quantity : 0;
           return prev + priceProduct;
         }
@@ -135,55 +138,6 @@ export default {
     },
   },
   methods: {
-    searchProducts: () => {
-    // searchProducts: (wish) => {
-      // const self = this;
-      // $.ajax({
-      //   type: 'GET',
-      //   url : '/products/search/'+wish.name,
-      //   data: {},
-      //   complete: function(responseObject) {
-      //     var products = JSON.parse(responseObject.responseText);
-          // test de sort
-          // function compare(a,b) {
-          //   if (a.price < b.price)
-          //     return -1;
-          //   if (a.price > b.price)
-          //     return 1;
-          //   return 0;
-          // }
-          // var sortedKeyProducts = Object.keys(products).sort( function(keyA, keyB) {
-          //     return products[keyA].price - products[keyB].price;
-          // });
-          // var sortedProducts = [];
-          // for(vari=0;i<sortedKeyProducts.length;i++){
-          //     sortedProducts[sortedKeyProducts[i]] = products[sortedKeyProducts[i]];
-          // }
-          // console.log(sortedProducts)
-          // self.currentWish.matchingProducts = sortedProducts;
-      //     self.currentWish.matchingProducts = products;
-      //   }
-      // });
-    },
-
-    removeWish: () => {
-    // removeWish: (pWish) => {
-      // console.log('here')
-      // if ( pWish.current ) {
-      //   this.pSelectedWishes[pWish.gid][pWish.id] = false;
-      //   this.removeCurrentWish();
-      //   this.setCurrentWishToNext();
-      // }
-      // var psw = this.selectedWishes;
-      // for(var i = 0; i < psw.length; i++ ) {
-      //   var wish = psw[i];
-      //   if ( wish.id == pWish.id) {
-      //     this.pSelectedWishes[wish.gid][wish.id] = false;
-      //   }
-      // }
-      // unselectWish(pWish);
-    },
-
     // lazyloading
     // lorsqu'on atteint le bas de la page a 100px pret on augmente le nombre de produits affichable
     handleScroll: () => {

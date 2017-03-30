@@ -80,7 +80,7 @@ export default new Vuex.Store({
       const currentWish = state.currentBasket.currentWish;
       if (getters.getBasket) {
         const newCurrentWish = getFirstUnmatchedSelectedWish(getters.getBasket);
-        if (newCurrentWish) {
+        if (newCurrentWish && Object.keys(newCurrentWish)) {
           const currentWish2 = getters.getWish(newCurrentWish.wid);
           const gid = currentWish2.gid;
           const wid = currentWish2.id;
