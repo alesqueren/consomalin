@@ -8,9 +8,12 @@ const getters = {
 };
 
 const actions = {
-  addWishGroup: ({ commit }, name) => {
-    resources.wishgroup.save({}, { name }).then((response) => {
-      commit('addWishGroup', { id: response.body, name, wishes: [] });
+  addWishGroup({ commit }, name) {
+    return new Promise((resolve) => {
+      resources.wishgroup.save({}, { name }).then((response) => {
+        commit('addWishGroup', { id: response.body, name, wishes: [] });
+        resolve(response.body);
+      });
     });
   },
   selectWishGroup: ({ commit }, { gid, selected }) => {

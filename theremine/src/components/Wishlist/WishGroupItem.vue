@@ -24,7 +24,7 @@ export default {
   methods: {
     addWish() {
       this.$store.dispatch('addWish', {
-        group: this.wishgroup,
+        gid: this.wishgroup.id,
         name: this.newWishName,
       });
       this.newWishName = '';

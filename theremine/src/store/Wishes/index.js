@@ -62,18 +62,21 @@ const actions = {
     });
     resources.wishProduct.save({ gid, wid }, { pid, quantity });
   },
-  addWish: ({ commit }, { group, name }) => {
-    const gid = group.id;
-    resources.wishes.save({ gid }, { names: [name] }).then((response) => {
-      commit('addWish', {
-        gid: group.id,
-        id: response.body,
-        name,
-      });
-      commit('selectWish', {
-        gid: group.id,
-        wid: response.body,
-        selected: true,
+  addWish({ commit }, { gid, name }) {
+    return new Promise((resolve) => {
+      resources.wishes.save({ gid }, { names: [name] }).then((response) => {
+        const wid = response.body;
+        commit('addWish', {
+          gid,
+          id: response.body,
+          name,
+        });
+        commit('selectWish', {
+          gid,
+          wid,
+          selected: true,
+        });
+        resolve(wid);
       });
     });
   },

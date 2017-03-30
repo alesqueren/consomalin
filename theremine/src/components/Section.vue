@@ -113,7 +113,7 @@ export default {
       return matchedWishes;
     },
     basketFull() {
-      return this.matchedWishes === this.basket.length;
+      return this.basket.length && this.matchedWishes === this.basket.length;
     },
     total() {
       return this.basket.reduce((prev, wish) => {

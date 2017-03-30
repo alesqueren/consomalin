@@ -1,8 +1,8 @@
 <template lang='pug'>
-.wish.list-group-item(v-bind:class='{active:wishIsCurrent}', style='padding:5px', @click='setCurrentWish($event)')
+.wish.list-group-item(v-bind:class='{active:wishIsCurrent}', style='padding:5px', @click='setCurrentWish()')
   span.fa.fa-remove(@click='removeWish($event)')
   div
-    span(style='font-weight:bold') {{wish.groupName}}
+    span(style='font-weight:bold') {{wish.gname}}
     |  {{wish.name}}
   div(v-if='wish.product.infos')
     div  {{wish.product.infos.name}}
@@ -29,14 +29,12 @@ export default {
     removeWish: () => {
       // this.$emit('remove_wish', this.wish);
     },
-    setCurrentWish: () => {
-      // if (event) {
-      //   // console.log(event.target.tagName)
-      //   var currentClass = event.target.tagName;
-      //   if ( event.target.tagName != 'SPAN' ) {
-      //     this.$emit('new_current_wish', this.wish);
-      //   }
-      // }
+    setCurrentWish() {
+      const gid = this.wish.gid;
+      const wid = this.wish.id;
+      const name = this.wish.name;
+      this.$store.dispatch('setCurrentWish', { gid, wid });
+      this.$store.dispatch('searchProductsWithName', { name });
     },
     changeQty: () => {
       // $.ajax({

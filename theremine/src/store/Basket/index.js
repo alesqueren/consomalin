@@ -20,6 +20,7 @@ const getters = {
               id: wish.id,
               name: wish.name,
               gid: wishgroup.id,
+              gname: wishgroup.name,
               product: {
                 id: selectedWish.pid,
                 quantity: selectedWish.quantity,
