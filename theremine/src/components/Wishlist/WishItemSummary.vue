@@ -1,6 +1,6 @@
 <template lang='pug'>
   div.wish.list-group-item.col-xs-6
-    div(v-if='editing')
+    div(v-if='isEditing')
       input(ref="editinput"
         v-model="editingName"
         v-on:keyup.enter="validEdition"
@@ -10,13 +10,10 @@
     div(v-else)
       span {{ name }}
 
-    div(v-if='!editing')
-      button.btn.btn-primary.btn-sm(@click.stop="edit")
-        i.fa.fa-pencil.fa-xs
-      button.btn.btn-warning.btn-sm(@click.stop="unselect")
-        i.fa.fa-close.fa-xs
-      button.btn.btn-danger.btn-sm(v-on:click.stop="remove")
-        i.fa.fa-trash-o.fa-xs
+    div.buttons(v-if='!isEditing')
+      i.fa.fa-edit.fa-xs(@click.stop="edit")
+      i.fa.fa-eraser.fa-xs(@click.stop="unselect")
+      i.fa.fa-trash-o.fa-xs(v-on:click.stop="remove")
 </template>
 
 <script>
@@ -34,13 +31,14 @@ export default {
     name() {
       return this.$store.getters.getWish(this.wid).name;
     },
-    editing() {
+    isEditing() {
       return this.$store.getters.isEditing(this.editingId);
     },
   },
   methods: {
     unselect() {
       this.$store.dispatch('selectWish', {
+        gid: this.gid,
         wid: this.wid,
         selected: false,
       });
@@ -58,13 +56,12 @@ export default {
       this.$store.dispatch('setInlineEdition', null);
     },
     validEdition() {
-      this.name = this.editingName;
-      this.finishEdition();
       this.$store.dispatch('renameWish', {
         gid: this.gid,
         wid: this.wid,
-        name: this.name,
+        name: this.editingName,
       });
+      this.finishEdition();
     },
     remove() {
       this.$store.dispatch('removeWish', {
@@ -77,10 +74,23 @@ export default {
 </script>
 
 <style scoped>
-.wish button {
+
+.wish {
+  min-width: 250px;
+}
+
+.wish i {
   visibility: hidden;
 }
-.wish:hover button {
+
+.wish:hover i {
   visibility: visible;
 }
+
+.buttons {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
 </style>

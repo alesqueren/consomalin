@@ -1,18 +1,24 @@
 <template lang='pug'>
-  div.wishgroup.list-group-item.col-3(v-if='wishgroup')
-    div
-      wishItem(v-for="wish in wishgroup.wishes" 
-        v-bind:wish="wish" 
-        v-bind:gid="wishgroup.id" 
-        v-bind:key="wish")
-      input(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Add a wish" onclick="event.stopPropagation()")
+  div
+    div.col.activeGroup.col-3(v-if="wishgroup")
+      h2 Elements de {{ wishgroup.name }}:
+      div.wishgroup.list-group-item.col-3(v-if='wishgroup')
+        div
+          wishItem(v-for="wish in wishgroup.wishes" 
+            v-bind:wish="wish" 
+            v-bind:gid="wishgroup.id" 
+            v-bind:key="wish")
+          input(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Add a wish" onclick="event.stopPropagation()")
+
+    router-link(:to='{ name: "section" }')
+      button.btn.btn-success.right(type="button") Passer aux rayons
 </template>
 
 <script>
 import wishItem from './WishItem';
 
 export default {
-  props: ['wishgroup'],
+  props: [],
   data() {
     return {
       newWishName: '',

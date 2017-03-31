@@ -50,13 +50,14 @@ const actions = {
     });
     resources.wishProduct.save({ gid, wid }, { pid, quantity });
   },
+
   addWish({ commit }, { gid, name }) {
     return new Promise((resolve) => {
       resources.wishes.save({ gid }, { names: [name] }).then((response) => {
-        const wid = response.body;
+        const wid = response.body[0];
         commit('addWish', {
           gid,
-          id: response.body,
+          id: wid,
           name,
         });
         commit('selectWish', {
@@ -68,6 +69,7 @@ const actions = {
       });
     });
   },
+
   removeWish: ({ commit, rootGetters }, { wid }) => {
     const wish = rootGetters.getWish(wid);
     const gid = wish.gid;
@@ -76,12 +78,14 @@ const actions = {
     });
     commit('selectWish', { gid, wid, selected: false });
   },
+
   renameWish: ({ commit }, { gid, wid, name }) => {
     commit('renameWish', { wid, name });
     resources.wish.update({ gid, wid }, { name }).then(() => {
       // commit('renameWish', { wid, name });
     });
   },
+
   selectWish({ commit, rootGetters }, { wid, selected }) {
     return new Promise((resolve) => {
       const wish = rootGetters.getWish(wid);

@@ -16,11 +16,7 @@
             v-bind:gid="gid" 
             v-bind:key="gid")
 
-      div.col.activeGroup.col-3
-        h2 Elements de XXX:
-        ActiveWishGroup
-        router-link(:to='{ name: "section" }')
-          button.btn.btn-success.right(type="button") Passer aux rayons
+      ActiveWishGroup
 
 </template>
 

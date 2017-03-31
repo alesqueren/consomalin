@@ -1,22 +1,24 @@
 <template lang="pug">
   #app
     div#header
-      div.container-fluid
-        div#navbar.row.no-gutter
-          div 
-            router-link.title(:to="{ name: 'home' }")
-              img.logo(src="../assets/images/car.jpg")
-              span.brand Consomalin
+      div.left
+        router-link.title(:to="{ name: 'home' }")
+          img.logo(src="../assets/images/car.jpg")
+          span.brand Consomalin
 
-          router-link.title(:to="{ name: 'wishlist' }") Ma liste de course
-          router-link.title(:to="{ name: 'section' }") Les rayons
-          router-link.title(:to="{ name: 'basket' }") Mon panier
-          router-link.title(:to="{ name: 'withdraw' }") Retrait
-          Usercard
+      div#steps.left
+        ul.header-tabs
+          li.header-tab
+            router-link.title(:to="{ name: 'wishlist' }") Liste
+          li.header-tab
+            router-link.title(:to="{ name: 'section' }") Rayons
+          li.header-tab
+            router-link.title(:to="{ name: 'basket' }") Panier
+          li.header-tab
+            router-link.title(:to="{ name: 'withdraw' }") Retrait
+      Usercard
     div#content
       router-view
-    div#footer
-      div.footer consomalin 2017
 </template>
 
 <script>
@@ -30,71 +32,99 @@ export default {
 
 <style>
 @import '../static/plugins/font-awesome-4.7.0/css/font-awesome.min.css';
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  color: #2c3e60;
+  background-color: #f2f4f7;
 }
+
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
-  text-decoration:none;
-  color:black;
+  text-decoration: none !important;
 }
+
 a:hover {
-  text-decoration:none;
-  color:black;
+  text-decoration: none;
 }
 
 #content{
-  padding : 50px;
+  padding: 60px;
   padding-bottom: 100px;
 }
 
 .left{
-  float:left;
-}
-.right{
-  float:right;
-}
-#header{
-  line-height: 50px;
-    height:50px;
-    width:100%;
-    background-color:#8CC739;
-}
-#header .logo {
-  height:50px;
-  width:50px;
-}
-#header .brand {
-  font-size:20px;
-  font-weight:bold;
-}
-#header .connectRegister{
-    text-align:right;
-}
-#header .title{
-    font-size :  36px;
-    font-weight: bold;
-    margin-left:15px;
-}
-#footer{
-    height:50px;
-    width:100%;
-    background-color:#8CC739;
-    position: fixed;
-  text-align:center;
-    bottom: 0;
-  line-height:50px;
+  float: left;
 }
 
-#footer .footer {
-  text-align:center;
-  font-weight:bold;
-  font-size :bold;
+#steps {
+  position: absolute;
+  left: 50%;
+  margin-left: -300px;
 }
+
+.right{
+  float: right;
+}
+
+#header{
+  /* plus de place pour le contenu
+  position: fixed;
+  z-index: 2; */
+  line-height: 60px;
+  height: 60px;
+  width: 100%;
+  background-color: #21314d;
+}
+
+#header .logo {
+  height: 60px;
+  width: 60px;
+}
+
+#header .brand {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#header .connectRegister{
+  text-align: right;
+}
+
+#header .title {
+  line-height: 60px;
+  font-weight: 700;
+  font-size: 22px;
+  font-weight: bold;
+  margin-left:15px;
+  color: #747e8f;
+}
+
+.header-tabs {
+  display: table;
+  padding: 0;
+  font-size: 0;
+  margin: 0;
+}
+
+.header-tab {
+  display: table-cell;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 150px;
+  text-align: center;
+}
+
+#steps .router-link-active {
+  color: #13181a !important;
+  background-color: #f2f4f7;
+  display: block;
+}
+
 </style>
