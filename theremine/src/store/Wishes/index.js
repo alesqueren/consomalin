@@ -1,6 +1,7 @@
 import resources from '../../resources';
 
 const getters = {
+
   getWish: (state, commit, rootState) => (wid) => {
     let wishFound = null;
     for (let i = 0; i < rootState.wishGroups.length; i++) {
@@ -19,6 +20,7 @@ const getters = {
     }
     return wishFound;
   },
+
   getCurrentWish(state, commit, rootState) {
     let wishFound = {};
     if (rootState.currentBasket && rootState.currentBasket.currentWish) {
@@ -40,6 +42,15 @@ const getters = {
     }
     return wishFound;
   },
+
+  getSelectedWishes: (state, commit, rootState) => (gid) => {
+    try {
+      return Object.keys(rootState.currentBasket.selectedWishes[gid]);
+    } catch (e) {
+      return [];
+    }
+  },
+
   isSelectedWish: (state, commit, rootState) => ({ gid, wid }) => {
     const sw = rootState.currentBasket.selectedWishes;
     if (!sw) {

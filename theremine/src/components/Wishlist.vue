@@ -1,23 +1,27 @@
 <template lang='pug'>
   div#wishlist.container-fluid
-    router-link(:to='{ name: "section" }')
-      button.btn.btn-success.right(type="button") Passer aux rayons
-    h2 Mes listes :
-    div.row.no-gutter.groups
-      WishGroup(v-for="wishgroup in wishlist" 
-        v-bind:wishgroup="wishgroup"
-        v-bind:key="wishgroup")
-      input(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Add a wishGroup")
-    div.col.no-gutter.activeGroup
-      ActiveWishGroup()
-    h2 Ma liste de course :
-    div.row.no-gutter
-      div.row.no-gutter
-        WishGroupItem(v-for="wishgroup in wishlist" 
-          v-bind:wishgroup="wishgroup" 
-          v-bind:key="wishgroup")
-    router-link(:to='{ name: "section" }')
-      button.btn.btn-success.right(type="button") Passer aux rayons
+
+    div.row
+      div.col.main
+        h2 Mes listes :
+        div.row.no-gutter
+          WishGroup(v-for="wishgroup in wishlist" 
+            v-bind:wishgroup="wishgroup"
+            v-bind:key="wishgroup")
+          input(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Add a wishGroup")
+
+        h2 Ma liste de course :
+        div.row
+          WishGroupItem(v-for="gid in selectedGroups" 
+            v-bind:gid="gid" 
+            v-bind:key="gid")
+
+      div.col.activeGroup.col-3
+        h2 Elements de XXX:
+        ActiveWishGroup
+        router-link(:to='{ name: "section" }')
+          button.btn.btn-success.right(type="button") Passer aux rayons
+
 </template>
 
 <script>
@@ -32,6 +36,9 @@ export default {
     };
   },
   computed: {
+    selectedGroups() {
+      return this.$store.getters.getSelectedWishGroups;
+    },
     wishlist() {
       return this.$store.getters.getWishlist;
     },
@@ -59,8 +66,5 @@ export default {
 }
 div.active-group {
   display: inline-block;
-}
-div.groups {
-  margin-bottom: 0px;
 }
 </style>

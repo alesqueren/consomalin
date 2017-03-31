@@ -1,5 +1,16 @@
 const getters = {
-  isEditing: (state, commit, rootState) => id => Boolean(rootState.inlineEdition === id),
+
+  isEditing: (state, commit, rootState) => id =>
+    Boolean(rootState.inlineEdition === id),
+
+  getSelectedWishGroups: (state, commit, rootState) => {
+    try {
+      return Object.keys(rootState.currentBasket.selectedWishes);
+    } catch (e) {
+      return [];
+    }
+  },
+
   getActiveWishGroup: (state, commit, rootState) => {
     const gid = rootState.activeWishGroup;
     if (gid && rootState.wishGroups) {
@@ -12,6 +23,7 @@ const getters = {
     }
     return null;
   },
+
   getWishlist: (state, commit, rootState) => {
     const wishlist = [];
     if (rootState.wishGroups) {

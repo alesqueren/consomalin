@@ -1,38 +1,44 @@
 <template lang='pug'>
-  div.wishgroup.list-group-item.col-3()
+  div.col.no-gutter.wishgroup.list-group-item.col-3
     div
-      span.groupName <strong>{{ wishgroup.name }}</strong>
-      wishItem(v-for="wish in wishgroup.wishes" 
-        v-bind:wish="wish" 
-        v-bind:gid="wishgroup.id" 
-        v-bind:key="wish")
+      span.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
+        wishItemSummary(v-for="wid in selectedWishes" 
+          v-bind:wid="wid" 
+          v-bind:gid="gid" 
+          v-bind:key="wid")
 </template>
 
 <script>
-import wishItem from './WishItem';
+import wishItemSummary from './WishItemSummary';
 
 export default {
-  props: ['wishgroup'],
+  props: ['gid'],
   data() {
     return {
       newWishName: '',
     };
   },
   computed: {
-    selected() {
-      return this.$store.getters.isSelectedWishGroup(this.wishgroup.id);
+    name() {
+      return this.$store.getters.getWishGroup(this.gid).name;
+    },
+    selectedWishes() {
+      return this.$store.getters.getSelectedWishes(this.gid);
     },
   },
   methods: {
+    setActivation() {
+      this.$store.dispatch('setWishGroupActivation', this.gid);
+    },
     addWish() {
       this.$store.dispatch('addWish', {
-        gid: this.wishgroup.id,
+        gid: this.gid,
         name: this.newWishName,
       });
       this.newWishName = '';
     },
   },
-  components: { wishItem },
+  components: { wishItemSummary },
 };
 
 </script>
@@ -41,6 +47,7 @@ export default {
 .wishgroup {
   position: relative;
   color: #00B7FF;
+  width: 400px;
 }
 .groupName {
   font-size: 1.2em;

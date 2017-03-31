@@ -246,6 +246,9 @@ export default new Vuex.Store({
 
           // si on a supprimé le dernier wish, on supprime le groupe de l'objet
           if (!Object.keys(selectedWishes[gid]).length) {
+            Vue.set(selectedWishes, 'tmp', {});
+            delete selectedWishes.tmp;
+
             Vue.set(selectedWishes, gid, null);
             delete selectedWishes[gid];
           }
@@ -275,12 +278,8 @@ export default new Vuex.Store({
       Vue.set(state.currentBasket.selectedWishes, gid, selectWishes);
     },
 
-    toggleWishGroupActivation: (state, gid) => {
-      if (state.activeWishGroup === gid) {
-        state.activeWishGroup = null;
-      } else {
-        state.activeWishGroup = gid;
-      }
+    setWishGroupActivation: (state, value) => {
+      state.activeWishGroup = value;
     },
 
     unselectGroup: (state, { gid }) => {
