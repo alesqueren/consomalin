@@ -74,7 +74,7 @@ const actions = {
     const wish = rootGetters.getWish(wid);
     const gid = wish.gid;
     resources.wish.delete({ gid, wid }, {}).then(() => {
-      commit('removeWish', { gid, wid });
+      commit('removeWish', { wid });
     });
     commit('selectWish', { gid, wid, selected: false });
   },

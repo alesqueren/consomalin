@@ -25,7 +25,6 @@ export default {
   },
   methods: {
     removeWish() {
-      const gid = this.wish.gid;
       const wid = this.wish.id;
       const selected = false;
       this.$store.dispatch('selectWish', { wid, selected }).then(() => {

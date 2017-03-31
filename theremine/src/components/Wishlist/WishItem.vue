@@ -81,7 +81,6 @@ export default {
     },
     remove() {
       this.$store.dispatch('removeWish', {
-        gid: this.gid,
         wid: this.wish.id,
       });
     },

@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import router from '../../router';
+
 export default {
   props: ['currentwish'],
   data() {
@@ -55,9 +57,10 @@ export default {
       this.wishCreation = true;
       const name = this.currentwish.name;
       this.$store.dispatch('addWishGroup', name).then((gid) => {
-        this.$store.dispatch('addWish', { gid, name }).then((wid) => {
-          this.$store.dispatch('setCurrentWish', { gid, wid });
-        });
+        this.$store.dispatch('removeCurrentWish');
+        this.$store.dispatch('removeWish', { wid: this.currentwish.id });
+        this.$store.dispatch('setWishGroupActivation', gid);
+        router.push({ name: 'wishlist' });
       });
     },
   },

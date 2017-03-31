@@ -98,6 +98,10 @@ export default new Vuex.Store({
       }
     },
 
+    removeCurrentWish({ commit }) {
+      commit('removeCurrentWish');
+    },
+
     setInlineEdition: ({ commit }, id) => {
       commit('setInlineEdition', { id });
     },
@@ -272,8 +276,8 @@ export default new Vuex.Store({
       Vue.set(state.currentBasket.selectedWishes, gid, selectWishes);
     },
 
-    setWishGroupActivation: (state, value) => {
-      state.activeWishGroup = value;
+    setWishGroupActivation: (state, gid) => {
+      state.activeWishGroup = gid;
     },
 
     unselectGroup: (state, { gid }) => {
