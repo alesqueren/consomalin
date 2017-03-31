@@ -12,11 +12,10 @@ router.get('/basket/currentWish',
 router.post('/basket/currentWish',
   mid.isAuthenticated,
   mid.parseData({
-    gid: { required: true },
     wid: { required: true },
   }),
   ({ data, user }, res) => {
-    basketManager.setCurrentWish(user._id, data.gid, data.wid);
+    basketManager.setCurrentWish(user._id, data.wid);
     res.json('OK');
   },
 );

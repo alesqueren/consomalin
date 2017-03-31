@@ -26,7 +26,7 @@ export default new Vuex.Store({
   state: {
     wishGroups: null,
     currentBasket: {
-      currentWish: null,
+      currentWishId: null,
       selectedWishes: null,
     },
     searchs: {},
@@ -40,7 +40,6 @@ export default new Vuex.Store({
   getters: {
   },
   actions: {
-
     updateWishGroupsAndCurrentBasket({ dispatch, commit, state }) {
       return new Promise((resolve, reject) => {
         if (!state.wishGroups) {
@@ -52,9 +51,6 @@ export default new Vuex.Store({
             const currentBasket = data.currentBasket;
             if (!currentBasket.selectedWishes) {
               currentBasket.selectedWishes = {};
-            }
-            if (!currentBasket.currentWish) {
-              currentBasket.currentWish = {};
             }
             const idsWithoutDetail = [];
             Object.keys(currentBasket.selectedWishes).map((wishgroupId) => {
@@ -82,18 +78,18 @@ export default new Vuex.Store({
       });
     },
 
-    nextCurrentWish: ({ dispatch, getters, commit, state }) => {
+    nextCurrentWish({ dispatch, getters, commit, state }) {
       if (getters.getBasket) {
         const newCurrentWish = getFirstUnmatchedSelectedWish(getters.getBasket);
-        if (newCurrentWish && Object.keys(newCurrentWish)) {
-          const currentWish2 = getters.getWish(newCurrentWish.wid);
-          const gid = currentWish2.gid;
-          const wid = currentWish2.id;
+        if (newCurrentWish) {
+          const wish = getters.getWish(newCurrentWish.wid);
+          const gid = wish.gid;
+          const wid = wish.id;
           resources.currentWish.save({}, { gid, wid }).then(() => {
-            commit('setCurrentWish', { gid: currentWish2.gid, wid: currentWish2.id });
-            const currentWishComplete = getters.getCurrentWish;
-            if (currentWishComplete.name && !state.searchs[currentWishComplete.name]) {
-              dispatch('searchProductsWithName', { name: currentWishComplete.name });
+            commit('setCurrentWish', { gid, wid });
+            const currentWish = getters.getWish(wid);
+            if (currentWish.name && !state.searchs[currentWish.name]) {
+              dispatch('searchProductsWithName', { name: currentWish.name });
             }
           });
         } else {
@@ -140,7 +136,6 @@ export default new Vuex.Store({
     setWishGroupsAndCurrentBasket(state, { wishGroups, currentBasket }) {
       return new Promise((resolve) => {
         state.wishGroups = wishGroups;
-        // attention, on voudra toujours que current basket contienne selectedWish
         state.currentBasket = currentBasket;
         resolve();
       });
@@ -151,13 +146,11 @@ export default new Vuex.Store({
     },
 
     removeCurrentWish: (state) => {
-      Vue.set(state.currentBasket, 'currentWish', {});
+      Vue.set(state.currentBasket, 'currentWishId', null);
     },
 
-    setCurrentWish: (state, { gid, wid }) => {
-      Vue.set(state.currentBasket.currentWish, 'gid', gid);
-      Vue.set(state.currentBasket.currentWish, 'wid', wid);
-      // state.currentBasket.currentWish = { gid, wid };
+    setCurrentWish: (state, { wid }) => {
+      Vue.set(state.currentBasket, 'currentWishId', wid);
     },
 
     addSearchs: (state, { name, products }) => {
@@ -239,6 +232,7 @@ export default new Vuex.Store({
       // si on deselectionne un wish
       if (!selected) {
         if (selectedWishes[gid]) {
+          Vue.set(selectedWishes[gid], wid, null);
           delete selectedWishes[gid][wid];
 
           Vue.set(selectedWishes[gid], 'tmp', {});

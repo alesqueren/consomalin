@@ -1,8 +1,9 @@
 <template lang='pug'>
   div.product-item.list-group-item.col-md-2(@click="selectProduct()")
-   img(style="width:75px;height:75px;" v-bind:src="product.imageUrl")
-   span.name {{product.name}}
-   span.price : {{product.price}}€
+   img.product-img.center(v-bind:src="product.imageUrl")
+   .name.center {{product.name}}
+   .price <b>{{product.price}}&nbsp;€</b>
+   .pu {{product.priceByQuantity}}&nbsp;€/u
 </template>
 
 <script>
@@ -13,9 +14,7 @@ export default {
       this.$store.dispatch('updateProductInfos',
         {
           pid: this.productkey,
-          name: this.product.name,
-          price: this.product.price,
-          imageUrl: this.product.imageUrl,
+          infos: this.product,
         },
       );
       this.$store.dispatch('setProduct',
@@ -33,4 +32,18 @@ export default {
 </script>
 
 <style scoped>
+.product-img{
+  width:100px;
+  height:100px;
+}
+.price{
+  font-size: 1.2em;
+}
+.pu{
+  font-size: 0.7em;
+}
+.center{
+  display: block;
+  margin: 0 auto;
+}
 </style>

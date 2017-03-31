@@ -1,9 +1,9 @@
 <template lang='pug'>
-.wish.list-group-item(v-bind:class='{active:wishIsCurrent}', style='padding:5px', @click='setCurrentWish()')
-  span.fa.fa-remove(@click='removeWish($event)')
+.wish.list-group-item(v-bind:class='{active:wishIsCurrent}', @click='setCurrentWish()')
+  span.fa.fa-remove.wish-remove(@click.prevent.stop='removeWish($event)')
   div
-    span(style='font-weight:bold') {{wish.gname}}
-    |  {{wish.name}}
+    span.wishgroupname.badge.badge-success {{wish.gname}}
+    span.wishname {{wish.name}}
   div(v-if='wish.product.infos')
     div  {{wish.product.infos.name}}
     div  {{wish.product.infos.price}}
@@ -19,15 +19,20 @@ export default {
   props: ['wish'],
   computed: {
     wishIsCurrent() {
-      return this.wish.id === this.$store.getters.getCurrentWish.id;
-    },
-    wishHasProduct() {
-      return this.wish.id === this.$store.getters.getCurrentWish.id;
+      const currentWishId = this.$store.state.currentBasket.currentWishId;
+      return this.wish.id === currentWishId;
     },
   },
   methods: {
-    removeWish: () => {
-      // this.$emit('remove_wish', this.wish);
+    removeWish() {
+      const gid = this.wish.gid;
+      const wid = this.wish.id;
+      const selected = false;
+      this.$store.dispatch('selectWish', { wid, selected }).then(() => {
+        if (this.wishIsCurrent) {
+          this.$store.dispatch('nextCurrentWish');
+        }
+      });
     },
     setCurrentWish() {
       const gid = this.wish.gid;
@@ -50,4 +55,24 @@ export default {
 </script>
 
 <style scoped>
+.wish{
+  padding: 5px;
+  min-height: 85px;
+  position: relative;
+}
+.wishgroupname{
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+.wishname{
+  font-weight: bold;
+}
+.wish-remove{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: red;
+  z-index: 10;
+}
 </style>

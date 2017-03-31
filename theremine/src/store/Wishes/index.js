@@ -3,13 +3,12 @@ import resources from '../../resources';
 const getters = {
 
   getWish: (state, commit, rootState) => (wid) => {
-    let wishFound = null;
     for (let i = 0; i < rootState.wishGroups.length; i++) {
       const wishGroup = rootState.wishGroups[i];
       for (let j = 0; j < wishGroup.wishes.length; j++) {
         const wish = wishGroup.wishes[j];
         if (wish.id === wid) {
-          wishFound = {
+          return {
             id: wish.id,
             name: wish.name,
             gid: wishGroup.id,
@@ -18,29 +17,7 @@ const getters = {
         }
       }
     }
-    return wishFound;
-  },
-
-  getCurrentWish(state, commit, rootState) {
-    let wishFound = {};
-    if (rootState.currentBasket && rootState.currentBasket.currentWish) {
-      const currentWish = rootState.currentBasket.currentWish;
-      for (let i = 0; i < rootState.wishGroups.length; i++) {
-        const wishGroup = rootState.wishGroups[i];
-        for (let j = 0; j < wishGroup.wishes.length; j++) {
-          const wish = wishGroup.wishes[j];
-          if (wish.id === currentWish.wid) {
-            wishFound = {
-              id: wish.id,
-              name: wish.name,
-              gid: wishGroup.id,
-              gname: wishGroup.name,
-            };
-          }
-        }
-      }
-    }
-    return wishFound;
+    return null;
   },
 
   getSelectedWishes: (state, commit, rootState) => (gid) => {
@@ -91,9 +68,11 @@ const actions = {
       });
     });
   },
-  removeWish: ({ commit }, { gid, wid }) => {
+  removeWish: ({ commit, rootGetters }, { wid }) => {
+    const wish = rootGetters.getWish(wid);
+    const gid = wish.gid;
     resources.wish.delete({ gid, wid }, {}).then(() => {
-      commit('removeWish', { wid });
+      commit('removeWish', { gid, wid });
     });
     commit('selectWish', { gid, wid, selected: false });
   },
@@ -103,9 +82,14 @@ const actions = {
       // commit('renameWish', { wid, name });
     });
   },
-  selectWish: ({ commit }, { gid, wid, selected }) => {
-    resources.wish.update({ gid, wid }, { selected }).then(() => {
-      commit('selectWish', { gid, wid, selected });
+  selectWish({ commit, rootGetters }, { wid, selected }) {
+    return new Promise((resolve) => {
+      const wish = rootGetters.getWish(wid);
+      const gid = wish.gid;
+      resources.wish.update({ gid, wid }, { selected }).then(() => {
+        commit('selectWish', { gid, wid, selected });
+        resolve();
+      });
     });
   },
 };

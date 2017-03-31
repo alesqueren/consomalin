@@ -1,6 +1,6 @@
 <template lang='pug'>
   div#wishes
-    .container
+    .container-fluid
       .row
         .col-md-10
           currentWish(v-bind:currentwish="currentWish")
@@ -30,17 +30,6 @@ import WishItem from './Section/WishItem';
 import CurrentWish from './Section/CurrentWish';
 import ProductItem from './Section/ProductItem';
 
-// function getFirstUnmatchedSelectedWish(basket) {
-//   for (let i = 0; i < basket.length; i++) {
-//     const wish = basket[i];
-//     if (!wish.product.id) {
-//       wish.current = true;
-//       return { gid: wish.gid, wid: wish.id };
-//     }
-//   }
-//   return null;
-// }
-
 /*eslint-disable */
 function debouncer(a,b,c){var d;return function(){var e=this,f=arguments,g=function(){d=null,c||a.apply(e,f)},h=c&&!d;clearTimeout(d),d=setTimeout(g,b),h&&a.apply(e,f)}}
 function getScrollXY(){var a=0,b=0;return"number"==typeof window.pageYOffset?(b=window.pageYOffset,a=window.pageXOffset):document.body&&(document.body.scrollLeft||document.body.scrollTop)?(b=document.body.scrollTop,a=document.body.scrollLeft):document.documentElement&&(document.documentElement.scrollLeft||document.documentElement.scrollTop)&&(b=document.documentElement.scrollTop,a=document.documentElement.scrollLeft),[a,b]}
@@ -61,10 +50,6 @@ function getDocHeight(){var a=document;return Math.max(a.body.scrollHeight,a.doc
 export default {
   data() {
     return {
-      // wishGroups: wishGroups,
-      // pSelectedWishes: pSelectedWishes,
-      // currentWish: currentWish,
-      // maxProducts: 40,
       maxProducts: 40,
     };
   },
@@ -72,8 +57,11 @@ export default {
     this.$store
       .dispatch('updateWishGroupsAndCurrentBasket')
       .then(() => {
-        if (!this.$store.state.currentBasket.currentWish.id) {
+        if (!this.$store.state.currentBasket.currentWishId) {
           this.$store.dispatch('nextCurrentWish');
+        } else {
+          const name = this.currentWish.name;
+          this.$store.dispatch('searchProductsWithName', { name });
         }
       });
   },
@@ -96,10 +84,14 @@ export default {
       return this.currentWish && this.searchs[this.currentWish.name];
     },
     currentWish() {
-      return this.$store.getters.getCurrentWish;
+      const currentWishId = this.$store.state.currentBasket.currentWishId;
+      if (currentWishId) {
+        return this.$store.getters.getWish(currentWishId);
+      }
+      return {};
     },
     currentWishIsEmpty() {
-      return !Object.keys(this.$store.getters.getCurrentWish).length;
+      return !this.$store.state.currentBasket.currentWishId;
     },
     basket() {
       const basket = this.$store.getters.getBasket;

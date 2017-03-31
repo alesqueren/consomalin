@@ -42,7 +42,6 @@ export default {
       },
       set(selected) {
         this.$store.dispatch('selectWish', {
-          gid: this.gid,
           wid: this.wish.id,
           selected,
         });
@@ -55,7 +54,6 @@ export default {
   methods: {
     select() {
       this.$store.dispatch('selectWish', {
-        gid: this.gid,
         wid: this.wish.id,
         selected: !this.selected,
       });

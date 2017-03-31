@@ -41,7 +41,6 @@ export default {
   methods: {
     unselect() {
       this.$store.dispatch('selectWish', {
-        gid: this.gid,
         wid: this.wid,
         selected: false,
       });

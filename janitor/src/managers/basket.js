@@ -2,29 +2,26 @@ const mongo = require('../bs/mongo');
 
 const userCollectionName = 'user';
 
-function setCurrentWish(email, gid, wid) {
+function setCurrentWish(email, wid) {
   const users = mongo.db.collection(userCollectionName);
-  const path = 'currentBasket.currentWish';
+  const path = 'currentBasket.currentWishId';
   users.updateOne(
     { _id: email },
     {
       $set: {
-        [path]: {
-          gid,
-          wid,
-        },
+        [path]: wid,
       },
     },
   );
 }
 function removeCurrentWish(email) {
   const users = mongo.db.collection(userCollectionName);
-  const path = 'currentBasket.currentWish';
+  const path = 'currentBasket.currentWishId';
   users.updateOne(
     { _id: email },
     {
       $set: {
-        [path]: {},
+        [path]: null,
       },
     },
   );

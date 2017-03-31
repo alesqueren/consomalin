@@ -27,9 +27,7 @@ const getters = {
                 infos: productInfos,
               },
             };
-            const sameGroup = currentBasket.currentWish.gid === wishgroup.id;
-            const sameWish = currentBasket.currentWish.wid === wish.id;
-            if (sameGroup && sameWish) {
+            if (currentBasket.currentWishId === wish.id) {
               newWish.current = true;
             }
             basket.push(newWish);
@@ -55,30 +53,23 @@ const actions = {
     resources.kiva.get({ uri }, {}).then((response) => {
       const products = JSON.parse(response.body);
       Object.keys(products).map((pid) => {
-        const product = products[pid];
-        const infos = {
-          name: product.name,
-          imageUrl: product.imageUrl,
-          price: product.price,
-        };
+        const infos = products[pid];
         commit('addProductInfos', { pid, infos });
         return null;
       });
     });
   },
-  updateProductInfos: ({ commit, rootState }, { pid, name, imageUrl, price }) => {
-    const infos = {
-      name,
-      imageUrl,
-      price,
-    };
+  updateProductInfos: ({ commit, rootState }, { pid, infos }) => {
     if (!rootState.productInfos[pid]) {
       commit('addProductInfos', { pid, infos });
     }
   },
-  setCurrentWish: ({ commit }, { gid, wid }) => {
-    resources.currentWish.save({}, { gid, wid }).then(() => {
-      commit('setCurrentWish', { gid, wid });
+  setCurrentWish({ commit }, { gid, wid }) {
+    return new Promise((resolve) => {
+      resources.currentWish.save({}, { wid }).then(() => {
+        commit('setCurrentWish', { wid });
+        resolve();
+      });
     });
   },
 };

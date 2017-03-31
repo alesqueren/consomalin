@@ -1,18 +1,17 @@
 <template lang='pug'>
-  div(v-if="currentwish.id")
+  div#currentWish(v-if="currentwish.id")
     div.input-group.stylish-input-group.search-wrapper
       span.input-group-addon.search-search
-        button(type="submit")
+        div
           span.fa.fa-search
       .input-wrapper.search-input(onclick="javascript:document.getElementById('search-text').focus();")
         .input-badge
-          span.badge.badge-primary {{ currentwish.gname }}
+          span.badge.badge-success {{ currentwish.gname }}
         .input-input
           input#search-text.form-control(type="text" v-model="currentwish.name" v-on:keyup="rename")
-      span.input-group-addon.search-addGroup
+      span.input-group-addon.search-addGroup(@click="addGroup")
+        span.fa.fa-list-ul &nbsp;&nbsp;&nbsp;
         span Est-ce une liste ?
-        button(type="submit" @click="addGroup")
-          span.fa.fa-list-ul
 </template>
 
 <script>
@@ -66,11 +65,14 @@ export default {
 </script>
 
 <style scoped>
+#currentWish{
+  padding-bottom: 25px;
+}
 #search-text{
-  text-align:center;
+  text-align: center;
   border: none;
-  height: 64px;
-  line-height: 64px;
+  height: 44px;
+  line-height: 44px;
   width: 100%;
 }
 .input-wrapper{
@@ -83,24 +85,26 @@ export default {
   cursor: text;
 }
 .input-input{
-  display:table-cell;
+  display: table-cell;
 }
 .input-badge{
-  display:table-cell;
+  display: table-cell;
   top: 24px;
   left: 10px;
-  margin-right: 12px;
+  padding-right: 10px;
+  padding-left: 10px;
 }
 .search-wrapper{
-  display:table;
+  display: table;
 }
 .search-search{
-  display:table-cell;
+  display: table-cell;
+  color: #0275d8;
 }
 .search-text{
-  display:table-cell;
+  display: table-cell;
 }
 .search-addGroup{
-  display:table-cell;
+  display: table-cell;
 }
 </style>
