@@ -1,11 +1,11 @@
 <template lang='pug'>
-  div.wishgroup.list-group-item.col-3()
+  div.wishgroup.list-group-item.col-3(v-if='wishgroup')
     div
-      span.groupName <strong>{{ wishgroup.name }}</strong>
       wishItem(v-for="wish in wishgroup.wishes" 
         v-bind:wish="wish" 
         v-bind:gid="wishgroup.id" 
         v-bind:key="wish")
+      input(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Add a wish" onclick="event.stopPropagation()")
 </template>
 
 <script>
@@ -19,8 +19,8 @@ export default {
     };
   },
   computed: {
-    selected() {
-      return this.$store.getters.isSelectedWishGroup(this.wishgroup.id);
+    wishgroup() {
+      return this.$store.getters.getActiveWishGroup;
     },
   },
   methods: {
@@ -57,3 +57,4 @@ export default {
   right: 0;
 }
 </style>
+

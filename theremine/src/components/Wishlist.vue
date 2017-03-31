@@ -2,25 +2,28 @@
   div#wishlist.container-fluid
     router-link(:to='{ name: "section" }')
       button.btn.btn-success.right(type="button") Passer aux rayons
+    h2 Mes listes :
+    div.row.no-gutter.groups
+      WishGroup(v-for="wishgroup in wishlist" 
+        v-bind:wishgroup="wishgroup"
+        v-bind:key="wishgroup")
+      input(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Add a wishGroup")
+    div.col.no-gutter.activeGroup
+      ActiveWishGroup()
+    h2 Ma liste de course :
     div.row.no-gutter
       div.row.no-gutter
-        WishGroup(
-          v-for="(wishgroup, wishgroupIndex) in wishlist" 
+        WishGroupItem(v-for="wishgroup in wishlist" 
           v-bind:wishgroup="wishgroup" 
-          v-bind:key="wishgroupIndex")
-        input(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Add a wishGroup")
-
-    div.row.no-gutter
-      div.row.no-gutter
-        WishGroupItem(v-for="(wishgroup, wishgroupIndex) in wishlist" v-bind:wishgroup="wishgroup" v-bind:key="wishgroupIndex")
+          v-bind:key="wishgroup")
     router-link(:to='{ name: "section" }')
       button.btn.btn-success.right(type="button") Passer aux rayons
-    input(ref="tata")
 </template>
 
 <script>
 import WishGroupItem from './Wishlist/WishGroupItem';
 import WishGroup from './Wishlist/WishGroup';
+import ActiveWishGroup from './Wishlist/ActiveWishGroup';
 
 export default {
   data() {
@@ -29,14 +32,6 @@ export default {
     };
   },
   computed: {
-    // mapState(['wishGroups']),
-    // wishGroups() {
-    //   return this.$store.state.wishGroups;
-    // },
-    // selectedWishes() {
-    //   return this.$store.state.currentBasket.selectedWishes;
-    // },
-    // ...mapGetters({ wishlist: 'getWishlist' }),
     wishlist() {
       return this.$store.getters.getWishlist;
     },
@@ -50,7 +45,7 @@ export default {
   mounted() {
     this.$store.dispatch('updateWishGroupsAndCurrentBasket');
   },
-  components: { WishGroupItem, WishGroup },
+  components: { WishGroupItem, WishGroup, ActiveWishGroup },
 };
 </script>
 
@@ -61,5 +56,11 @@ export default {
 }
 .no-gutter {
   margin-bottom:75px;
+}
+div.active-group {
+  display: inline-block;
+}
+div.groups {
+  margin-bottom: 0px;
 }
 </style>

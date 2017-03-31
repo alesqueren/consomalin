@@ -1,6 +1,15 @@
 import resources from '../../resources';
 
 const getters = {
+  getWishGroup: (state, commit, rootState) => (gid) => {
+    for (let i = 0; i < rootState.wishGroups.length; i++) {
+      const wishgroup = rootState.wishGroups[i];
+      if (wishgroup.id === gid) {
+        return wishgroup;
+      }
+    }
+    return null;
+  },
   isSelectedWishGroup: (state, commit, rootState) => (gid) => {
     const selectedWishes = rootState.currentBasket.selectedWishes;
     return Boolean(selectedWishes && selectedWishes[gid]);
@@ -16,13 +25,16 @@ const actions = {
       });
     });
   },
+  toggleWishGroupActivation: ({ commit }, gid) => {
+    commit('toggleWishGroupActivation', gid);
+  },
   selectWishGroup: ({ commit }, { gid, selected }) => {
     const commitName = selected ? 'selectGroup' : 'unselectGroup';
     commit(commitName, { gid });
     resources.wishgroup.update({ gid }, { selected });
   },
   renameWishGroup: ({ commit }, { gid, name }) => {
-    commit('renameWishGroup', { gid });
+    commit('renameWishGroup', { gid, name });
     resources.wishgroup.update({ gid }, { name });
   },
   removeWishGroup: ({ commit }, gid) => {

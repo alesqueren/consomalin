@@ -32,6 +32,7 @@ export default new Vuex.Store({
     searchs: {},
     productInfos: {},
     inlineEdition: null,
+    activeWishGroup: null,
   },
   // getWish: state => ({ gid, wid }) => {
   //   return state.currentBasket.selectedWishes[gid][wid];
@@ -82,7 +83,6 @@ export default new Vuex.Store({
     },
 
     nextCurrentWish: ({ dispatch, getters, commit, state }) => {
-      const currentWish = state.currentBasket.currentWish;
       if (getters.getBasket) {
         const newCurrentWish = getFirstUnmatchedSelectedWish(getters.getBasket);
         if (newCurrentWish && Object.keys(newCurrentWish)) {
@@ -273,6 +273,14 @@ export default new Vuex.Store({
         }
       }
       Vue.set(state.currentBasket.selectedWishes, gid, selectWishes);
+    },
+
+    toggleWishGroupActivation: (state, gid) => {
+      if (state.activeWishGroup === gid) {
+        state.activeWishGroup = null;
+      } else {
+        state.activeWishGroup = gid;
+      }
     },
 
     unselectGroup: (state, { gid }) => {

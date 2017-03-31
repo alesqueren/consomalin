@@ -1,14 +1,14 @@
 <template lang='pug'>
-  div.wishgroup.list-group-item.col-2(v-bind:class="{'bg-info': selected}")
-    input(type="checkbox" v-model="selected" @click="select")
+  div.wishgroup.list-group-item.col-2(v-bind:class="{'bg-primary': isActive, 'bg-info': selected && ! isActive}" @click="toggleActivation")
+    input(type="checkbox" v-model="selected" @click="select" onclick="event.stopPropagation()")
 
     div(v-if='editing')
-      input(ref="editinput" 
-        v-model="editingName" 
-        v-on:keyup.enter="validEdition" 
-        v-on:blur="cancelEdition")
-      button.btn.btn-success.btn-sm(@click.stop="validEdition")
+      button.btn.btn-success.btn-sm(@click.stop="validEdition" onclick="event.stopPropagation()")
         i.fa.fa-check.fa-xs
+      input(ref="editinput"
+        v-model="editingName"
+        v-on:keyup.enter="validEdition"
+        v-on:blur="finishEdition")
     div(v-else)
       span.groupName <strong>{{ name }}</strong>
 
@@ -27,13 +27,23 @@ export default {
   props: ['wishgroup'],
   data() {
     return {
-      name: this.wishgroup.name,
       editingName: null,
     };
   },
   computed: {
+    // todo: remove?
+    name() {
+      return this.$store.getters.getWishGroup(this.wishgroup.id).name;
+    },
+    isActive() {
+      try {
+        return this.wishgroup.id === this.$store.getters.getActiveWishGroup.id;
+      } catch (e) {
+        return false;
+      }
+    },
     editing() {
-      return Boolean(this.$store.state.inlineEdition === this.wishgroup.id);
+      return this.$store.getters.isEditing(this.wishgroup.id);
     },
     selected() {
       return this.$store.getters.isSelectedWishGroup(this.wishgroup.id);
@@ -58,26 +68,32 @@ export default {
         selected: !this.selected,
       });
     },
+    toggleActivation() {
+      this.$store.dispatch('toggleWishGroupActivation', this.wishgroup.id);
+    },
     focus() {
       this.$refs.editinput.focus();
     },
     edit() {
       this.editingName = this.name;
       this.$store.dispatch('setInlineEdition', this.wishgroup.id);
-      // document.getElementById(this.wishgroup.id).focus();
       Vue.nextTick(this.focus);
     },
-    cancelEdition() {
-      console.log('cancel');
+    finishEdition() {
+      console.log('finish');
       this.editingName = null;
       this.$store.dispatch('setInlineEdition', null);
     },
     validEdition() {
-      this.name = this.editingName;
+      console.log('valid0');
       this.$store.dispatch('renameWishGroup', {
         gid: this.wishgroup.id,
-        name: this.name,
+        name: this.editingName,
       });
+      console.log('valid1');
+      this.name = this.editingName;
+      console.log('valid2');
+      this.finishEdition();
     },
     remove() {
       this.$store.dispatch('removeWishGroup', this.wishgroup.id);

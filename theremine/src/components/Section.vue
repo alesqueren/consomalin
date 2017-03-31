@@ -30,16 +30,16 @@ import WishItem from './Section/WishItem';
 import CurrentWish from './Section/CurrentWish';
 import ProductItem from './Section/ProductItem';
 
-function getFirstUnmatchedSelectedWish(basket) {
-  for (let i = 0; i < basket.length; i++) {
-    const wish = basket[i];
-    if (!wish.product.id) {
-      wish.current = true;
-      return { gid: wish.gid, wid: wish.id };
-    }
-  }
-  return null;
-}
+// function getFirstUnmatchedSelectedWish(basket) {
+//   for (let i = 0; i < basket.length; i++) {
+//     const wish = basket[i];
+//     if (!wish.product.id) {
+//       wish.current = true;
+//       return { gid: wish.gid, wid: wish.id };
+//     }
+//   }
+//   return null;
+// }
 
 /*eslint-disable */
 function debouncer(a,b,c){var d;return function(){var e=this,f=arguments,g=function(){d=null,c||a.apply(e,f)},h=c&&!d;clearTimeout(d),d=setTimeout(g,b),h&&a.apply(e,f)}}
