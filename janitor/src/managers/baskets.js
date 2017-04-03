@@ -26,6 +26,30 @@ function removeCurrentWish(email) {
     },
   );
 }
+function removeCurrentselectedWishes(email) {
+  const users = mongo.db.collection(userCollectionName);
+  const path = 'currentBasket.selectedWishes';
+  users.updateOne(
+    { _id: email },
+    {
+      $set: {
+        [path]: null,
+      },
+    },
+  );
+}
+function removeCurrentSlot(email) {
+  const users = mongo.db.collection(userCollectionName);
+  const path = 'currentBasket.slot';
+  users.updateOne(
+    { _id: email },
+    {
+      $set: {
+        [path]: null,
+      },
+    },
+  );
+}
 // function setCurrentSlot(email, slot) {
 //   const users = mongo.db.collection(userCollectionName);
 //   const path = 'currentBasket.currentSlot';
@@ -42,4 +66,6 @@ function removeCurrentWish(email) {
 module.exports = {
   setCurrentWish,
   removeCurrentWish,
+  removeCurrentselectedWishes,
+  removeCurrentSlot,
 };

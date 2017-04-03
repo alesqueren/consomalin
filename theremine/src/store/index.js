@@ -26,6 +26,7 @@ export default new Vuex.Store({
   state: {
     wishGroups: null,
     currentBasket: {
+      slot: null,
       currentWishId: null,
       selectedWishes: null,
     },
@@ -280,6 +281,10 @@ export default new Vuex.Store({
       state.activeWishGroup = gid;
     },
 
+    selectSlot: (state, slotId) => {
+      state.currentBasket.slot = slotId;
+    },
+
     unselectGroup: (state, { gid }) => {
       if (state.currentBasket.selectedWishes[gid]) {
         Vue.set(state.currentBasket.selectedWishes, gid, null);
@@ -289,6 +294,33 @@ export default new Vuex.Store({
 
     setInlineEdition: (state, { id }) => {
       state.inlineEdition = id;
+    },
+
+    setSlots: (state, { slots }) => {
+      console.log('slots');
+      console.log(slots);
+      const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+      const newSlots = [];
+      let daySlots = [];
+      for (let i = 0; i < slots.length; i++) {
+        const slot = slots[i];
+        slot.selected = false;
+
+        const d = new Date(slot.day);
+        const h = new Date(slot.day + ' ' + slot.time);
+        let dayName = '';
+        // au dernier slot du jour, on les ajoutes tous
+        if ((dayName !== days[d.getDay()] || i + 1 === slots.length) && !i === 0) {
+          newSlots.push({ name: dayName, slots: daySlots });
+          daySlots = [];
+        }
+        dayName = days[d.getDay()];
+        if (!Object.keys(daySlots[h.getHours()]).length) {
+          daySlots[h.getHours()] = [];
+        }
+        daySlots[h.getHours()].push(slot);
+      }
+      state.slots = newSlots;
     },
 
   },

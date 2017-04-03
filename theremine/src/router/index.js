@@ -6,6 +6,7 @@ import Register from '@/components/Register';
 import Wishlist from '@/components/Wishlist/Index';
 import Section from '@/components/Section/Index';
 import Basket from '@/components/Basket/Index';
+import Withdraw from '@/components/Withdraw/Index';
 import store from '../store';
 
 Vue.use(Router);
@@ -50,7 +51,7 @@ const router = new Router({
       name: 'withdraw',
       path: '/withdraw',
       meta: { auth: true },
-      // component: Profile,
+      component: Withdraw,
     },
     // TODO: 404
     {

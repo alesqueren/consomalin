@@ -42,15 +42,28 @@ const actions = {
   searchProductsWithName: ({ commit, rootState }, { name }) => {
     if (!rootState.searchs.name) {
       const uri = 'search?s=' + name;
-      resources.kiva.get({ uri }, {}).then((response) => {
+      resources.products.get({ uri }, {}).then((response) => {
         const products = JSON.parse(response.body);
         commit('addSearchs', { name, products });
       });
     }
   },
+
+  setSlots({ commit, rootState }) {
+    return new Promise((resolve, reject) => {
+      resources.schedule.get().then((response) => {
+        const slots = JSON.parse(response.body);
+        console.log('slots action');
+        console.log(slots);
+        commit('setSlots', { slots });
+        resolve();
+      });
+    });
+  },
+
   detailProductsWithId: ({ commit, rootState }, { ids }) => {
     const uri = 'details?pids=' + JSON.stringify(ids);
-    resources.kiva.get({ uri }, {}).then((response) => {
+    resources.products.get({ uri }, {}).then((response) => {
       const products = JSON.parse(response.body);
       Object.keys(products).map((pid) => {
         const infos = products[pid];
@@ -68,6 +81,21 @@ const actions = {
     return new Promise((resolve) => {
       resources.currentWish.save({}, { wid }).then(() => {
         commit('setCurrentWish', { wid });
+        resolve();
+      });
+    });
+  },
+  order({ commit }) {
+    return new Promise((resolve) => {
+      resources.order.save().then(() => {
+        resolve();
+      });
+    });
+  },
+  slot({ commit }, { slotId }) {
+    return new Promise((resolve) => {
+      resources.slot.save({}, slotId).then(() => {
+        commit('setCurrentWish', { slotId });
         resolve();
       });
     });

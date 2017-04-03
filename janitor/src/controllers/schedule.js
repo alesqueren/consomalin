@@ -1,12 +1,13 @@
 const router = require('express').Router();
+const metronome = require('../bs/metronome');
 const mid = require('../middlewares');
-const kiva = require('../bs/kiva');
 
-router.get('/:kiva_uri*',
+// recuperer les slots
+router.get('/',
   mid.isAuthenticated,
-  ({ params }, res) => {
-    kiva.send(params.kiva_uri).then((response) => {
-      res.json(response);
+  (req, res) => {
+    metronome.send().then((slots) => {
+      res.json(slots);
     });
   },
 );

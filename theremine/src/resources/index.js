@@ -18,5 +18,8 @@ export default {
   wishProduct: Vue.resource('/api/wishlist/groups/{gid}/wishes/{wid}/product'),
   wishes: Vue.resource('/api/wishlist/groups/{gid}/wishes/bulk'),
   currentWish: Vue.resource('/api/wishlist/basket/currentWish'),
-  kiva: Vue.resource('/api/products/{uri}'),
+  products: Vue.resource('/api/products/{uri}'),
+  schedule: Vue.resource('/api/schedule'),
+  slot: Vue.resource('/api/basket/slot'),
+  basket: Vue.resource('/api/basket/order'),
 };

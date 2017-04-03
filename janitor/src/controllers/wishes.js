@@ -2,7 +2,7 @@ const router = require('express').Router();
 const mid = require('../middlewares');
 const wishesManager = require('../managers/wishes');
 const groupsManager = require('../managers/groups');
-const basketManager = require('../managers/basket');
+const basketsManager = require('../managers/baskets');
 
 router.post('/groups/:gid/wishes/bulk',
   mid.isAuthenticated,
@@ -53,7 +53,7 @@ router.put('/groups/:gid/wishes/:wid',
         wishesManager.select(user._id, params.gid, params.wid, data.selected);
         // if currentWish is deselected, so we delete it
         if (user.currentBasket.currentWishId === params.wid) {
-          basketManager.removeCurrentWish(user._id);
+          basketsManager.removeCurrentWish(user._id);
         }
       }
     }

@@ -144,14 +144,14 @@ function organizeSlotsPerDayAndHour(slots){
     var days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     var newSlots = [];
     var daySlots = [];
-    for(var i = 0; i < slots.length; i++){
+    for (var i = 0; i < slots.length; i++) {
         slot = slots[i];
         slot.selected = false;
 
         var d = new Date(slot.day);
         var h = new Date(slot.day + ' ' + slot.time);
         //au dernier slot du jour, on les ajoutes tous
-        if ( dayName != days[d.getDay()] || i+1 == slots.length && !i == 0) {
+        if ( (dayName !== days[d.getDay()] || i + 1 == slots.length) && !i === 0) {
             newSlots.push({name : dayName, slots : daySlots});
             daySlots = [];
         }

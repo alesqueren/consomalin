@@ -4,9 +4,10 @@ const userControllers = require('./controllers/users')();
 const wishListControllers = require('./controllers/wishlist')();
 const groupsControllers = require('./controllers/groups')();
 const wishesControllers = require('./controllers/wishes')();
+const wishProductsControllers = require('./controllers/wishProducts')();
+const basketsControllers = require('./controllers/baskets')();
 const productsControllers = require('./controllers/products')();
-const basketControllers = require('./controllers/basket')();
-const kivaControllers = require('./controllers/kiva')();
+const scheduleControllers = require('./controllers/schedule')();
 
 const port = process.env.SERVER_PORT || 3001;
 
@@ -20,9 +21,10 @@ const server = (app) => {
   app.use('/wishlist/', wishListControllers);
   app.use('/wishlist/', groupsControllers);
   app.use('/wishlist/', wishesControllers);
-  app.use('/wishlist/', productsControllers);
-  app.use('/wishlist/', basketControllers);
-  app.use('/products/', kivaControllers);
+  app.use('/wishlist/', wishProductsControllers);
+  app.use('/wishlist/', basketsControllers);
+  app.use('/products/', productsControllers);
+  app.use('/schedule/', scheduleControllers);
   app.use('/', notFound);
 
   app.listen(port, () => {
