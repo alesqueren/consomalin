@@ -2,9 +2,9 @@
   div.col.main
     h2 Mes listes :
     div.row.no-gutter
-      Group(v-for="group in wishlist" 
-        v-bind:group="group"
-        v-bind:key="group")
+      Group(v-for="gid in gids" 
+        v-bind:gid="gid"
+        v-bind:key="gid")
       input(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Ajouter une liste")
 </template>
 
@@ -18,8 +18,8 @@ export default {
     };
   },
   computed: {
-    wishlist() {
-      return this.$store.getters.getWishlist;
+    gids() {
+      return this.$store.getters.getGroups;
     },
   },
   methods: {
@@ -27,9 +27,6 @@ export default {
       this.$store.dispatch('addWishGroup', this.newGroupName);
       this.newGroupName = '';
     },
-  },
-  mounted() {
-    this.$store.dispatch('updateWishGroupsAndCurrentBasket');
   },
   components: { Group },
 };

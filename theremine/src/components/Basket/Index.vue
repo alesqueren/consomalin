@@ -5,10 +5,9 @@
       button.btn.btn-success.right(type="button") Passer au retrait
     div.col.main
       div.row.no-gutter
-        Group(v-for="group in selectedGroups" 
-          v-bind:group="group"
-          v-bind:key="group")
-        input(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Ajouter une liste")
+        Group(v-for="gid in selectedGroups" 
+          v-bind:gid="gid"
+          v-bind:key="gid")
 </template>
 
 <script>
@@ -20,9 +19,6 @@ export default {
       return this.$store.getters.getSelectedWishGroups;
     },
   },
-  mounted() {
-    this.$store.dispatch('updateWishGroupsAndCurrentBasket');
-  },
-  components: {},
+  components: { Group },
 };
 </script>

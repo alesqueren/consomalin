@@ -51,7 +51,7 @@ const actions = {
   },
 
   removeWishGroup: ({ commit }, gid) => {
-    resources.wishgroup.delete({ gid }, {}).then(() => {
+    resources.wishgroup.delete({ gid }).then(() => {
       commit('unselectGroup', { gid });
       commit('removeWishGroup', { gid });
     });

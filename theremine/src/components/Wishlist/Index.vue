@@ -10,9 +10,6 @@ import Groups from './Groups';
 import ActiveGroup from './ActiveGroup';
 
 export default {
-  mounted() {
-    this.$store.dispatch('updateWishGroupsAndCurrentBasket');
-  },
   components: { Groups, ActiveGroup },
 };
 </script>

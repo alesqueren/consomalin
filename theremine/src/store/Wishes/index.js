@@ -39,26 +39,18 @@ const getters = {
     }
     return false;
   },
+
 };
+
 const actions = {
   setProduct: ({ commit }, { gid, wid, pid, quantity }) => {
-    commit('setWishProduct', {
-      gid,
-      wid,
-      pid,
-      quantity,
-    });
-    resources.wishProduct.set({ gid, wid }, { pid, quantity });
+    commit('setWishProduct', { gid, wid, pid, quantity });
+    resources.wishProduct.save({ gid, wid }, { pid, quantity });
   },
 
   updateWishProduct: ({ commit }, { gid, wid, pid, quantity }) => {
-    commit('setWishProduct', {
-      gid,
-      wid,
-      pid,
-      quantity,
-    });
-    resources.wishProduct.save({ gid, wid }, { pid, quantity });
+    commit('setWishProduct', { gid, wid, pid, quantity });
+    resources.wishProduct.update({ gid, wid }, { pid, quantity });
   },
 
   addWish({ commit }, { gid, name }) {
@@ -81,9 +73,8 @@ const actions = {
   },
 
   removeWish: ({ commit, rootGetters }, { wid }) => {
-    const wish = rootGetters.getWish(wid);
-    const gid = wish.gid;
-    resources.wish.delete({ gid, wid }, {}).then(() => {
+    const gid = rootGetters.getWish(wid).gid;
+    resources.wish.delete({ gid, wid }).then(() => {
       commit('removeWish', { wid });
     });
     commit('selectWish', { gid, wid, selected: false });
@@ -98,8 +89,7 @@ const actions = {
 
   selectWish({ commit, rootGetters }, { wid, selected }) {
     return new Promise((resolve) => {
-      const wish = rootGetters.getWish(wid);
-      const gid = wish.gid;
+      const gid = rootGetters.getWish(wid).gid;
       resources.wish.update({ gid, wid }, { selected }).then(() => {
         commit('selectWish', { gid, wid, selected });
         resolve();

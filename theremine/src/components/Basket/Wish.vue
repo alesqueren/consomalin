@@ -9,7 +9,6 @@
         i.fa.fa-check.fa-xs
     div(v-else)
       span {{ name }}
-
     div.buttons(v-if='!isEditing')
       i.fa.fa-edit.fa-xs(@click.stop="edit")
       i.fa.fa-eraser.fa-xs(@click.stop="unselect")

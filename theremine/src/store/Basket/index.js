@@ -38,6 +38,7 @@ const getters = {
     return basket;
   },
 };
+
 const actions = {
   searchProductsWithName: ({ commit, rootState }, { name }) => {
     if (!rootState.searchs.name) {
