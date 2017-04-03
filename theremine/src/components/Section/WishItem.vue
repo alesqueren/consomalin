@@ -1,16 +1,18 @@
 <template lang='pug'>
-.wish.list-group-item(v-bind:class='{active:wishIsCurrent}', @click='setCurrentWish()')
-  span.fa.fa-remove.wish-remove(@click.prevent.stop='removeWish($event)')
-  div
-    span.wishgroupname.badge.badge-success {{wish.gname}}
-    span.wishname {{wish.name}}
-  div(v-if='wish.product.infos')
-    div  {{wish.product.infos.name}}
-    div  {{wish.product.infos.price}}
-    |  
-    img.col-md-6(style='width:50px;', v-bind:src='wish.product.infos.imageUrl')
-    |  
-    input.col-md-6(type='number', v-model.number='wish.product.quantity', step='1', value='0', min='1', max='64', v-on:change='changeQty')
+transition(name="fade")
+  .wish.list-group-item(v-bind:class='{active:wishIsCurrent}', @click='setCurrentWish()')
+    span.fa.fa-eraser.wish-remove(@click.prevent.stop='removeWish($event)')
+    div
+      span.wishgroupname.badge.badge-success {{wish.gname}}
+      span.wishname {{wish.name}}
+    div(v-if='wish.product.infos')
+      div  {{wish.product.infos.name}}
+      |  
+      img.col-md-6(style='width:50px;', v-bind:src='wish.product.infos.imageUrl')
+      |  
+      div
+        input(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='log')
+        span &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
 
 </template>
 
@@ -18,9 +20,24 @@
 export default {
   props: ['wish'],
   computed: {
+    quantity: {
+      get() {
+        return this.wish.product.quantity;
+      },
+      set(quantity) {
+        const gid = this.wish.gid;
+        const wid = this.wish.id;
+        const pid = this.wish.product.id;
+        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+      },
+    },
     wishIsCurrent() {
       const currentWishId = this.$store.state.currentBasket.currentWishId;
       return this.wish.id === currentWishId;
+    },
+    total() {
+      const total = this.wish.product.infos.price * this.wish.product.quantity;
+      return parseInt(total, 10);
     },
   },
   methods: {
@@ -40,14 +57,16 @@ export default {
       this.$store.dispatch('setCurrentWish', { gid, wid });
       this.$store.dispatch('searchProductsWithName', { name });
     },
-    changeQty: () => {
-      // $.ajax({
-      //   type: 'PUT',
-      //   url : '/wishlist/groups/'+this.wish.gid+'/wishes/'+this.wish.id+'/product',
-      //   data: {'qty' : this.wish.product.quantity },
-      //   complete: function(responseObject) {
-      //   }
-      // });
+    changeQty() {
+      // console.log('log2');
+      const gid = this.wish.gid;
+      const wid = this.wish.id;
+      const pid = this.wish.product.id;
+      const quantity = this.wish.product.quantity;
+      this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+    },
+    log() {
+      // console.log('log');
     },
   },
 };
@@ -73,5 +92,11 @@ export default {
   right: 5px;
   color: red;
   z-index: 10;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0
 }
 </style>

@@ -45,9 +45,9 @@ export default {
       this.newGroupName = '';
     },
   },
-  mounted() {
-    this.$store.dispatch('updateWishGroupsAndCurrentBasket');
-  },
+  // mounted() {
+  //   this.$store.dispatch('updateWishGroupsAndCurrentBasket');
+  // },
   components: { WishGroupItem, WishGroup, ActiveWishGroup },
 };
 </script>

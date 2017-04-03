@@ -12,8 +12,11 @@
             router-link.title(:to="{ name: 'wishlist' }") Liste
           li.header-tab
             router-link.title(:to="{ name: 'section' }") Rayons
+              span.fa.fa-list.title-desc {{matchedWishes}}/{{ basket.length }}
           li.header-tab
-            router-link.title(:to="{ name: 'basket' }") Panier
+            router-link(:to="{ name: 'basket' }")
+              span.title Panier
+
           li.header-tab
             router-link.title(:to="{ name: 'withdraw' }") Retrait
       Usercard
@@ -26,6 +29,22 @@
 import Usercard from './Usercard';
 
 export default {
+  computed: {
+    basket() {
+      const basket = this.$store.getters.getBasket;
+      return basket;
+    },
+    matchedWishes() {
+      let matchedWishes = 0;
+      for (let i = 0; i < this.basket.length; i += 1) {
+        matchedWishes += this.basket[i].product.id ? 1 : 0;
+      }
+      return matchedWishes;
+    },
+  },
+  mounted() {
+    this.$store.dispatch('updateWishGroupsAndCurrentBasket');
+  },
   components: { Usercard },
 };
 </script>
@@ -103,6 +122,11 @@ a:hover {
   font-weight: bold;
   margin-left:15px;
   color: #747e8f;
+}
+
+#header .title-desc {
+  color: black;
+  font-size: 12px;
 }
 
 .header-tabs {

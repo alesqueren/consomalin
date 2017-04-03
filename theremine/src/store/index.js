@@ -177,7 +177,7 @@ export default new Vuex.Store({
       }
     },
 
-    setProduct: (state, { gid, wid, pid, quantity }) => {
+    setWishProduct: (state, { gid, wid, pid, quantity }) => {
       const entity = state.currentBasket.selectedWishes[gid][wid];
       Vue.set(entity, 'pid', pid);
       Vue.set(entity, 'quantity', quantity);

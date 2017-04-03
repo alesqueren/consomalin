@@ -30,23 +30,6 @@ import WishItem from './Section/WishItem';
 import CurrentWish from './Section/CurrentWish';
 import ProductItem from './Section/ProductItem';
 
-/*eslint-disable */
-function debouncer(a,b,c){var d;return function(){var e=this,f=arguments,g=function(){d=null,c||a.apply(e,f)},h=c&&!d;clearTimeout(d),d=setTimeout(g,b),h&&a.apply(e,f)}}
-function getScrollXY(){var a=0,b=0;return"number"==typeof window.pageYOffset?(b=window.pageYOffset,a=window.pageXOffset):document.body&&(document.body.scrollLeft||document.body.scrollTop)?(b=document.body.scrollTop,a=document.body.scrollLeft):document.documentElement&&(document.documentElement.scrollLeft||document.documentElement.scrollTop)&&(b=document.documentElement.scrollTop,a=document.documentElement.scrollLeft),[a,b]}
-function getDocHeight(){var a=document;return Math.max(a.body.scrollHeight,a.documentElement.scrollHeight,a.body.offsetHeight,a.documentElement.offsetHeight,a.body.clientHeight,a.documentElement.clientHeight)}
-/*eslint-enable */
-// function unselectWish(wish) {
-  // var self = this;
-  // var gid = wish.gid;
-  // $.ajax({
-  //   type: 'PUT',
-  //   url : '/wishlist/groups/'+gid+'/wishes/'+wish.id,
-  //   data: { selected: false},
-  //   complete: function(responseObject) {
-  //   }
-  // });
-// }
-
 export default {
   data() {
     return {

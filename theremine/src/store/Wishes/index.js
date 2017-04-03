@@ -42,7 +42,17 @@ const getters = {
 };
 const actions = {
   setProduct: ({ commit }, { gid, wid, pid, quantity }) => {
-    commit('setProduct', {
+    commit('setWishProduct', {
+      gid,
+      wid,
+      pid,
+      quantity,
+    });
+    resources.wishProduct.set({ gid, wid }, { pid, quantity });
+  },
+
+  updateWishProduct: ({ commit }, { gid, wid, pid, quantity }) => {
+    commit('setWishProduct', {
       gid,
       wid,
       pid,
