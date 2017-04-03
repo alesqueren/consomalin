@@ -24,7 +24,7 @@
 import Vue from 'vue';
 
 export default {
-  props: ['group'],
+  props: ['gid'],
   data() {
     return {
       editingName: null,
@@ -33,29 +33,29 @@ export default {
   computed: {
     // todo: remove?
     name() {
-      return this.$store.getters.getWishGroup(this.group.id).name;
+      return this.$store.getters.getWishGroup(this.gid).name;
     },
     isActive() {
       try {
-        return this.group.id === this.$store.getters.getActiveWishGroup.id;
+        return this.gid === this.$store.getters.getActiveWishgid;
       } catch (e) {
         return false;
       }
     },
     editing() {
-      return this.$store.getters.isEditing(this.group.id);
+      return this.$store.getters.isEditing(this.gid);
     },
     selected() {
-      return this.$store.getters.isSelectedWishGroup(this.group.id);
+      return this.$store.getters.isSelectedWishGroup(this.gid);
     },
     wishesNb() {
-      const predicate = e => (e.id === this.group.id);
+      const predicate = e => (e.id === this.gid);
       return this.$store.state.wishGroups.filter(predicate)[0].wishes.length;
     },
     selectedWishesNb() {
       try {
         const selWishes = this.$store.state.currentBasket.selectedWishes;
-        return Object.keys(selWishes[this.group.id]).length;
+        return Object.keys(selWishes[this.gid]).length;
       } catch (e) {
         return 0;
       }
@@ -64,19 +64,19 @@ export default {
   methods: {
     select() {
       this.$store.dispatch('selectWishGroup', {
-        gid: this.group.id,
+        gid: this.gid,
         selected: !this.selected,
       });
     },
     toggleActivation() {
-      this.$store.dispatch('toggleWishGroupActivation', this.group.id);
+      this.$store.dispatch('toggleWishGroupActivation', this.gid);
     },
     focus() {
       this.$refs.editinput.focus();
     },
     edit() {
       this.editingName = this.name;
-      this.$store.dispatch('setInlineEdition', this.group.id);
+      this.$store.dispatch('setInlineEdition', this.gid);
       Vue.nextTick(this.focus);
     },
     finishEdition() {
@@ -87,7 +87,7 @@ export default {
     validEdition() {
       console.log('valid0');
       this.$store.dispatch('renameWishGroup', {
-        gid: this.group.id,
+        gid: this.gid,
         name: this.editingName,
       });
       console.log('valid1');
@@ -96,7 +96,7 @@ export default {
       this.finishEdition();
     },
     remove() {
-      this.$store.dispatch('removeWishGroup', this.group.id);
+      this.$store.dispatch('removeWishGroup', this.gid);
     },
   },
 };

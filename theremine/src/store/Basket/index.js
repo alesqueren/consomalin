@@ -38,11 +38,12 @@ const getters = {
     return basket;
   },
 };
+
 const actions = {
   searchProductsWithName: ({ commit, rootState }, { name }) => {
     if (!rootState.searchs.name) {
       const uri = 'search?s=' + name;
-      resources.kiva.get({ uri }, {}).then((response) => {
+      resources.kiva.get({ uri }).then((response) => {
         const products = JSON.parse(response.body);
         commit('addSearchs', { name, products });
       });
@@ -50,7 +51,7 @@ const actions = {
   },
   detailProductsWithId: ({ commit, rootState }, { ids }) => {
     const uri = 'details?pids=' + JSON.stringify(ids);
-    resources.kiva.get({ uri }, {}).then((response) => {
+    resources.kiva.get({ uri }).then((response) => {
       const products = JSON.parse(response.body);
       Object.keys(products).map((pid) => {
         const infos = products[pid];

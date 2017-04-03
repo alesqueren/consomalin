@@ -236,18 +236,18 @@ export default new Vuex.Store({
       // si on deselectionne un wish
       if (!selected) {
         if (selectedWishes[gid]) {
-          Vue.set(selectedWishes[gid], wid, null);
+          Vue.set(selectedWishes[gid], wid);
           delete selectedWishes[gid][wid];
 
-          Vue.set(selectedWishes[gid], 'tmp', {});
+          Vue.set(selectedWishes[gid], 'tmp');
           delete selectedWishes[gid].tmp;
 
           // si on a supprimé le dernier wish, on supprime le groupe de l'objet
           if (!Object.keys(selectedWishes[gid]).length) {
-            Vue.set(selectedWishes, 'tmp', {});
+            Vue.set(selectedWishes, 'tmp');
             delete selectedWishes.tmp;
 
-            Vue.set(selectedWishes, gid, null);
+            Vue.set(selectedWishes, gid);
             delete selectedWishes[gid];
           }
         }
@@ -255,10 +255,10 @@ export default new Vuex.Store({
       } else {
         // si le groupe n'existe pas, on le crée
         if (!selectedWishes[gid]) {
-          Vue.set(selectedWishes, gid, {});
+          Vue.set(selectedWishes, gid);
         }
         // dans tous les cas on rajoute le wish a son group
-        Vue.set(selectedWishes[gid], wid, {});
+        Vue.set(selectedWishes[gid], wid);
       }
     },
 
