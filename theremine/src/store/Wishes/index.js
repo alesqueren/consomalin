@@ -43,41 +43,15 @@ const getters = {
 };
 
 const actions = {
-  setProduct: ({ commit }, { gid, wid, pid, quantity }) => {
-    commit('setWishProduct', { gid, wid, pid, quantity });
-    resources.wishProduct.save({ gid, wid }, { pid, quantity });
-  },
-
-  updateWishProduct: ({ commit }, { gid, wid, pid, quantity }) => {
-    commit('setWishProduct', { gid, wid, pid, quantity });
-    resources.wishProduct.update({ gid, wid }, { pid, quantity });
-  },
-
   addWish({ commit }, { gid, name }) {
     return new Promise((resolve) => {
-      resources.wishes.save({ gid }, { names: [name] }).then((response) => {
+      resources.wish.bulk({ gid }, { names: [name] }).then((response) => {
         const wid = response.body[0];
-        commit('addWish', {
-          gid,
-          id: wid,
-          name,
-        });
-        commit('selectWish', {
-          gid,
-          wid,
-          selected: true,
-        });
+        commit('addWish', { gid, id: wid, name });
+        commit('selectWish', { gid, wid, selected: true });
         resolve(wid);
       });
     });
-  },
-
-  removeWish: ({ commit, rootGetters }, { wid }) => {
-    const gid = rootGetters.getWish(wid).gid;
-    resources.wish.delete({ gid, wid }).then(() => {
-      commit('removeWish', { wid });
-    });
-    commit('selectWish', { gid, wid, selected: false });
   },
 
   renameWish: ({ commit }, { gid, wid, name }) => {
@@ -95,6 +69,24 @@ const actions = {
         resolve();
       });
     });
+  },
+
+  removeWish: ({ commit, rootGetters }, { wid }) => {
+    const gid = rootGetters.getWish(wid).gid;
+    resources.wish.delete({ gid, wid }).then(() => {
+      commit('removeWish', { wid });
+    });
+    commit('selectWish', { gid, wid, selected: false });
+  },
+
+  setProduct: ({ commit }, { gid, wid, pid, quantity }) => {
+    commit('setWishProduct', { gid, wid, pid, quantity });
+    resources.wishProduct.save({ gid, wid }, { pid, quantity });
+  },
+
+  updateWishProduct: ({ commit }, { gid, wid, pid, quantity }) => {
+    commit('setWishProduct', { gid, wid, pid, quantity });
+    resources.wishProduct.update({ gid, wid }, { pid, quantity });
   },
 };
 

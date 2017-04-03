@@ -37,16 +37,12 @@ export default {
     };
   },
   mounted() {
-    this.$store
-      .dispatch('updateWishGroupsAndCurrentBasket')
-      .then(() => {
-        if (!this.$store.state.currentBasket.currentWishId) {
-          this.$store.dispatch('nextCurrentWish');
-        } else {
-          const name = this.currentWish.name;
-          this.$store.dispatch('searchProductsWithName', { name });
-        }
-      });
+    if (!this.$store.state.currentBasket.currentWishId) {
+      this.$store.dispatch('nextCurrentWish');
+    } else {
+      const name = this.currentWish.name;
+      this.$store.dispatch('searchProductsWithName', { name });
+    }
   },
   created() {
     // on ecoute le scroll pour augmenter le nombre de produits visibles

@@ -31,7 +31,6 @@ export default {
     };
   },
   computed: {
-    // todo: remove?
     name() {
       return this.$store.getters.getWishGroup(this.gid).name;
     },
@@ -80,19 +79,15 @@ export default {
       Vue.nextTick(this.focus);
     },
     finishEdition() {
-      console.log('finish');
       this.editingName = null;
       this.$store.dispatch('setInlineEdition', null);
     },
     validEdition() {
-      console.log('valid0');
       this.$store.dispatch('renameWishGroup', {
         gid: this.gid,
         name: this.editingName,
       });
-      console.log('valid1');
       this.name = this.editingName;
-      console.log('valid2');
       this.finishEdition();
     },
     remove() {

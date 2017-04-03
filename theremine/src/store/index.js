@@ -11,7 +11,6 @@ function getFirstUnmatchedSelectedWish(basket) {
   for (let i = 0; i < basket.length; i++) {
     const wish = basket[i];
     if (!wish.product.id) {
-      // console.log('gid:' + wish.gid + ', wid:' + wish.id);
       return { gid: wish.gid, wid: wish.id };
     }
   }
@@ -19,8 +18,6 @@ function getFirstUnmatchedSelectedWish(basket) {
 }
 
 Vue.use(Vuex);
-// TODO: add vuex-router-sync
-// https://github.com/vuejs/vuex-router-sync
 
 export default new Vuex.Store({
   state: {
@@ -35,47 +32,35 @@ export default new Vuex.Store({
     inlineEdition: null,
     activeWishGroup: null,
   },
-  // getWish: state => ({ gid, wid }) => {
-  //   return state.currentBasket.selectedWishes[gid][wid];
-  // },
+
   getters: {
   },
+
   actions: {
-    updateWishGroupsAndCurrentBasket({ dispatch, commit, state }) {
-      return new Promise((resolve, reject) => {
-        if (!state.wishGroups) {
-          resources.wishlist.get(
-            {},
-            {},
-          ).then(({ data }) => {
-            const wishGroups = data.wishGroups;
-            const currentBasket = data.currentBasket;
-            if (!currentBasket.selectedWishes) {
-              currentBasket.selectedWishes = {};
-            }
-            const idsWithoutDetail = [];
-            Object.keys(currentBasket.selectedWishes).map((wishgroupId) => {
-              const wishGroup = currentBasket.selectedWishes[wishgroupId];
-              Object.keys(wishGroup).map((wishId) => {
-                const wish = wishGroup[wishId];
-                if (wish.pid) {
-                  idsWithoutDetail.push(wish.pid);
-                }
-                return null;
-              });
-              return null;
-            });
-            if (idsWithoutDetail.length) {
-              dispatch('detailProductsWithId', { ids: idsWithoutDetail });
-            }
-            commit('setWishGroupsAndCurrentBasket', { wishGroups, currentBasket });
-            resolve();
-          }, () => {
-            reject();
-          });
-        } else {
-          resolve();
+
+    fetchUserData({ dispatch, commit }) {
+      resources.wishlist.get({}, {}).then((data) => {
+        const wishGroups = data.wishGroups;
+        const currentBasket = data.currentBasket;
+        if (!currentBasket.selectedWishes) {
+          currentBasket.selectedWishes = {};
         }
+        const idsWithoutDetail = [];
+        Object.keys(currentBasket.selectedWishes).map((wishgroupId) => {
+          const wishGroup = currentBasket.selectedWishes[wishgroupId];
+          Object.keys(wishGroup).map((wishId) => {
+            const wish = wishGroup[wishId];
+            if (wish.pid) {
+              idsWithoutDetail.push(wish.pid);
+            }
+            return null;
+          });
+          return null;
+        });
+        if (idsWithoutDetail.length) {
+          dispatch('detailProductsWithId', { ids: idsWithoutDetail });
+        }
+        commit('setWishGroupsAndCurrentBasket', { wishGroups, currentBasket });
       });
     },
 
@@ -252,13 +237,12 @@ export default new Vuex.Store({
             delete selectedWishes[gid];
           }
         }
-        // si on selectionne un wish
       } else {
         // si le groupe n'existe pas, on le crée
         if (!selectedWishes[gid]) {
-          Vue.set(selectedWishes, gid);
+          Vue.set(selectedWishes, gid, {});
         }
-        // dans tous les cas on rajoute le wish a son group
+        // dans tous les cas on rajoute le wish a son groupe
         Vue.set(selectedWishes[gid], wid);
       }
     },

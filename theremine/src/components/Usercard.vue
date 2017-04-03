@@ -22,11 +22,6 @@ export default {
       this.$router.push({ name: 'home' });
     },
   },
-  mounted() {
-    if (this.user === null) {
-      this.$store.dispatch('fetchUser');
-    }
-  },
 };
 </script>
 <style>

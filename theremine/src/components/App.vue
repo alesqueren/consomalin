@@ -25,11 +25,14 @@
 </template>
 
 <script>
-
+import { mapState } from 'vuex';
 import Usercard from './Usercard';
 
 export default {
   computed: {
+    ...mapState({
+      user: state => state.User.user,
+    }),
     basket() {
       const basket = this.$store.getters.getBasket;
       return basket;
@@ -41,9 +44,6 @@ export default {
       }
       return matchedWishes;
     },
-  },
-  mounted() {
-    this.$store.dispatch('updateWishGroupsAndCurrentBasket');
   },
   components: { Usercard },
 };

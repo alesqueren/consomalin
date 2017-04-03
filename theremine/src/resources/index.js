@@ -3,20 +3,19 @@ import VueResource from 'vue-resource';
 
 Vue.use(VueResource);
 
-// TODO: use custom actions
-// https://github.com/pagekit/vue-resource/blob/develop/docs/resource.md#custom-actions
-
 export default {
-  userTmp: Vue.resource('/api/users/me'),
-  user: Vue.resource('/api/users/login'),
-  userRegister: Vue.resource('/api/users/register'),
-  logout: Vue.resource('/api/users/signout'),
-  register: Vue.resource('/api/users/register'),
+  user: Vue.resource('/api/users/', {}, {
+    get: { method: 'GET', url: '/api/users/me' },
+    login: { method: 'POST', url: '/api/users/login' },
+    register: { method: 'POST', url: '/api/users/register' },
+    logout: { method: 'PUT', url: '/api/users/signout' },
+  }),
   wishlist: Vue.resource('/api/wishlist'),
   wishgroup: Vue.resource('/api/wishlist/groups{/gid}'),
-  wish: Vue.resource('/api/wishlist/groups/{gid}/wishes{/wid}'),
+  wish: Vue.resource('/api/wishlist/groups/{gid}/wishes{/wid}', {}, {
+    bulk: { method: 'POST', url: '/api/wishlist/groups/{gid}/wishes/bulk' },
+  }),
   wishProduct: Vue.resource('/api/wishlist/groups/{gid}/wishes/{wid}/product'),
-  wishes: Vue.resource('/api/wishlist/groups/{gid}/wishes/bulk'),
   currentWish: Vue.resource('/api/wishlist/basket/currentWish'),
   products: Vue.resource('/api/products/{uri}'),
   schedule: Vue.resource('/api/schedule'),

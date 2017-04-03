@@ -7,6 +7,7 @@ import Wishlist from '@/components/Wishlist/Index';
 import Section from '@/components/Section/Index';
 import Basket from '@/components/Basket/Index';
 import Withdraw from '@/components/Withdraw/Index';
+import NotFound from '@/components/NotFound';
 import store from '../store';
 
 Vue.use(Router);
@@ -53,25 +54,34 @@ const router = new Router({
       meta: { auth: true },
       component: Withdraw,
     },
-    // TODO: 404
     {
       path: '*',
-      redirect: '/',
+      component: NotFound,
     },
   ],
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.auth && !store.state.User.user) {
-    store.dispatch('fetchUser', () => {
-      if (to.meta.auth && !store.state.User.user) {
-        next('/login');
-      } else {
-        next();
-      }
-    });
-  } else {
+  const route = () => {
+    if (to.meta.auth) {
+      next('/login');
+    } else {
+      next();
+    }
+  };
+
+  if (store.state.User.user) {
+    if (!store.state.wishGroups) {
+      store.dispatch('fetchUserData');
+    }
     next();
+  } else if (store.state.User.user === false) {
+    route();
+  } else {
+    store.dispatch('fetchUser').then(() => {
+      store.dispatch('fetchUserData');
+      next();
+    }, route);
   }
 });
 

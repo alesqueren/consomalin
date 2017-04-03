@@ -73,12 +73,14 @@ const actions = {
       });
     });
   },
+
   updateProductInfos: ({ commit, rootState }, { pid, infos }) => {
     if (!rootState.productInfos[pid]) {
       commit('addProductInfos', { pid, infos });
     }
   },
-  setCurrentWish({ commit }, { gid, wid }) {
+
+  setCurrentWish({ commit }, { wid }) {
     return new Promise((resolve) => {
       resources.currentWish.save({}, { wid }).then(() => {
         commit('setCurrentWish', { wid });
