@@ -39,9 +39,9 @@ export default new Vuex.Store({
   actions: {
 
     fetchUserData({ dispatch, commit }) {
-      resources.wishlist.get({}, {}).then((data) => {
-        const wishGroups = data.wishGroups;
-        const currentBasket = data.currentBasket;
+      resources.wishlist.get({}, {}).then(({ body }) => {
+        const wishGroups = body.wishGroups;
+        const currentBasket = body.currentBasket;
         if (!currentBasket.selectedWishes) {
           currentBasket.selectedWishes = {};
         }

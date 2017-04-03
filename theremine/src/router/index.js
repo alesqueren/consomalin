@@ -71,13 +71,17 @@ router.beforeEach((to, from, next) => {
   };
 
   if (store.state.User.user) {
+    // user succeded to login
     if (!store.state.wishGroups) {
       store.dispatch('fetchUserData');
+      // todo: then next
     }
     next();
   } else if (store.state.User.user === false) {
+    // user failed to login
     route();
   } else {
+    // we don't know
     store.dispatch('fetchUser').then(() => {
       store.dispatch('fetchUserData');
       next();
