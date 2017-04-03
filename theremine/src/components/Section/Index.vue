@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import WishItem from './Section/WishItem';
-import CurrentWish from './Section/CurrentWish';
-import ProductItem from './Section/ProductItem';
+import WishItem from './WishItem';
+import CurrentWish from './CurrentWish';
+import ProductItem from './ProductItem';
 
 export default {
   data() {

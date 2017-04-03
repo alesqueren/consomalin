@@ -3,8 +3,9 @@ import Router from 'vue-router';
 import Home from '@/components/Home';
 import Login from '@/components/Login';
 import Register from '@/components/Register';
-import Wishlist from '@/components/Wishlist';
-import Section from '@/components/Section';
+import Wishlist from '@/components/Wishlist/Index';
+import Section from '@/components/Section/Index';
+import Basket from '@/components/Basket/Index';
 import store from '../store';
 
 Vue.use(Router);
@@ -43,7 +44,7 @@ const router = new Router({
       name: 'basket',
       path: '/basket',
       meta: { auth: true },
-      // component: Profile,
+      component: Basket,
     },
     {
       name: 'withdraw',

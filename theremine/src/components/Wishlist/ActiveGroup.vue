@@ -4,7 +4,7 @@
       h2 Elements de {{ wishgroup.name }}:
       div.wishgroup.list-group-item.col-3(v-if='wishgroup')
         div
-          wishItem(v-for="wish in wishgroup.wishes" 
+          Wish(v-for="wish in wishgroup.wishes" 
             v-bind:wish="wish" 
             v-bind:gid="wishgroup.id" 
             v-bind:key="wish")
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import wishItem from './WishItem';
+import Wish from './Wish';
 
 export default {
   props: [],
@@ -38,7 +38,7 @@ export default {
       this.newWishName = '';
     },
   },
-  components: { wishItem },
+  components: { Wish },
 };
 
 </script>
@@ -63,4 +63,3 @@ export default {
   right: 0;
 }
 </style>
-

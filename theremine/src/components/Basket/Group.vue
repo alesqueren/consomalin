@@ -2,14 +2,14 @@
   div.col.no-gutter.wishgroup.list-group-item.col-3
     div
       span.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
-        wishItemSummary(v-for="wid in selectedWishes" 
+        Wish(v-for="wid in selectedWishes" 
           v-bind:wid="wid" 
           v-bind:gid="gid" 
           v-bind:key="wid")
 </template>
 
 <script>
-import wishItemSummary from './WishItemSummary';
+import Wish from './Wish';
 
 export default {
   props: ['gid'],
@@ -38,7 +38,7 @@ export default {
       this.newWishName = '';
     },
   },
-  components: { wishItemSummary },
+  components: { Wish },
 };
 
 </script>
