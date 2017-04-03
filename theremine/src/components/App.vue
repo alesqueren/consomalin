@@ -12,7 +12,7 @@
             router-link.title(:to="{ name: 'wishlist' }") Liste
           li.header-tab
             router-link.title(:to="{ name: 'section' }") Rayons
-              span.fa.fa-list.title-desc {{matchedWishes}}/{{ basket.length }}
+              span.title-desc {{matchedWishes}}/{{ basket.length }}
           li.header-tab
             router-link(:to="{ name: 'basket' }")
               span.title Panier
@@ -125,7 +125,6 @@ a:hover {
 }
 
 #header .title-desc {
-  color: black;
   font-size: 12px;
 }
 
