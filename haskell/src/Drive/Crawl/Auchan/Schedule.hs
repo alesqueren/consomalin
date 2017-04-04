@@ -181,7 +181,9 @@ getDay2 day = do
   -- $(logDebug) (show d)
   
   case parseIds2 resp day of
-    Nothing -> return []
+    Nothing -> do
+      $(logDebug) ("NOTHING")
+      return []
     Just res -> do
       $(logDebug) (show res)
       return res
