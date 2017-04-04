@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div.col.no-gutter.wishgroup.list-group-item.col-3
+  div.col.no-gutter.wishgroup.list-group-item.col-3(v-if="selectedWishes.length")
     div
       span.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
         Wish(v-for="wid in selectedWishes" 
@@ -48,6 +48,11 @@ export default {
   position: relative;
   color: #00B7FF;
   width: 400px;
+  min-width: 200px;
+  background-color: #eee;
+  display: inline-block;
+  margin: 0 0 1em;
+  width: 100%;
 }
 .groupName {
   font-size: 1.2em;

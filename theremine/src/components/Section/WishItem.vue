@@ -11,7 +11,7 @@ transition(name="fade")
       img.col-md-6(style='width:50px;', v-bind:src='wish.product.infos.imageUrl')
       |  
       div
-        input(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='log')
+        input(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='')
         span &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
 
 </template>
@@ -64,9 +64,6 @@ export default {
       const pid = this.wish.product.id;
       const quantity = this.wish.product.quantity;
       this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
-    },
-    log() {
-      // console.log('log');
     },
   },
 };

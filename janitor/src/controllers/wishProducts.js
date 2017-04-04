@@ -25,7 +25,7 @@ router.put('/groups/:gid/wishes/:wid/product',
   }),
   ({ params, data, user }, res) => {
     const quantity = data.quantity || 1;
-    productManager.set(user._id, params.gid, params.wid, quantity);
+    productManager.set(user._id, params.gid, params.wid, data.pid, quantity);
     res.json('OK');
   },
 );

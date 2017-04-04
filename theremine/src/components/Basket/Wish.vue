@@ -1,5 +1,16 @@
 <template lang='pug'>
-  div.wish.list-group-item.col-xs-6
+  div.wish.list-group-item
+    span.fa.fa-eraser.wish-remove(@click.prevent.stop='removeWish($event)')
+    div
+      span.wishgroupname.badge.badge-success {{wish.gname}}
+    div(v-if='productInfos')
+      div  {{productInfos.name}}
+      |  
+      img.col-md-6(style='width:50px;', v-bind:src='productInfos.imageUrl')
+      |  
+      div
+        input(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='')
+        span &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
     div(v-if='isEditing')
       input(ref="editinput"
         v-model="editingName"
@@ -8,7 +19,7 @@
       button.btn.btn-success.btn-sm(@click.stop="validEdition")
         i.fa.fa-check.fa-xs
     div(v-else)
-      span {{ name }}
+      span {{ wish.name }}
     div.buttons(v-if='!isEditing')
       i.fa.fa-edit.fa-xs(@click.stop="edit")
       i.fa.fa-eraser.fa-xs(@click.stop="unselect")
@@ -27,11 +38,36 @@ export default {
     };
   },
   computed: {
-    name() {
-      return this.$store.getters.getWish(this.wid).name;
+    quantity: {
+      get() {
+        return this.productQuantity;
+      },
+      set(quantity) {
+        const gid = this.wish.gid;
+        const wid = this.wish.id;
+        const pid = this.productId;
+        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+      },
+    },
+    wish() {
+      const wish = this.$store.getters.getWish(this.wid);
+      return this.$store.getters.getWish(this.wid);
+    },
+    productId() {
+      return this.$store.state.currentBasket.selectedWishes[this.wish.gid][this.wish.id].pid;
+    },
+    productQuantity() {
+      return this.$store.state.currentBasket.selectedWishes[this.wish.gid][this.wish.id].quantity;
+    },
+    productInfos() {
+      return this.$store.state.productInfos[this.productId];
     },
     isEditing() {
       return this.$store.getters.isEditing(this.editingId);
+    },
+    total() {
+      const total = this.productInfos.price * this.productQuantity;
+      return parseInt(total, 10);
     },
   },
   methods: {
@@ -75,7 +111,7 @@ export default {
 <style scoped>
 
 .wish {
-  min-width: 250px;
+  min-width: 200px;
 }
 
 .wish i {

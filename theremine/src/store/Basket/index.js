@@ -1,6 +1,25 @@
 import resources from '../../resources';
 
 const getters = {
+  getBasketWish: (state, commit, rootState) => (wid) => {
+    const basket = rootState.getBasket;
+    for (let i = 0; i < basket.length; i++) {
+      const wishGroup = basket[i];
+      for (let j = 0; j < wishGroup.wishes.length; j++) {
+        const wish = wishGroup.wishes[j];
+        if (wish.id === wid) {
+          return {
+            id: wish.id,
+            name: wish.name,
+            gid: wishGroup.id,
+            gname: wishGroup.name,
+          };
+        }
+      }
+    }
+    return null;
+  },
+
   getBasket: (state, commit, rootState) => {
     const basket = [];
     const currentBasket = rootState.currentBasket;
