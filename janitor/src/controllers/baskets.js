@@ -54,7 +54,6 @@ router.post('/order',
     const wishGroups = req.user.wishGroups;
     const pSelectedWishes = req.user.currentBasket.selectedWishes;
 
-
     const productsToDetail = [];
     const wishGroupsToSave = [];
     for (let i = 0; i < wishGroups.length; i++) {

@@ -7,7 +7,7 @@ function addTransaction(_idUser, slotId, slotDateTime, wishes) {
   const hash = utils.randHash(_idUser, slotId + Date.now().toString());
   const request = 'transactions';
 
-  const value = {
+  const transaction = {
     id: hash,
     status: 'transferring',
     value: 10,
@@ -26,7 +26,7 @@ function addTransaction(_idUser, slotId, slotDateTime, wishes) {
     { _id: _idUser },
     {
       $push: {
-        [request]: value,
+        [request]: transaction,
       },
     },
     (err) => {

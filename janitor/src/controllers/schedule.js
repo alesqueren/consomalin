@@ -6,7 +6,7 @@ const mid = require('../middlewares');
 router.get('/',
   mid.isAuthenticated,
   (req, res) => {
-    metronome.send().then((slots) => {
+    metronome.getSlots().then((slots) => {
       res.json(slots);
     });
   },
