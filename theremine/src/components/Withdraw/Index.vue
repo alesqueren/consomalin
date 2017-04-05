@@ -5,8 +5,7 @@ div#slots
   div
     .container-fluid
       .row.no-gutters
-        day-item(v-for="day in slots" v-bind:day="day" style="min-width:150px;")
-
+        day-item(v-for="day in slots" v-bind:day="day" style="min-width:150px;", :key="day")
 
   a(href='/basket')
     button.btn.btn-primary.left(type="button") Revenir au panier

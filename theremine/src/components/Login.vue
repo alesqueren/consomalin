@@ -39,7 +39,7 @@ export default {
         username: this.username,
         password: this.password,
       };
-      this.$store.dispatch('login', {
+      this.$store.dispatch('user/login', {
         data,
         fail: this.loginFail,
         success: this.loginSucceed,

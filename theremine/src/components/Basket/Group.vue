@@ -20,18 +20,18 @@ export default {
   },
   computed: {
     name() {
-      return this.$store.getters.getWishGroup(this.gid).name;
+      return this.$store.getters['wishlist/group/get'](this.gid).name;
     },
     selectedWishes() {
-      return this.$store.getters.getSelectedWishes(this.gid);
+      return this.$store.getters['basket/getSelectedWishGroups'](this.gid);
     },
   },
   methods: {
     setActivation() {
-      this.$store.dispatch('setWishGroupActivation', this.gid);
+      this.$store.dispatch('wishlist/group/setActivation', this.gid);
     },
     addWish() {
-      this.$store.dispatch('addWish', {
+      this.$store.dispatch('wishlist/group/addWish', {
         gid: this.gid,
         name: this.newWishName,
       });

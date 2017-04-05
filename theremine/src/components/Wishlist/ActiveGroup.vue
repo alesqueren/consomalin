@@ -26,12 +26,12 @@ export default {
   },
   computed: {
     wishgroup() {
-      return this.$store.getters.getActiveWishGroup;
+      return this.$store.getters['wishlist/group/getActiveWishGroup'];
     },
   },
   methods: {
     addWish() {
-      this.$store.dispatch('addWish', {
+      this.$store.dispatch('wishlist/wish/add', {
         gid: this.wishgroup.id,
         name: this.newWishName,
       });

@@ -14,11 +14,11 @@ import { mapState } from 'vuex';
 
 export default {
   computed: mapState({
-    user: state => state.User.user,
+    user: state => state.user.user,
   }),
   methods: {
     logout() {
-      this.$store.dispatch('logout');
+      this.$store.dispatch('user/logout');
       this.$router.push({ name: 'home' });
     },
   },

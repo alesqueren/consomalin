@@ -28,11 +28,11 @@ export default {
   },
   computed: {
     name() {
-      return this.$store.getters.getWishGroup(this.gid).name;
+      return this.$store.getters['wishlist/group/get'](this.gid).name;
     },
     isActive() {
       try {
-        return this.gid === this.$store.getters.getActiveWishgid;
+        return this.gid === this.$store.getters['wishlist/group/getActiveWishGroup'].id;
       } catch (e) {
         return false;
       }
@@ -41,15 +41,15 @@ export default {
       return this.$store.getters.isEditing(this.gid);
     },
     selected() {
-      return this.$store.getters.isSelectedWishGroup(this.gid);
+      return this.$store.getters['basket/isSelectedWishGroup'](this.gid);
     },
     wishesNb() {
       const predicate = e => (e.id === this.gid);
-      return this.$store.state.wishGroups.filter(predicate)[0].wishes.length;
+      return this.$store.state.wishlist.group.wishGroups.filter(predicate)[0].wishes.length;
     },
     selectedWishesNb() {
       try {
-        const selWishes = this.$store.state.currentBasket.selectedWishes;
+        const selWishes = this.$store.state.basket.selectedWishes;
         return Object.keys(selWishes[this.gid]).length;
       } catch (e) {
         return 0;
@@ -58,13 +58,13 @@ export default {
   },
   methods: {
     select() {
-      this.$store.dispatch('selectWishGroup', {
+      this.$store.dispatch('basket/selectWishGroup', {
         gid: this.gid,
         selected: !this.selected,
       });
     },
     toggleActivation() {
-      this.$store.dispatch('toggleWishGroupActivation', this.gid);
+      this.$store.dispatch('wishlist/group/toggleActivation', this.gid);
     },
     focus() {
       this.$refs.editinput.focus();
@@ -79,7 +79,7 @@ export default {
       this.$store.dispatch('setInlineEdition', null);
     },
     validEdition() {
-      this.$store.dispatch('renameWishGroup', {
+      this.$store.dispatch('wishlist/group/rename', {
         gid: this.gid,
         name: this.editingName,
       });
@@ -87,7 +87,7 @@ export default {
       this.finishEdition();
     },
     remove() {
-      this.$store.dispatch('removeWishGroup', this.gid);
+      this.$store.dispatch('wishlist/group/remove', this.gid);
     },
   },
 };

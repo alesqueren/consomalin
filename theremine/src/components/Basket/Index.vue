@@ -16,7 +16,7 @@ import Group from './Group';
 export default {
   computed: {
     selectedGroups() {
-      return this.$store.getters.getSelectedWishGroups;
+      return this.$store.getters['Wishlist/getSelectedWishGroups'];
     },
     basket() {
       const basket = this.$store.getters.getBasket;

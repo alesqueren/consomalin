@@ -40,7 +40,6 @@ export default {
       },
     },
     wish() {
-      const wish = this.$store.getters.getWish(this.wid);
       return this.$store.getters.getWish(this.wid);
     },
     productId() {
@@ -59,7 +58,7 @@ export default {
   },
   methods: {
     unselect() {
-      this.$store.dispatch('selectWish', {
+      this.$store.dispatch('basket/selectWish', {
         gid: this.gid,
         wid: this.wid,
         selected: false,
@@ -96,7 +95,7 @@ export default {
       this.$store.dispatch('setInlineEdition', null);
     },
     validEdition() {
-      this.$store.dispatch('renameWish', {
+      this.$store.dispatch('wishlist/group/renameWish', {
         gid: this.gid,
         wid: this.wid,
         name: this.editingName,
@@ -104,7 +103,7 @@ export default {
       this.finishEdition();
     },
     remove() {
-      this.$store.dispatch('removeWish', {
+      this.$store.dispatch('wishlist/group/removeWish', {
         gid: this.gid,
         wid: this.wid,
       });

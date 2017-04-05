@@ -28,14 +28,16 @@ export default {
         return this.wish.product.quantity;
       },
       set(quantity) {
-        const gid = this.wish.gid;
-        const wid = this.wish.id;
-        const pid = this.wish.product.id;
-        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+        this.$store.dispatch('wishlist/product/updateWishProduct', {
+          gid: this.wish.gid,
+          wid: this.wish.id,
+          pid: this.wish.product.id,
+          quantity,
+        });
       },
     },
     wishIsCurrent() {
-      const currentWishId = this.$store.state.currentBasket.currentWishId;
+      const currentWishId = this.$store.state.basket.currentWishId;
       return this.wish.id === currentWishId;
     },
     total() {
@@ -65,25 +67,28 @@ export default {
     removeWish() {
       const wid = this.wish.id;
       const selected = false;
-      this.$store.dispatch('selectWish', { wid, selected }).then(() => {
+      this.$store.dispatch('basket/selectWish', { wid, selected }).then(() => {
         if (this.wishIsCurrent) {
           this.$store.dispatch('nextCurrentWish');
         }
       });
     },
     setCurrentWish() {
-      const gid = this.wish.gid;
-      const wid = this.wish.id;
-      const name = this.wish.name;
-      this.$store.dispatch('setCurrentWish', { gid, wid });
-      this.$store.dispatch('searchProductsWithName', { name });
+      this.$store.dispatch('basket/setCurrentWish', {
+        gid: this.wish.gid,
+        wid: this.wish.id,
+      });
+      this.$store.dispatch('searchProductsWithName', {
+        name: this.wish.name,
+      });
     },
     changeQty() {
-      const gid = this.wish.gid;
-      const wid = this.wish.id;
-      const pid = this.wish.product.id;
-      const quantity = this.wish.product.quantity;
-      this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+      this.$store.dispatch('wishlist/product/updateWishProduct', {
+        gid: this.wish.gid,
+        wid: this.wish.id,
+        pid: this.wish.product.id,
+        quantity: this.wish.product.quantity,
+      });
     },
   },
 };

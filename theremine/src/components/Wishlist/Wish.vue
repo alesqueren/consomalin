@@ -28,7 +28,7 @@ export default {
   computed: {
     selected: {
       get() {
-        const wishIsSelected = this.$store.getters.isSelectedWish(
+        const wishIsSelected = this.$store.getters['basket/isSelectedWish'](
           {
             gid: this.gid,
             wid: this.wish.id,
@@ -37,7 +37,7 @@ export default {
         return wishIsSelected;
       },
       set(selected) {
-        this.$store.dispatch('selectWish', {
+        this.$store.dispatch('basket/selectWish', {
           wid: this.wish.id,
           selected,
         });
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     select() {
-      this.$store.dispatch('selectWish', {
+      this.$store.dispatch('basket/selectWish', {
         wid: this.wish.id,
         selected: !this.selected,
       });
@@ -69,14 +69,14 @@ export default {
     validEdition() {
       this.name = this.editingName;
       this.finishEdition();
-      this.$store.dispatch('renameWish', {
+      this.$store.dispatch('wishlist/wish/rename', {
         gid: this.gid,
         wid: this.wish.id,
         name: this.name,
       });
     },
     remove() {
-      this.$store.dispatch('removeWish', {
+      this.$store.dispatch('wishlist/wish/remove', {
         wid: this.wish.id,
       });
     },

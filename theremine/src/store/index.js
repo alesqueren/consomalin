@@ -1,15 +1,15 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import resources from '../resources';
-import User from './User/index';
-import Wishes from './Wishes/index';
-import WishGroups from './WishGroups/index';
-import Wishlist from './Wishlist/index';
-import Basket from './Basket/index';
+import user from './user';
+import wishlist from './wishlist/index';
+import basket from './basket/index';
 
-function getFirstUnmatchedSelectedWish(basket) {
-  for (let i = 0; i < basket.length; i++) {
-    const wish = basket[i];
+Vue.use(Vuex);
+
+function getFirstUnmatchedSelectedWish(currBasket) {
+  for (let i = 0; i < currBasket.length; i++) {
+    const wish = currBasket[i];
     if (!wish.product.id) {
       return { gid: wish.gid, wid: wish.id };
     }
@@ -17,257 +17,105 @@ function getFirstUnmatchedSelectedWish(basket) {
   return null;
 }
 
-Vue.use(Vuex);
+const globalGetters = {
+  isEditing: state => id =>
+    Boolean(state.inlineEdition === id),
 
-export default new Vuex.Store({
-  state: {
-    wishGroups: null,
-    currentBasket: {
-      slot: null,
-      currentWishId: null,
-      selectedWishes: null,
-    },
-    searchs: {},
-    slots: [],
-    productInfos: {},
-    inlineEdition: null,
-    activeWishGroup: null,
+  getCurrentWish: (state, getters) => {
+    const currentWishId = state.basket.currentWishId;
+    if (currentWishId) {
+      return getters['wishlist/group/getByWish'](currentWishId);
+    }
+    return null;
   },
 
-  getters: {
-  },
+  getProduct: state => pid =>
+    state.productInfos[pid],
 
-  actions: {
+};
 
-    fetchUserData({ dispatch, commit }) {
-      resources.wishlist.get({}, {}).then(({ body }) => {
-        const wishGroups = body.wishGroups;
-        const currentBasket = body.currentBasket;
-        if (!currentBasket.selectedWishes) {
-          currentBasket.selectedWishes = {};
-        }
-        const idsWithoutDetail = [];
-        Object.keys(currentBasket.selectedWishes).map((wishgroupId) => {
-          const wishGroup = currentBasket.selectedWishes[wishgroupId];
-          Object.keys(wishGroup).map((wishId) => {
-            const wish = wishGroup[wishId];
-            if (wish.pid) {
-              idsWithoutDetail.push(wish.pid);
-            }
-            return null;
-          });
-          return null;
+const actions = {
+
+  nextCurrentWish({ dispatch, getters, commit, state }) {
+    if (getters['basket/getBasket']) {
+      const newCurrentWish = getFirstUnmatchedSelectedWish(getters['basket/getBasket']);
+      if (newCurrentWish) {
+        const wish = getters['wishlist/group/getByWish'](newCurrentWish.wid);
+        const gid = wish.gid;
+        const wid = wish.id;
+        resources.currentWish.save({}, { gid, wid }).then(() => {
+          commit('basket/setCurrentWish', { gid, wid });
+          const currentWish = getters['wishlist/group/getByWish'](wid);
+          if (currentWish.name && !state.searchs[currentWish.name]) {
+            dispatch('searchProductsWithName', { name: currentWish.name });
+          }
         });
-        if (idsWithoutDetail.length) {
-          dispatch('detailProductsWithId', { ids: idsWithoutDetail });
-        }
-        commit('setWishGroupsAndCurrentBasket', { wishGroups, currentBasket });
-      });
-    },
-
-    nextCurrentWish({ dispatch, getters, commit, state }) {
-      if (getters.getBasket) {
-        const newCurrentWish = getFirstUnmatchedSelectedWish(getters.getBasket);
-        if (newCurrentWish) {
-          const wish = getters.getWish(newCurrentWish.wid);
-          const gid = wish.gid;
-          const wid = wish.id;
-          resources.currentWish.save({}, { gid, wid }).then(() => {
-            commit('setCurrentWish', { gid, wid });
-            const currentWish = getters.getWish(wid);
-            if (currentWish.name && !state.searchs[currentWish.name]) {
-              dispatch('searchProductsWithName', { name: currentWish.name });
-            }
-          });
-        } else {
-          commit('removeCurrentWish');
-        }
+      } else {
+        dispatch('removeCurrentWish');
       }
-    },
-
-    removeCurrentWish({ commit }) {
-      commit('removeCurrentWish');
-    },
-
-    setInlineEdition: ({ commit }, id) => {
-      commit('setInlineEdition', { id });
-    },
-
-    resetStore: ({ commit }) => {
-      commit('resetStore');
-    },
-
+    }
   },
 
-  mutations: {
-    resetStore: (state) => {
-      Vue.set(state, 'wishGroups', null);
-      Vue.set(state, 'currentBasket', null);
-      Vue.set(state, 'searchs', null);
-      Vue.set(state, 'productInfos', null);
-    },
+  removeCurrentWish({ commit }) {
+    commit('basket/removeCurrentWish');
+    resources.currentWish.delete();
+  },
 
-    addWishGroup: (state, { id, name, wishes }) => {
-      state.wishGroups.push({
-        id,
-        name,
-        wishes,
-      });
-    },
+  setInlineEdition: ({ commit }, id) => {
+    commit('setInlineEdition', { id });
+  },
 
-    removeWishGroup: (state, { gid }) => {
-      for (let i = 0; i < state.wishGroups.length; i++) {
-        const wishgroup = state.wishGroups[i];
-        if (wishgroup.id === gid) {
-          state.wishGroups.splice(i, 1);
+  searchProductsWithName: ({ commit, state }, { name }) => {
+    if (!state.searchs[name]) {
+      const uri = 'search?s=' + name;
+      resources.products.get({ uri }, {}).then(({ body }) => {
+        const products = JSON.parse(body);
+
+        // todo: see array v-for
+        commit('addSearchs', {
+          name,
+          products: Object.keys(products).reduce((acc, cur, i) => {
+            acc[i] = cur;
+            return acc;
+          }, {}),
+        });
+
+        for (const pid in products) {
+          commit('addProductInfos', {
+            pid,
+            infos: products[pid],
+          });
         }
-      }
-    },
+      });
+    }
+  },
 
-    setWishGroupsAndCurrentBasket(state, { wishGroups, currentBasket }) {
-      return new Promise((resolve) => {
-        state.wishGroups = wishGroups;
-        state.currentBasket = currentBasket;
+  resetStore: ({ commit }) => {
+    commit('resetStore');
+  },
+
+  updateProductInfos: ({ commit, rootState }, { pid, infos }) => {
+    if (!rootState.productInfos[pid]) {
+      commit('addProductInfos', { pid, infos });
+    }
+  },
+
+  setSlots({ commit }) {
+    return new Promise((resolve) => {
+      resources.schedule.get().then((response) => {
+        const body = JSON.parse(response.body);
+        commit('setSlots', { slots: body.slots });
         resolve();
       });
-    },
+    });
+  },
 
-    setWishlist: (state, wishlist) => {
-      state.wishlist = wishlist;
-    },
-
-    removeCurrentWish: (state) => {
-      Vue.set(state.currentBasket, 'currentWishId', null);
-    },
-
-    setCurrentWish: (state, { wid }) => {
-      Vue.set(state.currentBasket, 'currentWishId', wid);
-    },
-
-    addSearchs: (state, { name, products }) => {
-      Vue.set(state.searchs, name, products);
-    },
-
-    addProductInfos: (state, { pid, infos }) => {
-      Vue.set(state.productInfos, pid, infos);
-    },
-
-    addWish: (state, { gid, id, name }) => {
-      for (let i = 0; i < state.wishGroups.length; i++) {
-        const wishgroup = state.wishGroups[i];
-        if (wishgroup.id === gid) {
-          wishgroup.wishes.push({
-            id,
-            name,
-          });
-        }
-      }
-    },
-
-    setWishProduct: (state, { gid, wid, pid, quantity }) => {
-      const entity = state.currentBasket.selectedWishes[gid][wid];
-      Vue.set(entity, 'pid', pid);
-      Vue.set(entity, 'quantity', quantity);
-    },
-
-    setMatchingProducts: (state, { wish, products }) => {
-      for (let i = 0; i < state.wishGroups.length; i++) {
-        const wishgroup = state.wishGroups[i];
-        if (wishgroup.id === wish.gid) {
-          for (let j = 0; j < wishgroup.wishes.length; j++) {
-            const tmpWish = wishgroup.wishes[j];
-            if (tmpWish.id === wish.id) {
-              Vue.set(state.wishGroups[i].wishes[j], 'matchingProducts', products);
-            }
-          }
-        }
-      }
-    },
-
-    removeWish: (state, { wid }) => {
-      for (let i = 0; i < state.wishGroups.length; i++) {
-        const wishGroup = state.wishGroups[i];
-        for (let j = 0; j < wishGroup.wishes.length; j++) {
-          const wish = wishGroup.wishes[j];
-          if (wish.id === wid) {
-            state.wishGroups[i].wishes.splice(j, 1);
-          }
-        }
-      }
-    },
-
-    renameWish: (state, { wid, name }) => {
-      for (let i = 0; i < state.wishGroups.length; i++) {
-        const wishGroup = state.wishGroups[i];
-        for (let j = 0; j < wishGroup.wishes.length; j++) {
-          const wish = wishGroup.wishes[j];
-          if (wish.id === wid) {
-            wish.name = name;
-          }
-        }
-      }
-    },
-
-    renameWishGroup: (state, { gid, name }) => {
-      for (let i = 0; i < state.wishGroups.length; i++) {
-        const wishGroup = state.wishGroups[i];
-        if (wishGroup.id === gid) {
-          wishGroup.name = name;
-          break;
-        }
-      }
-    },
-
-    selectWish: (state, { gid, wid, selected }) => {
-      const selectedWishes = state.currentBasket.selectedWishes;
-      // si on deselectionne un wish
-      if (!selected) {
-        if (selectedWishes[gid]) {
-          Vue.set(selectedWishes[gid], wid);
-          delete selectedWishes[gid][wid];
-
-          Vue.set(selectedWishes[gid], 'tmp');
-          delete selectedWishes[gid].tmp;
-
-          // si on a supprimé le dernier wish, on supprime le groupe de l'objet
-          if (!Object.keys(selectedWishes[gid]).length) {
-            Vue.set(selectedWishes, 'tmp');
-            delete selectedWishes.tmp;
-
-            Vue.set(selectedWishes, gid);
-            delete selectedWishes[gid];
-          }
-        }
-      } else {
-        // si le groupe n'existe pas, on le crée
-        if (!selectedWishes[gid]) {
-          Vue.set(selectedWishes, gid, {});
-        }
-        // dans tous les cas on rajoute le wish a son groupe
-        Vue.set(selectedWishes[gid], wid);
-      }
-    },
-
-    selectGroup: (state, { gid }) => {
-      const selectWishes = {};
-      for (const i in state.wishGroups) {
-        const group = state.wishGroups[i];
-        if (group.id === gid) {
-          for (const j in group.wishes) {
-            const wish = group.wishes[j];
-            selectWishes[wish.id] = {};
-          }
-        }
-      }
-      Vue.set(state.currentBasket.selectedWishes, gid, selectWishes);
-    },
-
-    setWishGroupActivation: (state, gid) => {
-      state.activeWishGroup = gid;
-    },
-
-    selectSlot: (state, slotId) => {
-      const daySlots = state.slots;
+  selectSlot({ commit, rootState }, { slotId }) {
+    return new Promise((resolve) => {
+      let date = '';
+      let time = '';
+      let frenchTime = '';
+      const daySlots = rootState.slots;
       for (let i = 0; i < daySlots.length; i++) {
         const day = daySlots[i];
         for (let j = 0; j < day.slots.length; j++) {
@@ -275,63 +123,166 @@ export default new Vuex.Store({
           if (slotHours) {
             for (let k = 0; k < slotHours.length; k++) {
               const slot = slotHours[k];
-              slot.selected = false;
               if (slot.id === slotId) {
-                slot.selected = true;
+                date = slot.day;
+                time = slot.time;
+                const hours = parseInt(time.split(':')[0], 10);
+                const minutes = time.split(':')[1];
+                frenchTime = day.name + ' ' + hours + 'h' + minutes;
               }
             }
           }
         }
       }
-      state.currentBasket.slot = slotId;
-    },
-
-    unselectGroup: (state, { gid }) => {
-      if (state.currentBasket.selectedWishes[gid]) {
-        Vue.set(state.currentBasket.selectedWishes, gid, null);
-        delete state.currentBasket.selectedWishes[gid];
-      }
-    },
-
-    setInlineEdition: (state, { id }) => {
-      state.inlineEdition = id;
-    },
-
-    setSlots: (state, { slots }) => {
-      const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-      const daysSlots = [];
-      let daySlots = [];
-      let precedentDay = new Date(slots[1].day + ' ' + slots[1].time).getHours();
-      for (let i = 0; i < slots.length; i++) {
-        const slot = slots[i];
-        slot.selected = false;
-        const currentDay = days[new Date(slot.day).getDay()];
-        const currentHour = new Date(slot.day + ' ' + slot.time).getHours();
-        const isLastSlot = i + 1 === slots.length;
-        if (precedentDay !== currentDay || isLastSlot) {
-          if (isLastSlot) {
-            daySlots[currentHour].push(slot);
-          }
-          daysSlots.push({ name: currentDay, slots: daySlots });
-          daySlots = [];
-        }
-        precedentDay = currentDay;
-        if (!daySlots[currentHour]) {
-          daySlots[currentHour] = [];
-        }
-        daySlots[currentHour].push(slot);
-      }
-      console.log('state mutation slots');
-      // console.log(state.slots);
-    },
-
+      const dateTime = date + ' ' + time;
+      resources.slot.save({}, { id: slotId, dateTime }).then(() => {
+        commit('selectSlot', { slotId });
+        resolve(frenchTime);
+      });
+    });
   },
+
+  order() {
+    return new Promise((resolve) => {
+      resources.order.save().then(() => {
+        resolve();
+      });
+    });
+  },
+
+  slot({ commit }, { slotId }) {
+    return new Promise((resolve) => {
+      resources.slot.save({}, slotId).then(() => {
+        commit('setCurrentWish', { slotId });
+        resolve();
+      });
+    });
+  },
+
+};
+
+const mutations = {
+  resetStore: (state) => {
+    Vue.set(state, 'wishGroups', null);
+    Vue.set(state, 'currentBasket', null);
+    Vue.set(state, 'searchs', null);
+    Vue.set(state, 'productInfos', null);
+  },
+
+  setWishGroupsAndCurrentBasket(state, { wishGroups, currentBasket }) {
+    return new Promise((resolve) => {
+      state.wishlist.group.wishGroups = wishGroups;
+      state.basket = currentBasket;
+      resolve();
+    });
+  },
+
+  setInlineEdition: (state, { id }) => {
+    state.inlineEdition = id;
+  },
+
+  // TODO: move
+  addSearchs: (state, { name, products }) => {
+    Vue.set(state.searchs, name, products);
+  },
+
+  addProductInfos: (state, { pid, infos }) => {
+    Vue.set(state.productInfos, pid, infos);
+  },
+
+  setMatchingProducts: (state, { wish, products }) => {
+    for (let i = 0; i < state.wishGroups.length; i++) {
+      const wishgroup = state.wishGroups[i];
+      if (wishgroup.id === wish.gid) {
+        for (let j = 0; j < wishgroup.wishes.length; j++) {
+          const tmpWish = wishgroup.wishes[j];
+          if (tmpWish.id === wish.id) {
+            Vue.set(state.wishGroups[i].wishes[j], 'matchingProducts', products);
+          }
+        }
+      }
+    }
+  },
+
+  selectGroup: (state, { gid }) => {
+    const selectWishes = {};
+    for (const i in state.wishlist.group.wishGroups) {
+      const group = state.wishlist.group.wishGroups[i];
+      if (group.id === gid) {
+        for (const j in group.wishes) {
+          const wish = group.wishes[j];
+          selectWishes[wish.id] = {};
+        }
+      }
+    }
+    Vue.set(state.basket.selectedWishes, gid, selectWishes);
+  },
+
+  selectSlot: (state, slotId) => {
+    const daySlots = state.slots;
+    for (let i = 0; i < daySlots.length; i++) {
+      const day = daySlots[i];
+      for (let j = 0; j < day.slots.length; j++) {
+        const slotHours = day.slots[j];
+        if (slotHours) {
+          for (let k = 0; k < slotHours.length; k++) {
+            const slot = slotHours[k];
+            slot.selected = false;
+            if (slot.id === slotId) {
+              slot.selected = true;
+            }
+          }
+        }
+      }
+    }
+    state.currentBasket.slot = slotId;
+  },
+
+  setSlots: (state, { slots }) => {
+    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    const daysSlots = [];
+    let daySlots = [];
+    let precedentDay = new Date(slots[1].day + ' ' + slots[1].time).getHours();
+    for (let i = 0; i < slots.length; i++) {
+      const slot = slots[i];
+      slot.selected = false;
+      const currentDay = days[new Date(slot.day).getDay()];
+      const currentHour = new Date(slot.day + ' ' + slot.time).getHours();
+      const isLastSlot = i + 1 === slots.length;
+      if (precedentDay !== currentDay || isLastSlot) {
+        if (isLastSlot) {
+          daySlots[currentHour].push(slot);
+        }
+        daysSlots.push({ name: currentDay, slots: daySlots });
+        daySlots = [];
+      }
+      precedentDay = currentDay;
+      if (!daySlots[currentHour]) {
+        daySlots[currentHour] = [];
+      }
+      daySlots[currentHour].push(slot);
+    }
+  },
+};
+
+
+export default new Vuex.Store({
   strict: true,
+
+  state: {
+    searchs: {},
+    productInfos: {},
+    inlineEdition: null,
+    slots: [],
+  },
+
+  getters: globalGetters,
+  actions,
+  mutations,
+
   modules: {
-    User,
-    Wishes,
-    WishGroups,
-    Wishlist,
-    Basket,
+    user,
+    wishlist,
+    basket,
   },
 });

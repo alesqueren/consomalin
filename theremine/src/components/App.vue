@@ -31,11 +31,10 @@ import Usercard from './Usercard';
 export default {
   computed: {
     ...mapState({
-      user: state => state.User.user,
+      user: state => state.user.user,
     }),
     basket() {
-      const basket = this.$store.getters.getBasket;
-      return basket;
+      return this.$store.getters['basket/getBasket'];
     },
     matchedWishes() {
       let matchedWishes = 0;

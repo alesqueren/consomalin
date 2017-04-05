@@ -39,7 +39,7 @@ export default {
         username: this.username,
         password: this.password,
       };
-      this.$store.dispatch('register', {
+      this.$store.dispatch('user/register', {
         data,
         fail: this.fail,
         success: this.succeed,

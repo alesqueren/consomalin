@@ -3,10 +3,15 @@
     .container-fluid
       .row
         .col-md-10
-          currentWish(v-bind:currentwish="currentWish")
+          CurrentWish
           .container(v-if="!currentWishIsEmpty")
-            .row(v-if="currentWishHasMatchingProducts")
-                product-item(v-for="(product, productKey, productIndex) in currentWishHasMatchingProducts" v-if="productIndex < maxProducts" v-bind:maxProducts="maxProducts" v-bind:wish="currentWish" v-bind:productkey="productKey" v-bind:product="product" v-bind:key="productIndex" v-bind:currentWish="currentWish")
+            .row(v-if="currentWishResults")
+                ProductItem(
+                  v-for="(pid, key, i) in currentWishResults" 
+                  v-if="i < maxProducts" 
+                  v-bind:maxProducts="maxProducts" 
+                  v-bind:pid="pid" 
+                  v-bind:key="i")
           .container(v-else-if="basketFull")
             .row
               div
@@ -36,14 +41,6 @@ export default {
       maxProducts: 40,
     };
   },
-  mounted() {
-    if (!this.$store.state.currentBasket.currentWishId) {
-      this.$store.dispatch('nextCurrentWish');
-    } else {
-      const name = this.currentWish.name;
-      this.$store.dispatch('searchProductsWithName', { name });
-    }
-  },
   created() {
     // on ecoute le scroll pour augmenter le nombre de produits visibles
     // document.addEventListener('scroll',CheckIfScrollBottom);
@@ -56,25 +53,17 @@ export default {
     searchs() {
       return this.$store.state.searchs;
     },
-    currentBasket() {
-      return this.$store.state.currentBasket;
-    },
-    currentWishHasMatchingProducts() {
-      return this.currentWish && this.searchs[this.currentWish.name];
-    },
     currentWish() {
-      const currentWishId = this.$store.state.currentBasket.currentWishId;
-      if (currentWishId) {
-        return this.$store.getters.getWish(currentWishId);
-      }
-      return {};
-    },
-    currentWishIsEmpty() {
-      return !this.$store.state.currentBasket.currentWishId;
+      return this.$store.getters.getCurrentWish;
     },
     basket() {
-      const basket = this.$store.getters.getBasket;
-      return basket;
+      return this.$store.getters['basket/getBasket'];
+    },
+    currentWishResults() {
+      return this.$store.state.searchs[this.currentWish.name];
+    },
+    currentWishIsEmpty() {
+      return !this.$store.state.basket.currentWishId;
     },
     matchedWishes() {
       let matchedWishes = 0;
@@ -107,6 +96,14 @@ export default {
         text: textLabelNext,
       };
     },
+  },
+  mounted() {
+    if (this.currentWish) {
+      const name = this.currentWish.name;
+      this.$store.dispatch('searchProductsWithName', { name });
+    } else {
+      this.$store.dispatch('nextCurrentWish');
+    }
   },
   methods: {
     // lazyloading

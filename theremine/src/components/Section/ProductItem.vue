@@ -8,23 +8,27 @@
 
 <script>
 export default {
-  props: ['product', 'productkey', 'currentWish'],
+  props: ['pid', 'maxProducts'],
+  computed: {
+    product() {
+      return this.$store.getters.getProduct(this.pid);
+    },
+    currentWish() {
+      return this.$store.getters.getCurrentWish;
+    },
+  },
   methods: {
     selectProduct() {
-      this.$store.dispatch('updateProductInfos',
-        {
-          pid: this.productkey,
-          infos: this.product,
-        },
-      );
-      this.$store.dispatch('setProduct',
-        {
-          gid: this.currentWish.gid,
-          wid: this.currentWish.id,
-          pid: this.productkey,
-          quantity: 1,
-        },
-      );
+      this.$store.dispatch('updateProductInfos', {
+        pid: this.pid,
+        infos: this.product,
+      });
+      this.$store.dispatch('wishlist/product/setProduct', {
+        gid: this.currentWish.gid,
+        wid: this.currentWish.id,
+        pid: this.pid,
+        quantity: 1,
+      });
       this.$store.dispatch('nextCurrentWish');
     },
   },

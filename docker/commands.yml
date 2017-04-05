@@ -6,8 +6,7 @@ services:
     build:
       context: ./haskell
       dockerfile: ./byte-diver/Dockerfile
-    networks:
-      - mongo
+    networks: [big]
 
 networks:
-  mongo:
+  big:

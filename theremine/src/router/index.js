@@ -62,7 +62,7 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  const route = () => {
+  const routeOrRedirect = () => {
     if (to.meta.auth) {
       next('/login');
     } else {
@@ -70,22 +70,21 @@ router.beforeEach((to, from, next) => {
     }
   };
 
-  if (store.state.User.user) {
+  if (store.state.user.user) {
     // user succeded to login
-    if (!store.state.wishGroups) {
-      store.dispatch('fetchUserData');
-      // todo: then next
+    if (!store.state.wishlist.group.wishGroups) {
+      store.dispatch('user/fetchUserData').then(next);
+    } else {
+      next();
     }
-    next();
-  } else if (store.state.User.user === false) {
+  } else if (store.state.user.user === false) {
     // user failed to login
-    route();
+    routeOrRedirect();
   } else {
     // we don't know
-    store.dispatch('fetchUser').then(() => {
-      store.dispatch('fetchUserData');
-      next();
-    }, route);
+    store.dispatch('user/fetchUser').then(() => {
+      store.dispatch('user/fetchUserData').then(next);
+    }, routeOrRedirect);
   }
 });
 

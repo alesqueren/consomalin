@@ -1,14 +1,14 @@
 <template lang='pug'>
-  div#currentWish(v-if="currentwish.id")
+  div#currentWish(v-if="currentWish")
     div.input-group.stylish-input-group.search-wrapper
       span.input-group-addon.search-search
         div
           span.fa.fa-search
       .input-wrapper.search-input(onclick="javascript:document.getElementById('search-text').focus();")
         .input-badge
-          span.badge.badge-success {{ currentwish.gname }}
+          span.badge.badge-success {{ currentWish.gname }}
         .input-input
-          input#search-text.form-control(type="text" v-model="currentwish.name" v-on:keyup="rename")
+          input#search-text.form-control(type="text" v-model="currentWish.name" v-on:keyup="rename")
       span.input-group-addon.search-addGroup(@click="addGroup")
         span.fa.fa-list-ul &nbsp;&nbsp;&nbsp;
         span Est-ce une liste ?
@@ -18,7 +18,7 @@
 import router from '../../router';
 
 export default {
-  props: ['currentwish'],
+  props: [],
   data() {
     return {
       delayTimer: null,
@@ -26,28 +26,18 @@ export default {
     };
   },
   computed: {
-    name: {
-      get() {
-        // return this.$store.getters.getCurrentWish.name;
-      },
-      set() {
-        // set(name) {
-        // this.$store.dispatch('renameWish', {
-        //   gid: this.currentwish.gid,
-        //   wid: this.currentwish.id,
-        //   name,
-        // });
-      },
+    currentWish() {
+      return this.$store.getters.getCurrentWish;
     },
   },
   methods: {
     rename() {
       clearTimeout(this.delayTimer);
       this.delayTimer = setTimeout(() => {
-        const name = this.currentwish.name;
-        this.$store.dispatch('renameWish', {
-          gid: this.currentwish.gid,
-          wid: this.currentwish.id,
+        const name = this.currentWish.name;
+        this.$store.dispatch('wishlist/wish/rename', {
+          gid: this.currentWish.gid,
+          wid: this.currentWish.id,
           name,
         });
         this.$store.dispatch('searchProductsWithName', { name });
@@ -55,11 +45,11 @@ export default {
     },
     addGroup() {
       this.wishCreation = true;
-      const name = this.currentwish.name;
-      this.$store.dispatch('addWishGroup', name).then((gid) => {
+      const name = this.currentWish.name;
+      this.$store.dispatch('wishlist/group/add', name).then((gid) => {
         this.$store.dispatch('removeCurrentWish');
-        this.$store.dispatch('removeWish', { wid: this.currentwish.id });
-        this.$store.dispatch('setWishGroupActivation', gid);
+        this.$store.dispatch('wishlist/wish/remove', { wid: this.currentWish.id });
+        this.$store.dispatch('wishlist/group/setActivation', gid);
         router.push({ name: 'wishlist' });
       });
     },
