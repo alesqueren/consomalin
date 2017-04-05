@@ -1,18 +1,21 @@
 <template lang='pug'>
 transition(name="fade")
   .wish.list-group-item(v-bind:class='{active:wishIsCurrent}', @click='setCurrentWish()')
-    span.fa.fa-eraser.wish-remove(@click.prevent.stop='removeWish($event)')
+    span.fa.fa-eraser.wish-erase(@click.prevent.stop='removeWish($event)')
     div
       span.wishgroupname.badge.badge-success {{wish.gname}}
       span.wishname {{wish.name}}
     div(v-if='wish.product.infos')
       div  {{wish.product.infos.name}}
       |  
-      img.col-md-6(style='width:50px;', v-bind:src='wish.product.infos.imageUrl')
+      img(style='width:150px;', v-bind:src='wish.product.infos.imageUrl')
       |  
       div
-        input(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='')
-        span &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
+        div.count-input.space-bottom
+          a.incr-btn(@click.prevent.stop='decrease' href="#") –
+          input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='')
+          a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
+        span.total &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
 
 </template>
 
@@ -41,6 +44,24 @@ export default {
     },
   },
   methods: {
+    increase() {
+      if (this.productQuantity < 64) {
+        const gid = this.wish.gid;
+        const wid = this.wish.id;
+        const pid = this.productId;
+        const quantity = this.productQuantity + 1;
+        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+      }
+    },
+    decrease() {
+      if (this.productQuantity > 1) {
+        const gid = this.wish.gid;
+        const wid = this.wish.id;
+        const pid = this.productId;
+        const quantity = this.productQuantity - 1;
+        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+      }
+    },
     removeWish() {
       const wid = this.wish.id;
       const selected = false;
@@ -58,7 +79,6 @@ export default {
       this.$store.dispatch('searchProductsWithName', { name });
     },
     changeQty() {
-      // console.log('log2');
       const gid = this.wish.gid;
       const wid = this.wish.id;
       const pid = this.wish.product.id;
@@ -83,7 +103,7 @@ export default {
 .wishname{
   font-weight: bold;
 }
-.wish-remove{
+.wish-erase{
   position: absolute;
   top: 5px;
   right: 5px;
@@ -95,5 +115,53 @@ export default {
 }
 .fade-enter, .fade-leave-to {
   opacity: 0
+}
+.total{
+  float:left;
+  height: 27px;
+  line-height: 27px;
+  margin: 5px 0 5px 0;
+  vertical-align: text-bottom;
+}
+.count-input {
+  position: relative;
+  float:left;
+  width: 100%;
+  max-width: 75px;
+  margin: 5px 0;
+}
+.count-input input {
+  width: 100%;
+  height: 27px;
+  line-height: 27px;
+  border: 1px solid #000;
+  border-radius: 2px;
+  background: none;
+  text-align: center;
+}
+.count-input input:focus {
+  outline: none;
+}
+.count-input .incr-btn {
+  display: block;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  font-size: 26px;
+  font-weight: 300;
+  text-align: center;
+  line-height: 30px;
+  top: 49%;
+  right: 0;
+  margin-top: -15px;
+  text-decoration:none;
+}
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.count-input .incr-btn:first-child {
+  right: auto;
+  left: 0;
+  top: 46%;
 }
 </style>

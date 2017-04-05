@@ -28,6 +28,7 @@ export default new Vuex.Store({
       selectedWishes: null,
     },
     searchs: {},
+    slots: [],
     productInfos: {},
     inlineEdition: null,
     activeWishGroup: null,
@@ -266,6 +267,22 @@ export default new Vuex.Store({
     },
 
     selectSlot: (state, slotId) => {
+      const daySlots = state.slots;
+      for (let i = 0; i < daySlots.length; i++) {
+        const day = daySlots[i];
+        for (let j = 0; j < day.slots.length; j++) {
+          const slotHours = day.slots[j];
+          if (slotHours) {
+            for (let k = 0; k < slotHours.length; k++) {
+              const slot = slotHours[k];
+              slot.selected = false;
+              if (slot.id === slotId) {
+                slot.selected = true;
+              }
+            }
+          }
+        }
+      }
       state.currentBasket.slot = slotId;
     },
 
@@ -281,30 +298,31 @@ export default new Vuex.Store({
     },
 
     setSlots: (state, { slots }) => {
-      console.log('slots');
-      console.log(slots);
       const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-      const newSlots = [];
+      const daysSlots = [];
       let daySlots = [];
+      let precedentDay = new Date(slots[1].day + ' ' + slots[1].time).getHours();
       for (let i = 0; i < slots.length; i++) {
         const slot = slots[i];
         slot.selected = false;
-
-        const d = new Date(slot.day);
-        const h = new Date(slot.day + ' ' + slot.time);
-        let dayName = '';
-        // au dernier slot du jour, on les ajoutes tous
-        if ((dayName !== days[d.getDay()] || i + 1 === slots.length) && !i === 0) {
-          newSlots.push({ name: dayName, slots: daySlots });
+        const currentDay = days[new Date(slot.day).getDay()];
+        const currentHour = new Date(slot.day + ' ' + slot.time).getHours();
+        const isLastSlot = i + 1 === slots.length;
+        if (precedentDay !== currentDay || isLastSlot) {
+          if (isLastSlot) {
+            daySlots[currentHour].push(slot);
+          }
+          daysSlots.push({ name: currentDay, slots: daySlots });
           daySlots = [];
         }
-        dayName = days[d.getDay()];
-        if (!Object.keys(daySlots[h.getHours()]).length) {
-          daySlots[h.getHours()] = [];
+        precedentDay = currentDay;
+        if (!daySlots[currentHour]) {
+          daySlots[currentHour] = [];
         }
-        daySlots[h.getHours()].push(slot);
+        daySlots[currentHour].push(slot);
       }
-      state.slots = newSlots;
+      console.log('state mutation slots');
+      // console.log(state.slots);
     },
 
   },

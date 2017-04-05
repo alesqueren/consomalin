@@ -14,7 +14,7 @@ function addTransaction(_idUser, slotId, slotDateTime, wishes) {
     orderTime: new Date(),
     slot: {
       id: slotId,
-      dateTime: new Date(slotDateTime),
+      dateTime: slotDateTime,
     },
     wishGroups: wishes,
   };

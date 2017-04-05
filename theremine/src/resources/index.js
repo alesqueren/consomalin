@@ -19,6 +19,6 @@ export default {
   currentWish: Vue.resource('/api/wishlist/basket/currentWish'),
   products: Vue.resource('/api/products/{uri}'),
   schedule: Vue.resource('/api/schedule'),
-  slot: Vue.resource('/api/basket/slot'),
+  slot: Vue.resource('/api/wishlist/basket/slot'),
   basket: Vue.resource('/api/basket/order'),
 };

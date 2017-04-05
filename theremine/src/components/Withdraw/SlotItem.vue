@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div
+  div.slotHour
     button(type="button" v-bind:disabled="pickupslot.status == 'Past'" v-bind:class="classSlot" class="btn" @click="selectSlot()" v-bind:style="styleObject")
       span {{frenchTime}}
 </template>
@@ -14,14 +14,13 @@ export default {
         'btn-success': this.pickupslot.selected,
       };
     },
-    frenchTime: () => {
+    frenchTime() {
       const time = this.pickupslot.time;
       const frenchTime = parseInt(time.split(':')[0], 10) + 'h' + time.split(':')[1];
       return frenchTime;
     },
-    styleObject: () => {
+    styleObject() {
       const attendance = parseFloat(this.pickupslot.attendanceLevel);
-      console.log(attendance);
       // vert rgb(130,234,109)
       // rouge rgb(245,20,9)
       const rmin = 130;
@@ -36,13 +35,23 @@ export default {
       // var hsv = rgb2hsv(r,g,b);
       // backgroundColor = 'rgb('+hsv.h+','+hsv.s+','+hsv.v+')';
       const backgroundColor = 'rgb(' + r + ',' + g + ',' + b + ')';
-      console.log(backgroundColor);
       return {
         backgroundColor,
       };
     },
   },
   methods: {
+    selectSlot() {
+      const slotId = this.pickupslot.id;
+      this.$store.dispatch('selectSlot', { slotId }).then((dateTime) => {
+        this.textNext = 'Valider ma commande pour ' + dateTime;
+      });
+    },
   },
 };
 </script>
+<style>
+.slotHour{
+  float:left;
+}
+</style>

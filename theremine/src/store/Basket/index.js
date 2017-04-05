@@ -1,24 +1,6 @@
 import resources from '../../resources';
 
 const getters = {
-  getBasketWish: (state, commit, rootState) => (wid) => {
-    const basket = rootState.getBasket;
-    for (let i = 0; i < basket.length; i++) {
-      const wishGroup = basket[i];
-      for (let j = 0; j < wishGroup.wishes.length; j++) {
-        const wish = wishGroup.wishes[j];
-        if (wish.id === wid) {
-          return {
-            id: wish.id,
-            name: wish.name,
-            gid: wishGroup.id,
-            gname: wishGroup.name,
-          };
-        }
-      }
-    }
-    return null;
-  },
 
   getBasket: (state, commit, rootState) => {
     const basket = [];
@@ -72,11 +54,41 @@ const actions = {
   setSlots({ commit, rootState }) {
     return new Promise((resolve, reject) => {
       resources.schedule.get().then((response) => {
-        const slots = JSON.parse(response.body);
-        console.log('slots action');
-        console.log(slots);
-        commit('setSlots', { slots });
+        const body = JSON.parse(response.body);
+        commit('setSlots', { slots: body.slots });
         resolve();
+      });
+    });
+  },
+
+  selectSlot({ commit, rootState }, { slotId }) {
+    return new Promise((resolve, reject) => {
+      let date = '';
+      let time = '';
+      let frenchTime = '';
+      const daySlots = rootState.slots;
+      for (let i = 0; i < daySlots.length; i++) {
+        const day = daySlots[i];
+        for (let j = 0; j < day.slots.length; j++) {
+          const slotHours = day.slots[j];
+          if (slotHours) {
+            for (let k = 0; k < slotHours.length; k++) {
+              const slot = slotHours[k];
+              if (slot.id === slotId) {
+                date = slot.day;
+                time = slot.time;
+                const hours = parseInt(time.split(':')[0], 10);
+                const minutes = time.split(':')[1];
+                frenchTime = day.name + ' ' + hours + 'h' + minutes;
+              }
+            }
+          }
+        }
+      }
+      const dateTime = date + ' ' + time;
+      resources.slot.save({}, { id: slotId, dateTime }).then((response) => {
+        commit('selectSlot', { slotId });
+        resolve(frenchTime);
       });
     });
   },

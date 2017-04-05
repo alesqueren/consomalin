@@ -5,7 +5,7 @@ div#slots
   div
     .container-fluid
       .row.no-gutters
-        day-item(v-for="(day, dayKey, dayIndex) in daySlots" v-bind:day="day" v-bind:daykey="dayKey" v-bind:dayindex="dayIndex" v-on:select_slot="selectSlot" style="min-width:150px;")
+        day-item(v-for="day in slots" v-bind:day="day" style="min-width:150px;")
 
 
   a(href='/basket')
@@ -16,7 +16,6 @@ div#slots
 
 <script>
 import DayItem from './DayItem';
-import SlotItem from './SlotItem';
 
 export default {
   data() {
@@ -27,6 +26,12 @@ export default {
       disableNext: true,
       textNext: 'Valider ma commande',
     };
+  },
+  computed: {
+    slots() {
+      const slots = this.$store.state.slots;
+      return slots;
+    },
   },
   mounted() {
     this.$store.dispatch('setSlots').then(() => {
@@ -40,7 +45,7 @@ export default {
       });
     },
   },
-  components: { DayItem, SlotItem },
+  components: { DayItem },
 };
 
 // function rgb2hsv (pr,pg,pb) {
@@ -85,18 +90,4 @@ export default {
 </script>
 
 <style scoped>
-.product-img{
-  width:100px;
-  height:100px;
-}
-.price{
-  font-size: 1.2em;
-}
-.pu{
-  font-size: 0.7em;
-}
-.center{
-  display: block;
-  margin: 0 auto;
-}
 </style>

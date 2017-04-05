@@ -2,10 +2,10 @@
   div.col.no-gutter.wishgroup.list-group-item.col-3(v-if="selectedWishes.length")
     div
       span.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
-        Wish(v-for="wid in selectedWishes" 
-          v-bind:wid="wid" 
-          v-bind:gid="gid" 
-          v-bind:key="wid")
+      Wish(v-for="wid in selectedWishes" 
+        v-bind:wid="wid" 
+        v-bind:gid="gid" 
+        v-bind:key="wid")
 </template>
 
 <script>
@@ -44,19 +44,26 @@ export default {
 </script>
 
 <style scoped>
+@font-face {
+    font-family: gunny;
+    src: url('/static/fonts/gnyrwn971.ttf');
+}
 .wishgroup {
   position: relative;
-  color: #00B7FF;
   width: 400px;
-  min-width: 200px;
+  min-width: 393px;
   background-color: #eee;
   display: inline-block;
   margin: 0 0 1em;
   width: 100%;
 }
 .groupName {
-  font-size: 1.2em;
+  font-family: gunny;
   color: black;
+  font-size: 2.5em;
+  text-align: center;
+  width: 100%;
+  display: block;
 }
 .topright {
   position: absolute;

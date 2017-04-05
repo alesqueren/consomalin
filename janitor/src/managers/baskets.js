@@ -50,22 +50,23 @@ function removeCurrentSlot(email) {
     },
   );
 }
-// function setCurrentSlot(email, slot) {
-//   const users = mongo.db.collection(userCollectionName);
-//   const path = 'currentBasket.currentSlot';
-//   users.updateOne(
-//     { _id: email },
-//     {
-//       $set: {
-//         [path]: slot,
-//       },
-//     },
-//   );
-// }
+function setCurrentSlot(email, slot) {
+  const users = mongo.db.collection(userCollectionName);
+  const path = 'currentBasket.currentSlot';
+  users.updateOne(
+    { _id: email },
+    {
+      $set: {
+        [path]: slot,
+      },
+    },
+  );
+}
 
 module.exports = {
   setCurrentWish,
   removeCurrentWish,
   removeCurrentselectedWishes,
   removeCurrentSlot,
+  setCurrentSlot,
 };

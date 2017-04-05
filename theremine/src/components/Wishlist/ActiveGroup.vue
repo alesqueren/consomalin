@@ -46,7 +46,7 @@ export default {
 <style scoped>
 .wishgroup {
   position: relative;
-  color: #00B7FF;
+  /*color: #00B7FF;*/
 }
 .groupName {
   font-size: 1.2em;

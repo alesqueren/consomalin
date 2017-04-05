@@ -1,23 +1,19 @@
 <template lang='pug'>
   div.group.list-group-item.col-2(v-bind:class="{'bg-primary': isActive, 'bg-info': selected && ! isActive}" @click="toggleActivation")
-    input(type="checkbox" v-model="selected" @click="select" onclick="event.stopPropagation()")
+    input(type="checkbox" name="selected" v-model="selected" @click="select" onclick="event.stopPropagation()")
 
-    div(v-if='editing')
-      button.btn.btn-success.btn-sm(@click.stop="validEdition" onclick="event.stopPropagation()")
-        i.fa.fa-check.fa-xs
-      input(ref="editinput"
-        v-model="editingName"
-        v-on:keyup.enter="validEdition"
-        v-on:blur="finishEdition")
-    div(v-else)
-      span.groupName <strong>{{ name }}</strong>
+    button.btn.btn-success.btn-sm(@click.stop="validEdition" onclick="event.stopPropagation()")(v-if='editing')
+      i.fa.fa-check.fa-xs
+    input(ref="editinput"
+      v-model="editingName"
+      v-on:keyup.enter="validEdition"
+      v-on:blur="finishEdition")(v-if='editing')
+    label.groupName(v-else for="selected") <strong>{{ name }}</strong>
 
     span ({{ selectedWishesNb }} / {{ wishesNb }})
-    div(v-if='!editing')
-      button.dynamic.btn.btn-primary.btn-sm(@click.stop="edit")
-        i.fa.fa-pencil.fa-xs
-      button.dynamic.btn.btn-danger.btn-sm(@click.stop="remove")
-        i.fa.fa-trash-o.fa-xs
+    div.buttns-action(v-if='!editing')
+      i.fa.fa-pencil.fa-xs.buttn-action(@click.stop="edit")
+      i.fa.fa-trash-o.fa-xs.buttn-action(v-on:click.stop="remove")
 </template>
 
 <script>
@@ -98,10 +94,25 @@ export default {
 </script>
 
 <style scoped>
-.group button.dynamic {
-  visibility: hidden;
+.group{
+  min-width: 150px;
+  min-height: 50px;
 }
-.group:hover button.dynamic {
+.groupName{
+  font-family: gunny;
+  font-size: 2em;
+  font-weight: bold;
+}
+.group .buttns-action {
+  visibility: hidden;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+.group:hover .buttns-action {
   visibility: visible;
+}
+.buttn-action {
+  padding: 2px;
 }
 </style>

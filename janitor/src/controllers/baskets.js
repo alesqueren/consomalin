@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const mid = require('../middlewares');
 const basketsManager = require('../managers/baskets');
-const usersManager = require('../managers/users');
 const transactionsManager = require('../managers/transactions');
 const rabbitMQ = require('../bs/rabbitMQ');
 const kiva = require('../bs/kiva');
@@ -33,14 +32,16 @@ router.delete('/basket/currentWish',
 );
 
 // save the slot
-router.put('/basket/slot',
+router.post('/basket/slot',
   mid.isAuthenticated,
   mid.parseData({
     id: { required: true },
     dateTime: { required: true },
   }),
   ({ data, user }, res) => {
-    usersManager.setCurrentSlot(user._id, { slot_id: data.id, slot_dateTime: data.dateTime });
+    console.log(data.dateTime);
+    const dateTime = new Date(data.dateTime);
+    basketsManager.setCurrentSlot(user._id, { id: data.id, dateTime });
     res.json('OK');
   },
 );
@@ -49,8 +50,8 @@ router.put('/basket/slot',
 router.post('/order',
   mid.isAuthenticated,
   (req, res) => {
-    const slotId = req.user.currentBasket.currentSlot.slot_id;
-    const slotDateTime = req.user.currentBasket.currentSlot.slot_dateTime;
+    const slotId = req.user.currentBasket.slot.id;
+    const slotDateTime = req.user.currentBasket.slot.dateTime;
     const wishGroups = req.user.wishGroups;
     const pSelectedWishes = req.user.currentBasket.selectedWishes;
 

@@ -15,6 +15,11 @@ export default {
 </script>
 
 <style scoped>
+@font-face {
+    font-family: gunny;
+    src: url('/static/fonts/gnyrwn971.ttf');
+}
+
 #wishlist {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;

@@ -1,6 +1,6 @@
 <template lang='pug'>
   div#wishlist.container-fluid
-    h2 Mon panier: {{ total }} €
+    h2 Mon panier: {{ matchedWishes }} articles, {{ total }} €
     router-link(:to='{ name: "withdraw" }')
       button.btn.btn-success.right(type="button") Passer au retrait
     div.col.main
@@ -21,6 +21,13 @@ export default {
     basket() {
       const basket = this.$store.getters.getBasket;
       return basket;
+    },
+    matchedWishes() {
+      let matchedWishes = 0;
+      for (let i = 0; i < this.basket.length; i += 1) {
+        matchedWishes += this.basket[i].product.id ? 1 : 0;
+      }
+      return matchedWishes;
     },
     total() {
       return this.basket.reduce((prev, wish) => {

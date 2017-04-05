@@ -1,21 +1,17 @@
 <template lang='pug'>
   div.wish.list-group-item.col-xs-6(v-on:click.stop="select")
-    input(type="checkbox" v-model="selected" onclick="event.cancelBubble=true;")
-    div(v-if='editing')
-      input(ref="editinput"
-        v-model="editingName"
-        v-on:keyup.enter="validEdition"
-        v-on:blur="finishEdition")
-      button.btn.btn-success.btn-sm(@click.stop="validEdition")
-        i.fa.fa-check.fa-xs
-    div(v-else)
-      span {{ name }}
+    input(type="checkbox" name="select" v-model="selected" onclick="event.cancelBubble=true;")
+    input(ref="editinput" 
+      v-model="editingName"
+      v-on:keyup.enter="validEdition"
+      v-on:blur="finishEdition")(v-if='editing')
+    button.btn.btn-success.btn-sm(@click.stop="validEdition" v-if='editing')
+      i.fa.fa-check.fa-xs
+    label.wish-name(v-else for="select") {{ name }}
 
-    div(v-if='!editing')
-      button.btn.btn-primary.btn-sm(@click.stop="edit")
-        i.fa.fa-pencil.fa-xs
-      button.btn.btn-danger.btn-sm(v-on:click.stop="remove")
-        i.fa.fa-trash-o.fa-xs
+    div.buttns-action(v-if='!editing')
+      i.fa.fa-pencil.fa-xs.buttn-action(@click.stop="edit")
+      i.fa.fa-trash-o.fa-xs.buttn-action(v-on:click.stop="remove")
 </template>
 
 <script>
@@ -89,10 +85,64 @@ export default {
 </script>
 
 <style scoped>
-.wish button {
-  visibility: hidden;
+.wish-name{
+  font-family: gunny;
+  font-size: 1.5em;
+  font-weight: bold;
 }
-.wish:hover button {
+.wish .buttns-action {
+  visibility: hidden;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+.wish:hover .buttns-action {
   visibility: visible;
+}
+.buttn-action {
+  padding: 2px;
+}
+/* Cachons la case à cocher */
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+
+[type="checkbox"]:not(:checked) + label,
+[type="checkbox"]:checked + label {
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+}
+[type="checkbox"]:not(:checked) + label:before,
+[type="checkbox"]:checked + label:before {
+  content: '';
+  position: absolute;
+  left:0; top: 2px;
+  width: 25px; height: 25px;
+  border: 1px solid #aaa;
+  background: #f8f8f8;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+}
+
+[type="checkbox"]:not(:checked) + label:after,
+[type="checkbox"]:checked + label:after {
+  content: '✔';
+  position: absolute;
+  top: -2px; left: 1px;
+  font-size: 30px;
+  color: #09ad7e;
+  transition: all .2s;
+}
+
+[type="checkbox"]:not(:checked) + label:after {
+  opacity: 0;
+  transform: scale(0);
+}
+[type="checkbox"]:checked + label:after {
+  opacity: 1;
+  transform: scale(1);
 }
 </style>
