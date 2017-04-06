@@ -82,6 +82,9 @@ router.beforeEach((to, from, next) => {
     routeOrRedirect();
   } else {
     // we don't know
+    // next();
+    // store.dispatch('user/fetchUser');
+    // store.dispatch('user/fetchUserData');
     store.dispatch('user/fetchUser').then(() => {
       store.dispatch('user/fetchUserData').then(next);
     }, routeOrRedirect);

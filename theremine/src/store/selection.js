@@ -11,9 +11,6 @@ const globalGetters = {
       for (let j = 0; j < group.wishes.length; j++) {
         const wish = wishGroup[i].wishes[j];
         if (state[group.id] && state[group.id][wish.id]) {
-          const newWish = {
-            id: wish.id,
-          };
           wishes.push(wish.id);
         }
       }

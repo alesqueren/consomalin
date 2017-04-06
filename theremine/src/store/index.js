@@ -27,7 +27,7 @@ const mutations = {
 
   setUserData(state, { wishGroups, currentBasket }) {
     return new Promise((resolve) => {
-      Vue.set(state, 'wishlist', wishGroups);
+      Vue.set(state, 'wishGroup', wishGroups);
       Vue.set(state, 'selection', currentBasket.selectedWishes);
       Vue.set(state.singleton, 'currentWishId', currentBasket.currentWishId);
       resolve();
