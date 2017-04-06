@@ -30,9 +30,6 @@ import Usercard from './Usercard';
 
 export default {
   computed: {
-    ...mapState({
-      user: state => state.user.user,
-    }),
     selectedWishesNb() {
       return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
     },

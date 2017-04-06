@@ -65,13 +65,15 @@ const actions = {
 
 const mutations = {
   set: (state, user) => {
-    state = user;
+    state.username = user;
   },
 };
 
 export default {
   namespaced: true,
-  state: null,
+  state: {
+    username: null,
+  },
   actions,
   mutations,
 };

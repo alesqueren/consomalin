@@ -70,14 +70,14 @@ router.beforeEach((to, from, next) => {
     }
   };
 
-  if (store.state.user.user) {
+  if (store.state.user.username) {
     // user succeded to login
-    if (!store.state.wishlist.group.wishGroups) {
+    if (!store.state.wishGroup[0]) {
       store.dispatch('user/fetchUserData').then(next);
     } else {
       next();
     }
-  } else if (store.state.user.user === false) {
+  } else if (store.state.user === false) {
     // user failed to login
     routeOrRedirect();
   } else {
