@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     gids() {
-      return this.$store.getters['selection/getSelectedGroups'];
+      return this.$store.state.wishGroup.map(group => group.id);
     },
   },
   methods: {

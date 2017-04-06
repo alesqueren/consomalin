@@ -73,9 +73,7 @@ export default {
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', {
-        key: 'inlineEditionId',
-      });
+      this.$store.dispatch('singleton/unset', 'inlineEditionId');
     },
     validEdition() {
       this.$store.dispatch('wishGroup/renameGroup', {
