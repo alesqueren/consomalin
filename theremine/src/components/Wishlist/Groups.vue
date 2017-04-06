@@ -19,12 +19,12 @@ export default {
   },
   computed: {
     gids() {
-      return this.$store.getters['wishlist/getGroups'];
+      return this.$store.state.selection.getSelectedGroups;
     },
   },
   methods: {
     addWishGroup() {
-      this.$store.dispatch('wishlist/group/add', this.newGroupName);
+      this.$store.dispatch('wishGroup/addGroup', this.newGroupName);
       this.newGroupName = '';
     },
   },

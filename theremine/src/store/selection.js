@@ -11,9 +11,6 @@ const globalGetters = {
       for (let j = 0; j < group.wishes.length; j++) {
         const wish = wishGroup[i].wishes[j];
         if (state[group.id] && state[group.id][wish.id]) {
-          const newWish = {
-            id: wish.id,
-          };
           wishes.push(wish.id);
         }
       }
@@ -21,7 +18,7 @@ const globalGetters = {
     return wishes;
   },
 
-  getMatchedWishesLength: (state) => {
+  getMatchedWishes: (state) => {
     let length = 0;
     for (let i = 0; i < state.length; i++) {
       const group = state[i];
@@ -38,12 +35,15 @@ const globalGetters = {
 
   getSelectedWishesByGroup: state => gid => Object.keys(state[gid]),
 
-  isSelectedWish: state => ({ gid, wid }) => {
-    const hasGrpIdP = Object.prototype.hasOwnProperty.call(state, gid);
-    if (hasGrpIdP) {
-      return Object.prototype.hasOwnProperty.call(state[gid], wid);
+  getSelectedWishes: state => () => {
+    let wishes = 0;
+    for (let i = 0; i < state.length; i++) {
+      const group = state[i];
+      for (let j = 0; j < group.wishes.length; j++) {
+        wishes++;
+      }
     }
-    return false;
+    return wishes;
   },
 
 };

@@ -28,58 +28,55 @@ export default {
   },
   computed: {
     name() {
-      return this.$store.getters['wishlist/group/get'](this.gid).name;
+      return this.$store.getters['wishgroup/getGroup'](this.gid).name;
     },
     isActive() {
-      try {
-        return this.gid === this.$store.getters['wishlist/group/getActiveWishGroup'].id;
-      } catch (e) {
-        return false;
-      }
+      return this.gid === this.$store.state.singleton.activeGroupId;
     },
     editing() {
-      return this.$store.getters.isEditing(this.gid);
+      return this.$store.state.singleton.inlineEditionId === this.gid;
     },
     selected() {
-      return this.$store.getters['basket/isSelectedWishGroup'](this.gid);
+      return this.$store.getters['selection/getSelectedGroups'][this.gid];
     },
     wishesNb() {
       const predicate = e => (e.id === this.gid);
-      return this.$store.state.wishlist.group.wishGroups.filter(predicate)[0].wishes.length;
+      return this.$store.state.wishGroup.filter(predicate)[0].wishes.length;
     },
     selectedWishesNb() {
-      try {
-        const selWishes = this.$store.state.basket.selectedWishes;
-        return Object.keys(selWishes[this.gid]).length;
-      } catch (e) {
-        return 0;
-      }
+      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
     },
   },
   methods: {
     select() {
-      this.$store.dispatch('basket/selectWishGroup', {
+      this.$store.dispatch('selection/selectGroup', {
         gid: this.gid,
         selected: !this.selected,
       });
     },
     toggleActivation() {
-      this.$store.dispatch('wishlist/group/toggleActivation', this.gid);
+      const key = 'activeGroupId';
+      const value = this.gid;
+      this.$store.dispatch('singleton/toggle', { key, value });
     },
     focus() {
       this.$refs.editinput.focus();
     },
     edit() {
       this.editingName = this.name;
-      this.$store.dispatch('setInlineEdition', this.gid);
+      const key = 'inlineEditionId';
+      const value = this.gid;
+      this.$store.dispatch('singleton/set', { key, value });
       Vue.nextTick(this.focus);
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('setInlineEdition', null);
+      const key = 'inlineEditionId';
+      const value = null;
+      this.$store.dispatch('singleton/set', { key, value });
     },
     validEdition() {
-      this.$store.dispatch('wishlist/group/rename', {
+      this.$store.dispatch('wishGroup/renameGroup', {
         gid: this.gid,
         name: this.editingName,
       });
@@ -87,7 +84,7 @@ export default {
       this.finishEdition();
     },
     remove() {
-      this.$store.dispatch('wishlist/group/remove', this.gid);
+      this.$store.dispatch('wishGroup/removeGroup', this.gid);
     },
   },
 };

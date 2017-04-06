@@ -3,7 +3,7 @@
     div#header
       div.left
         router-link.title(:to="{ name: 'home' }")
-          img.logo(src="/images/car.jpg")
+          img.logo(src="../assets/images/car.jpg")
           span.brand Consomalin
 
       div#steps.left
@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import Usercard from './Usercard';
 
 export default {
