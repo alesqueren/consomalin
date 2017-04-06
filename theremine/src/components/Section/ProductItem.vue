@@ -11,25 +11,24 @@ export default {
   props: ['pid', 'maxProducts'],
   computed: {
     product() {
-      return this.$store.getters.getProduct(this.pid);
+      return this.$store.state.product.details[this.pid];
+    },
+    currentWishId() {
+      return this.$store.state.singleton.currentWishId;
     },
     currentWish() {
-      return this.$store.getters.getCurrentWish;
+      return this.$store.getters['wishGroup/getWish'](this.currentWishId);
     },
   },
   methods: {
     selectProduct() {
-      this.$store.dispatch('updateProductInfos', {
-        pid: this.pid,
-        infos: this.product,
-      });
-      this.$store.dispatch('wishlist/product/setProduct', {
+      this.$store.dispatch('wishGroup/setWishProduct', {
         gid: this.currentWish.gid,
         wid: this.currentWish.id,
         pid: this.pid,
         quantity: 1,
       });
-      this.$store.dispatch('nextCurrentWish');
+      this.$store.dispatch('currentWish/next');
     },
   },
 };

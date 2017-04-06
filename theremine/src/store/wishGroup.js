@@ -71,15 +71,15 @@ const actions = {
   },
 
   setWishProduct: ({ rootState, commit }, { gid, wid, pid, quantity }) => {
-    commit('basket/setWishProduct', { gid, wid, pid, quantity }, { root: true });
-    if (rootState.selectedWishes[gid][wid].id) {
+    commit('selection/setWishProduct', { gid, wid, pid, quantity }, { root: true });
+    if (rootState.selection[gid][wid].id) {
       resources.wishProduct.save({ gid, wid }, { pid, quantity });
     } else {
       resources.wishProduct.update({ gid, wid }, { pid, quantity });
     }
   },
 
-  removeWish: ({ commit, getters }, { wid }) => {
+  removeWish: ({ commit, getters }, wid) => {
     const gid = getters.getWish(wid).gid;
     resources.wish.delete({ gid, wid }).then();
     commit('removeWish', { wid });
@@ -103,7 +103,7 @@ const mutations = {
     }
   },
 
-  removeGroup: (state, { gid }) => {
+  removeGroup: (state, gid) => {
     for (let i = 0; i < state.length; i++) {
       if (state[i].id === gid) {
         state.splice(i, 1);
@@ -132,7 +132,7 @@ const mutations = {
     }
   },
 
-  removeWish: (state, { wid }) => {
+  removeWish: (state, wid) => {
     for (let i = 0; i < state.length; i++) {
       for (let j = 0; j < state[i].wishes.length; j++) {
         const wish = state[i].wishes[j];

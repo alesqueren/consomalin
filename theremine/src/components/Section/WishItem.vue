@@ -5,10 +5,10 @@ transition(name="fade")
     div
       span.wishgroupname.badge.badge-success {{wish.gname}}
       span.wishname {{wish.name}}
-    div(v-if='wish.product.infos')
-      div  {{wish.product.infos.name}}
+    div(v-if='hasProduct')
+      div  {{productDetails.name}}
       |  
-      img(style='width:150px;', v-bind:src='wish.product.infos.imageUrl')
+      img(style='width:150px;', v-bind:src='productDetails.imageUrl')
       |  
       div
         div.count-input.space-bottom
@@ -21,14 +21,14 @@ transition(name="fade")
 
 <script>
 export default {
-  props: ['wish'],
+  props: ['wid'],
   computed: {
     quantity: {
       get() {
-        return this.wish.product.quantity;
+        return this.productQuantity.quantity;
       },
       set(quantity) {
-        this.$store.dispatch('wishlist/product/updateWishProduct', {
+        this.$store.dispatch('wishGroup/setWishProduct', {
           gid: this.wish.gid,
           wid: this.wish.id,
           pid: this.wish.product.id,
@@ -36,13 +36,40 @@ export default {
         });
       },
     },
+    wish() {
+      return this.$store.getters['wishGroup/getWish'](this.wid);
+    },
+    hasProduct() {
+      return this.$store.getters['selection/getMatchedWishes'][this.wid];
+    },
+    productId() {
+      if (this.hasProduct) {
+        return this.$store.getters['selection/getMatchedWishes'][this.wid].pid;
+      }
+      return null;
+    },
+    productQuantity() {
+      if (this.hasProduct) {
+        return this.$store.getters['selection/getMatchedWishes'][this.wid].quantity;
+      }
+      return null;
+    },
+    productDetails() {
+      if (this.hasProduct) {
+        return this.$store.state.product.details[this.productId];
+      }
+      return null;
+    },
     wishIsCurrent() {
-      const currentWishId = this.$store.state.basket.currentWishId;
+      const currentWishId = this.$store.state.singleton.currentWishId;
       return this.wish.id === currentWishId;
     },
     total() {
-      const total = this.wish.product.infos.price * this.wish.product.quantity;
-      return parseInt(total, 10);
+      let total = 0;
+      if (this.hasProduct) {
+        total = this.productDetails.price * this.productQuantity;
+      }
+      return parseFloat(total).toFixed(2);
     },
   },
   methods: {
@@ -52,7 +79,12 @@ export default {
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = this.productQuantity + 1;
-        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+        this.$store.dispatch('wishGroup/setWishProduct', {
+          gid,
+          wid,
+          pid,
+          quantity,
+        });
       }
     },
     decrease() {
@@ -61,29 +93,32 @@ export default {
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = this.productQuantity - 1;
-        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+        this.$store.dispatch('wishGroup/setWishProduct', {
+          gid,
+          wid,
+          pid,
+          quantity,
+        });
       }
     },
     removeWish() {
       const wid = this.wish.id;
       const selected = false;
-      this.$store.dispatch('basket/selectWish', { wid, selected }).then(() => {
+      this.$store.dispatch('wishGroup/selectWish', { wid, selected }).then(() => {
         if (this.wishIsCurrent) {
-          this.$store.dispatch('nextCurrentWish');
+          this.$store.dispatch('currentWish/next');
         }
       });
     },
     setCurrentWish() {
-      this.$store.dispatch('basket/setCurrentWish', {
-        gid: this.wish.gid,
-        wid: this.wish.id,
+      this.$store.dispatch('singleton/set', {
+        key: 'currentWishId',
+        wid: this.wid,
       });
-      this.$store.dispatch('searchProductsWithName', {
-        name: this.wish.name,
-      });
+      this.$store.dispatch('product/fetchSearch', this.wish.name);
     },
     changeQty() {
-      this.$store.dispatch('wishlist/product/updateWishProduct', {
+      this.$store.dispatch('wishGroup/setWishProduct', {
         gid: this.wish.gid,
         wid: this.wish.id,
         pid: this.wish.product.id,

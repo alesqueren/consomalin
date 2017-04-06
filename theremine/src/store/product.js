@@ -25,7 +25,6 @@ const actions = {
       const uri = 'search?s=' + name;
       resources.products.get({ uri }, {}).then(({ body }) => {
         const products = JSON.parse(body);
-
         // todo: see array v-for
         commit('addSearch', {
           name,
@@ -34,10 +33,7 @@ const actions = {
             return acc;
           }, {}),
         });
-
-        for (const pid in products) {
-          commit('addDetail', { pid, detail: products[pid] });
-        }
+        commit('addDetails', products);
       });
     }
   },
@@ -45,6 +41,9 @@ const actions = {
 };
 
 const mutations = {
+  addDetails: (state, products) => {
+    Vue.set(state, 'details', products);
+  },
   addDetail: (state, { pid, detail }) => {
     Vue.set(state.details, pid, detail);
   },

@@ -1,10 +1,9 @@
 import resources from '../resources';
 
-function getFirstUnmatchedSelectedWish(currBasket) {
+function getFirstUnmatchedWish(currBasket, selection) {
   for (let i = 0; i < currBasket.length; i++) {
-    const wish = currBasket[i];
-    if (!wish.product.id) {
-      return { gid: wish.gid, wid: wish.id };
+    if (!selection[currBasket[i]]) {
+      return currBasket[i];
     }
   }
   return null;
@@ -20,17 +19,19 @@ const actions = {
     });
   },
 
-  next({ dispatch, rootGetters, commit, state }) {
-    if (rootGetters.getBasket) {
-      const newCurrentWish = getFirstUnmatchedSelectedWish(rootGetters.getBasket);
-      if (newCurrentWish) {
-        const wish = rootGetters['wishGroup/getWish'](newCurrentWish.wid);
+  next({ dispatch, rootGetters, commit, rootState }) {
+    if (rootState.selection) {
+      const orderdedSelectedWishes = rootGetters['selection/getOrdreredSelectedWishes'];
+      const matchedWishes = rootGetters['selection/getMatchedWishes'];
+      const newCurrentWid = getFirstUnmatchedWish(orderdedSelectedWishes, matchedWishes);
+      if (newCurrentWid) {
+        const wish = rootGetters['wishGroup/getWish'](newCurrentWid);
         const gid = wish.gid;
         const wid = wish.id;
         resources.currentWish.save({}, { gid, wid }).then(() => {
           commit('singleton/set', { key: 'currentWishId', value: wid }, { root: true });
           const currentWish = rootGetters['wishGroup/getWish'](wid);
-          if (currentWish.name && !state.searchs[currentWish.name]) {
+          if (currentWish.name && !rootState.product.searchs[currentWish.name]) {
             dispatch('product/fetchSearch', currentWish.name, { root: true });
           }
         });

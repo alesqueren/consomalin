@@ -20,9 +20,9 @@
                     button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
                 span  pour finaliser la commande.
         .col-md-2
-            wish-item(v-for="wish in basket" v-bind:wish="wish" v-bind:key="wish.id")
+            wish-item(v-for="wid in basket" v-bind:wid="wid" v-bind:key="wid")
             div Total : {{total}} €
-            div Produits au panier : {{matchedWishes}}/{{basket.length}}
+            div Produits au panier : {{matchedWishesLength}}/{{basket.length}}
             router-link(:to='{ name: "basket" }')
               button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier
 
@@ -50,30 +50,36 @@ export default {
     // document.removeEventListener('scroll',CheckIfScrollBottom);
   },
   computed: {
+    currentWishId() {
+      return this.$store.state.singleton.currentWishId;
+    },
+    currentWish() {
+      return this.$store.getters['wishGroup/getWish'](this.currentWishId);
+    },
     searchs() {
       return this.$store.state.searchs;
     },
-    currentWish() {
-      return this.$store.getters.getCurrentWish;
-    },
     basket() {
-      return this.$store.getters['basket/getBasket'];
+      return this.$store.getters['selection/getOrdreredSelectedWishes'];
     },
     currentWishResults() {
-      return this.$store.state.searchs[this.currentWish.name];
+      if (this.currentWish && this.currentWish.name) {
+        return this.$store.state.product.searchs[this.currentWish.name];
+      }
+      return [];
     },
     currentWishIsEmpty() {
-      return !this.$store.state.basket.currentWishId;
+      return !this.$store.state.singleton.currentWishId;
     },
-    matchedWishes() {
-      let matchedWishes = 0;
-      for (let i = 0; i < this.basket.length; i += 1) {
-        matchedWishes += this.basket[i].product.id ? 1 : 0;
+    matchedWishesLength() {
+      let length = 0;
+      if (this.$store.getters.getMatchedWishes) {
+        length = this.$store.getters.getMatchedWishes.length;
       }
-      return matchedWishes;
+      return length;
     },
     basketFull() {
-      return this.basket.length && this.matchedWishes === this.basket.length;
+      return this.matchedWishesLength === this.basket.length;
     },
     total() {
       return this.basket.reduce((prev, wish) => {
@@ -89,7 +95,7 @@ export default {
       const length = this.basket.length;
       const successClass = 'btn-outline-success';
       const warningClass = 'btn-outline-warning';
-      const classButtonNext = length === this.matchedWishes ? successClass : warningClass;
+      const classButtonNext = length === this.matchedWishesLength ? successClass : warningClass;
       const textLabelNext = classButtonNext === 'active' ? '' : 'Il reste des produits à ajouter';
       return {
         class: classButtonNext,
@@ -100,9 +106,9 @@ export default {
   mounted() {
     if (this.currentWish) {
       const name = this.currentWish.name;
-      this.$store.dispatch('searchProductsWithName', { name });
+      this.$store.dispatch('product/fetchSearch', name);
     } else {
-      this.$store.dispatch('nextCurrentWish');
+      this.$store.dispatch('currentWish/next');
     }
   },
   methods: {

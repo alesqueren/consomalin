@@ -26,8 +26,11 @@ export default {
     };
   },
   computed: {
+    currentWishId() {
+      return this.$store.state.singleton.currentWishId;
+    },
     currentWish() {
-      return this.$store.getters.getCurrentWish;
+      return this.$store.getters['wishGroup/getWish'](this.currentWishId);
     },
   },
   methods: {
@@ -35,21 +38,24 @@ export default {
       clearTimeout(this.delayTimer);
       this.delayTimer = setTimeout(() => {
         const name = this.currentWish.name;
-        this.$store.dispatch('wishlist/wish/rename', {
+        this.$store.dispatch('wishGroup/rename', {
           gid: this.currentWish.gid,
           wid: this.currentWish.id,
           name,
         });
-        this.$store.dispatch('searchProductsWithName', { name });
+        this.$store.dispatch('product/fetchSearch', name);
       }, 200);
     },
     addGroup() {
       this.wishCreation = true;
       const name = this.currentWish.name;
-      this.$store.dispatch('wishlist/group/add', name).then((gid) => {
-        this.$store.dispatch('removeCurrentWish');
-        this.$store.dispatch('wishlist/wish/remove', { wid: this.currentWish.id });
-        this.$store.dispatch('wishlist/group/setActivation', gid);
+      this.$store.dispatch('wishGroup/addGroup', name).then((gid) => {
+        this.$store.dispatch('singleton/unset', 'currentWishId');
+        this.$store.dispatch('wishGroup/removeWish', this.currentWish.id);
+        this.$store.dispatch('singleton/set', {
+          key: 'activeGroupId',
+          value: gid,
+        });
         router.push({ name: 'wishlist' });
       });
     },
