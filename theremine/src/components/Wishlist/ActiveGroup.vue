@@ -5,9 +5,9 @@
       div.wishgroup.list-group-item.col-3(v-if='wishgroup')
         div
           Wish(v-for="wish in wishgroup.wishes" 
-            v-bind:wish="wish" 
+            v-bind:wid="wish.id" 
             v-bind:gid="wishgroup.id" 
-            v-bind:key="wish")
+            v-bind:key="wish.id")
           input(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Add a wish" onclick="event.stopPropagation()")
 
     router-link(:to='{ name: "section" }')
@@ -26,12 +26,16 @@ export default {
   },
   computed: {
     wishgroup() {
-      return this.$store.getters['wishlist/group/getActiveWishGroup'];
+      const gid = this.$store.state.singleton.activeGroupId;
+      if (gid) {
+        return this.$store.getters['wishGroup/getGroup'](gid);
+      }
+      return null;
     },
   },
   methods: {
     addWish() {
-      this.$store.dispatch('wishlist/wish/add', {
+      this.$store.dispatch('wishGroup/addWish', {
         gid: this.wishgroup.id,
         name: this.newWishName,
       });

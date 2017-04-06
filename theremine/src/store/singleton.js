@@ -19,11 +19,11 @@ const mutations = {
     Vue.set(state, key, value);
   },
 
-  unset: ({ state }, key) => {
+  unset: (state, key) => {
     Vue.set(state, key, null);
   },
 
-  toggle: ({ state }, { key, value }) => {
+  toggle: (state, { key, value }) => {
     const newValue = (state[key] === value) ? null : value;
     Vue.set(state, key, newValue);
   },

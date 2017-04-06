@@ -1,18 +1,18 @@
 <template lang='pug'>
   div.group.list-group-item.col-2(v-bind:class="{'bg-primary': isActive, 'bg-info': selected && ! isActive}" @click="toggleActivation")
-    input(type="checkbox" name="selected" v-model="selected" @click="select" onclick="event.stopPropagation()")
-
-    button.btn.btn-success.btn-sm(@click.stop="validEdition" onclick="event.stopPropagation()")(v-if='editing')
-      i.fa.fa-check.fa-xs
-    input(ref="editinput"
+    input(type="checkbox" name="selected" v-model="selected")
+    input(v-if='editing'
+      ref="editinput"
       v-model="editingName"
       v-on:keyup.enter="validEdition"
-      v-on:blur="finishEdition")(v-if='editing')
-    label.groupName(v-else for="selected") {{ name }}
+      v-on:blur="finishEdition")
+    button.btn.btn-success.btn-sm(v-if='editing' @click.stop="validEdition" onclick="event.stopPropagation()")
+      i.fa.fa-check.fa-xs
+    label.groupName(v-else for="selected" @click="toggleSelection" onclick="event.stopPropagation()") {{ name }}
 
     span.filling {{ selectedWishesNb }} / {{ wishesNb }}
     div.buttns-action(v-if='!editing')
-      i.fa.fa-pencil.fa-xs.buttn-action(@click.stop="edit")
+      i.fa.fa-pencil.fa-xs.buttn-action(@click.stop="startEdition")
       i.fa.fa-trash-o.fa-xs.buttn-action(v-on:click.stop="remove")
 </template>
 
@@ -37,22 +37,20 @@ export default {
       return this.$store.state.singleton.inlineEditionId === this.gid;
     },
     selected() {
-      return this.$store.getters['selection/getSelectedGroups'][this.gid];
+      return this.$store.getters['selection/getSelectedGroupsIds'].indexOf(this.gid) !== -1;
+    },
+    selectedWishesNb() {
+      return this.$store.getters['selection/getSelectedWishesByGroup'](this.gid).length;
     },
     wishesNb() {
       const predicate = e => (e.id === this.gid);
       return this.$store.state.wishGroup.filter(predicate)[0].wishes.length;
     },
-    selectedWishesNb() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
-    },
   },
   methods: {
-    select() {
-      this.$store.dispatch('selection/selectGroup', {
-        gid: this.gid,
-        selected: !this.selected,
-      });
+    toggleSelection() {
+      const actionName = !this.selected ? 'selectGroup' : 'unselectGroup';
+      this.$store.dispatch('selection/' + actionName, this.gid);
     },
     toggleActivation() {
       this.$store.dispatch('singleton/toggle', {
@@ -63,7 +61,7 @@ export default {
     focus() {
       this.$refs.editinput.focus();
     },
-    edit() {
+    startEdition() {
       this.editingName = this.name;
       this.$store.dispatch('singleton/set', {
         key: 'inlineEditionId',
@@ -80,7 +78,6 @@ export default {
         gid: this.gid,
         name: this.editingName,
       });
-      this.name = this.editingName;
       this.finishEdition();
     },
     remove() {

@@ -3,7 +3,6 @@ import resources from '../resources';
 
 const globalGetters = {
 
-  // TODO: rm ?
   getOrdreredSelectedWishes: (state, getters, { wishGroup }) => {
     const wishes = [];
     for (let i = 0; i < wishGroup.length; i++) {
@@ -31,9 +30,14 @@ const globalGetters = {
     return length;
   },
 
-  getSelectedGroups: state => Object.keys(state),
+  getSelectedGroupsIds: state => Object.keys(state),
 
-  getSelectedWishesByGroup: state => gid => Object.keys(state[gid]),
+  getSelectedWishesByGroup: state => (gid) => {
+    if (gid in state) {
+      return Object.keys(state[gid]);
+    }
+    return [];
+  },
 
   getSelectedWishes: state => () => {
     let wishes = 0;
@@ -50,11 +54,26 @@ const globalGetters = {
 
 const actions = {
 
-  selectGroup: ({ commit }, { gid, selected }) => {
-    // TODO: add Promise
-    const commitName = selected ? 'selectGroup' : 'unselectGroup';
-    commit(commitName, { gid });
-    resources.wishgroup.update({ gid }, { selected });
+  // TODO: add Promise?
+  selectGroup: ({ rootState, commit }, gid) => {
+    const selectWishes = {};
+    for (const i in rootState.wishGroup) {
+      const wg = rootState.wishGroup;
+      if (wg[i].id === gid) {
+        for (const j in wg[i].wishes) {
+          const wish = wg[i].wishes[j];
+          selectWishes[wish.id] = {};
+        }
+      }
+    }
+    commit('selectGroup', { gid, selectWishes });
+    resources.wishgroup.update({ gid }, { selected: true });
+  },
+
+  // TODO: add Promise?
+  unselectGroup: ({ rootState, commit }, gid) => {
+    commit('unselectGroup', { gid });
+    resources.wishgroup.update({ gid }, { selected: false });
   },
 
   selectWish({ commit, rootGetters }, { wid, selected }) {
@@ -77,17 +96,7 @@ const mutations = {
     Vue.set(entity, 'quantity', quantity);
   },
 
-  selectGroup: (state, { gid }) => {
-    const selectWishes = {};
-    for (const i in state) {
-      const group = state[i];
-      if (group.id === gid) {
-        for (const j in group.wishes) {
-          const wish = group.wishes[j];
-          selectWishes[wish.id] = {};
-        }
-      }
-    }
+  selectGroup: (state, { gid, selectWishes }) => {
     Vue.set(state, gid, selectWishes);
   },
 
@@ -95,35 +104,32 @@ const mutations = {
     if (state[gid]) {
       Vue.set(state, gid, null);
       delete state[gid];
+      Vue.set(state, 'tmp');
+      delete state.tmp;
     }
   },
 
-  selectWish: (state, { gid, wid, selected }) => {
-    // si on deselectionne un wish
-    if (!selected) {
-      if (state[gid]) {
-        Vue.set(state[gid], wid);
-        delete state[gid][wid];
+  selectWish: (state, { gid, wid }) => {
+    if (!Object.prototype.hasOwnProperty.call(state, gid)) {
+      Vue.set(state, gid, {});
+    }
+    Vue.set(state[gid], wid, {});
+  },
 
-        Vue.set(state[gid], 'tmp');
-        delete state[gid].tmp;
+  unselectWish: (state, { gid, wid }) => {
+    Vue.set(state[gid], wid);
+    delete state[gid][wid];
 
-        // si on a supprimé le dernier wish, on supprime le groupe de l'objet
-        if (!Object.keys(state[gid]).length) {
-          Vue.set(state, 'tmp');
-          delete state.tmp;
+    Vue.set(state[gid], 'tmp');
+    delete state[gid].tmp;
 
-          Vue.set(state, gid);
-          delete state[gid];
-        }
-      }
-    } else {
-      // si le groupe n'existe pas, on le crée
-      if (!state[gid]) {
-        Vue.set(state, gid, {});
-      }
-      // dans tous les cas on rajoute le wish a son groupe
-      Vue.set(state[gid], wid);
+    // delete the group if it doesn't contain selected wishes
+    if (!Object.keys(state[gid]).length) {
+      Vue.set(state, 'tmp');
+      delete state.tmp;
+
+      Vue.set(state, gid);
+      delete state[gid];
     }
   },
 };
