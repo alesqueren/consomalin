@@ -67,7 +67,7 @@ const actions = {
   renameWish: ({ commit, rootGetters }, { wid, name }) => {
     const gid = rootGetters['wishGroup/getWish'](wid).gid;
     resources.wish.update({ gid, wid }, { name });
-    commit('wishlist/group/renameWish', { wid, name }, { root: true });
+    commit('renameWish', { wid, name });
   },
 
   setWishProduct: ({ rootState, commit }, { gid, wid, pid, quantity }) => {

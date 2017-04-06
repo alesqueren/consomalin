@@ -1,16 +1,17 @@
 <template lang='pug'>
   div.wish.list-group-item.col-xs-6(v-on:click.stop="select")
-    input(type="checkbox" name="select" v-model="selected" onclick="event.cancelBubble=true;")
-    input(ref="editinput" 
+    input(type="checkbox" name="select" v-model="selected")
+    input(v-if='editing'
+      ref="editinput" 
       v-model="editingName"
       v-on:keyup.enter="validEdition"
-      v-on:blur="finishEdition")(v-if='editing')
-    button.btn.btn-success.btn-sm(@click.stop="validEdition" v-if='editing')
+      v-on:blur="finishEdition")
+    button.btn.btn-success.btn-sm(v-if='editing' @click.stop="validEdition")
       i.fa.fa-check.fa-xs
     label.wish-name(v-else for="select") {{ name }}
 
     div.buttns-action(v-if='!editing')
-      i.fa.fa-pencil.fa-xs.buttn-action(@click.stop="edit")
+      i.fa.fa-pencil.fa-xs.buttn-action(@click.stop="startEdition")
       i.fa.fa-trash-o.fa-xs.buttn-action(v-on:click.stop="remove")
 </template>
 
@@ -18,66 +19,60 @@
 import Vue from 'vue';
 
 export default {
-  props: ['wish', 'gid'],
+  props: ['gid', 'wid'],
   data() {
     return {
-      name: this.wish.name,
+      // name: this.wish.name,
       editingName: null,
     };
   },
   computed: {
-    selected: {
-      get() {
-        const wishIsSelected = this.$store.getters['basket/isSelectedWish'](
-          {
-            gid: this.gid,
-            wid: this.wish.id,
-          },
-        );
-        return wishIsSelected;
-      },
-      set(selected) {
-        this.$store.dispatch('basket/selectWish', {
-          wid: this.wish.id,
-          selected,
-        });
-      },
+    name() {
+      return this.$store.getters['wishGroup/getWish'](this.wid).name;
+    },
+    selected() {
+      try {
+        return Boolean(this.$store.state.selection[this.gid][this.wid]);
+      } catch (e) {
+        return false;
+      }
     },
     editing() {
-      return this.$store.getters.isEditing(this.wish.id);
+      return this.$store.state.singleton.inlineEditionId === this.wid;
     },
   },
   methods: {
     select() {
-      this.$store.dispatch('basket/selectWish', {
-        wid: this.wish.id,
+      this.$store.dispatch('selection/selectWish', {
+        wid: this.wid,
         selected: !this.selected,
       });
     },
     focus() {
       this.$refs.editinput.focus();
     },
-    edit() {
+    startEdition() {
       this.editingName = this.name;
-      this.$store.dispatch('setInlineEdition', this.wish.id);
+      this.$store.dispatch('singleton/set', {
+        key: 'inlineEditionId',
+        value: this.wid,
+      });
       Vue.nextTick(this.focus);
+    },
+    validEdition() {
+      this.$store.dispatch('wishGroup/renameWish', {
+        wid: this.wid,
+        name: this.editingName,
+      });
+      this.finishEdition();
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('setInlineEdition', null);
-    },
-    validEdition() {
-      this.name = this.editingName;
-      this.finishEdition();
-      this.$store.dispatch('wishlist/wish/rename', {
-        gid: this.gid,
-        wid: this.wish.id,
-        name: this.name,
-      });
+      this.$store.dispatch('singleton/unset', 'inlineEditionId');
     },
     remove() {
-      this.$store.dispatch('wishlist/wish/remove', {
-        wid: this.wish.id,
+      this.$store.dispatch('wishGroup/removeWish', {
+        wid: this.wid,
       });
     },
   },
