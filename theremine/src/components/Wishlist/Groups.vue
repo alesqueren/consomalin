@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     gids() {
-      return this.$store.state.selection.getSelectedGroups;
+      return this.$store.getters['selection/getSelectedGroups'];
     },
   },
   methods: {

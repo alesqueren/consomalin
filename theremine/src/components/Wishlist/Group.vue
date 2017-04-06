@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     name() {
-      return this.$store.getters['wishgroup/getGroup'](this.gid).name;
+      return this.$store.getters['wishGroup/getGroup'](this.gid).name;
     },
     isActive() {
       return this.gid === this.$store.state.singleton.activeGroupId;
@@ -55,25 +55,27 @@ export default {
       });
     },
     toggleActivation() {
-      const key = 'activeGroupId';
-      const value = this.gid;
-      this.$store.dispatch('singleton/toggle', { key, value });
+      this.$store.dispatch('singleton/toggle', {
+        key: 'activeGroupId',
+        value: this.gid,
+      });
     },
     focus() {
       this.$refs.editinput.focus();
     },
     edit() {
       this.editingName = this.name;
-      const key = 'inlineEditionId';
-      const value = this.gid;
-      this.$store.dispatch('singleton/set', { key, value });
+      this.$store.dispatch('singleton/set', {
+        key: 'inlineEditionId',
+        value: this.gid,
+      });
       Vue.nextTick(this.focus);
     },
     finishEdition() {
       this.editingName = null;
-      const key = 'inlineEditionId';
-      const value = null;
-      this.$store.dispatch('singleton/set', { key, value });
+      this.$store.dispatch('singleton/unset', {
+        key: 'inlineEditionId',
+      });
     },
     validEdition() {
       this.$store.dispatch('wishGroup/renameGroup', {
