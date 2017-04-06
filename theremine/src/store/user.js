@@ -2,35 +2,33 @@ import resources from '../resources';
 
 const actions = {
   login: ({ commit }, { data, success, fail }) => {
-    resources.user.login({}, data)
-      .then(() => {
-        commit('setUser', data.username);
-        success();
-      }, fail);
+    resources.user.login({}, data).then(() => {
+      commit('set', data.username);
+      success();
+    }, fail);
   },
 
   register: ({ commit }, { data, success, fail }) => {
-    resources.user.register({}, data)
-      .then(() => {
-        commit('setUser', data.username);
-        success();
-      }, fail);
+    resources.user.register({}, data).then(() => {
+      commit('set', data.username);
+      success();
+    }, fail);
   },
 
   fetchUser: ({ commit }) =>
     new Promise((resolve, reject) => {
-      resources.user.get().then((res) => {
-        commit('setUser', res.body.id);
+      resources.user.get().then(({ body }) => {
+        commit('set', body.id);
         resolve();
       }, () => {
-        commit('setUser', false);
+        commit('set', false);
         reject();
       });
     }),
 
   fetchUserData({ dispatch, commit }) {
     return new Promise((resolve) => {
-      resources.wishlist.get({}, {}).then(({ body }) => {
+      resources.wishlist.get().then(({ body }) => {
         const wishGroups = body.wishGroups;
         const currentBasket = body.currentBasket;
         if (!currentBasket.selectedWishes) {
@@ -49,9 +47,9 @@ const actions = {
           return null;
         });
         if (idsWithoutDetail.length) {
-          dispatch('basket/detailProductsWithId', { ids: idsWithoutDetail }, { root: true });
+          dispatch('product/fetchDetails', idsWithoutDetail, { root: true });
         }
-        commit('setWishGroupsAndCurrentBasket', { wishGroups, currentBasket }, { root: true });
+        commit('setUserData', { wishGroups, currentBasket }, { root: true });
         resolve();
       });
     });
@@ -59,23 +57,21 @@ const actions = {
 
   logout: ({ commit }) => {
     resources.user.logout().then(() => {
-      commit('setUser', false);
-      commit('resetStore', false, { root: true });
+      commit('set', false);
+      commit('resetStore', null, { root: true });
     });
   },
 };
 
 const mutations = {
-  setUser: (state, user) => {
-    state.user = user;
+  set: (state, user) => {
+    state = user;
   },
 };
 
 export default {
   namespaced: true,
-  state: {
-    user: null,
-  },
+  state: null,
   actions,
   mutations,
 };
