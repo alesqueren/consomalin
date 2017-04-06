@@ -102,7 +102,6 @@ export default {
 .buttn-action {
   padding: 2px;
 }
-/* Cachons la case à cocher */
 [type="checkbox"]:not(:checked),
 [type="checkbox"]:checked {
   position: absolute;

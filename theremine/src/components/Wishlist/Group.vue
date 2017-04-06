@@ -8,9 +8,9 @@
       v-model="editingName"
       v-on:keyup.enter="validEdition"
       v-on:blur="finishEdition")(v-if='editing')
-    label.groupName(v-else for="selected") <strong>{{ name }}</strong>
+    label.groupName(v-else for="selected") {{ name }}
 
-    span ({{ selectedWishesNb }} / {{ wishesNb }})
+    span.filling {{ selectedWishesNb }} / {{ wishesNb }}
     div.buttns-action(v-if='!editing')
       i.fa.fa-pencil.fa-xs.buttn-action(@click.stop="edit")
       i.fa.fa-trash-o.fa-xs.buttn-action(v-on:click.stop="remove")
@@ -114,5 +114,53 @@ export default {
 }
 .buttn-action {
   padding: 2px;
+}
+.filling {
+  display: block;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+
+[type="checkbox"]:not(:checked) + label,
+[type="checkbox"]:checked + label {
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+}
+[type="checkbox"]:not(:checked) + label:before,
+[type="checkbox"]:checked + label:before {
+  content: '';
+  position: absolute;
+  left:0; top: 2px;
+  width: 25px; height: 25px;
+  border: 1px solid #aaa;
+  background: #f8f8f8;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+}
+
+[type="checkbox"]:not(:checked) + label:after,
+[type="checkbox"]:checked + label:after {
+  content: '✔';
+  position: absolute;
+  top: -2px; left: 1px;
+  font-size: 30px;
+  color: #09ad7e;
+  transition: all .1s;
+}
+
+[type="checkbox"]:not(:checked) + label:after {
+  opacity: 0;
+  transform: scale(0);
+}
+[type="checkbox"]:checked + label:after {
+  opacity: 1;
+  transform: scale(1);
 }
 </style>
