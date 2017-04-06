@@ -12,7 +12,7 @@
             router-link.title(:to="{ name: 'wishlist' }") Liste
           li.header-tab
             router-link.title(:to="{ name: 'section' }") Rayons
-              span.title-desc {{matchedWishes}}/{{ basket.length }}
+              span.title-desc {{matchedWishesLength}}/{{selectedWishesNb}}
           li.header-tab
             router-link(:to="{ name: 'basket' }")
               span.title Panier
@@ -33,15 +33,11 @@ export default {
     ...mapState({
       user: state => state.user.user,
     }),
-    basket() {
-      return this.$store.getters['basket/getBasket'];
+    selectedWishesNb() {
+      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
     },
-    matchedWishes() {
-      let matchedWishes = 0;
-      for (let i = 0; i < this.basket.length; i += 1) {
-        matchedWishes += this.basket[i].product.id ? 1 : 0;
-      }
-      return matchedWishes;
+    matchedWishesLength() {
+      return this.$store.getters.getMatchedWishesLength;
     },
   },
   components: { Usercard },

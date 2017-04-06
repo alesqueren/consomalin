@@ -3,6 +3,37 @@ import resources from '../resources';
 
 const globalGetters = {
 
+  // TODO: rm ?
+  getOrdreredSelectedWishes: (state, getters, { wishGroup }) => {
+    const wishes = [];
+    for (let i = 0; i < wishGroup.length; i++) {
+      const group = wishGroup[i];
+      for (let j = 0; j < group.wishes.length; j++) {
+        const wish = wishGroup[i].wishes[j];
+        if (state[group.id] && state[group.id][wish.id]) {
+          const newWish = {
+            id: wish.id,
+          };
+          wishes.push(wish.id);
+        }
+      }
+    }
+    return wishes;
+  },
+
+  getMatchedWishesLength: (state) => {
+    let length = 0;
+    for (let i = 0; i < state.length; i++) {
+      const group = state[i];
+      for (let j = 0; j < group.wishes.length; j++) {
+        if (group.wishes[j].id) {
+          length++;
+        }
+      }
+    }
+    return length;
+  },
+
   getSelectedGroups: state => Object.keys(state),
 
   getSelectedWishesByGroup: state => gid => Object.keys(state[gid]),

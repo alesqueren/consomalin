@@ -11,47 +11,6 @@ import transaction from './transaction';
 
 Vue.use(Vuex);
 
-// TODO: empty file?
-
-const globalGetters = {
-  // TODO: rm ?
-  getBasket: (state, commit, rootState) => {
-    const basket = [];
-    const wishGroups = rootState.wishlist.group.wishGroups;
-    if (wishGroups && state.selectedWishes) {
-      const selectedWishes = state.selectedWishes;
-      for (let i = 0; i < wishGroups.length; i++) {
-        const wishgroup = wishGroups[i];
-        const wishGroupLength = wishgroup.wishes ? wishgroup.wishes.length : 0;
-        for (let j = 0; j < wishGroupLength; j++) {
-          const wish = wishGroups[i].wishes[j];
-          const wishGroupSelect = selectedWishes[wishgroup.id];
-          if (wishGroupSelect && selectedWishes[wishgroup.id][wish.id]) {
-            const selectedWish = selectedWishes[wishgroup.id][wish.id];
-            const productInfos = rootState.productInfos[selectedWish.pid];
-            const newWish = {
-              id: wish.id,
-              name: wish.name,
-              gid: wishgroup.id,
-              gname: wishgroup.name,
-              product: {
-                id: selectedWish.pid,
-                quantity: selectedWish.quantity,
-                infos: productInfos,
-              },
-            };
-            if (state.currentWishId === wish.id) {
-              newWish.current = true;
-            }
-            basket.push(newWish);
-          }
-        }
-      }
-    }
-    return basket;
-  },
-};
-
 const actions = {
   resetStore: ({ commit }) => {
     commit('resetStore');
@@ -79,7 +38,6 @@ const mutations = {
 
 export default new Vuex.Store({
   strict: true,
-  getters: globalGetters,
   actions,
   mutations,
   modules: {
