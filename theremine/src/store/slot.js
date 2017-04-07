@@ -3,9 +3,10 @@ import resources from '../resources';
 const actions = {
   fetch({ commit }) {
     return new Promise((resolve) => {
-      resources.schedule.get().then((response) => {
-        const slots = JSON.parse(response.body);
-        commit('set', { slots });
+      resources.schedule.get().then(({ body }) => {
+        commit('set', { 
+          slots: JSON.parse(body);
+        });
         resolve();
       });
     });

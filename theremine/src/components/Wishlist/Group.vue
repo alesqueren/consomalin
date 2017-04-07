@@ -8,7 +8,7 @@
       v-on:blur="finishEdition")
     button.btn.btn-success.btn-sm(v-if='editing' @click.stop="validEdition" onclick="event.stopPropagation()")
       i.fa.fa-check.fa-xs
-    label.groupName(v-else for="selected" @click="toggleSelection" onclick="event.stopPropagation()") {{ name }}
+    label.groupName(v-else for="selected" @click="toggleSelection") {{ name }}
 
     span.filling {{ selectedWishesNb }} / {{ wishesNb }}
     div.buttns-action(v-if='!editing')

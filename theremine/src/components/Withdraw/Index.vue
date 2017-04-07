@@ -33,7 +33,7 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch('setSlots').then(() => {
+    this.$store.dispatch('slot/fetch').then(() => {
       this.loading = false;
     });
   },
