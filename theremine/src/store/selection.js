@@ -37,7 +37,7 @@ const globalGetters = {
 
   getSelectedGroupsIds: state => Object.keys(state),
 
-  getSelectedWishesByGroup: state => (gid) => {
+  getSelectedWishesByGroup: state => ({ gid }) => {
     if (gid in state) {
       return Object.keys(state[gid]);
     }
@@ -60,7 +60,7 @@ const globalGetters = {
 const actions = {
 
   // TODO: add Promise?
-  selectGroup: ({ rootState, commit }, gid) => {
+  selectGroup: ({ rootState, commit }, { gid }) => {
     const selectWishes = {};
     for (const i in rootState.wishGroup) {
       const wg = rootState.wishGroup;
@@ -76,14 +76,14 @@ const actions = {
   },
 
   // TODO: add Promise?
-  unselectGroup: ({ rootState, commit }, gid) => {
+  unselectGroup: ({ rootState, commit }, { gid }) => {
     commit('unselectGroup', { gid });
     resources.wishgroup.update({ gid }, { selected: false });
   },
 
   selectWish({ commit, rootGetters }, { wid, selected }) {
     return new Promise((resolve) => {
-      const gid = rootGetters['wishGroup/getWish'](wid).gid;
+      const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
       resources.wish.update({ gid, wid }, { selected });
       const commitName = selected ? 'selectWish' : 'unselectWish';
       commit(commitName, { gid, wid, selected });

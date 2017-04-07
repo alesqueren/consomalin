@@ -2,7 +2,7 @@ import Vue from 'vue';
 import resources from '../resources';
 
 const globalGetters = {
-  getWish: state => (wid) => {
+  getWish: state => ({ wid }) => {
     for (let i = 0; i < state.length; i++) {
       const wishGroup = state[i];
       for (let j = 0; j < wishGroup.wishes.length; j++) {
@@ -20,7 +20,7 @@ const globalGetters = {
     return null;
   },
 
-  getGroup: state => (gid) => {
+  getGroup: state => ({ gid }) => {
     for (let i = 0; i < state.length; i++) {
       const wishgroup = state[i];
       if (wishgroup.id === gid) {
@@ -32,7 +32,7 @@ const globalGetters = {
 };
 
 const actions = {
-  addGroup({ commit }, name) {
+  addGroup({ commit }, { name }) {
     return new Promise((resolve) => {
       resources.wishgroup.save({}, { name }).then(({ body }) => {
         commit('addGroup', { gid: body, name, wishes: [] });
@@ -46,7 +46,7 @@ const actions = {
     commit('renameGroup', { gid, name });
   },
 
-  removeGroup: ({ commit }, gid) => {
+  removeGroup: ({ commit }, { gid }) => {
     resources.wishgroup.delete({ gid }).then(() => {
       commit('selection/unselectGroup', { gid }, { root: true });
       commit('removeGroup', { gid });
@@ -65,7 +65,7 @@ const actions = {
   },
 
   renameWish: ({ commit, rootGetters }, { wid, name }) => {
-    const gid = rootGetters['wishGroup/getWish'](wid).gid;
+    const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
     resources.wish.update({ gid, wid }, { name });
     commit('renameWish', { wid, name });
   },
@@ -79,10 +79,10 @@ const actions = {
     }
   },
 
-  removeWish: ({ commit, getters }, wid) => {
-    const gid = getters.getWish(wid).gid;
+  removeWish: ({ commit, getters }, { wid }) => {
+    const gid = getters.getWish({ wid }).gid;
     resources.wish.delete({ gid, wid }).then();
-    commit('removeWish', wid);
+    commit('removeWish', { wid });
     commit('selection/selectWish', { gid, wid, selected: false }, { root: true });
   },
 
@@ -103,7 +103,7 @@ const mutations = {
     }
   },
 
-  removeGroup: (state, gid) => {
+  removeGroup: (state, { gid }) => {
     for (let i = 0; i < state.length; i++) {
       if (state[i].id === gid) {
         state.splice(i, 1);
@@ -132,7 +132,7 @@ const mutations = {
     }
   },
 
-  removeWish: (state, wid) => {
+  removeWish: (state, { wid }) => {
     for (let i = 0; i < state.length; i++) {
       for (let j = 0; j < state[i].wishes.length; j++) {
         const wish = state[i].wishes[j];

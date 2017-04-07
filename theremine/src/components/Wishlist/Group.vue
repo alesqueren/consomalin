@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     name() {
-      return this.$store.getters['wishGroup/getGroup'](this.gid).name;
+      return this.$store.getters['wishGroup/getGroup']({ gid: this.gid }).name;
     },
     isActive() {
       return this.gid === this.$store.state.singleton.activeGroupId;
@@ -40,7 +40,7 @@ export default {
       return this.$store.getters['selection/getSelectedGroupsIds'].indexOf(this.gid) !== -1;
     },
     selectedWishesNb() {
-      return this.$store.getters['selection/getSelectedWishesByGroup'](this.gid).length;
+      return this.$store.getters['selection/getSelectedWishesByGroup']({ gid: this.gid }).length;
     },
     wishesNb() {
       const predicate = e => (e.id === this.gid);
@@ -50,7 +50,7 @@ export default {
   methods: {
     toggleSelection() {
       const actionName = !this.selected ? 'selectGroup' : 'unselectGroup';
-      this.$store.dispatch('selection/' + actionName, this.gid);
+      this.$store.dispatch('selection/' + actionName, { gid: this.gid });
     },
     toggleActivation() {
       this.$store.dispatch('singleton/toggle', {
@@ -71,7 +71,7 @@ export default {
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', 'inlineEditionId');
+      this.$store.dispatch('singleton/unset', { key: 'inlineEditionId' });
     },
     validEdition() {
       this.$store.dispatch('wishGroup/renameGroup', {
@@ -81,7 +81,7 @@ export default {
       this.finishEdition();
     },
     remove() {
-      this.$store.dispatch('wishGroup/removeGroup', this.gid);
+      this.$store.dispatch('wishGroup/removeGroup', { gid: this.gid });
     },
   },
 };
@@ -105,6 +105,7 @@ export default {
 }
 .group:hover .buttns-action {
   visibility: visible;
+  cursor: pointer;
 }
 .buttn-action {
   padding: 2px;

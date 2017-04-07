@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     name() {
-      return this.$store.getters['wishGroup/getWish'](this.wid).name;
+      return this.$store.getters['wishGroup/getWish']({ wid: this.wid }).name;
     },
     selected() {
       try {
@@ -68,10 +68,10 @@ export default {
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', 'inlineEditionId');
+      this.$store.dispatch('singleton/unset', { key: 'inlineEditionId' });
     },
     remove() {
-      this.$store.dispatch('wishGroup/removeWish', this.wid);
+      this.$store.dispatch('wishGroup/removeWish', { wid: this.wid });
     },
   },
 };
@@ -91,6 +91,7 @@ export default {
 }
 .wish:hover .buttns-action {
   visibility: visible;
+  cursor: pointer;
 }
 .buttn-action {
   padding: 2px;

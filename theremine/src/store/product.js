@@ -2,25 +2,15 @@ import Vue from 'vue';
 import resources from '../resources';
 
 const actions = {
-  fetchDetails: ({ commit }, ids) => {
+  fetchDetails: ({ commit }, { ids }) => {
     const uri = 'details?pids=' + JSON.stringify(ids);
     resources.products.get({ uri }, {}).then(({ body }) => {
       const products = JSON.parse(body);
-      Object.keys(products).map((pid) => {
-        const detail = products[pid];
-        commit('addDetail', { pid, detail });
-        return null;
-      });
+      commit('addDetails', { products });
     });
   },
 
-  updateDetail: ({ commit, state }, { pid, detail }) => {
-    if (!state.details[pid]) {
-      commit('addDetail', { pid, detail });
-    }
-  },
-
-  fetchSearch: ({ commit, state }, name) => {
+  fetchSearch: ({ commit, state }, { name }) => {
     if (!state.searchs[name]) {
       const uri = 'search?s=' + name;
       resources.products.get({ uri }, {}).then(({ body }) => {
@@ -33,7 +23,7 @@ const actions = {
             return acc;
           }, {}),
         });
-        commit('addDetails', products);
+        commit('addDetails', { products });
       });
     }
   },
@@ -41,11 +31,13 @@ const actions = {
 };
 
 const mutations = {
-  addDetails: (state, products) => {
-    Vue.set(state, 'details', products);
-  },
-  addDetail: (state, { pid, detail }) => {
-    Vue.set(state.details, pid, detail);
+  addDetails: (state, { products }) => {
+    Object.keys(products).map((pid) => {
+      const detail = products[pid];
+      // commit('addDetail', { pid, detail });
+      Vue.set(state.details, pid, detail);
+      return null;
+    });
   },
 
   addSearch: (state, { name, products }) => {
