@@ -1,26 +1,26 @@
 <template lang='pug'>
   div.slotHour
-    button(type="button" v-bind:disabled="pickupslot.status == 'Past'" v-bind:class="classSlot" class="btn" @click="selectSlot()" v-bind:style="styleObject")
+    button(type="button" v-bind:disabled="pickupSlot.status == 'Past'" v-bind:class="classSlot" class="btn" @click="selectSlot()" v-bind:style="styleObject")
       span {{frenchTime}}
 </template>
 
 <script>
 export default {
-  props: ['pickupslot'],
+  props: ['pickupSlot'],
   computed: {
     classSlot() {
       return {
-        'btn-secondary': !this.pickupslot.selected,
-        'btn-success': this.pickupslot.selected,
+        'btn-secondary': !this.pickupSlot.selected,
+        'btn-success': this.pickupSlot.selected,
       };
     },
     frenchTime() {
-      const time = this.pickupslot.time;
+      const time = this.pickupSlot.time;
       const frenchTime = parseInt(time.split(':')[0], 10) + 'h' + time.split(':')[1];
       return frenchTime;
     },
     styleObject() {
-      const attendance = parseFloat(this.pickupslot.attendanceLevel);
+      const attendance = parseFloat(this.pickupSlot.attendanceLevel);
       // vert rgb(130,234,109)
       // rouge rgb(245,20,9)
       const rmin = 130;
@@ -42,15 +42,16 @@ export default {
   },
   methods: {
     selectSlot() {
-      const slotId = this.pickupslot.id;
-      this.$store.dispatch('selectSlot', { slotId }).then((dateTime) => {
-        this.textNext = 'Valider ma commande pour ' + dateTime;
+      this.$store.dispatch('schedule/selectSlot', {
+        slotId: this.pickupSlot.id,
+        dateTime: this.pickupSlot.day + ' ' + this.pickupSlot.time,
       });
     },
   },
 };
 </script>
-<style>
+
+<style scoped>
 .slotHour{
   float:left;
 }

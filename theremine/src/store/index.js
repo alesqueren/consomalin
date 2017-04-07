@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import slot from './slot';
 import user from './user';
 import product from './product';
+import schedule from './schedule';
 import wishGroup from './wishGroup';
 import selection from './selection';
 import singleton from './singleton';
@@ -29,6 +29,7 @@ const mutations = {
     return new Promise((resolve) => {
       Vue.set(state, 'wishGroup', wishGroups);
       Vue.set(state, 'selection', currentBasket.selectedWishes);
+      Vue.set(state.singleton, 'selectedSlot', currentBasket.currentSlot);
       Vue.set(state.singleton, 'currentWishId', currentBasket.currentWishId);
       resolve();
     });
@@ -41,9 +42,9 @@ export default new Vuex.Store({
   actions,
   mutations,
   modules: {
-    slot,
     user,
     product,
+    schedule,
     wishGroup,
     selection,
     singleton,

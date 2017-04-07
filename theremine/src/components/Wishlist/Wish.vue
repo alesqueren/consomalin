@@ -71,7 +71,6 @@ export default {
       this.$store.dispatch('singleton/unset', 'inlineEditionId');
     },
     remove() {
-      console.log(this.wid);
       this.$store.dispatch('wishGroup/removeWish', this.wid);
     },
   },

@@ -1,47 +1,49 @@
 <template lang='pug'>
 div#slots
-  <i v-show="loading" class="text-center fa fa-spinner fa-spin fa-5x" style="width: 100%;"></i>
-  <i v-show="loading" class="text-center" style="width: 100%;display: inline-block;">Nous chargeons les horaires de retraits disponibles</i>
+  <i v-show="!isScheduleDataValid" class="text-center fa fa-spinner fa-spin fa-5x" style="width: 100%;"></i>
+  <i v-show="!isScheduleDataValid" class="text-center" style="width: 100%;display: inline-block;">Nous chargeons les horaires de retraits disponibles</i>
   div
     .container-fluid
       .row.no-gutters
-        day-item(v-for="day in slots" v-bind:day="day" style="min-width:150px;", :key="day")
-
+        day-item(v-for="day in days" 
+          v-bind:day="day" 
+          v-bind:key="day"
+          style="min-width:150px;")
   a(href='/basket')
     button.btn.btn-primary.left(type="button") Revenir au panier
   a(href='#' @click="confirmSlot")
-    button.btn.btn-success.right(type="button" v-bind:disabled="disableNext") {{textNext}}
+    button.btn.btn-success.right(type="button" v-bind:disabled="!selectedSlot") {{ confirmationMessage }}
 </template>
 
 <script>
 import DayItem from './DayItem';
 
 export default {
-  data() {
-    return {
-      daySlots: null,
-      loading: true,
-      selectedSlot: null,
-      disableNext: true,
-      textNext: 'Valider ma commande',
-    };
-  },
   computed: {
-    slots() {
-      const slots = this.$store.state.slots;
-      return slots;
+    days() {
+      return this.$store.state.schedule.days;
+    },
+    selectedSlot() {
+      return this.$store.state.singleton.selectedSlot;
+    },
+    isScheduleDataValid() {
+      // TODO: check expiration > now()
+      //       fetch schedule if data is expired
+      return this.$store.state.schedule.expiration;
+    },
+    confirmationMessage() {
+      if (this.selectedSlot) {
+        return 'Valider ma commande pour "' + this.selectedSlot.dateTime + '"';
+      }
+      return 'Valider ma commande';
     },
   },
   mounted() {
-    this.$store.dispatch('slot/fetch').then(() => {
-      this.loading = false;
-    });
+    this.$store.dispatch('schedule/fetch');
   },
   methods: {
     confirmSlot() {
-      this.$store.dispatch('order').then(() => {
-        this.loading = false;
-      });
+      this.$store.dispatch('transaction/order');
     },
   },
   components: { DayItem },

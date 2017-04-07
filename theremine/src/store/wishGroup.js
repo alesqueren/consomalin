@@ -80,8 +80,6 @@ const actions = {
   },
 
   removeWish: ({ commit, getters }, wid) => {
-    console.log(wid);
-    // console.log(getters.getWish(wid));
     const gid = getters.getWish(wid).gid;
     resources.wish.delete({ gid, wid }).then();
     commit('removeWish', wid);

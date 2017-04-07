@@ -16,6 +16,7 @@ const actions = {
 
 const mutations = {
   set(state, { key, value }) {
+    // delete state.key;
     Vue.set(state, key, value);
   },
 
@@ -33,7 +34,7 @@ export default {
   namespaced: true,
   strict: true,
   state: {
-    slotId: null,
+    selectedSlot: null,
     currentWishId: null,
     inlineEditionId: null,
     activeGroupId: null,
