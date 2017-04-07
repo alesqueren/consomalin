@@ -22,8 +22,7 @@ export default {
       return this.$store.getters['selection/getOrdreredSelectedWishes'];
     },
     matchedWishesLength() {
-      const matchedWishes = this.$store.getters.getMatchedWishes;
-      return matchedWishes ? matchedWishes.length : 0;
+      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
     total() {
       return this.$store.getters['transaction/basketAmount'];

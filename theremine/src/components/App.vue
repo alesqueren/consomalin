@@ -33,11 +33,7 @@ export default {
       return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
     },
     matchedWishesLength() {
-      let length = 0;
-      if (this.$store.getters.getMatchedWishes) {
-        length = this.$store.getters.getMatchedWishes.length;
-      }
-      return length;
+      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
   },
   components: { Usercard },

@@ -32,7 +32,7 @@ const actions = {
           commit('singleton/set', { key: 'currentWishId', value: wid }, { root: true });
           const currentWish = rootGetters['wishGroup/getWish']({ wid: newCurrentWid });
           if (currentWish.name && !rootState.product.searchs[currentWish.name]) {
-            dispatch('product/fetchSearch', currentWish.name, { root: true });
+            dispatch('product/fetchSearch', { name: currentWish.name }, { root: true });
           }
         });
       } else {

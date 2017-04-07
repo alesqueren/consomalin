@@ -105,6 +105,7 @@ export default {
 }
 .group:hover .buttns-action {
   visibility: visible;
+  cursor: pointer;
 }
 .buttn-action {
   padding: 2px;

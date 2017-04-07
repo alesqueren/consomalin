@@ -1,8 +1,8 @@
 <template lang='pug'>
   div#wishlist.container-fluid
     div.row
-      Groups
-      ActiveGroup
+      Groups.col-6
+      ActiveGroup.col-6
 </template>
 
 <script>

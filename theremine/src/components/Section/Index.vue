@@ -72,8 +72,7 @@ export default {
       return !this.$store.state.singleton.currentWishId;
     },
     matchedWishesLength() {
-      const matchedWishes = this.$store.getters.getMatchedWishes;
-      return matchedWishes ? matchedWishes.length : 0;
+      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
     basketFull() {
       return this.matchedWishesLength === this.basket.length;
