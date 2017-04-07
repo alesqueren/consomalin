@@ -111,6 +111,9 @@ doSchedule :: (MonadFree CrawlF cr) => Account -> ConduitM () Void cr [SlotInfo]
 doSchedule acc = do
   _ <- lift . fromF $ chooseDrive "Toulouse-954"
   _ <- lift . fromF $ connect acc
+  -- TODO: make sure to add an existing product
+  _ <- lift . fromF $ addToBasket ("141418", 1)
+  -- a non empty basket is needed for getting schedule
   _ <- lift . fromF $ getBasket
   _ <- lift . fromF $ goSchedule
   lift . fromF $ getSchedule

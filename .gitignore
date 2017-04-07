@@ -1,4 +1,3 @@
-/docker/state/
 /docker-compose.yml
 /commands.yml
 /docker_dev
