@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     name() {
-      return this.$store.getters['wishGroup/getWish'](this.wid).name;
+      return this.$store.getters['wishGroup/getWish']({ wid: this.wid }).name;
     },
     selected() {
       try {
@@ -68,11 +68,10 @@ export default {
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', 'inlineEditionId');
+      this.$store.dispatch('singleton/unset', { key: 'inlineEditionId' });
     },
     remove() {
-      console.log(this.wid);
-      this.$store.dispatch('wishGroup/removeWish', this.wid);
+      this.$store.dispatch('wishGroup/removeWish', { wid: this.wid });
     },
   },
 };

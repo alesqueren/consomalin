@@ -5,8 +5,8 @@ const actions = {
     commit('set', { key, value });
   },
 
-  unset: ({ commit }, key) => {
-    commit('unset', key);
+  unset: ({ commit }, { key }) => {
+    commit('unset', { key });
   },
 
   toggle: ({ commit }, { key, value }) => {
@@ -19,7 +19,7 @@ const mutations = {
     Vue.set(state, key, value);
   },
 
-  unset: (state, key) => {
+  unset: (state, { key }) => {
     Vue.set(state, key, null);
   },
 

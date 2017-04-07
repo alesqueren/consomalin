@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import Vue from 'vue';
 
 export default {
   props: ['wid', 'gid'],
@@ -40,16 +39,16 @@ export default {
       },
     },
     wish() {
-      return this.$store.getters.getWish(this.wid);
+      return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
     productId() {
-      return this.$store.state.currentBasket.selectedWishes[this.wish.gid][this.wish.id].pid;
+      return this.$store.state.selection[this.wish.gid][this.wish.id].pid;
     },
     productQuantity() {
-      return this.$store.state.currentBasket.selectedWishes[this.wish.gid][this.wish.id].quantity;
+      return this.$store.state.selection[this.wish.gid][this.wish.id].quantity;
     },
     productInfos() {
-      return this.$store.state.productInfos[this.productId];
+      return this.$store.state.product.details[this.productId];
     },
     total() {
       const total = this.productInfos.price * this.productQuantity;
@@ -57,20 +56,13 @@ export default {
     },
   },
   methods: {
-    unselect() {
-      this.$store.dispatch('basket/selectWish', {
-        gid: this.gid,
-        wid: this.wid,
-        selected: false,
-      });
-    },
     increase() {
       if (this.productQuantity < 64) {
         const gid = this.wish.gid;
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = this.productQuantity + 1;
-        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+        this.$store.dispatch('wishGroup/setWishProduct', { gid, wid, pid, quantity });
       }
     },
     decrease() {
@@ -79,32 +71,14 @@ export default {
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = this.productQuantity - 1;
-        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+        this.$store.dispatch('wishGroup/setWishProduct', { gid, wid, pid, quantity });
       }
     },
     focus() {
       this.$refs.editinput.focus();
     },
-    edit() {
-      this.editingName = this.name;
-      this.$store.dispatch('setInlineEdition', this.editingId);
-      Vue.nextTick(this.focus);
-    },
-    finishEdition() {
-      this.editingName = null;
-      this.$store.dispatch('setInlineEdition', null);
-    },
-    validEdition() {
-      this.$store.dispatch('wishlist/group/renameWish', {
-        gid: this.gid,
-        wid: this.wid,
-        name: this.editingName,
-      });
-      this.finishEdition();
-    },
     remove() {
-      this.$store.dispatch('wishlist/group/removeWish', {
-        gid: this.gid,
+      this.$store.dispatch('wishGroup/removeWish', {
         wid: this.wid,
       });
     },

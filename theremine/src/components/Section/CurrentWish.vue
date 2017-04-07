@@ -30,7 +30,7 @@ export default {
       return this.$store.state.singleton.currentWishId;
     },
     currentWish() {
-      return this.$store.getters['wishGroup/getWish'](this.currentWishId);
+      return this.$store.getters['wishGroup/getWish']({ wid: this.currentWishId });
     },
   },
   methods: {
@@ -38,20 +38,19 @@ export default {
       clearTimeout(this.delayTimer);
       this.delayTimer = setTimeout(() => {
         const name = this.currentWish.name;
-        this.$store.dispatch('wishGroup/rename', {
-          gid: this.currentWish.gid,
+        this.$store.dispatch('wishGroup/renameWish', {
           wid: this.currentWish.id,
           name,
         });
-        this.$store.dispatch('product/fetchSearch', name);
+        this.$store.dispatch('product/fetchSearch', { name });
       }, 200);
     },
     addGroup() {
       this.wishCreation = true;
       const name = this.currentWish.name;
-      this.$store.dispatch('wishGroup/addGroup', name).then((gid) => {
-        this.$store.dispatch('singleton/unset', 'currentWishId');
-        this.$store.dispatch('wishGroup/removeWish', this.currentWish.id);
+      this.$store.dispatch('wishGroup/addGroup', { name }).then((gid) => {
+        this.$store.dispatch('wishGroup/removeWish', { wid: this.currentWishId });
+        this.$store.dispatch('singleton/unset', { key: 'currentWishId' });
         this.$store.dispatch('singleton/set', {
           key: 'activeGroupId',
           value: gid,

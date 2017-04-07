@@ -4,8 +4,8 @@ const actions = {
   fetch({ commit }) {
     return new Promise((resolve) => {
       resources.schedule.get().then(({ body }) => {
-        commit('set', { 
-          slots: JSON.parse(body);
+        commit('set', {
+          slots: JSON.parse(body),
         });
         resolve();
       });

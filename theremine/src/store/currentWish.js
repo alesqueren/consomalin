@@ -25,12 +25,12 @@ const actions = {
       const matchedWishes = rootGetters['selection/getMatchedWishes'];
       const newCurrentWid = getFirstUnmatchedWish(orderdedSelectedWishes, matchedWishes);
       if (newCurrentWid) {
-        const wish = rootGetters['wishGroup/getWish'](newCurrentWid);
+        const wish = rootGetters['wishGroup/getWish']({ wid: newCurrentWid });
         const gid = wish.gid;
         const wid = wish.id;
         resources.currentWish.save({}, { gid, wid }).then(() => {
           commit('singleton/set', { key: 'currentWishId', value: wid }, { root: true });
-          const currentWish = rootGetters['wishGroup/getWish'](wid);
+          const currentWish = rootGetters['wishGroup/getWish']({ wid: newCurrentWid });
           if (currentWish.name && !rootState.product.searchs[currentWish.name]) {
             dispatch('product/fetchSearch', currentWish.name, { root: true });
           }
@@ -42,7 +42,7 @@ const actions = {
   },
 
   remove({ commit }) {
-    commit('singleton/unset', 'currentWishId', { root: true });
+    commit('singleton/unset', { key: 'currentWishId' }, { root: true });
     resources.currentWish.delete();
   },
 

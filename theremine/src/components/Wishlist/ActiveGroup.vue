@@ -28,7 +28,7 @@ export default {
     wishgroup() {
       const gid = this.$store.state.singleton.activeGroupId;
       if (gid) {
-        return this.$store.getters['wishGroup/getGroup'](gid);
+        return this.$store.getters['wishGroup/getGroup']({ gid });
       }
       return null;
     },

@@ -5,7 +5,8 @@ transition(name="fade")
     div
       span.wishgroupname.badge.badge-success {{wish.gname}}
       span.wishname {{wish.name}}
-    div(v-if='hasProduct')
+    div(v-if='productDetails')
+      div  la
       div  {{productDetails.name}}
       |  
       img(style='width:150px;', v-bind:src='productDetails.imageUrl')
@@ -25,7 +26,7 @@ export default {
   computed: {
     quantity: {
       get() {
-        return this.productQuantity.quantity;
+        return this.productQuantity;
       },
       set(quantity) {
         this.$store.dispatch('wishGroup/setWishProduct', {
@@ -37,25 +38,19 @@ export default {
       },
     },
     wish() {
-      return this.$store.getters['wishGroup/getWish'](this.wid);
+      return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
-    hasProduct() {
+    matchedProduct() {
       return this.$store.getters['selection/getMatchedWishes'][this.wid];
     },
     productId() {
-      if (this.hasProduct) {
-        return this.$store.getters['selection/getMatchedWishes'][this.wid].pid;
-      }
-      return null;
+      return this.matchedProduct && this.matchedProduct.pid;
     },
     productQuantity() {
-      if (this.hasProduct) {
-        return this.$store.getters['selection/getMatchedWishes'][this.wid].quantity;
-      }
-      return null;
+      return this.matchedProduct && this.matchedProduct.quantity;
     },
     productDetails() {
-      if (this.hasProduct) {
+      if (this.matchedProduct) {
         return this.$store.state.product.details[this.productId];
       }
       return null;
@@ -66,7 +61,7 @@ export default {
     },
     total() {
       let total = 0;
-      if (this.hasProduct) {
+      if (this.matchedProduct) {
         total = this.productDetails.price * this.productQuantity;
       }
       return parseFloat(total).toFixed(2);
@@ -104,18 +99,17 @@ export default {
     removeWish() {
       const wid = this.wish.id;
       const selected = false;
-      this.$store.dispatch('wishGroup/selectWish', { wid, selected }).then(() => {
+      this.$store.dispatch('selection/selectWish', { wid, selected }).then(() => {
         if (this.wishIsCurrent) {
           this.$store.dispatch('currentWish/next');
         }
       });
     },
     setCurrentWish() {
-      this.$store.dispatch('singleton/set', {
-        key: 'currentWishId',
+      this.$store.dispatch('currentWish/set', {
         wid: this.wid,
       });
-      this.$store.dispatch('product/fetchSearch', this.wish.name);
+      this.$store.dispatch('product/fetchSearch', { name: this.wish.name });
     },
     changeQty() {
       this.$store.dispatch('wishGroup/setWishProduct', {

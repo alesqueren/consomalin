@@ -17,7 +17,7 @@ export default {
       return this.$store.state.singleton.currentWishId;
     },
     currentWish() {
-      return this.$store.getters['wishGroup/getWish'](this.currentWishId);
+      return this.$store.getters['wishGroup/getWish']({ wid: this.currentWishId });
     },
   },
   methods: {

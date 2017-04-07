@@ -47,7 +47,7 @@ const actions = {
           return null;
         });
         if (idsWithoutDetail.length) {
-          dispatch('product/fetchDetails', idsWithoutDetail, { root: true });
+          dispatch('product/fetchDetails', { ids: idsWithoutDetail }, { root: true });
         }
         commit('setUserData', { wishGroups, currentBasket }, { root: true });
         resolve();

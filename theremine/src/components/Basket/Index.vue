@@ -1,6 +1,6 @@
 <template lang='pug'>
   div#wishlist.container-fluid
-    h2 Mon panier: {{ matchedWishes }} articles, {{ total }} €
+    h2 Mon panier: {{ matchedWishesLength }} articles, {{ total }} €
     router-link(:to='{ name: "withdraw" }')
       button.btn.btn-success.right(type="button") Passer au retrait
     div.col.main
@@ -16,28 +16,17 @@ import Group from './Group';
 export default {
   computed: {
     selectedGroups() {
-      return this.$store.getters['Wishlist/getSelectedWishGroups'];
+      return this.$store.state.wishGroup.map(group => group.id);
     },
     basket() {
-      const basket = this.$store.getters.getBasket;
-      return basket;
+      return this.$store.getters['selection/getOrdreredSelectedWishes'];
     },
-    matchedWishes() {
-      let matchedWishes = 0;
-      for (let i = 0; i < this.basket.length; i += 1) {
-        matchedWishes += this.basket[i].product.id ? 1 : 0;
-      }
-      return matchedWishes;
+    matchedWishesLength() {
+      const matchedWishes = this.$store.getters.getMatchedWishes;
+      return matchedWishes ? matchedWishes.length : 0;
     },
     total() {
-      return this.basket.reduce((prev, wish) => {
-        if (wish.product && wish.product.infos && wish.product.infos.price) {
-          const price = wish.product.infos.price;
-          const priceProduct = price ? price * wish.product.quantity : 0;
-          return prev + priceProduct;
-        }
-        return prev;
-      }, 0).toFixed(2);
+      return this.$store.getters['transaction/basketAmount'];
     },
   },
   components: { Group },

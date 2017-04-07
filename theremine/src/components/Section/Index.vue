@@ -54,7 +54,7 @@ export default {
       return this.$store.state.singleton.currentWishId;
     },
     currentWish() {
-      return this.$store.getters['wishGroup/getWish'](this.currentWishId);
+      return this.$store.getters['wishGroup/getWish']({ wid: this.currentWishId });
     },
     searchs() {
       return this.$store.state.searchs;
@@ -72,24 +72,14 @@ export default {
       return !this.$store.state.singleton.currentWishId;
     },
     matchedWishesLength() {
-      let length = 0;
-      if (this.$store.getters.getMatchedWishes) {
-        length = this.$store.getters.getMatchedWishes.length;
-      }
-      return length;
+      const matchedWishes = this.$store.getters.getMatchedWishes;
+      return matchedWishes ? matchedWishes.length : 0;
     },
     basketFull() {
       return this.matchedWishesLength === this.basket.length;
     },
     total() {
-      return this.basket.reduce((prev, wish) => {
-        if (wish.product && wish.product.infos && wish.product.infos.price) {
-          const price = wish.product.infos.price;
-          const priceProduct = price ? price * wish.product.quantity : 0;
-          return prev + priceProduct;
-        }
-        return prev;
-      }, 0).toFixed(2);
+      return this.$store.getters['transaction/basketAmount'];
     },
     nextInfos() {
       const length = this.basket.length;
@@ -106,7 +96,7 @@ export default {
   mounted() {
     if (this.currentWish) {
       const name = this.currentWish.name;
-      this.$store.dispatch('product/fetchSearch', name);
+      this.$store.dispatch('product/fetchSearch', { name });
     } else {
       this.$store.dispatch('currentWish/next');
     }
