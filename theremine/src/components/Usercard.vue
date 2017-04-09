@@ -3,10 +3,14 @@
     router-link(:to='{ name: "login" }') Se connecter
     router-link(:to='{ name: "register" }') S'enregister
   div.right(v-else)
-    span.user-name {{ user }}
-    a.btn.btn-info.btn-sm(@click.prevent='logout')
-      span.fa.fa-sign-out
-      span Log out
+    .dropdown(style="line-height: 10px;")
+      button#dropdownMenuButton.btn.btn-secondary.btn-sm.dropdown-toggle.user-name(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+        | {{ user }}
+      .dropdown-menu(aria-labelledby='dropdownMenuButton')
+        a.dropdown-item.btn.btn-info.btn-sm.pointer(href="#", @click.prevent='logout')
+          span.fa.fa-sign-out
+          span Déconnection
+
 </template>
 
 <script>
@@ -25,7 +29,14 @@ export default {
 };
 </script>
 <style>
+.dropdown{
+  top: 16px;
+  margin-right: 16px;
+}
 .user-name{
   color: #747e8f;
+}
+.pointer{
+  cursor: pointer;
 }
 </style>

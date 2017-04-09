@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div.wish.list-group-item.col-xs-6(v-on:click.stop="select")
+  div.wish.list-group-item(v-on:click.stop="select")
     input(type="checkbox" name="select" v-model="selected")
     input(v-if='editing'
       ref="editinput" 
@@ -80,7 +80,7 @@ export default {
 <style scoped>
 .wish-name{
   font-family: gunny;
-  font-size: 1.5em;
+  font-size: 2em;
   font-weight: bold;
 }
 .wish .buttns-action {

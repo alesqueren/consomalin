@@ -14,8 +14,9 @@
             router-link.title(:to="{ name: 'section' }") Rayons
               span.title-desc {{matchedWishesLength}}/{{selectedWishesNb}}
           li.header-tab
-            router-link(:to="{ name: 'basket' }")
-              span.title Panier
+            router-link.title(:to="{ name: 'basket' }") Panier
+              div.title-desc(style=" position:absolute; bottom: 25px;") {{matchedWishesLength}}/{{selectedWishesNb}}
+              div.title-desc(style="font-size: 0.8em; position:absolute; bottom: 0px;")
 
           li.header-tab
             router-link.title(:to="{ name: 'withdraw' }") Retrait
@@ -43,12 +44,14 @@ export default {
 <style>
 @import '../static/plugins/font-awesome-4.7.0/css/font-awesome.min.css';
 
+body{
+  background-color: #f2f4f7;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e60;
-  background-color: #f2f4f7;
 }
 
 body {
@@ -107,6 +110,8 @@ a:hover {
 }
 
 #header .title {
+  min-width: 200px;
+  position:relative;
   line-height: 60px;
   font-weight: 700;
   font-size: 22px;
