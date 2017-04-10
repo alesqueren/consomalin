@@ -18,6 +18,7 @@ if [ $# -ne 0 ]; then
     exit 1
 fi
 
+ex "cp docker/docker-compose.yml ."
 ex "docker-compose build --pull theremine"
 
 img=$(pwd | rev | cut -d"/" -f1 | rev | tr '[:upper:]' '[:lower:]')_theremine
