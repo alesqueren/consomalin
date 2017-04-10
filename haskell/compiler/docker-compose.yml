@@ -1,6 +1,0 @@
-compiler:
-  build: ./image
-  volumes:
-    - ..:/app
-    - ../.stack-compiler/local:/app/.stack-work
-    - ../.stack-compiler/global:/root/.stack
