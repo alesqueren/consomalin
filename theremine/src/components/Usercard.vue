@@ -5,10 +5,13 @@
   div.right(v-else)
     .dropdown(style="line-height: 10px;")
       button#dropdownMenuButton.btn.btn-secondary.btn-sm.dropdown-toggle.user-name(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-        | {{ user }}
+        span.fa.fa-user-o
       .dropdown-menu(aria-labelledby='dropdownMenuButton')
         a.dropdown-item.btn.btn-info.btn-sm.pointer(href="#", @click.prevent='logout')
-          span.fa.fa-sign-out
+          span {{ user }}
+        div.dropdown-divider
+        a.dropdown-item.btn.btn-info.btn-sm.pointer(href="#", @click.prevent='logout')
+          span.fa.fa-sign-out 
           span Déconnection
 
 </template>
@@ -32,6 +35,9 @@ export default {
 .dropdown{
   top: 16px;
   margin-right: 16px;
+}
+.dropdown-menu{
+  left: -116px;
 }
 .user-name{
   color: #747e8f;

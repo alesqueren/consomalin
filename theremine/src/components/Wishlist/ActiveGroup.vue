@@ -1,7 +1,7 @@
 <template lang='pug'>
   div
     div.activeGroup(v-if="wishgroup")
-      h2 Elements de {{ wishgroup.name }}:
+      h2.activegroupName {{ wishgroup.name }} :
       div.wishgroup(v-if='wishgroup')
         div
           Wish(v-for="wish in wishgroup.wishes" 
@@ -48,6 +48,9 @@ export default {
 </script>
 
 <style scoped>
+.activegroupName {
+  text-transform: capitalize;
+}
 .wishgroup {
   position: relative;
   /*color: #00B7FF;*/

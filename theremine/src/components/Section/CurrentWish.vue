@@ -11,7 +11,7 @@
           input#search-text.form-control(type="text" v-model="currentWish.name" v-on:keyup="rename")
       span.input-group-addon.search-addGroup(@click="addGroup")
         span.fa.fa-list-ul &nbsp;&nbsp;&nbsp;
-        span Est-ce une liste ?
+        span Creer une liste de {{ currentWish.name }}
 </template>
 
 <script>

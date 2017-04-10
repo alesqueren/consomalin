@@ -1,8 +1,8 @@
 <template lang='pug'>
   div.col.main
-    h2 Mes listes de courses:
     div#notepad
       .lines
+      h2.title Mes listes de courses
       Group(v-for="gid in gids" 
         v-bind:gid="gid"
         v-bind:key="gid")
@@ -55,7 +55,15 @@ export default {
   margin-left: 65px;
   z-index: 2;
 }
+.title {
+  font-family: gunny;
+  font-size: 2rem;
+  text-decoration: underline;
+  text-align: center;
+  margin-left: 65px;
+}
 #newGroup{
+  width: 100%;
   font-family: gunny;
   border: none;
   font-size: 1.5em;

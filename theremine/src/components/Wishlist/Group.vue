@@ -1,6 +1,6 @@
 <template lang='pug'>
-  div.group(v-bind:class="{'bg-info': isActive, 'bg-infoo': selected && ! isActive, 'strong': selectedWishesNb}"
-      @click="toggleActivation")
+  div.group(v-bind:class="{'active': isActive, 'strong': selectedWishesNb}"
+      @click="setActivation")
     input(type="checkbox"
       name="selected"
       v-model="selected",
@@ -12,7 +12,8 @@
       v-on:blur="finishEdition")
     button.btn.btn-success.btn-sm(v-if='editing' @click.stop="validEdition" onclick="event.stopPropagation()" @keyup.esc="finishEdition")
       i.fa.fa-check.fa-xs
-    label.groupName(v-else for="selected" @click="toggleSelection") {{ name }}
+    label.groupName(v-else for="selected") {{ name }}
+    div.groupCheckbox(v-if='!editing && wishesNb' @click="toggleSelection")
 
     div.filling
       span {{ selectedWishesNb }} / {{ wishesNb }}
@@ -29,6 +30,7 @@ export default {
   data() {
     return {
       editingName: null,
+      deleting: false,
     };
   },
   computed: {
@@ -57,8 +59,8 @@ export default {
       const actionName = !this.selected ? 'selectGroup' : 'unselectGroup';
       this.$store.dispatch('selection/' + actionName, { gid: this.gid });
     },
-    toggleActivation() {
-      this.$store.dispatch('singleton/toggle', {
+    setActivation() {
+      this.$store.dispatch('singleton/set', {
         key: 'activeGroupId',
         value: this.gid,
       });
@@ -96,14 +98,18 @@ export default {
 .group{
 /*  min-width: 150px;
   min-height: 50px;*/
+  cursor: pointer;
   position: relative;
   list-style: none;
-  border-bottom: 1px dotted #ccc;
+  border-bottom: 1px dotted #72c4ff ;
   text-indent: 25px;
   height: 50px;
   line-height: 50px;
   padding: 0 10px 0 10px;
   text-transform: capitalize;
+}
+.active{
+  background-color: #5bc0de!important;
 }
 .group:hover{
   background-color: #f0f0f0;
@@ -113,6 +119,7 @@ export default {
   -o-transition:      all 0.2s;
 }
 .groupName{
+  cursor: default;
   font-family: gunny;
   font-size: 2em;
 }
@@ -127,7 +134,12 @@ export default {
   cursor: pointer;
 }
 .buttn-action {
-  padding: 2px;
+  display: inline!important;
+  padding: 8px;
+  width: 30px;
+}
+.buttn-action:hover {
+  font-size: 1.1em;
 }
 .filling {
   display: block;
@@ -137,6 +149,15 @@ export default {
 }
 .strong{
   font-weight: bold;
+}
+.groupCheckbox{
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 65px;
+  height: 50px;
+
 }
 [type="checkbox"]:not(:checked),
 [type="checkbox"]:checked {
@@ -148,7 +169,6 @@ export default {
 [type="checkbox"]:checked + label {
   position: relative;
   padding-left: 35px;
-  cursor: pointer;
 }
 [type="checkbox"]:not(:checked) + label:before,
 [type="checkbox"]:checked + label:before {
@@ -163,7 +183,6 @@ export default {
 }
 [type="checkbox"]:not(:checked):disabled + label:before,
 [type="checkbox"]:checked:disabled + label:before {
-  cursor: auto;
   box-shadow: inset 0 1px 28px rgba(0,0,0,.3);
 }
 
