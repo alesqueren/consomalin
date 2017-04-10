@@ -1,0 +1,6 @@
+compiler:
+  build: ./haskell/compiler/image
+  volumes:
+    - ${HASKELL_PATH}:/app
+    - ${STACK_PATH}/local:/app/.stack-work
+    - ${STACK_PATH}/global:/root/.stack

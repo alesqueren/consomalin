@@ -2,11 +2,11 @@
 set -e
 
 function ex () {
-    COLOR='\033[0;35m'
-    NC='\033[0m'
-    echo ""
-    echo -e "${COLOR}[ci]$ "$1"${NC}"
-    eval $1
+  COLOR='\033[0;35m'
+  NC='\033[0m'
+  echo ""
+  echo -e "${COLOR}[ci]$ "$1"${NC}"
+  eval $1
 }
 
 myself=$(readlink -f ${BASH_SOURCE[0]})
