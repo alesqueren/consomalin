@@ -91,4 +91,7 @@ export default {
 </script>
 
 <style scoped>
+.row.no-gutters{
+  border: 1px solid grey;
+}
 </style>

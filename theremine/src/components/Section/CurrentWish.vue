@@ -9,9 +9,12 @@
           span.badge.badge-success.groupName {{ currentWish.gname }}
         .input-input
           input#search-text.form-control(type="text" v-model="currentWish.name" v-on:keyup="rename")
+      span.input-group-addon.search-deleteWish.alert.alert-danger(@click="remove")
+        span.fa.fa-eraser &nbsp;&nbsp;&nbsp;
+        span Effacer de ma liste
       span.input-group-addon.search-addGroup(@click="addGroup")
         span.fa.fa-list-ul &nbsp;&nbsp;&nbsp;
-        span Creer une liste de {{ currentWish.name }}
+        span Créer une liste de {{ currentWish.name }}
 </template>
 
 <script>
@@ -56,6 +59,13 @@ export default {
           value: gid,
         });
         router.push({ name: 'wishlist' });
+      });
+    },
+    remove() {
+      const wid = this.currentWishId;
+      const selected = false;
+      this.$store.dispatch('selection/selectWish', { wid, selected }).then(() => {
+        this.$store.dispatch('currentWish/next');
       });
     },
   },
@@ -104,11 +114,18 @@ export default {
 .search-search{
   display: table-cell;
   color: #0275d8;
+  font-size: 1.5em;
 }
 .search-text{
   display: table-cell;
 }
 .search-addGroup{
+  cursor: pointer;
   display: table-cell;
+}
+.search-deleteWish{
+  cursor: pointer;
+  display: table-cell;
+  width: 130px;
 }
 </style>

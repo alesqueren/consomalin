@@ -2,7 +2,6 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '@/components/Home';
 import Login from '@/components/Login';
-import Register from '@/components/Register';
 import Wishlist from '@/components/Wishlist/Index';
 import Section from '@/components/Section/Index';
 import Basket from '@/components/Basket/Index';
@@ -24,11 +23,6 @@ const router = new Router({
       name: 'login',
       path: '/login',
       component: Login,
-    },
-    {
-      name: 'register',
-      path: '/register',
-      component: Register,
     },
     {
       name: 'wishlist',

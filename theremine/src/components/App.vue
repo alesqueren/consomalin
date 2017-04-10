@@ -9,14 +9,9 @@
       div#steps.left
         ul.header-tabs
           li.header-tab
-            router-link.title(:to="{ name: 'wishlist' }") Liste
-          li.header-tab
-            router-link.title(:to="{ name: 'section' }") Rayons
-              span.title-desc {{matchedWishesLength}}/{{selectedWishesNb}}
+            router-link.title(:to="{ name: 'wishlist' }") Listes
           li.header-tab
             router-link.title(:to="{ name: 'basket' }") Panier
-              div.title-desc(style=" position:absolute; bottom: 25px;") {{matchedWishesLength}}/{{selectedWishesNb}}
-              div.title-desc(style="font-size: 0.8em; position:absolute; bottom: 0px;")
 
           li.header-tab
             router-link.title(:to="{ name: 'withdraw' }") Retrait

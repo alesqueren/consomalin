@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div.wish.list-group-item(v-on:click.stop="select")
+  div.wish(v-on:click.stop="select")
     input(type="checkbox" name="select" v-model="selected")
     input(v-if='editing'
       ref="editinput" 
@@ -78,10 +78,22 @@ export default {
 </script>
 
 <style scoped>
+.wish{
+/*  min-width: 150px;
+  min-height: 50px;*/
+  cursor: pointer;
+  position: relative;
+  list-style: none;
+  border-bottom: 1px dotted #72c4ff ;
+  text-indent: 25px;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 10px 0 10px;
+  text-transform: capitalize;
+}
 .wish-name{
   font-family: gunny;
   font-size: 2em;
-  font-weight: bold;
 }
 .wish .buttns-action {
   visibility: hidden;
@@ -106,28 +118,31 @@ export default {
 [type="checkbox"]:checked + label {
   position: relative;
   padding-left: 35px;
-  cursor: pointer;
 }
 [type="checkbox"]:not(:checked) + label:before,
 [type="checkbox"]:checked + label:before {
   content: '';
   position: absolute;
-  left:0; top: 2px;
+  left:-16px; top: 12px;
   width: 25px; height: 25px;
   border: 1px solid #aaa;
   background: #f8f8f8;
   border-radius: 3px;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.3);
+}
+[type="checkbox"]:not(:checked):disabled + label:before,
+[type="checkbox"]:checked:disabled + label:before {
+  box-shadow: inset 0 1px 28px rgba(0,0,0,.3);
 }
 
-[type="checkbox"]:not(:checked) + label:after,
-[type="checkbox"]:checked + label:after {
+[type="checkbox"]:not(:checked):not(:disabled) + label:after,
+[type="checkbox"]:checked:not(:disabled) + label:after {
   content: '✔';
   position: absolute;
-  top: -2px; left: 1px;
+  top: 2px; left: -40px;
   font-size: 30px;
   color: #09ad7e;
-  transition: all .2s;
+  transition: all .1s;
 }
 
 [type="checkbox"]:not(:checked) + label:after {
@@ -139,3 +154,4 @@ export default {
   transform: scale(1);
 }
 </style>
+

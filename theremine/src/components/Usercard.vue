@@ -1,13 +1,12 @@
 <template lang="pug">
   div.right(v-if='user === false')
     router-link(:to='{ name: "login" }') Se connecter
-    router-link(:to='{ name: "register" }') S'enregister
   div.right(v-else)
     .dropdown(style="line-height: 10px;")
       button#dropdownMenuButton.btn.btn-secondary.btn-sm.dropdown-toggle.user-name(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
         span.fa.fa-user-o
       .dropdown-menu(aria-labelledby='dropdownMenuButton')
-        a.dropdown-item.btn.btn-info.btn-sm.pointer(href="#", @click.prevent='logout')
+        a.dropdown-item.btn.btn-info.btn-sm.pointer(href="#")
           span {{ user }}
         div.dropdown-divider
         a.dropdown-item.btn.btn-info.btn-sm.pointer(href="#", @click.prevent='logout')

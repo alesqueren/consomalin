@@ -1,6 +1,6 @@
 <template lang='pug'>
   div.col.main
-    div#notepad
+    div#groups
       .lines
       h2.title Mes listes de courses
       Group(v-for="gid in gids" 
@@ -33,7 +33,7 @@ export default {
 };
 </script>
 <style>
-#notepad{
+#groups{
 /*  background-color: #f5f5f5;
   width: 600px;
   margin: 0 auto;
@@ -45,6 +45,7 @@ export default {
   min-width: 250px;
   font-family: courier, monospace;
   border: 1px solid #dedede;
+  background-color: white;
 }
 .lines {
   position: absolute;
@@ -55,7 +56,7 @@ export default {
   margin-left: 65px;
   z-index: 2;
 }
-.title {
+#groups .title {
   font-family: gunny;
   font-size: 2rem;
   text-decoration: underline;
