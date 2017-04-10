@@ -1,5 +1,6 @@
 /docker-compose.yml
 /commands.yml
+/compiler.yml
 /docker_dev
 npm-debug.log
 *.log

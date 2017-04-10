@@ -1,6 +1,0 @@
-compiler:
-    build: ./image
-    volumes:
-        - /root/apps/gocdagent/pipelines/Drive/haskell/:/app
-        - /root/apps/stack/local:/app/.stack-work
-        - /root/apps/stack/global:/root/.stack
