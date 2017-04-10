@@ -1,4 +1,4 @@
-FROM node:7.4
+FROM haskell:8
 
 WORKDIR app
 ADD ./bin/metronome metronome
