@@ -1,16 +1,21 @@
 <template lang='pug'>
-  div.group.list-group-item.col-2(v-bind:class="{'bg-primary': isActive, 'bg-info': selected && ! isActive}" @click="toggleActivation")
-    input(type="checkbox" name="selected" v-model="selected")
-    input(v-if='editing'
+  div.group(v-bind:class="{'bg-info': isActive, 'bg-infoo': selected && ! isActive, 'strong': selectedWishesNb}"
+      @click="toggleActivation")
+    input(type="checkbox"
+      name="selected"
+      v-model="selected",
+      :disabled="wishesNb === 0")
+    input(v-if='editing',
       ref="editinput"
       v-model="editingName"
       v-on:keyup.enter="validEdition"
       v-on:blur="finishEdition")
-    button.btn.btn-success.btn-sm(v-if='editing' @click.stop="validEdition" onclick="event.stopPropagation()")
+    button.btn.btn-success.btn-sm(v-if='editing' @click.stop="validEdition" onclick="event.stopPropagation()" @keyup.esc="finishEdition")
       i.fa.fa-check.fa-xs
     label.groupName(v-else for="selected" @click="toggleSelection") {{ name }}
 
-    span.filling {{ selectedWishesNb }} / {{ wishesNb }}
+    div.filling
+      span {{ selectedWishesNb }} / {{ wishesNb }}
     div.buttns-action(v-if='!editing')
       i.fa.fa-pencil.fa-xs.buttn-action(@click.stop="startEdition")
       i.fa.fa-trash-o.fa-xs.buttn-action(v-on:click.stop="remove")
@@ -89,19 +94,33 @@ export default {
 
 <style scoped>
 .group{
-  min-width: 150px;
-  min-height: 50px;
+/*  min-width: 150px;
+  min-height: 50px;*/
+  position: relative;
+  list-style: none;
+  border-bottom: 1px dotted #ccc;
+  text-indent: 25px;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 10px 0 10px;
+  text-transform: capitalize;
+}
+.group:hover{
+  background-color: #f0f0f0;
+  -webkit-transition: all 0.2s;
+  -moz-transition:    all 0.2s;
+  -ms-transition:     all 0.2s;
+  -o-transition:      all 0.2s;
 }
 .groupName{
   font-family: gunny;
   font-size: 2em;
-  font-weight: bold;
 }
 .group .buttns-action {
   visibility: hidden;
   position: absolute;
   top: 2px;
-  right: 2px;
+  right: 75px;
 }
 .group:hover .buttns-action {
   visibility: visible;
@@ -113,8 +132,11 @@ export default {
 .filling {
   display: block;
   position: absolute;
-  bottom: 5px;
+  bottom: -2px;
   right: 5px;
+}
+.strong{
+  font-weight: bold;
 }
 [type="checkbox"]:not(:checked),
 [type="checkbox"]:checked {
@@ -132,19 +154,24 @@ export default {
 [type="checkbox"]:checked + label:before {
   content: '';
   position: absolute;
-  left:0; top: 2px;
+  left:-16px; top: 12px;
   width: 25px; height: 25px;
   border: 1px solid #aaa;
   background: #f8f8f8;
   border-radius: 3px;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,.3)
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.3);
+}
+[type="checkbox"]:not(:checked):disabled + label:before,
+[type="checkbox"]:checked:disabled + label:before {
+  cursor: auto;
+  box-shadow: inset 0 1px 28px rgba(0,0,0,.3);
 }
 
-[type="checkbox"]:not(:checked) + label:after,
-[type="checkbox"]:checked + label:after {
+[type="checkbox"]:not(:checked):not(:disabled) + label:after,
+[type="checkbox"]:checked:not(:disabled) + label:after {
   content: '✔';
   position: absolute;
-  top: -2px; left: 1px;
+  top: 2px; left: -40px;
   font-size: 30px;
   color: #09ad7e;
   transition: all .1s;

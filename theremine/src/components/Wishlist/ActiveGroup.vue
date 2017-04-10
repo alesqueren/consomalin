@@ -1,8 +1,8 @@
 <template lang='pug'>
   div
-    div.col.activeGroup.col-3(v-if="wishgroup")
+    div.activeGroup(v-if="wishgroup")
       h2 Elements de {{ wishgroup.name }}:
-      div.wishgroup.list-group-item.col-3(v-if='wishgroup')
+      div.wishgroup(v-if='wishgroup')
         div
           Wish(v-for="wish in wishgroup.wishes" 
             v-bind:wid="wish.id" 

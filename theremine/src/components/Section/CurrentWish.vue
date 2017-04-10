@@ -67,6 +67,9 @@ export default {
   padding-bottom: 25px;
 }
 #search-text{
+  font-family: gunny;
+  font-size: 2em;
+  font-weight: bolder;
   text-align: center;
   border: none;
   height: 44px;

@@ -12,6 +12,12 @@
                   v-bind:maxProducts="maxProducts" 
                   v-bind:pid="pid" 
                   v-bind:key="i")
+          .container(v-else-if="basket.length === 0")
+            .row
+              div
+                span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
+                  router-link(:to='{ name: "wishlist" }')
+                    button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
           .container(v-else-if="basketFull")
             .row
               div
@@ -19,7 +25,7 @@
                   router-link(:to='{ name: "basket" }')
                     button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
                 span  pour finaliser la commande.
-        .col-md-2
+        .col-md-2(v-if="basket.length != 0")
             wish-item(v-for="wid in basket" v-bind:wid="wid" v-bind:key="wid")
             div Total : {{total}} €
             div Produits au panier : {{matchedWishesLength}}/{{basket.length}}

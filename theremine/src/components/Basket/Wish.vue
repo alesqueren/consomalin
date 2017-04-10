@@ -1,6 +1,6 @@
 <template lang='pug'>
   div.wish
-    span.fa.fa-eraser.wish-erase(@click.prevent.stop='removeWish($event)')
+    span.fa.fa-eraser.wish-erase(@click.prevent.stop='remove()')
     span.wish-name(v-if='!productInfos') {{ wish.name }}
     div.product-infos(v-if='productInfos')
       img.product-left(v-bind:src='productInfos.imageUrl')
