@@ -1,43 +1,27 @@
 <template lang='pug'>
   div#wishes
-    .container-fluid
-      .row
-        .col-md-10
-          CurrentWish
-          .container(v-if="!currentWishIsEmpty")
-            .row(v-if="currentWishResults")
-                ProductItem(
-                  v-for="(pid, key, i) in currentWishResults" 
-                  v-if="i < maxProducts" 
-                  v-bind:maxProducts="maxProducts" 
-                  v-bind:pid="pid" 
-                  v-bind:key="i")
-          .container(v-else-if="basket.length === 0")
-            .row
-              div
-                span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
-                  router-link(:to='{ name: "wishlist" }')
-                    button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
-          .container(v-else-if="basketFull")
-            .row
-              div
-                span Votre liste de course est complète ! Vous pouvez 
-                  router-link(:to='{ name: "basket" }')
-                    button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
-                span  pour finaliser la commande.
-        .col-md-2(v-if="basket.length != 0")
-            wish-item(v-for="wid in basket" v-bind:wid="wid" v-bind:key="wid")
-            div Total : {{total}} €
-            div Produits au panier : {{matchedWishesLength}}/{{basket.length}}
+    CurrentWish
+    div(v-if="currentWishResults && !currentWishIsEmpty")
+      ProductItem(
+        v-for="(pid, key, i) in currentWishResults" 
+        v-if="i < maxProducts"
+        v-bind:maxProducts="maxProducts" 
+        v-bind:pid="pid" 
+        v-bind:key="i")
+    .container(v-else-if="basket.length === 0")
+        div
+          span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
+            router-link(:to='{ name: "wishlist" }')
+              button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
+    .container(v-else-if="basketFull")
+        div
+          span Votre liste de course est complète ! Vous pouvez 
             router-link(:to='{ name: "basket" }')
-              button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier
-
-    router-link(:to='{ name: "wishlist" }')
-      button.btn.btn-primary.left(type="button") Revenir à la wishlist
+              button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
+          span  pour finaliser la commande.
 </template>
 
 <script>
-import WishItem from './WishItem';
 import CurrentWish from './CurrentWish';
 import ProductItem from './ProductItem';
 
@@ -121,7 +105,7 @@ export default {
       // }
     },
   },
-  components: { CurrentWish, WishItem, ProductItem },
+  components: { CurrentWish, ProductItem },
 };
 </script>
 

@@ -54,16 +54,8 @@ body{
   color: #2c3e60;
 }
 
-html {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  width: 100%;
-  height: 100%;
-  margin: 0;
 }
 
 a {

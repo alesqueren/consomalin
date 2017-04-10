@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div.product-item.list-group-item.col-md-2(@click="selectProduct()")
+  div.product-item(@click="selectProduct()")
    img.product-img.center(v-bind:src="product.imageUrl")
    .name.center {{product.name}}
    .price <b>{{product.price}}&nbsp;€</b>
@@ -35,6 +35,13 @@ export default {
 </script>
 
 <style scoped>
+.product-item{
+  background-color: white;
+  border: 1px solid grey;
+  width:150px;
+  height:150px;
+  float: left;
+}
 .product-img{
   width:100px;
   height:100px;

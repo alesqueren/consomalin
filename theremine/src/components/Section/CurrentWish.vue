@@ -6,7 +6,7 @@
           span.fa.fa-search
       .input-wrapper.search-input(onclick="javascript:document.getElementById('search-text').focus();")
         .input-badge
-          span.badge.badge-success {{ currentWish.gname }}
+          span.badge.badge-success.groupName {{ currentWish.gname }}
         .input-input
           input#search-text.form-control(type="text" v-model="currentWish.name" v-on:keyup="rename")
       span.input-group-addon.search-addGroup(@click="addGroup")
@@ -65,6 +65,9 @@ export default {
 <style scoped>
 #currentWish{
   padding-bottom: 25px;
+}
+.groupName{
+  font-size: 1.5em;
 }
 #search-text{
   font-family: gunny;
