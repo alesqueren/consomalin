@@ -3,7 +3,7 @@ FROM haskell:8
 RUN apt-get update && \
     apt-get install -y git libcurl4-openssl-dev
 
-WORKDIR /app
+WORKDIR /bin
 ADD compile.sh .
 
-CMD /app/compile.sh
+CMD compile.sh
