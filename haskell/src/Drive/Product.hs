@@ -52,7 +52,7 @@ data ProductSummary = ProductSummary
   , psPrice           :: !Price
   , psImageUrl        :: !TextURI
   , psPriceByQuantity :: !Price
-  , psquantity        :: Maybe Int64
+  , psQuantity        :: Maybe Int64
   , psQuantityUnit    :: Maybe Text
   }
   deriving (Typeable, Eq, Show, Generic)
@@ -62,11 +62,13 @@ instance ToJSON Price where
   toJSON = Number . fromPrice
 instance FromJSON ProductSummary
 instance ToJSON ProductSummary where
-  toJSON ProductSummary{..} = object [
-    "name"            .= psName,
-    "imageUrl"        .= psImageUrl,
-    "price"           .= psPrice,
-    "priceByQuantity" .= psPriceByQuantity]
+  toJSON ProductSummary{..} = 
+    object [ "name"            .= psName
+           , "imageUrl"        .= psImageUrl
+           , "price"           .= psPrice
+           , "priceByQuantity" .= psPriceByQuantity
+           , "quantityUnit"    .= psQuantityUnit
+           ]
 
 data Product = Product
   { pid             :: !Text
@@ -106,7 +108,6 @@ instance Val Product where
               , "benefits" =: benefits p
               , "composition" =: composition p
               ]
-  -- TODO: set quantity...
   cast' (Doc doc) = do
     id <- lookup "_id" doc :: Maybe Text
     price <- lookup "price" doc :: Maybe Price
@@ -115,13 +116,12 @@ instance Val Product where
     nameShort <- lookup "nameShort" doc :: Maybe Text
     nameLong <- lookup "nameLong" doc :: Maybe Text
     imageUrl <- lookup "imageUrl" doc :: Maybe TextURI
-    -- quantity <- lookup "quantity" doc :: Maybe Int64
-    -- quantityUnit <- lookup "quantityUnit" doc :: Maybe Text
-    -- description <- lookup "description" doc :: Maybe Text
-    -- benefits <- lookup "benefits" doc :: Maybe Text
-    -- composition <- lookup "composition" doc :: Maybe Text
-    -- return $ Product id price priceByQuantity nameShort nameLong imageUrl (Just quantity) (Just quantityUnit) (Just description) (Just benefits) (Just composition)
-    return $ Product id price priceByQuantity name nameShort nameLong imageUrl Nothing Nothing Nothing Nothing Nothing
+    let quantity = lookup "quantity" doc :: Maybe Int64
+    let quantityUnit = lookup "quantityUnit" doc :: Maybe Text
+    let description = lookup "description" doc :: Maybe Text
+    let benefits = lookup "benefits" doc :: Maybe Text
+    let composition = lookup "composition" doc :: Maybe Text
+    return $ Product id price priceByQuantity name nameShort nameLong imageUrl quantity quantityUnit description benefits composition
   cast' _ = Nothing
 
 summarize :: Product -> ProductSummary
@@ -132,7 +132,7 @@ summarize p =
   , psPrice           = price p
   , psImageUrl        = imageUrl p
   , psPriceByQuantity = priceByQuantity p
-  , psquantity        = quantity p
+  , psQuantity        = quantity p
   , psQuantityUnit    = quantityUnit p
   }
 
