@@ -23,7 +23,6 @@ export default {
   props: ['gid', 'wid'],
   data() {
     return {
-      // name: this.wish.name,
       editingName: null,
     };
   },
