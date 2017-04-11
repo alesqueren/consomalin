@@ -12,7 +12,7 @@ const actions = {
 
   fetchSearch: ({ commit, state }, { name }) => {
     if (!state.searchs[name]) {
-      const uri = 'search?s=' + name;
+      const uri = 'search?s="' + name + '"';
       resources.products.get({ uri }, {}).then(({ body }) => {
         const products = JSON.parse(body);
         // todo: see array v-for

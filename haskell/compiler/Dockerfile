@@ -6,4 +6,4 @@ RUN apt-get update && \
 WORKDIR /app
 ADD compile.sh .
 
-CMD compile.sh
+CMD /app/compile.sh
