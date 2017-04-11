@@ -36,7 +36,7 @@ then
   exit 1
 fi
 
-ex "cp docker/docker-compose.yml docker/commands.yml."
+ex "cp docker/docker-compose.yml docker/commands.yml ."
 ex "envsubst < ci/compiler.yml > compiler.yml"
 
 ex "docker-compose -f compiler.yml build --pull"

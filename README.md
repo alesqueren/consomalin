@@ -14,13 +14,14 @@ git clone ssh://git@git.consomalin.ovh:2222/drive/drive.git
 git clone ssh://git@git.consomalin.ovh:2222/drive/state.git drive/docker/state
 
 cd drive/
-cp docker/docker-compose.yml .
-docker-compose -f haskell/compiler/docker-compose.yml up
+cp docker/*.yml .
+docker-compose -f compiler.yml up
+docker-compose build
 docker-compose up -d
 ```
 
 ## Update
 ```bash
-docker-compose -f haskell/compiler/docker-compose.yml up
+docker-compose -f compiler.yml up
 docker-compose up -d --build
 ```
