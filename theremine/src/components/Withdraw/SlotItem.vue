@@ -57,20 +57,6 @@ export default {
     },
     styleObject() {
       const attendance = 100 - (parseFloat(this.pickupSlot.attendanceLevel) * 100);
-      console.log(attendance);
-      // // vert rgb(130,234,109)
-      // // rouge rgb(245,20,9)
-      // const rmin = 130;
-      // const rdiff = 245 - 130;
-      // const gmin = 234;
-      // const gdiff = 234 - 20;
-      // const bmin = 109;
-      // const bdiff = 109 - 9;
-      // const r = parseInt(rmin + (rdiff * attendance), 10);
-      // const g = parseInt(gmin - (gdiff * attendance), 10);
-      // const b = parseInt(bmin - (bdiff * attendance), 10);
-      // // var hsv = rgb2hsv(r,g,b);
-      // // backgroundColor = 'rgb('+hsv.h+','+hsv.s+','+hsv.v+')';
       const color = numberToColorHsl(attendance);
       const backgroundColor = color;
       return {

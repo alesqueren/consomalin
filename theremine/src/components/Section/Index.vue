@@ -1,18 +1,31 @@
 <template lang='pug'>
   div#wishes
     CurrentWish
-    div(v-if="currentWishResults && !currentWishIsEmpty")
+    div(v-if="!currentWishIsEmpty && currentWishResults")
       ProductItem(
         v-for="(pid, key, i) in currentWishResults" 
         v-if="i < maxProducts"
         v-bind:maxProducts="maxProducts" 
         v-bind:pid="pid" 
         v-bind:key="i")
+    div.waiting-box(
+      v-if="!currentWishIsEmpty && !currentWishResults"
+      v-for="i in 40"
+      v-bind:key="i")
+      img.product-img.center
+      .product-name.center
+      div.count-input
+        input.quantity(type='number', step='1', value='0', min='1', max='256')
+      div.price
+      div.btn-atb
+        i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
+    div.nothing-box(v-if="!currentWishIsEmpty && currentWishResults && !currentWishResults[0]")
+      span Aucun produits ne correspond à cette recherche
     .container(v-else-if="basket.length === 0")
-        div
-          span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
-            router-link(:to='{ name: "wishlist" }')
-              button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
+      div
+        span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
+          router-link(:to='{ name: "wishlist" }')
+            button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
     .container(v-else-if="basketFull")
         div
           span Votre liste de course est complète ! Vous pouvez 
@@ -110,4 +123,44 @@ export default {
 </script>
 
 <style scoped>
+.waiting{
+  background-color: white;
+  width: 150px;
+  height: 150px;
+}
+.waiting-box{
+  background-color: #eceeef;
+  border: 1px solid rgba(0,0,0,.125);
+  width: 162px;
+  height: 275px;
+  padding: 5px 5px 0 5px;
+  float: left;
+  margin: 5px;
+}
+.product-img{
+  background-color: white;
+  width:150px;
+  height:150px;
+}
+.product-name{
+  height: 50px;
+}
+.btn-atb{
+  clear: both;
+  font-size: 1em;
+  font-weight: bold;
+  background-color: white;
+  cursor: pointer;
+  text-align: center;
+  padding: 2px;
+  width: 163px;
+  margin-left: -6px;
+  height: 32px;
+  line-height: 32px;
+}
+.text-atb{
+  line-height: 32px;
+}
+.nothing-box{
+}
 </style>

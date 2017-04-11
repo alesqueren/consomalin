@@ -96,9 +96,6 @@ const actions = {
 const mutations = {
 
   setWishProduct: (state, { gid, wid, pid, quantity }) => {
-    console.log(state);
-    console.log(gid);
-    console.log(wid);
     const entity = state[gid][wid];
     Vue.set(entity, 'pid', pid);
     Vue.set(entity, 'quantity', quantity);

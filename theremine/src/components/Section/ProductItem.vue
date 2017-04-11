@@ -10,7 +10,7 @@
       div <b>{{product.price}}&nbsp;€</b>
       div.pu {{product.priceByQuantity}}&nbsp;€/u
     div.btn-atb(@click="selectProduct()")
-      i.fa.fa-shopping-basket.fa-xs &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
+      i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
 </template>
 
 <script>
@@ -60,8 +60,8 @@ export default {
 .product-item{
   background-color: white;
   border: 1px solid rgba(0,0,0,.125);
-  width:170px;
-  height:100%;
+  width:162px;
+  height:275px;
   padding: 5px 5px 0 5px;
   float: left;
   margin: 5px;
@@ -81,10 +81,13 @@ export default {
   cursor: pointer;
   text-align: center;
   padding: 2px;
-  width: 170px;
-  height: 40px;
-  line-height: 40px;
-  margin-left: -5px;
+  width: 163px;
+  margin-left: -6px;
+  height: 32px;
+  line-height: 32px;
+}
+.text-atb{
+  line-height: 32px;
 }
 .price{
   font-size: 1.2em;

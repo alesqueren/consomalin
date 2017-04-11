@@ -1,5 +1,5 @@
 <template lang="pug">
-  #app
+  #app(@click='finishDeletion')
     div#header
       div.left
         router-link.title(:to="{ name: 'home' }")
@@ -32,12 +32,18 @@ export default {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
   },
+  methods: {
+    finishDeletion() {
+      this.$store.dispatch('singleton/unset', {
+        key: 'deletingGroup',
+      });
+    },
+  },
   components: { Usercard },
 };
 </script>
 
 <style>
-@import '../static/plugins/font-awesome-4.7.0/css/font-awesome.min.css';
 
 body{
   background-color: #f2f4f7;

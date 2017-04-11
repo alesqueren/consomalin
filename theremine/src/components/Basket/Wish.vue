@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div.wish
+  div.wish(@click='select()')
     span.fa.fa-eraser.wish-erase(@click.prevent.stop='remove()')
     span.wish-name(v-if='!productInfos') {{ wish.name }}
     div.product-infos(v-if='productInfos')
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import router from '../../router';
 
 export default {
   props: ['wid', 'gid'],
@@ -56,6 +57,17 @@ export default {
     },
   },
   methods: {
+    select() {
+      console.log('select');
+      this.$store.dispatch('currentWish/set', {
+        wid: this.wid,
+      }).then(
+        this.$store.dispatch('product/fetchSearch', {
+          name: this.wish.name,
+        }),
+        router.push({ name: 'section' }),
+      );
+    },
     increase() {
       if (this.productQuantity < 64) {
         const gid = this.wish.gid;
@@ -93,6 +105,7 @@ export default {
 }
 
 .wish {
+  cursor: pointer;
   position: relative;
   min-width: 350px;
   padding: 5px;
@@ -151,7 +164,10 @@ export default {
   top: 5px;
   right: 5px;
   color: red;
-  z-index: 10;
+  z-index: 1;
+}
+.wish-erase:hover{
+  font-size: 1.1em;
 }
 .wish:hover .wish-erase{
   visibility: visible;

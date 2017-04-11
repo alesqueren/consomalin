@@ -14,7 +14,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @font-face {
     font-family: gunny;
     src: url('/static/fonts/gnyrwn971.ttf');
@@ -23,11 +23,5 @@ export default {
 #wishlist {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-.no-gutter {
-  margin-bottom:75px;
-}
-div.active-group {
-  display: inline-block;
 }
 </style>
