@@ -19,7 +19,7 @@ ENV SERVER_PORT=80 \
     MONGO_URI=mongodb://mongo:27017/ \
     KIVA_HOST=http://kiva/ \
     METRONOME_HOST=http://metronome-cache \
-    RABBIT_URI=amqp://rabbitmq:5672
+    RABBIT_URI=amqp://rabbitmq:5672/
     
 HEALTHCHECK \
   CMD check localhost $MONGO_URI $KIVA_HOST $METRONOME_HOST $RABBIT_URI
