@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import router from '../../router';
 import Wish from './Wish';
 
 export default {
@@ -32,6 +33,7 @@ export default {
         key: 'activeGroupId',
         value: this.gid,
       });
+      router.push({ name: 'wishlist' });
     },
   },
   components: { Wish },
@@ -54,6 +56,7 @@ export default {
   width: 100%;
 }
 .groupName {
+  cursor: pointer;
   font-family: gunny;
   color: black;
   font-size: 2.5em;

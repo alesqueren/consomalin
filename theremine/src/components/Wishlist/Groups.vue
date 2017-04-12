@@ -10,7 +10,10 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import Group from './Group';
+
+const $ = window.$;
 
 export default {
   data() {
@@ -24,14 +27,26 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch('singleton/set', {
-      key: 'activeGroupId',
-      value: this.gids[0],
-    });
+    if (!this.$store.state.singleton.activeGroupId) {
+      this.$store.dispatch('singleton/set', {
+        key: 'activeGroupId',
+        value: this.gids[0],
+      });
+    }
   },
   methods: {
     addWishGroup() {
-      this.$store.dispatch('wishGroup/addGroup', { name: this.newGroupName });
+      this.$store.dispatch('wishGroup/addGroup', {
+        name: this.newGroupName,
+      }).then((gid) => {
+        this.$store.dispatch('singleton/set', {
+          key: 'activeGroupId',
+          value: gid,
+        });
+        Vue.nextTick(() => {
+          $('#newWish').focus();
+        });
+      });
       this.newGroupName = '';
     },
   },

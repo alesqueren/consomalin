@@ -9,9 +9,6 @@
           v-bind:gid="wishgroup.id" 
           v-bind:key="wish.id")
         input#newWish(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Ajouter un produit" onclick="event.stopPropagation()")
-
-    router-link(:to='{ name: "section" }')
-      button.btn.btn-success.right(type="button") Passer aux rayons
 </template>
 
 <script>
@@ -48,4 +45,7 @@ export default {
 </script>
 
 <style scoped>
+.notepad .title {
+  text-transform: capitalize;
+}
 </style>

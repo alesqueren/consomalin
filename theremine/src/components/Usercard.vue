@@ -1,6 +1,7 @@
 <template lang="pug">
   div.right(v-if='user === false')
-    router-link(:to='{ name: "login" }') Se connecter
+    router-link(:to='{ name: "login" }')
+      button.btn.btn-primary.connexion(type="button") Connexion/Inscription
   div.right(v-else)
     .dropdown(style="line-height: 10px;")
       button#dropdownMenuButton.btn.btn-secondary.btn-sm.dropdown-toggle.user-name(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
@@ -31,6 +32,9 @@ export default {
 };
 </script>
 <style>
+.connexion{
+  position: relative;
+}
 .dropdown{
   top: 16px;
   margin-right: 16px;

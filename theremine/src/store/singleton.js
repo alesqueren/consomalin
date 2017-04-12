@@ -5,8 +5,10 @@ const actions = {
     commit('set', { key, value });
   },
 
-  unset: ({ commit }, { key }) => {
-    commit('unset', { key });
+  unset: ({ state, commit }, { key }) => {
+    if (state && state[key]) {
+      commit('unset', { key });
+    }
   },
 
   toggle: ({ commit }, { key, value }) => {
@@ -21,7 +23,7 @@ const mutations = {
   },
 
   unset: (state, { key }) => {
-    Vue.set(state, key, null);
+    Vue.set(state, key, {});
   },
 
   toggle: (state, { key, value }) => {
@@ -36,8 +38,9 @@ export default {
   state: {
     selectedSlot: null,
     currentWishId: null,
-    inlineEditionId: null,
+    actionnedEntity: {},
     activeGroupId: null,
+    registering: null,
   },
   actions,
   mutations,

@@ -70,7 +70,8 @@ const actions = {
     commit('renameWish', { wid, name });
   },
 
-  setWishProduct: ({ rootState, commit }, { gid, wid, pid, quantity }) => {
+  setWishProduct: ({ rootState, commit, getters }, { wid, pid, quantity }) => {
+    const gid = getters.getWish({ wid }).gid;
     commit('selection/setWishProduct', { gid, wid, pid, quantity }, { root: true });
     if (rootState.selection[gid][wid].id) {
       resources.wishProduct.save({ gid, wid }, { pid, quantity });
@@ -82,8 +83,8 @@ const actions = {
   removeWish: ({ commit, getters }, { wid }) => {
     const gid = getters.getWish({ wid }).gid;
     resources.wish.delete({ gid, wid }).then();
+    commit('selection/unselectWish', { gid, wid }, { root: true });
     commit('removeWish', { wid });
-    commit('selection/selectWish', { gid, wid, selected: false }, { root: true });
   },
 
 };

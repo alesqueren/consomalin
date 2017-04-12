@@ -8,6 +8,7 @@
   border: 1px solid #dedede;
   background-color: white;
 }
+
 .notepad .redLine {
   position: absolute;
   border-left: 1px solid #ffaa9f;
@@ -15,16 +16,17 @@
   width: 4px;
   height: 100%;
   margin-left: 65px;
-  z-index: 2;
+  z-index: 3;
 }
+
 .notepad .title {
-  text-transform: capitalize;
   font-family: gunny;
   font-size: 2em;
   text-decoration: underline;
   text-align: center;
   margin-left: 65px;
 }
+
 .notepad input{
   width: 100%;
   font-family: gunny;
@@ -35,6 +37,36 @@
   padding-left: 92px;
 }
 
+.notepad .edition{
+  width: 100%;
+  font-family: gunny;
+}
+
+.notepad .edition {
+  position: relative;
+  width: 100%;
+  margin-left: -50px;
+  z-index: 2;
+}
+.notepad .btn-edition {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  width: 60px;
+  height: 52px;
+  z-index: 3;
+}
+
+.confirmDeletion{
+  text-transform: none;
+  cursor: pointer;
+  position: absolute;
+  font-size: 1em;
+  font-family: arial;
+  top: 0;
+  right: 25px;
+  z-index: 2;
+}
 .line{
   cursor: pointer;
   position: relative;
@@ -47,6 +79,7 @@
 }
 
 .line:hover{
+  cursor: pointer;
   background-color: #f0f0f0;
   -webkit-transition: all 0.2s;
   -moz-transition:    all 0.2s;
@@ -55,7 +88,7 @@
 }
 
 .line .name{
-  cursor: default;
+  cursor: pointer;
   font-family: gunny;
   font-size: 2em;
 }

@@ -19,10 +19,16 @@ const actions = {
 
 const mutations = {
   resetStore: (state) => {
-    Vue.set(state, 'wishGroups', null);
-    Vue.set(state, 'singleton', null);
-    Vue.set(state.product, 'searchs', null);
-    Vue.set(state.product, 'details', null);
+    Vue.set(state, 'wishGroups', {});
+    Vue.set(state, 'singleton', {
+      selectedSlot: null,
+      currentWishId: null,
+      actionnedEntity: {},
+      activeGroupId: null,
+      registering: null,
+    });
+    Vue.set(state.product, 'searchs', {});
+    Vue.set(state.product, 'details', {});
   },
 
   setUserData(state, { wishGroups, currentBasket }) {

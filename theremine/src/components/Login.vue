@@ -8,12 +8,12 @@
               .col-xs-6.col-md-6
                 a#login-form-link(
                   v-bind:class="{'active': !registering}",
-                  @click="loginW",
+                  @click="loginM",
                   href='#') Se connecter
               .col-xs-6.col-md-6
                 a#register-form-link(
                   v-bind:class="{'active': registering}",
-                  @click="registerW",
+                  @click="registerM",
                   href='#') S'inscrire
             hr
           .panel-body
@@ -23,11 +23,17 @@
                   .form-group
                     input#username.form-control(v-model="username", type='text', name='username', tabindex='1', placeholder='Email', value='')
                   .form-group
-                    input#password.form-control(v-model="password", name='password', tabindex='2', placeholder='Mot de passe')
+                    input#password.form-control(v-model="password", type='password', name='password', tabindex='2', placeholder='Mot de passe')
                   .form-group
+                    p.danger.danger-alert(v-if="error") Utilisateur ou mot de passe incorrect.
                     .row
                       .col-sm-6.col-sm-offset-3
-                        input#login-submit.form-control.btn.btn-login(name='login-submit', tabindex='4', value='Se connecter', @click="login")
+                        input#login-submit.submit.form-control.btn.btn-login(
+                          type.prevent='submit',
+                          name='login-submit',
+                          tabindex='4',
+                          value='Se connecter',
+                          @click="login")
                 form#register-form(v-if="registering")
                   .form-group
                     input#email.form-control(v-model="username", type='email', name='username', tabindex='1', placeholder='Email', value='')
@@ -37,7 +43,12 @@
                     p.danger.danger-alert(v-if="error") Cet utilisateur existe deja.
                     .row
                       .col-sm-6.col-sm-offset-3
-                        input#register-submit.form-control.btn.btn-register(name='register-submit', tabindex='4', value="S'inscrire", @click="register")
+                        input#register-submit.submit.form-control.btn.btn-register(
+                          type='submit',
+                          name='register-submit',
+                          tabindex='4',
+                          value="S'inscrire",
+                          @click.prevent="register")
 </template>
 
 <script>
@@ -47,15 +58,24 @@ export default {
       username: '',
       password: '',
       error: false,
-      registering: false,
     };
   },
-  methods: {
-    registerW() {
-      this.registering = true;
+  computed: {
+    registering() {
+      return this.$store.state.singleton && this.$store.state.singleton.registering;
     },
-    loginW() {
-      this.registering = false;
+  },
+  methods: {
+    loginM() {
+      this.$store.dispatch('singleton/unset', {
+        key: 'registering',
+      });
+    },
+    registerM() {
+      this.$store.dispatch('singleton/set', {
+        key: 'registering',
+        value: true,
+      });
     },
     fail() {
       this.error = true;
@@ -107,13 +127,17 @@ li {
 a {
   color: #42b983;
 }
+.submit {
+  cursor: pointer;
+}
 .panel-login {
   border-color: #ccc;
-  -webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
-  -moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
-  box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+  -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.2);
 }
 .panel-login>.panel-heading {
+  padding-top: 10px;
   color: #00415d;
   background-color: #fff;
   border-color: #fff;
@@ -142,6 +166,9 @@ a {
   background-image: -moz-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
   background-image: -ms-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
   background-image: -o-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
+}
+.panel-login>.panel-body {
+  padding: 10px;
 }
 .panel-login input[type="text"],.panel-login input[type="email"],.panel-login input[type="password"] {
   height: 45px;
@@ -175,15 +202,6 @@ a {
   color: #fff;
   background-color: #53A3CD;
   border-color: #53A3CD;
-}
-.forgot-password {
-  text-decoration: underline;
-  color: #888;
-}
-.forgot-password:hover,
-.forgot-password:focus {
-  text-decoration: underline;
-  color: #666;
 }
 
 .btn-register {

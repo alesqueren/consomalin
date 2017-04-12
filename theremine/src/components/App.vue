@@ -6,7 +6,7 @@
           img.logo(src="../assets/images/car.jpg")
           span.brand Consomalin
 
-      div#steps.left
+      div#steps.left(v-if="user && user.username")
         ul.header-tabs
           li.header-tab
             router-link.title(:to="{ name: 'wishlist' }") Listes
@@ -25,6 +25,9 @@ import Usercard from './Usercard';
 
 export default {
   computed: {
+    user() {
+      return this.$store.state.user;
+    },
     selectedWishesNb() {
       return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
     },
@@ -35,7 +38,7 @@ export default {
   methods: {
     finishDeletion() {
       this.$store.dispatch('singleton/unset', {
-        key: 'deletingGroup',
+        key: 'actionnedEntity',
       });
     },
   },

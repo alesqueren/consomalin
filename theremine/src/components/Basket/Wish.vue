@@ -58,7 +58,6 @@ export default {
   },
   methods: {
     select() {
-      console.log('select');
       this.$store.dispatch('currentWish/set', {
         wid: this.wid,
       }).then(
@@ -70,20 +69,18 @@ export default {
     },
     increase() {
       if (this.productQuantity < 64) {
-        const gid = this.wish.gid;
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = this.productQuantity + 1;
-        this.$store.dispatch('wishGroup/setWishProduct', { gid, wid, pid, quantity });
+        this.$store.dispatch('wishGroup/setWishProduct', { wid, pid, quantity });
       }
     },
     decrease() {
       if (this.productQuantity > 1) {
-        const gid = this.wish.gid;
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = this.productQuantity - 1;
-        this.$store.dispatch('wishGroup/setWishProduct', { gid, wid, pid, quantity });
+        this.$store.dispatch('wishGroup/setWishProduct', { wid, pid, quantity });
       }
     },
     focus() {

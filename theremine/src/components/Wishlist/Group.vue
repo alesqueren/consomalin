@@ -5,18 +5,18 @@
       name="selected"
       v-model="selected",
       :disabled="wishesNb === 0")
-    input(v-if='editing',
+    input.edition(v-if='editing',
       ref="editinput"
       v-model="editingName"
       v-on:keyup.enter="validEdition"
-      v-on:keyup.esc="finishEdition"
-      v-on:blur="finishEdition")
-    button.btn.btn-success.btn-sm(v-if='editing' @click.stop="validEdition" onclick="event.stopPropagation()" @keyup.esc="finishEdition")
+      v-on:blur="finishEdition"
+      v-on:keyup.esc="finishEdition")
+    button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click.stop="validEdition" onclick="event.stopPropagation()" @keyup.esc="finishEdition")
       i.fa.fa-check.fa-xs
     label.name(v-else for="selected") {{ name }}
     div.fakeCheckbox(v-if='!editing && wishesNb' @click="toggleSelection")
     div.confirmDeletion(v-if='deleting' @click.stop="remove" @keyup.esc="finishDeletion")
-      span.btn.btn-danger Confirmer la suppression du groupe "{{ name }}"
+      span.btn.btn-danger Confirmer la suppression"
 
     div.filling
       span {{ selectedWishesNb }} / {{ wishesNb }}
@@ -43,10 +43,16 @@ export default {
       return this.gid === this.$store.state.singleton.activeGroupId;
     },
     editing() {
-      return this.$store.state.singleton.inlineEditionId === this.gid;
+      const actionnedEntity = this.$store.state.singleton.actionnedEntity;
+      const actionnedEntityId = actionnedEntity.id;
+      const action = actionnedEntity.action;
+      return action === 'edit' && actionnedEntityId === this.gid;
     },
     deleting() {
-      return this.$store.state.singleton.deletingGroup === this.gid;
+      const actionnedEntity = this.$store.state.singleton.actionnedEntity;
+      const actionnedEntityId = actionnedEntity.id;
+      const action = actionnedEntity.action;
+      return action === 'delete' && actionnedEntityId === this.gid;
     },
     selected() {
       return this.$store.getters['selection/getSelectedGroupsIds'].indexOf(this.gid) !== -1;
@@ -76,14 +82,18 @@ export default {
     startEdition() {
       this.editingName = this.name;
       this.$store.dispatch('singleton/set', {
-        key: 'inlineEditionId',
-        value: this.gid,
+        key: 'actionnedEntity',
+        value: {
+          action: 'edit',
+          id: this.gid,
+        },
       });
       Vue.nextTick(this.focus);
+      this.setActivation();
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', { key: 'inlineEditionId' });
+      this.$store.dispatch('singleton/unset', { key: 'actionnedEntity' });
     },
     validEdition() {
       this.$store.dispatch('wishGroup/renameGroup', {
@@ -94,21 +104,28 @@ export default {
     },
     startDeletion() {
       this.$store.dispatch('singleton/set', {
-        key: 'deletingGroup',
-        value: this.gid,
+        key: 'actionnedEntity',
+        value: {
+          action: 'delete',
+          id: this.gid,
+        },
       });
+      this.setActivation();
     },
     finishDeletion() {
       this.$store.dispatch('singleton/unset', {
-        key: 'deletingGroup',
+        key: 'actionnedEntity',
       });
     },
     remove() {
+      const gids = this.$store.state.wishGroup.map(group => group.id);
+      const currentPosition = gids.indexOf(this.gid);
+
       this.$store.dispatch('wishGroup/removeGroup', { gid: this.gid });
 
       this.$store.dispatch('singleton/set', {
         key: 'activeGroupId',
-        value: this.$store.state.wishGroup.map(group => group.id)[0],
+        value: gids[currentPosition - 1],
       });
     },
   },
@@ -127,15 +144,5 @@ export default {
 }
 .strong{
   font-weight: bold;
-}
-.confirmDeletion{
-  text-transform: none;
-  cursor: pointer;
-  position: absolute;
-  font-size: 1em;
-  font-family: arial;
-  top: 0;
-  right: 25px;
-  z-index: 2;
 }
 </style>

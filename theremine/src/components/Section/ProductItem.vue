@@ -35,7 +35,6 @@ export default {
   methods: {
     selectProduct() {
       this.$store.dispatch('wishGroup/setWishProduct', {
-        gid: this.currentWish.gid,
         wid: this.currentWish.id,
         pid: this.pid,
         quantity: this.quantity,

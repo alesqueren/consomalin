@@ -3,6 +3,9 @@
     div.row
       Groups.col-6
       ActiveGroup.col-6
+    router-link(:to='{ name: "basket" }')
+      button.btn.btn-success.right(type="button", style="position:absolute;top:-10px;right:10px;") Voir mon panier
+
 </template>
 
 <script>
