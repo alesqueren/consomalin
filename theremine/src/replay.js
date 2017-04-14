@@ -15,14 +15,13 @@ function flush() {
 function storePlugin(store) {
   const startTime = (new Date()).getTime();
 
-  // setInterval(flush, 1000);
+  setInterval(flush, 1000);
 
   store.subscribe((mutation, state) => {
     if (!history) {
       buffer.push({
         time: (new Date()).getTime() - startTime,
-        // deep copy
-        state: JSON.parse(JSON.stringify(state)),
+        state: JSON.parse(JSON.stringify(state)), // deep copy
       });
     }
   });

@@ -21,5 +21,5 @@ export default {
   schedule: Vue.resource('/api/schedule'),
   slot: Vue.resource('/api/wishlist/basket/slot'),
   basket: Vue.resource('/api/basket/order'),
-  watcher: Vue.resource('/api/watcher'),
+  watcher: Vue.resource('/api/history/add'),
 };
