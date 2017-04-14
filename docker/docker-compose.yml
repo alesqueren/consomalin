@@ -13,24 +13,22 @@ services:
   theremine:
     build: ./theremine
     networks: [big]
-    ports:
-      - "8081:80"
 
   janitor:
     build: ./janitor
     networks: [big]
     environment:
       - METRONOME_HOST=http://metronome-cache
-    ports:
-      - "8082:80"
+
+  recorder:
+    build: ./recorder
+    networks: [big]
 
   kiva:
     build: 
       context: ./haskell
       dockerfile: ./kiva/Dockerfile
     networks: [big]
-    ports:
-      - "8083:80"
 
   wendy:
     build:
@@ -56,14 +54,12 @@ services:
       - DRIVE_USER=bitcoin.miner@mailoo.org
       - DRIVE_PASS=hDDqSUGmY3!
     networks: [big]
-    ports:
-      - "8084:80"
 
   mongo-express:
     image: mongo-express
     networks: [big]
     ports:
-      - "8085:8081"
+      - "9000:8081"
 
   mongo:
     image: mongo

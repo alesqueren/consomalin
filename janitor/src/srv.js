@@ -8,6 +8,7 @@ const wishProductsControllers = require('./controllers/wishProducts')();
 const basketsControllers = require('./controllers/baskets')();
 const productsControllers = require('./controllers/products')();
 const scheduleControllers = require('./controllers/schedule')();
+const historyControllers = require('./controllers/history')();
 
 const port = process.env.SERVER_PORT || 3001;
 
@@ -25,6 +26,7 @@ const server = (app) => {
   app.use('/wishlist/', basketsControllers);
   app.use('/products/', productsControllers);
   app.use('/schedule/', scheduleControllers);
+  app.use('/history/', historyControllers);
   app.use('/', notFound);
 
   app.listen(port, () => {

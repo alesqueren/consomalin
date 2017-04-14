@@ -1,11 +1,10 @@
 <template lang="pug">
-  #app(@click='finishDeletion', @keyup.esc="finishDeletion", tabindex="0")
+  #app(@click='finishDeletion')
     div#header
       div.left
-        // router-link.title(:to="{ name: 'replay' }")
         router-link.title(:to="{ name: 'home' }")
-          img.logo(src="../assets/images/ant.png")
-          span.brand &nbsp;&nbsp;&nbsp;Consomalin
+          img.logo(src="../assets/images/car.jpg")
+          span.brand Consomalin
 
       div#steps.left(v-if="user && user.username")
         ul.header-tabs
@@ -17,17 +16,12 @@
           li.header-tab
             router-link.title(:to="{ name: 'withdraw' }") Retrait
       Usercard
-      Basketcard
     div#content
       router-view
 </template>
 
 <script>
-import Basketcard from './Basketcard';
 import Usercard from './Usercard';
-import replay from '../replay';
-
-const $ = window.$;
 
 export default {
   computed: {
@@ -48,16 +42,7 @@ export default {
       });
     },
   },
-  created() {
-    $(document).keydown((e) => {
-      if (e.which === 37) {
-        replay.previous(this.$store, this.$router);
-      } else if (e.which === 39) {
-        replay.next(this.$store, this.$router);
-      }
-    });
-  },
-  components: { Usercard, Basketcard },
+  components: { Usercard },
 };
 </script>
 
@@ -71,7 +56,6 @@ body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e60;
-  outline:none;
 }
 
 body {
@@ -86,6 +70,10 @@ a:hover {
   text-decoration: none;
 }
 
+#content{
+  padding: 60px;
+  padding-bottom: 100px;
+}
 
 .left{
   float: left;
@@ -105,16 +93,15 @@ a:hover {
   /* plus de place pour le contenu
   position: fixed;
   z-index: 2; */
-line-height: 60px;
-height: 60px;
-width: 100%;
-background-color: #21314d;
+  line-height: 60px;
+  height: 60px;
+  width: 100%;
+  background-color: #21314d;
 }
 
 #header .logo {
   height: 60px;
   width: 60px;
-  background-color: #f2f4f7;
 }
 
 #header .brand {
@@ -133,6 +120,7 @@ background-color: #21314d;
   font-weight: 700;
   font-size: 22px;
   font-weight: bold;
+  margin-left:15px;
   color: #747e8f;
 }
 
