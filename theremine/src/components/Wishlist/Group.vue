@@ -16,7 +16,7 @@
     label.name(v-else for="selected") {{ name }}
     div.fakeCheckbox(v-if='!editing && wishesNb' @click="toggleSelection")
     div.confirmDeletion(v-if='deleting' @click.stop="remove" @keyup.esc="finishDeletion")
-      span.btn.btn-danger Confirmer la suppression"
+      span.btn.btn-danger Confirmer la suppression
 
     div.filling
       span {{ selectedWishesNb }} / {{ wishesNb }}

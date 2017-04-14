@@ -1,11 +1,10 @@
 <template lang='pug'>
-  div.col.no-gutter.wishgroup.list-group-item.col-3(v-if="selectedWishes.length")
-    div
-      span.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
-      Wish(v-for="wid in selectedWishes" 
-        v-bind:wid="wid" 
-        v-bind:gid="gid" 
-        v-bind:key="wid")
+  div.wishgroup(v-if="selectedWishes.length")
+    span.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
+    Wish(v-for="wid in selectedWishes" 
+      v-bind:wid="wid" 
+      v-bind:gid="gid" 
+      v-bind:key="wid")
 </template>
 
 <script>
@@ -48,12 +47,12 @@ export default {
 }
 .wishgroup {
   position: relative;
-  width: 400px;
-  min-width: 393px;
+  float: left;
+  width: 350px;
+  max-width: 350px;
+  min-width: 350px;
   background-color: #eee;
-  display: inline-block;
-  margin: 0 0 1em;
-  width: 100%;
+  color: #555;
 }
 .groupName {
   cursor: pointer;
@@ -64,14 +63,7 @@ export default {
   width: 100%;
   display: block;
 }
-.topright {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-.bottomright {
-  position: absolute;
-  bottom: 0;
-  right: 0;
+.groupName:hover {
+  text-decoration: underline
 }
 </style>

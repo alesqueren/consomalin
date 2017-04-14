@@ -6,7 +6,7 @@ const actions = {
   },
 
   unset: ({ state, commit }, { key }) => {
-    if (state && state[key]) {
+    if (Object.keys(state[key]).length) {
       commit('unset', { key });
     }
   },

@@ -15,7 +15,7 @@
       img.product-img.center
       .product-name.center
       div.count-input
-        input.quantity(type='number', step='1', value='0', min='1', max='256')
+        input.quantity(type='number', step='1', value='1', min='1', max='256')
       div.price
       div.btn-atb
         i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
@@ -26,8 +26,8 @@
         span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
           router-link(:to='{ name: "wishlist" }')
             button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
-    .container(v-else-if="basketFull")
-        div
+    .container(v-else-if="basketFull && currentWishIsEmpty")
+        div(style="margin-top:50px;")
           span Votre liste de course est complète ! Vous pouvez 
             router-link(:to='{ name: "basket" }')
               button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
@@ -72,7 +72,7 @@ export default {
       return [];
     },
     currentWishIsEmpty() {
-      return !this.$store.state.singleton.currentWishId;
+      return !Object.keys(this.$store.state.singleton.currentWishId).length;
     },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
@@ -136,6 +136,7 @@ export default {
   padding: 5px 5px 0 5px;
   float: left;
   margin: 5px;
+  opacity: 0.3;
 }
 .product-img{
   background-color: white;
@@ -153,8 +154,8 @@ export default {
   cursor: pointer;
   text-align: center;
   padding: 2px;
-  width: 163px;
-  margin-left: -6px;
+  width: 160px;
+  margin-left: -5px;
   height: 32px;
   line-height: 32px;
 }

@@ -70,10 +70,6 @@ a:hover {
   text-decoration: none;
 }
 
-#content{
-  padding: 60px;
-  padding-bottom: 100px;
-}
 
 .left{
   float: left;

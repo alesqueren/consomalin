@@ -67,8 +67,9 @@ export default {
   },
   methods: {
     loginM() {
-      this.$store.dispatch('singleton/unset', {
+      this.$store.dispatch('singleton/set', {
         key: 'registering',
+        value: false,
       });
     },
     registerM() {

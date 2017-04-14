@@ -4,7 +4,7 @@
       Groups.col-6
       ActiveGroup.col-6
     router-link(:to='{ name: "basket" }')
-      button.btn.btn-success.right(type="button", style="position:absolute;top:-10px;right:10px;") Voir mon panier
+      button.btn.btn-success.right(type="button", style="position:absolute;top:6px;right:51px;") Valider ma selection
 
 </template>
 
@@ -17,7 +17,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @font-face {
     font-family: gunny;
     src: url('/static/fonts/gnyrwn971.ttf');

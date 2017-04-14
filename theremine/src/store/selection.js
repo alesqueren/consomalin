@@ -27,7 +27,7 @@ const globalGetters = {
           const product = state[group.id][wish.id];
           wishes[wish.id] = {
             pid: product.pid,
-            quantity: product.quantity,
+            quantity: parseInt(product.quantity, 10),
           };
         }
       }
@@ -98,7 +98,7 @@ const mutations = {
   setWishProduct: (state, { gid, wid, pid, quantity }) => {
     const entity = state[gid][wid];
     Vue.set(entity, 'pid', pid);
-    Vue.set(entity, 'quantity', quantity);
+    Vue.set(entity, 'quantity', parseInt(quantity, 10));
   },
 
   selectGroup: (state, { gid, selectWishes }) => {

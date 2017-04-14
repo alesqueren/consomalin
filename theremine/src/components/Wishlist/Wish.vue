@@ -11,7 +11,7 @@
       i.fa.fa-check.fa-xs
     label.name(v-else for="select") {{ name }}
     div.confirmDeletion(v-if='deleting' @click.stop="remove" @keyup.esc="finishDeletion")
-      span.btn.btn-danger Confirmer la suppression"
+      span.btn.btn-danger Confirmer la suppression
 
     div.buttns(v-if='!editing')
       i.fa.fa-pencil.fa-xs.action.edit(@click.stop="startEdition")
@@ -110,7 +110,7 @@ export default {
   visibility: hidden;
   position: absolute;
   top: 2px;
-  right: 25px;
+  right: 5px;
 }
 </style>
 

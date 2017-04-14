@@ -34,6 +34,9 @@ export default {
 <style>
 .connexion{
   position: relative;
+  cursor:pointer;
+  top: -2px;
+  margin-right: 10px;
 }
 .dropdown{
   top: 16px;

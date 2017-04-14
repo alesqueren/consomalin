@@ -1,8 +1,13 @@
 <template lang='pug'>
-  div.wish(@click='select()')
-    span.fa.fa-eraser.wish-erase(@click.prevent.stop='remove()')
+  div.wish(
+    @click='select()',
+    v-bind:class="{'full': productInfos, 'empty': !productInfos}")
+    div.overlay
+    span.fa.fa-eraser.fa-xs.wish-erase(@click.prevent.stop='erase()')
     span.wish-name(v-if='!productInfos') {{ wish.name }}
+    span.help.badge.badge-info(v-if='!productInfos') Choisir
     div.product-infos(v-if='productInfos')
+      span.help Modifier
       img.product-left(v-bind:src='productInfos.imageUrl')
       div.product-right
         span.product-name {{ wish.name }} <br/>
@@ -10,7 +15,7 @@
         div.product-number
           div.count-input.space-bottom
             a.incr-btn(@click.prevent.stop='decrease' href="#") –
-            input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='')
+            input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='', disabled="disabled")
             a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
           span.total &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
 
@@ -71,7 +76,7 @@ export default {
       if (this.productQuantity < 64) {
         const wid = this.wish.id;
         const pid = this.productId;
-        const quantity = this.productQuantity + 1;
+        const quantity = parseInt(this.productQuantity + 1, 10);
         this.$store.dispatch('wishGroup/setWishProduct', { wid, pid, quantity });
       }
     },
@@ -79,17 +84,17 @@ export default {
       if (this.productQuantity > 1) {
         const wid = this.wish.id;
         const pid = this.productId;
-        const quantity = this.productQuantity - 1;
+        const quantity = parseInt(this.productQuantity - 1, 10);
         this.$store.dispatch('wishGroup/setWishProduct', { wid, pid, quantity });
       }
     },
     focus() {
       this.$refs.editinput.focus();
     },
-    remove() {
-      this.$store.dispatch('wishGroup/removeWish', {
-        wid: this.wid,
-      });
+    erase() {
+      const wid = this.wid;
+      const selected = false;
+      this.$store.dispatch('selection/selectWish', { wid, selected });
     },
   },
 };
@@ -109,14 +114,42 @@ export default {
   background-color: white;
   border: 1px solid grey;
 }
-
-.wish i {
+.wish .overlay {
   visibility: hidden;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: #21314d;
+  /*background-color: grey;*/
+  opacity: 0.5;
 }
-
-.wish:hover i {
+.wish.empty .help{
+  visibility: hidden;
+  position: absolute;
+  right: 0px;
+  bottom: 2px;
+}
+/*.wish.empty:hover .help{
   visibility: visible;
 }
+.wish.empty:hover .overlay{
+  visibility: visible;
+}*/
+.wish.full .help{
+  visibility: hidden;
+  position: absolute;
+  right: 0px;
+  bottom: 2px;
+}/*
+.wish.full:hover .help{
+  visibility: visible;
+}*/
+.wish:hover .product-name{
+  text-decoration: underline;
+}
+
 .product-infos {
   display: table;
 }
@@ -147,6 +180,9 @@ export default {
   font-size: 1.5em;
   font-weight: bold;
 }
+.wish:hover .wish-name{
+  text-decoration: underline
+}
 .product-name{
   position: absolute;
   top: 15px;
@@ -158,16 +194,17 @@ export default {
 .wish-erase{
   visibility: hidden;
   position: absolute;
+  font-size: 1.5em;
   top: 5px;
   right: 5px;
-  color: red;
+  color: #555;
   z-index: 1;
-}
-.wish-erase:hover{
-  font-size: 1.1em;
 }
 .wish:hover .wish-erase{
   visibility: visible;
+}
+.wish .wish-erase:hover{
+  color: orange;
 }
 .total{
   vertical-align: bottom;

@@ -18,7 +18,7 @@ export default {
   props: ['pid', 'maxProducts'],
   data() {
     return {
-      quantity: '1',
+      quantity: 1,
     };
   },
   computed: {
@@ -37,7 +37,7 @@ export default {
       this.$store.dispatch('wishGroup/setWishProduct', {
         wid: this.currentWish.id,
         pid: this.pid,
-        quantity: this.quantity,
+        quantity: parseInt(this.quantity, 10),
       });
       this.$store.dispatch('currentWish/next');
     },
