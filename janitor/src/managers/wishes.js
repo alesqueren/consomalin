@@ -25,7 +25,7 @@ function select(uid, gid, wid, selected) {
   }
 }
 
-function add(uid, gid, wname) {
+function add(uid, gid, wname, selected) {
   const users = mongo.db.collection('user');
   const hash = utils.randHash(uid, wname);
   const path = 'wishGroups.$.wishes';
@@ -40,7 +40,10 @@ function add(uid, gid, wname) {
       },
     },
   );
-  select(uid, gid, hash, true);
+  if (selected !== false) {
+    console.log('selected');
+    select(uid, gid, hash, selected);
+  }
   return hash;
 }
 
