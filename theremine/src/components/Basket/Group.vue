@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
     span.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
     Wish(v-for="wid in selectedWishes" 

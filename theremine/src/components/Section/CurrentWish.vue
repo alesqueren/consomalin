@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div#currentWish(v-if="currentWish")
     div.input-group.stylish-input-group.search-wrapper
       span.input-group-addon.search-search
@@ -8,7 +8,7 @@
         .input-badge
           span.badge.badge-success.groupName {{ currentWish.gname }}
         .input-input
-          input#search-text.form-control(type="text" v-model="currentWish.name" v-on:keyup="rename")
+          input#search-text.form-control(type="text" v-model="currentWish.name" v-on:keyup="rename", tabindex="0" autofocus)
       span.input-group-addon.search-deleteWish.alert.alert-danger(@click="remove")
         span.fa.fa-eraser &nbsp;&nbsp;&nbsp;
         span Effacer de ma liste
@@ -107,6 +107,7 @@ export default {
   left: 10px;
   padding-right: 10px;
   padding-left: 10px;
+  background-color: white;
 }
 .search-wrapper{
   display: table;
@@ -122,10 +123,11 @@ export default {
 .search-addGroup{
   cursor: pointer;
   display: table-cell;
+  max-width: 175px;
 }
 .search-deleteWish{
   cursor: pointer;
   display: table-cell;
-  width: 130px;
+  max-width: 125px;
 }
 </style>

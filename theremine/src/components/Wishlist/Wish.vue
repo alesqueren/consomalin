@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div.line(v-on:click.stop="select")
     input(type="checkbox" name="select" v-model="selected")
     input.edition(v-if='editing'

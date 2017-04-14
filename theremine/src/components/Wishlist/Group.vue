@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div.line(v-bind:class="{'active': isActive, 'strong': selectedWishesNb}"
       @click="setActivation")
     input(type="checkbox"
@@ -6,11 +6,12 @@
       v-model="selected",
       :disabled="wishesNb === 0")
     input.edition(v-if='editing',
-      ref="editinput"
-      v-model="editingName"
-      v-on:keyup.enter="validEdition"
-      v-on:blur="finishEdition"
-      v-on:keyup.esc="finishEdition")
+      ref="editinput",
+      v-model="editingName",
+      @click.stop.prevent="",
+      @keyup.enter="validEdition",
+      v-on:blur="finishEdition",
+      @keyup.esc="finishEdition")
     button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click.stop="validEdition" onclick="event.stopPropagation()" @keyup.esc="finishEdition")
       i.fa.fa-check.fa-xs
     label.name(v-else for="selected") {{ name }}

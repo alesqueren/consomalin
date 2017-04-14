@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
 .col(v-if='day.name')
   h2  {{day.name}}
   div.slotHours(v-for='hour in day.hours', :key='hour')

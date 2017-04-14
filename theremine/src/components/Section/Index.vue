@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div#wishes
     CurrentWish
     div(v-if="!currentWishIsEmpty && currentWishResults")
@@ -14,13 +14,18 @@
       v-bind:key="i")
       img.product-img.center
       .product-name.center
-      div.count-input
-        input.quantity(type='number', step='1', value='1', min='1', max='256')
+      div.count-input.space-bottom
+        a.incr-btn(href="#") –
+        input.quantity(type='number', value='1' disabled="disabled")
+        a.incr-btn(href="#") &plus;
       div.price
       div.btn-atb
         i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
+    //- SI aucun resultat
     div.nothing-box(v-if="!currentWishIsEmpty && currentWishResults && !currentWishResults[0]")
-      span Aucun produits ne correspond à cette recherche
+      div(style="width: 100%; text-align: center;")
+        span Aucun produit trouvé. <br/>
+        span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
     .container(v-else-if="basket.length === 0")
       div
         span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
@@ -163,5 +168,46 @@ export default {
   line-height: 32px;
 }
 .nothing-box{
+}
+.count-input {
+  position: relative;
+  float: left;
+  width: 100%;
+  max-width: 75px;
+  margin: 5px 0;
+}
+.count-input input {
+  width: 100%;
+  height: 27px;
+  line-height: 27px;
+  border: 1px solid #000;
+  border-radius: 2px;
+  background: none;
+  text-align: center;
+}
+.count-input input:focus {
+  outline: none;
+}
+.count-input .incr-btn {
+  display: block;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  font-size: 26px;
+  font-weight: 300;
+  text-align: center;
+  line-height: 30px;
+  top: 49%;
+  right: 0;
+  margin-top: -15px;
+  text-decoration:none;
+}
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.count-input .incr-btn:first-child {
+  right: auto;
+  left: 0;
+  top: 46%;
 }
 </style>

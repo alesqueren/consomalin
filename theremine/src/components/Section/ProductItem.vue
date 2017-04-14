@@ -1,10 +1,10 @@
-<template lang='pug'>
+<template lang="pug">
   div.product-item
     img.product-img.center(v-bind:src="product.imageUrl")
     .product-name.center {{product.name}}
-    div.count-input
+    div.count-input.space-bottom
       a.incr-btn(@click.prevent.stop='decrease' href="#") –
-      input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='')
+      input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='', disabled="disabled")
       a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
     div.price
       div <b>{{product.price}}&nbsp;€</b>
@@ -99,11 +99,12 @@ export default {
   display: block;
   margin: 0 auto;
 }
+
 .count-input {
   position: relative;
   float: left;
   width: 100%;
-  max-width: 65px;
+  max-width: 75px;
   margin: 5px 0;
 }
 .count-input input {

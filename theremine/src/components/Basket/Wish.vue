@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div.wish(
     @click='select()',
     v-bind:class="{'full': productInfos, 'empty': !productInfos}")

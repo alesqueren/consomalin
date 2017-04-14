@@ -1,11 +1,11 @@
 <template lang="pug">
-  #app(@click='finishDeletion')
+  #app(@click='finishDeletion', @keyup.esc="finishDeletion", tabindex="0")
     div#header
       div.left
-        // router-link.title(:to="{ name: 'home' }")
-        router-link.title(:to="{ name: 'replay' }")
-          img.logo(src="../assets/images/car.jpg")
-          span.brand Consomalin
+        // router-link.title(:to="{ name: 'replay' }")
+        router-link.title(:to="{ name: 'home' }")
+          img.logo(src="../assets/images/ant.png")
+          span.brand &nbsp;&nbsp;&nbsp;Consomalin
 
       div#steps.left(v-if="user && user.username")
         ul.header-tabs
@@ -17,11 +17,13 @@
           li.header-tab
             router-link.title(:to="{ name: 'withdraw' }") Retrait
       Usercard
+      Basketcard
     div#content
       router-view
 </template>
 
 <script>
+import Basketcard from './Basketcard';
 import Usercard from './Usercard';
 import replay from '../replay';
 
@@ -55,7 +57,7 @@ export default {
       }
     });
   },
-  components: { Usercard },
+  components: { Usercard, Basketcard },
 };
 </script>
 
@@ -69,6 +71,7 @@ body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e60;
+  outline:none;
 }
 
 body {
@@ -111,6 +114,7 @@ background-color: #21314d;
 #header .logo {
   height: 60px;
   width: 60px;
+  background-color: #f2f4f7;
 }
 
 #header .brand {
@@ -129,7 +133,6 @@ background-color: #21314d;
   font-weight: 700;
   font-size: 22px;
   font-weight: bold;
-  margin-left:15px;
   color: #747e8f;
 }
 

@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div#wishlist
     Group(v-for="gid in selectedGroups" 
       v-bind:gid="gid"
@@ -66,6 +66,7 @@ export default {
   height: auto;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   padding-bottom: 300px;
+  clear: both;
 }
 #wishlist:after {
     content:"";

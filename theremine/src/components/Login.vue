@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   .container
     .row
       .col-md-6.offset-md-3

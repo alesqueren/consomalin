@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div.slotHour
     button(type="button" v-bind:disabled="pickupSlot.status == 'Past'" v-bind:class="classSlot" class="btn" @click="selectSlot()" v-bind:style="styleObject")
       span {{frenchTime}}
