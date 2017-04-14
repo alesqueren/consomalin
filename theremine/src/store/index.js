@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import watcher from './watcher';
+import replay from '../replay';
 import user from './user';
 import product from './product';
 import schedule from './schedule';
@@ -43,12 +43,11 @@ const mutations = {
   },
 };
 
-
 export default new Vuex.Store({
   strict: true,
   actions,
   mutations,
-  plugins: [watcher],
+  plugins: [replay.storePlugin],
   modules: {
     user,
     product,

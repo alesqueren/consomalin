@@ -16,6 +16,7 @@ const actions = {
       resources.products.get({ uri }, {}).then(({ body }) => {
         const products = JSON.parse(body);
         // todo: see array v-for
+        commit('addDetails', { products });
         commit('addSearch', {
           name,
           products: Object.keys(products).reduce((acc, cur, i) => {
@@ -23,7 +24,6 @@ const actions = {
             return acc;
           }, {}),
         });
-        commit('addDetails', { products });
       });
     }
   },

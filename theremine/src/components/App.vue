@@ -23,6 +23,9 @@
 
 <script>
 import Usercard from './Usercard';
+import replay from '../replay';
+
+const $ = window.$;
 
 export default {
   computed: {
@@ -42,6 +45,15 @@ export default {
         key: 'actionnedEntity',
       });
     },
+  },
+  created() {
+    $(document).keydown((e) => {
+      if (e.which === 37) {
+        replay.previous(this.$store, this.$router);
+      } else if (e.which === 39) {
+        replay.next(this.$store, this.$router);
+      }
+    });
   },
   components: { Usercard },
 };
@@ -94,10 +106,10 @@ a:hover {
   /* plus de place pour le contenu
   position: fixed;
   z-index: 2; */
-  line-height: 60px;
-  height: 60px;
-  width: 100%;
-  background-color: #21314d;
+line-height: 60px;
+height: 60px;
+width: 100%;
+background-color: #21314d;
 }
 
 #header .logo {
