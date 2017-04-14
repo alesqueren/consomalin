@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div.col.main
     div.notepad
       .redLine
@@ -6,7 +6,7 @@
       Group(v-for="gid in gids" 
         v-bind:gid="gid"
         v-bind:key="gid")
-      input#newGroup(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Ajouter une liste")
+      input#newGroup(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Ajouter une liste", tabindex="1")
 </template>
 
 <script>
@@ -36,18 +36,20 @@ export default {
   },
   methods: {
     addWishGroup() {
-      this.$store.dispatch('wishGroup/addGroup', {
-        name: this.newGroupName,
-      }).then((gid) => {
-        this.$store.dispatch('singleton/set', {
-          key: 'activeGroupId',
-          value: gid,
+      if (this.newGroupName !== '') {
+        this.$store.dispatch('wishGroup/addGroup', {
+          name: this.newGroupName,
+        }).then((gid) => {
+          this.$store.dispatch('singleton/set', {
+            key: 'activeGroupId',
+            value: gid,
+          });
+          Vue.nextTick(() => {
+            $('#newWish').focus();
+          });
         });
-        Vue.nextTick(() => {
-          $('#newWish').focus();
-        });
-      });
-      this.newGroupName = '';
+        this.newGroupName = '';
+      }
     },
   },
   components: { Group },

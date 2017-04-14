@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div
     div.activeGroup(v-if="wishgroup")
       div.notepad
@@ -8,7 +8,13 @@
           v-bind:wid="wish.id" 
           v-bind:gid="wishgroup.id" 
           v-bind:key="wish.id")
-        input#newWish(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Ajouter un produit" onclick="event.stopPropagation()")
+        input#newWish(v-model="newWishName",
+        placeholder="Ajouter un produit",
+        required="required",
+        v-on:keyup.enter="addWish",
+        @click.stop.prevent="",
+        onclick="event.stopPropagation()",
+        tabindex="2")
 </template>
 
 <script>
@@ -32,11 +38,13 @@ export default {
   },
   methods: {
     addWish() {
-      this.$store.dispatch('wishGroup/addWish', {
-        gid: this.wishgroup.id,
-        name: this.newWishName,
-      });
-      this.newWishName = '';
+      if (this.newWishName !== '') {
+        this.$store.dispatch('wishGroup/addWish', {
+          gid: this.wishgroup.id,
+          name: this.newWishName,
+        });
+        this.newWishName = '';
+      }
     },
   },
   components: { Wish },

@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div#wishlist.container-fluid
     div.row
       Groups.col-6
