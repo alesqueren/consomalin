@@ -8,6 +8,7 @@ import Basket from '@/components/Basket/Index';
 import Withdraw from '@/components/Withdraw/Index';
 import NotFound from '@/components/NotFound';
 import store from '../store';
+import replay from '../replay';
 
 Vue.use(Router);
 
@@ -49,6 +50,10 @@ const router = new Router({
       component: Withdraw,
     },
     {
+      name: 'replay',
+      path: '/replay',
+    },
+    {
       path: '*',
       component: NotFound,
     },
@@ -63,6 +68,11 @@ router.beforeEach((to, from, next) => {
       next();
     }
   };
+
+  if (to.name === 'replay') {
+    replay.init(store, router);
+    return;
+  }
 
   if (store.state.user.username) {
     // user succeded to login
