@@ -2,8 +2,7 @@
   #app(@click='finishDeletion')
     div#header
       div.left
-        // router-link.title(:to="{ name: 'home' }")
-        router-link.title(:to="{ name: 'replay' }")
+        router-link.title(:to="{ name: 'home' }")
           img.logo(src="../assets/images/car.jpg")
           span.brand Consomalin
 

@@ -6,6 +6,7 @@ import Wishlist from '@/components/Wishlist/Index';
 import Section from '@/components/Section/Index';
 import Basket from '@/components/Basket/Index';
 import Withdraw from '@/components/Withdraw/Index';
+import Replay from '@/components/Replay';
 import NotFound from '@/components/NotFound';
 import store from '../store';
 
@@ -47,6 +48,11 @@ const router = new Router({
       path: '/withdraw',
       meta: { auth: true },
       component: Withdraw,
+    },
+    {
+      name: 'replay',
+      path: '/replay',
+      component: Replay,
     },
     {
       path: '*',

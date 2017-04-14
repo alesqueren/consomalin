@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import watcher from './watcher';
 import user from './user';
 import product from './product';
 import schedule from './schedule';
@@ -47,6 +48,7 @@ export default new Vuex.Store({
   strict: true,
   actions,
   mutations,
+  plugins: [watcher],
   modules: {
     user,
     product,
