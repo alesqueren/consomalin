@@ -43,6 +43,8 @@
 import CurrentWish from './CurrentWish';
 import ProductItem from './ProductItem';
 
+const $ = window.$;
+
 export default {
   data() {
     return {
@@ -51,11 +53,10 @@ export default {
   },
   created() {
     // on ecoute le scroll pour augmenter le nombre de produits visibles
-    // document.addEventListener('scroll',CheckIfScrollBottom);
+    window.addEventListener('scroll', this.handleScroll);
   },
   destroyed() {
-    // window.removeEventListener('scroll', this.handleScroll);
-    // document.removeEventListener('scroll',CheckIfScrollBottom);
+    window.removeEventListener('scroll', this.handleScroll);
   },
   computed: {
     currentWishId() {
@@ -111,16 +112,13 @@ export default {
   methods: {
     // lazyloading
     // lorsqu'on atteint le bas de la page a 100px pret on augmente le nombre de produits affichable
-    handleScroll: () => {
-      // const footerEl = document.getElementById('footer');
-      // const CheckIfScrollBottom = debouncer(function() {
-      //   if(getDocHeight() == getScrollXY()[1] + window.innerHeight) {
-      //      this.maxProducts += 20;
-      //   }
-      // },500);
-      // if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-      //    this.maxProducts += 20;
-      // }
+    handleScroll() {
+      const scrollTop = $(window).scrollTop();
+      const height = $(window).height();
+      const nbResult = Object.keys(this.$store.state.singleton.currentWishId).length;
+      if (scrollTop + height > height - 100 && this.maxProducts < nbResult) {
+        this.maxProducts += 20;
+      }
     },
   },
   components: { CurrentWish, ProductItem },
