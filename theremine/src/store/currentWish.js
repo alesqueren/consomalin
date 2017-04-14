@@ -1,7 +1,12 @@
 import resources from '../resources';
 
-function getFirstUnmatchedWish(currBasket, selection) {
-  for (let i = 0; i < currBasket.length; i++) {
+function getFirstUnmatchedWish(currBasket, selection, startIndex) {
+  for (let i = startIndex; i < currBasket.length; i++) {
+    if (!selection[currBasket[i]]) {
+      return currBasket[i];
+    }
+  }
+  for (let i = 0; i < startIndex; i++) {
     if (!selection[currBasket[i]]) {
       return currBasket[i];
     }
@@ -19,17 +24,17 @@ const actions = {
     });
   },
 
-  next({ dispatch, rootGetters, commit, rootState }) {
+  next({ dispatch, rootGetters, commit, rootState }, wid) {
     if (rootState.selection) {
-      const orderdedSelectedWishes = rootGetters['selection/getOrdreredSelectedWishes'];
+      const ordSW = rootGetters['selection/getOrdreredSelectedWishes'];
+      const oldWishIndex = wid ? ordSW.indexOf(wid) : 0;
       const matchedWishes = rootGetters['selection/getMatchedWishes'];
-      const newCurrentWid = getFirstUnmatchedWish(orderdedSelectedWishes, matchedWishes);
+      const newCurrentWid = getFirstUnmatchedWish(ordSW, matchedWishes, oldWishIndex);
       if (newCurrentWid) {
         const wish = rootGetters['wishGroup/getWish']({ wid: newCurrentWid });
         const gid = wish.gid;
-        const wid = wish.id;
-        resources.currentWish.save({}, { gid, wid }).then(() => {
-          commit('singleton/set', { key: 'currentWishId', value: wid }, { root: true });
+        resources.currentWish.save({}, { gid, wid: wish.id }).then(() => {
+          commit('singleton/set', { key: 'currentWishId', value: wish.id }, { root: true });
           const currentWish = rootGetters['wishGroup/getWish']({ wid: newCurrentWid });
           if (currentWish.name && !rootState.product.searchs[currentWish.name]) {
             dispatch('product/fetchSearch', { name: currentWish.name }, { root: true });
@@ -40,7 +45,6 @@ const actions = {
       }
     }
   },
-
   remove({ commit }) {
     commit('singleton/unset', { key: 'currentWishId' }, { root: true });
     resources.currentWish.delete();

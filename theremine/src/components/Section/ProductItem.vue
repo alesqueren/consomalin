@@ -39,7 +39,7 @@ export default {
         pid: this.pid,
         quantity: parseInt(this.quantity, 10),
       });
-      this.$store.dispatch('currentWish/next');
+      this.$store.dispatch('currentWish/next', this.currentWishId);
     },
     increase() {
       if (this.quantity < 64) {
