@@ -1,9 +1,10 @@
 .notepad {
   position: relative;
   color: #555;
-  font-size: 1.5em;
+  font-size: 1em;
   padding: 0 !important;
   min-width: 250px;
+  width: 350px;
   font-family: courier, monospace;
   border: 1px solid #dedede;
   background-color: white;
@@ -61,7 +62,7 @@
   text-transform: none;
   cursor: pointer;
   position: absolute;
-  font-size: 1em;
+  font-size: 1.5em;
   font-family: arial;
   top: 0;
   right: 5px;
@@ -90,7 +91,7 @@
 .line .name{
   cursor: pointer;
   font-family: gunny;
-  font-size: 2em;
+  font-size: 1.5em;
 }
 
 .line .buttns {

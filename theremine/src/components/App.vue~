@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Usercard from './Usercard';
+import Usercard from './User/Usercard';
 
 export default {
   computed: {

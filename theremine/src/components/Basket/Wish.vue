@@ -2,12 +2,9 @@
   div.wish(
     @click='select()',
     v-bind:class="{'full': productInfos, 'empty': !productInfos}")
-    div.overlay
     span.fa.fa-eraser.fa-xs.wish-erase(@click.prevent.stop='erase()')
     span.wish-name(v-if='!productInfos') {{ wish.name }}
-    span.help.badge.badge-info(v-if='!productInfos') Choisir
     div.product-infos(v-if='productInfos')
-      span.help Modifier
       img.product-left(v-bind:src='productInfos.imageUrl')
       div.product-right
         span.product-name {{ wish.name }} <br/>
@@ -101,51 +98,17 @@ export default {
 </script>
 
 <style scoped>
-@font-face {
-    font-family: gunny;
-    src: url('/static/fonts/gnyrwn971.ttf');
-}
-
 .wish {
   cursor: pointer;
   position: relative;
-  min-width: 350px;
+  float: left;
+  height: auto;
+  min-width: 320px;
+  width: 320px;
   padding: 5px;
   background-color: white;
   border: 1px solid grey;
 }
-.wish .overlay {
-  visibility: hidden;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  background-color: #21314d;
-  /*background-color: grey;*/
-  opacity: 0.5;
-}
-.wish.empty .help{
-  visibility: hidden;
-  position: absolute;
-  right: 0px;
-  bottom: 2px;
-}
-/*.wish.empty:hover .help{
-  visibility: visible;
-}
-.wish.empty:hover .overlay{
-  visibility: visible;
-}*/
-.wish.full .help{
-  visibility: hidden;
-  position: absolute;
-  right: 0px;
-  bottom: 2px;
-}/*
-.wish.full:hover .help{
-  visibility: visible;
-}*/
 .wish:hover .product-name{
   text-decoration: underline;
 }
@@ -155,12 +118,14 @@ export default {
 }
 .product-left {
   display: table-cell;
+  width: 100px;
 }
 .product-right {
   position: relative;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
+  height: 125px;
   /*position: absolute;
   right: 20px;
   bottom: 50px;*/

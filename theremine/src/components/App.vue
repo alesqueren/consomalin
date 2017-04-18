@@ -24,7 +24,7 @@
 
 <script>
 import Basketcard from './Basketcard';
-import Usercard from './Usercard';
+import Usercard from './User/Usercard';
 import replay from '../replay';
 
 const $ = window.$;

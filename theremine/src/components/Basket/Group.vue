@@ -47,12 +47,9 @@ export default {
 }
 .wishgroup {
   position: relative;
-  float: left;
-  width: 350px;
-  max-width: 350px;
-  min-width: 350px;
   background-color: #eee;
   color: #555;
+  clear: both;
 }
 .groupName {
   cursor: pointer;
@@ -60,8 +57,6 @@ export default {
   color: black;
   font-size: 2.5em;
   text-align: center;
-  width: 100%;
-  display: block;
 }
 .groupName:hover {
   text-decoration: underline

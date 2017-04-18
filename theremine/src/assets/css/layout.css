@@ -11,6 +11,11 @@ a:hover {
   color:black;
 }
 
+@font-face {
+  font-family: gunny;
+  src: url('/static/fonts/gnyrwn971.ttf');
+}
+
 .left{
   float:left;
 }

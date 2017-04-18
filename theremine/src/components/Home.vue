@@ -1,12 +1,14 @@
 <template lang="pug">
   div#homepage
+    div#title
+      h2 Consomalin est un site de course en ligne independant qui permet de commander chez Auchan drive sur une interface simple, rapide et sans publicité.
     div#rassurance
       div.item
         i.fa.fa-plus-circle
         span &nbsp;Rapide
       div.item
         i.fa.fa-plus-circle
-        span &nbsp;Moins de produits oubliés
+        span &nbsp;Maitrise du panier
       div.item
         i.fa.fa-plus-circle
         span &nbsp;Aucune pub !
@@ -29,6 +31,9 @@
         div.img
           img.logo(src="../assets/images/withdraw.png")
         div.txt Régle tes achats chez Auchan lors du retrait
+    div#registration
+      router-link(:to='{ name: "register" }')
+        button.btn.btn-primary.connexion(type="button") Inscription
 </template>
 
 <script>
@@ -37,6 +42,10 @@
 <style>
 #homepage{
   padding: 50px 0 0 0;
+}
+#title{
+  padding: 0 0 50px 0;
+  text-align: center;
 }
 #rassurance{
   clear: both;
@@ -98,5 +107,17 @@
   text-align: center;
   padding-left: 25px;
   font-size: 1em;
+}
+#registration{
+  position: relative;
+  text-align: center;
+  padding-bottom: 50px;
+  top: 5px;
+}
+#registration a{
+  display: block;
+  left: 50%;
+  position: absolute;
+  margin-left: -50px;
 }
 </style>
