@@ -41,7 +41,6 @@ function add(uid, gid, wname, selected) {
     },
   );
   if (selected !== false) {
-    console.log('selected');
     select(uid, gid, hash, selected);
   }
   return hash;

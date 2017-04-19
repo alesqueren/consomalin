@@ -9,7 +9,7 @@ const notFound = router.get('*',
   });
 
 const server = (app) => {
-  app.use('/history', controller);
+  app.use('/sessions/', controller);
   app.use('/', notFound);
 
   app.listen(port, () => {

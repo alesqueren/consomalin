@@ -57,7 +57,7 @@ const router = new Router({
     },
     {
       name: 'replay',
-      path: '/replay',
+      path: '/replay/:sid',
     },
     {
       path: '*',
@@ -76,7 +76,7 @@ router.beforeEach((to, from, next) => {
   };
 
   if (to.name === 'replay') {
-    replay.init(store, router);
+    replay.init(store, router, to.params.sid);
     return;
   }
 

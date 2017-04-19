@@ -18,6 +18,7 @@ function add(email, password, callback) {
     });
 }
 
+// TODO: useless ?
 function find(email, callback) {
   const users = mongo.db.collection(userCollectionName);
   return users.findOne(
