@@ -54,7 +54,7 @@ disp "$services"
 for service in $services;
 do
   local_img=$GO_PIPELINE_LABEL"_"$service
-  distant_img="registry.consomalin.ovh:443/$service:$GO_PIPELINE_LABEL"
+  distant_img="registry.consomalin.ovh:5000/$service:$GO_PIPELINE_LABEL"
 
   ex "docker tag $local_img $distant_img"
   ex "docker push $distant_img"
