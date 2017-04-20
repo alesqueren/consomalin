@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.product-item
+  div.product-item(v-bind:class="{'active': inCurrentBasket}")
     img.product-img.center(v-bind:src="product.imageUrl")
     .product-name.center {{product.name}}
     div.count-input.space-bottom
@@ -44,6 +44,9 @@ export default {
     },
     multiSelection() {
       return this.$store.state.singleton && this.$store.state.singleton.multiSelection;
+    },
+    inCurrentBasket() {
+      return this.$store.getters['selection/getProductsInBasket'][this.pid];
     },
   },
   methods: {
@@ -91,6 +94,9 @@ export default {
   padding: 5px 5px 0 5px;
   float: left;
   margin: 5px;
+}
+.active{
+  background-color: #5bc0de;
 }
 .product-img{
   width:150px;

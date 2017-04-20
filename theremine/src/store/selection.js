@@ -25,8 +25,10 @@ const globalGetters = {
         const wish = wishGroup[i].wishes[j];
         if (state[group.id] && state[group.id][wish.id]) {
           const products = state[group.id][wish.id];
-          wishes[wish.id] = [];
           for (const k in products) {
+            if (!wishes[wish.id]) {
+              wishes[wish.id] = [];
+            }
             wishes[wish.id].push({
               pid: k,
               quantity: parseInt(products[k], 10),
@@ -36,6 +38,23 @@ const globalGetters = {
       }
     }
     return wishes;
+  },
+
+  getProductsInBasket: (state, getters, { wishGroup }) => {
+    const results = {};
+    for (let i = 0; i < wishGroup.length; i++) {
+      const group = wishGroup[i];
+      for (let j = 0; j < group.wishes.length; j++) {
+        const wish = wishGroup[i].wishes[j];
+        if (state[group.id] && state[group.id][wish.id]) {
+          const products = state[group.id][wish.id];
+          for (const k in products) {
+            results[k] = true;
+          }
+        }
+      }
+    }
+    return results;
   },
 
   getSelectedGroupsIds: state => Object.keys(state),

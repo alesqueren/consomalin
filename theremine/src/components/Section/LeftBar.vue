@@ -39,7 +39,8 @@ export default {
       return this.$store.getters['wishGroup/getWish']({ wid: this.currentWishId });
     },
     productIds() {
-      return Object.keys(this.$store.state.selection[this.currentWish.gid][this.currentWish.id]);
+      const wish = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
+      return Object.keys(wish);
     },
   },
   methods: {
@@ -67,6 +68,9 @@ export default {
 </script>
 
 <style>
+#LeftBar .btn {
+  padding-top: 40px;
+}
 #LeftBar .btn {
   width: 100%;
   cursor: pointer;

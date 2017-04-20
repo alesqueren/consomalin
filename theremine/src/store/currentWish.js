@@ -2,12 +2,12 @@ import resources from '../resources';
 
 function getFirstUnmatchedWish(currBasket, selection, startIndex) {
   for (let i = startIndex; i < currBasket.length; i++) {
-    if (!selection[currBasket[i]].length) {
+    if (!selection[currBasket[i]]) {
       return currBasket[i];
     }
   }
   for (let i = 0; i < startIndex; i++) {
-    if (!selection[currBasket[i]].length) {
+    if (!selection[currBasket[i]]) {
       return currBasket[i];
     }
   }

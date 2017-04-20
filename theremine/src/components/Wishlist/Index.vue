@@ -35,11 +35,12 @@ export default {
 }
 #wishlist .content .groups{
   display: table-cell;
-  width: 50%;
+  width: 49%;
+  padding-right: 2%;
 }
 #wishlist .content .activegroup{
   display: table-cell;
-  width: 50%;
+  width: 49%;
 }
 #wishlist .content .list{
   width: 20%;

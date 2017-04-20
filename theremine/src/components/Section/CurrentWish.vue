@@ -1,12 +1,11 @@
 <template lang="pug">
   div#currentWish(v-if="currentWish")
+    span.groupName Liste : {{ currentWish.gname }}
     div.input-group.stylish-input-group.search-wrapper
       span.input-group-addon.search-search
         div
           span.fa.fa-search
       .input-wrapper.search-input(onclick="javascript:document.getElementById('search-text').focus();")
-        .input-badge
-          span.badge.badge-success.groupName {{ currentWish.gname }}
         .input-input
           input#search-text.form-control(type="text" v-model="currentWish.name" v-on:keyup="rename", tabindex="0" autofocus)
       //- span.input-group-addon.search-addGroup(@click="addGroup")

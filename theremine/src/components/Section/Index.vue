@@ -140,6 +140,7 @@ export default {
 }
 #wishes .main{
   display: table-cell;
+  vertical-align: top;
   width: 80%;
 }
 #wishes .side{

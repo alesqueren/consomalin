@@ -73,6 +73,9 @@ body{
   color: #2c3e60;
   outline:none;
 }
+#content {
+  padding: 50px;
+}
 
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
