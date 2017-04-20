@@ -2,7 +2,6 @@
   #app(@click='finishDeletion', @keyup.esc="finishDeletion", tabindex="0")
     div#header
       div.left
-        // router-link.title(:to="{ name: 'replay' }")
         router-link.title(:to="{ name: 'home' }")
           img.logo(src="../assets/images/ant.png")
           span.brand &nbsp;&nbsp;&nbsp;Consomalin
@@ -19,6 +18,7 @@
       Usercard
       Basketcard
     div#content
+      div#replay
       router-view
 </template>
 

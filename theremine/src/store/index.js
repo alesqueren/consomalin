@@ -20,7 +20,7 @@ const actions = {
 
 const mutations = {
   resetStore: (state) => {
-    Vue.set(state, 'wishGroups', {});
+    Vue.set(state, 'wishGroup', {});
     Vue.set(state, 'singleton', {
       selectedSlot: null,
       currentWishId: null,
