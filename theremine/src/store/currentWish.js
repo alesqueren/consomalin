@@ -2,12 +2,12 @@ import resources from '../resources';
 
 function getFirstUnmatchedWish(currBasket, selection, startIndex) {
   for (let i = startIndex; i < currBasket.length; i++) {
-    if (!selection[currBasket[i]]) {
+    if (!selection[currBasket[i]].length) {
       return currBasket[i];
     }
   }
   for (let i = 0; i < startIndex; i++) {
-    if (!selection[currBasket[i]]) {
+    if (!selection[currBasket[i]].length) {
       return currBasket[i];
     }
   }
@@ -39,11 +39,13 @@ const actions = {
           if (currentWish.name && !rootState.product.searchs[currentWish.name]) {
             dispatch('product/fetchSearch', { name: currentWish.name }, { root: true });
           }
+          return true;
         });
       } else {
         dispatch('remove');
       }
     }
+    return false;
   },
   remove({ commit }) {
     commit('singleton/unset', { key: 'currentWishId' }, { root: true });

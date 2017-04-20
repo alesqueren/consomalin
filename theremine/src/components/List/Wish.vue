@@ -59,7 +59,7 @@ export default {
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = parseInt(this.productQuantity + 1, 10);
-        this.$store.dispatch('wishGroup/setWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('wishGroup/setWishProducts', { wid, pid, quantity });
       }
     },
     decrease() {
@@ -67,7 +67,7 @@ export default {
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = parseInt(this.productQuantity - 1, 10);
-        this.$store.dispatch('wishGroup/setWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('wishGroup/setWishProducts', { wid, pid, quantity });
       }
     },
     focus() {

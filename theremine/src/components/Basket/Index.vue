@@ -1,5 +1,6 @@
 <template lang="pug">
   div#wishlist
+    h2 Mon panier
     Group(v-for="gid in selectedGroups" 
       v-bind:gid="gid"
       v-bind:key="gid")
@@ -72,6 +73,9 @@ export default {
     content:"";
     clear:both;
     display:block;
+}
+#wishlist h2 {
+  text-align: center;
 }
 button{
   cursor: pointer;

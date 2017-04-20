@@ -41,21 +41,9 @@ export default {
 </script>
 
 <style scoped>
-@font-face {
-    font-family: gunny;
-    src: url('/static/fonts/gnyrwn971.ttf');
-}
-.wishgroup {
-  position: relative;
-  background-color: #eee;
-  color: #555;
-  clear: both;
-}
 .groupName {
-  cursor: pointer;
-  font-family: gunny;
   color: black;
-  font-size: 2.5em;
+  font-size: 1.5em;
   text-align: center;
 }
 .groupName:hover {

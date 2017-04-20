@@ -80,6 +80,7 @@ body {
 
 a {
   text-decoration: none !important;
+  display: block;
 }
 
 a:hover {
@@ -160,6 +161,14 @@ background-color: #21314d;
   color: #13181a !important;
   background-color: #f2f4f7;
   display: block;
+}
+#steps .header-tab:hover :not(.router-link-active) {
+  color:white !important;
+  background-color: rgba(255, 255, 255, 0.14902);
+  display: block;
+}
+#steps .header-tab:hover .router-link-active {
+  cursor: default;
 }
 
 </style>

@@ -1,6 +1,6 @@
 <template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
-    span.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
+    div.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
     Wish(v-for="wid in selectedWishes" 
       v-bind:wid="wid" 
       v-bind:gid="gid" 
@@ -41,10 +41,6 @@ export default {
 </script>
 
 <style scoped>
-@font-face {
-    font-family: gunny;
-    src: url('/static/fonts/gnyrwn971.ttf');
-}
 .wishgroup {
   position: relative;
   background-color: #eee;

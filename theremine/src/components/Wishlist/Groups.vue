@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.col.main
+  div
     div.notepad
       .redLine
       h2.title Mes listes de courses

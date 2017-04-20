@@ -1,21 +1,44 @@
 const mongo = require('../bs/mongo');
 
-function set(uid, gid, wid, pid, quantity) {
+function update(uid, gid, wid, pid, quantity) {
   const users = mongo.db.collection('user');
-  const path = `currentBasket.selectedWishes.${gid}.${wid}`;
+  const path = `currentBasket.selectedWishes.${gid}.${wid}.${pid}`;
   users.updateOne(
     { _id: uid },
     {
       $set: {
-        [path]: {
-          pid,
-          quantity,
-        },
+        [path]: quantity,
+      },
+    },
+  );
+}
+function add(uid, gid, wid, pid, quantity) {
+  const users = mongo.db.collection('user');
+  const path = `currentBasket.selectedWishes.${gid}.${wid}.${pid}`;
+  users.updateOne(
+    { _id: uid },
+    {
+      $set: {
+        [path]: quantity,
+      },
+    },
+  );
+}
+function remove(uid, gid, wid, pid) {
+  const users = mongo.db.collection('user');
+  const path = `currentBasket.selectedWishes.${gid}.${wid}.${pid}`;
+  users.updateOne(
+    { _id: uid },
+    {
+      $unset: {
+        [path]: '',
       },
     },
   );
 }
 
 module.exports = {
-  set,
+  update,
+  add,
+  remove,
 };

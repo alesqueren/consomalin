@@ -39,9 +39,10 @@ const actions = {
           const wishGroup = currentBasket.selectedWishes[wishgroupId];
           Object.keys(wishGroup).map((wishId) => {
             const wish = wishGroup[wishId];
-            if (wish.pid) {
-              idsWithoutDetail.push(wish.pid);
-            }
+            Object.keys(wish).map((pid) => {
+              idsWithoutDetail.push(pid);
+              return null;
+            });
             return null;
           });
           return null;

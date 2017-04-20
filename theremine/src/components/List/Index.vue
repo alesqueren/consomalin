@@ -1,5 +1,5 @@
 <template lang='pug'>
-  div
+  div#list
     Group(v-for="gid in selectedGroups" 
       v-bind:gid="gid" 
       v-bind:key="gid")
@@ -26,4 +26,8 @@ export default {
 </script>
 
 <style scoped>
+#list{
+  text-align: right;
+  background-color: white;
+}
 </style>

@@ -41,6 +41,7 @@ export default {
     actionnedEntity: {},
     activeGroupId: null,
     registering: null,
+    multiSelection: null,
   },
   actions,
   mutations,

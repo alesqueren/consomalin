@@ -1,25 +1,17 @@
 <template lang="pug">
   div.wish(
-    @click='select()',
-    v-bind:class="{'full': productInfos, 'empty': !productInfos}")
-    span.fa.fa-eraser.fa-xs.wish-erase(@click.prevent.stop='erase()')
-    span.wish-name(v-if='!productInfos') {{ wish.name }}
-    div.product-infos(v-if='productInfos')
-      img.product-left(v-bind:src='productInfos.imageUrl')
-      div.product-right
-        span.product-name {{ wish.name }} <br/>
-        span {{productInfos.name}}
-        div.product-number
-          div.count-input.space-bottom
-            a.incr-btn(@click.prevent.stop='decrease' href="#") –
-            input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='', disabled="disabled")
-            a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
-          span.total &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
-
+    @click='select()')
+    span.wish-name {{ wish.name }}
+    span.fa.fa-check-square-o.fa-xs.wish-erase(@click.prevent.stop='erase()')
+    Product(v-for="pid in productIds" 
+      v-bind:pid="pid",
+      v-bind:wid="wid",
+      v-bind:key="pid")
 </template>
 
 <script>
 import router from '../../router';
+import Product from './Product';
 
 export default {
   props: ['wid', 'gid'],
@@ -30,32 +22,12 @@ export default {
     };
   },
   computed: {
-    quantity: {
-      get() {
-        return this.productQuantity;
-      },
-      set(quantity) {
-        const gid = this.wish.gid;
-        const wid = this.wish.id;
-        const pid = this.productId;
-        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
-      },
-    },
     wish() {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
-    productId() {
-      return this.$store.state.selection[this.wish.gid][this.wish.id].pid;
-    },
-    productQuantity() {
-      return this.$store.state.selection[this.wish.gid][this.wish.id].quantity;
-    },
-    productInfos() {
-      return this.$store.state.product.details[this.productId];
-    },
-    total() {
-      const total = this.productInfos.price * this.productQuantity;
-      return parseFloat(total).toFixed(2);
+    productIds() {
+      const pids = Object.keys(this.$store.state.selection[this.wish.gid][this.wish.id]);
+      return pids;
     },
   },
   methods: {
@@ -69,22 +41,6 @@ export default {
         router.push({ name: 'section' }),
       );
     },
-    increase() {
-      if (this.productQuantity < 64) {
-        const wid = this.wish.id;
-        const pid = this.productId;
-        const quantity = parseInt(this.productQuantity + 1, 10);
-        this.$store.dispatch('wishGroup/setWishProduct', { wid, pid, quantity });
-      }
-    },
-    decrease() {
-      if (this.productQuantity > 1) {
-        const wid = this.wish.id;
-        const pid = this.productId;
-        const quantity = parseInt(this.productQuantity - 1, 10);
-        this.$store.dispatch('wishGroup/setWishProduct', { wid, pid, quantity });
-      }
-    },
     focus() {
       this.$refs.editinput.focus();
     },
@@ -94,6 +50,7 @@ export default {
       this.$store.dispatch('selection/selectWish', { wid, selected });
     },
   },
+  components: { Product },
 };
 </script>
 
@@ -109,37 +66,6 @@ export default {
   background-color: white;
   border: 1px solid grey;
 }
-.wish:hover .product-name{
-  text-decoration: underline;
-}
-
-.product-infos {
-  display: table;
-}
-.product-left {
-  display: table-cell;
-  width: 100px;
-}
-.product-right {
-  position: relative;
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
-  height: 125px;
-  /*position: absolute;
-  right: 20px;
-  bottom: 50px;*/
-}
-.product-number {
-  position: absolute;
-  left: 0;
-  bottom: 10px;
-  width: 100%;
-}
-.product {
-  width: 100%;
-  max-width: 100%;
-}
 .wish-name{
   font-family: gunny;
   font-size: 1.5em;
@@ -147,14 +73,6 @@ export default {
 }
 .wish:hover .wish-name{
   text-decoration: underline
-}
-.product-name{
-  position: absolute;
-  top: 15px;
-  width: 75%;
-  font-family: gunny;
-  font-size: 1.5em;
-  font-weight: bold;
 }
 .wish-erase{
   visibility: hidden;
@@ -171,61 +89,4 @@ export default {
 .wish .wish-erase:hover{
   color: orange;
 }
-.total{
-  vertical-align: bottom;
-  float: right;
-  display: block;
-  height: 27px;
-  line-height: 27px;
-  margin: 5px 0 5px 0;
-  font-size: 1.5em;
-  font-weight: bold;
-}
-.buttons {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-}
-.count-input {
-  position: relative;
-  float: left;
-  width: 100%;
-  max-width: 75px;
-  margin: 5px 0;
-}
-.count-input input {
-  width: 100%;
-  height: 27px;
-  line-height: 27px;
-  border: 1px solid #000;
-  border-radius: 2px;
-  background: none;
-  text-align: center;
-}
-.count-input input:focus {
-  outline: none;
-}
-.count-input .incr-btn {
-  display: block;
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  font-size: 26px;
-  font-weight: 300;
-  text-align: center;
-  line-height: 30px;
-  top: 49%;
-  right: 0;
-  margin-top: -15px;
-  text-decoration:none;
-}
-input[type=number]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
-.count-input .incr-btn:first-child {
-  right: auto;
-  left: 0;
-  top: 46%;
-}
-
 </style>

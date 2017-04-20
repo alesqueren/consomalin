@@ -70,14 +70,22 @@ const actions = {
     commit('renameWish', { wid, name });
   },
 
-  setWishProduct: ({ rootState, commit, getters }, { wid, pid, quantity }) => {
+  setWishProducts: ({ rootState, commit, getters }, { wid, products }) => {
     const gid = getters.getWish({ wid }).gid;
-    commit('selection/setWishProduct', { gid, wid, pid, quantity }, { root: true });
-    if (rootState.selection[gid][wid].id) {
-      resources.wishProduct.save({ gid, wid }, { pid, quantity });
-    } else {
-      resources.wishProduct.update({ gid, wid }, { pid, quantity });
-    }
+    commit('selection/setWishProducts', { gid, wid, products }, { root: true });
+    resources.wishProduct.bulk({ gid, wid }, { products });
+  },
+
+  updateWishProduct: ({ rootState, commit, getters }, { wid, pid, quantity }) => {
+    const gid = getters.getWish({ wid }).gid;
+    commit('selection/updateWishProduct', { gid, wid, pid, quantity }, { root: true });
+    resources.wishProduct.update({ gid, wid }, { pid, quantity });
+  },
+
+  removeWishProduct: ({ rootState, commit, getters }, { wid, pid }) => {
+    const gid = getters.getWish({ wid }).gid;
+    commit('selection/removeWishProduct', { gid, wid, pid }, { root: true });
+    resources.wishProduct.remove({ gid, wid }, { pid });
   },
 
   removeWish: ({ commit, getters }, { wid }) => {

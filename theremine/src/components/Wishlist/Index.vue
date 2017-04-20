@@ -1,11 +1,13 @@
 <template lang="pug">
-  div#wishlist.container-fluid
-    div.row
-      Groups.col-4
-      ActiveGroup.col-4
-      List.col-4
-    router-link(:to='{ name: "basket" }')
-      button.btn.btn-success.right(type="button", style="position:absolute;top:6px;right:51px;") Valider ma selection
+  div(style="position:relative;width:100%;")
+    div#wishlist
+      h2 Je crée et gére mes liste de courses
+      div.content
+          Groups.groups
+          ActiveGroup.activegroup
+          //- List.list
+      router-link(:to='{ name: "basket" }')
+        button.btn.btn-success.right.validation(type="button") Valider ma selection
 
 </template>
 
@@ -21,7 +23,31 @@ export default {
 
 <style scoped>
 #wishlist {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+#wishlist h2 {
+  text-align: center;
+}
+#wishlist .content {
+  width: 100%;
+  display: table;
+  padding-top: 50px;
+}
+#wishlist .content .groups{
+  display: table-cell;
+  width: 50%;
+}
+#wishlist .content .activegroup{
+  display: table-cell;
+  width: 50%;
+}
+#wishlist .content .list{
+  width: 20%;
+  display: table-cell;
+}
+#wishlist .validation {
+  position:absolute;
+  top:50px;
+  right:50px;
 }
 </style>

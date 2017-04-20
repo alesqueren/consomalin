@@ -7,7 +7,7 @@
       v-on:keyup.enter="validEdition"
       v-on:keyup.esc="finishEdition"
       v-on:blur="finishEdition")
-    button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click.stop="validEdition")
+    button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click.stop.prevent="validEdition")
       i.fa.fa-check.fa-xs
     label.name(v-else for="select") {{ name }}
     div.confirmDeletion(v-if='deleting' @click.stop="remove" @keyup.esc="finishDeletion")
@@ -15,7 +15,7 @@
 
     div.buttns(v-if='!editing')
       i.fa.fa-pencil.fa-xs.action.edit(@click.stop="startEdition")
-      i.fa.fa-trash-o.fa-xs.action.delete(@click.stop="startDeletion")
+      i.fa.fa-eraser.fa-xs.action.delete(@click.stop="startDeletion")
 </template>
 
 <script>

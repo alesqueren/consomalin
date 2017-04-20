@@ -15,7 +15,11 @@ export default {
   wish: Vue.resource('/api/wishlist/groups/{gid}/wishes{/wid}', {}, {
     bulk: { method: 'POST', url: '/api/wishlist/groups/{gid}/wishes/bulk' },
   }),
-  wishProduct: Vue.resource('/api/wishlist/groups/{gid}/wishes/{wid}/product'),
+  wishProduct: Vue.resource('/api/wishlist/groups/{gid}/wishes/{wid}/product', {}, {
+    bulk: { method: 'POST', url: '/api/wishlist/groups/{gid}/wishes/{wid}/product/bulk' },
+    update: { method: 'PUT', url: '/api/wishlist/groups/{gid}/wishes/{wid}/product' },
+    remove: { method: 'DELETE', url: '/api/wishlist/groups/{gid}/wishes/{wid}/product' },
+  }),
   currentWish: Vue.resource('/api/wishlist/basket/currentWish'),
   products: Vue.resource('/api/products/{uri}'),
   schedule: Vue.resource('/api/schedule'),

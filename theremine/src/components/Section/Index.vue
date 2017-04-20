@@ -1,47 +1,52 @@
 <template lang="pug">
   div#wishes
-    CurrentWish
-    div(v-if="!currentWishIsEmpty && currentWishResults")
-      ProductItem(
-        v-for="(pid, key, i) in currentWishResults" 
-        v-if="i < maxProducts"
-        v-bind:maxProducts="maxProducts" 
-        v-bind:pid="pid" 
+    div.main
+      CurrentWish
+      div(v-if="!currentWishIsEmpty && currentWishResults")
+        ProductItem(
+          v-for="(pid, key, i) in currentWishResults" 
+          v-if="i < maxProducts"
+          v-bind:maxProducts="maxProducts" 
+          v-bind:pid="pid" 
+          v-bind:key="i")
+      div.waiting-box(
+        v-if="!currentWishIsEmpty && !currentWishResults"
+        v-for="i in 40"
         v-bind:key="i")
-    div.waiting-box(
-      v-if="!currentWishIsEmpty && !currentWishResults"
-      v-for="i in 40"
-      v-bind:key="i")
-      img.product-img.center
-      .product-name.center
-      div.count-input.space-bottom
-        a.incr-btn(href="#") –
-        input.quantity(type='number', value='1' disabled="disabled")
-        a.incr-btn(href="#") &plus;
-      div.price
-      div.btn-atb
-        i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
-    //- SI aucun resultat
-    div.nothing-box(v-if="!currentWishIsEmpty && currentWishResults && !currentWishResults[0]")
-      div(style="width: 100%; text-align: center;")
-        span Aucun produit trouvé. <br/>
-        span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
-    .container(v-else-if="basket.length === 0")
-      div
-        span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
-          router-link(:to='{ name: "wishlist" }')
-            button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
-    .container(v-else-if="basketFull && currentWishIsEmpty")
-        div(style="margin-top:50px;")
-          span Votre liste de course est complète ! Vous pouvez 
-            router-link(:to='{ name: "basket" }')
-              button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
-          span  pour finaliser la commande.
+        img.product-img.center
+        .product-name.center
+        div.count-input.space-bottom
+          a.incr-btn(href="#") –
+          input.quantity(type='number', value='1' disabled="disabled")
+          a.incr-btn(href="#") &plus;
+        div.price
+        div.btn-atb
+          i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
+      //- SI aucun resultat
+      div.nothing-box(v-if="!currentWishIsEmpty && currentWishResults && !currentWishResults[0]")
+        div(style="width: 100%; text-align: center;")
+          span Aucun produit trouvé. <br/>
+          span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
+      .container(v-else-if="basket.length === 0")
+        div
+          span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
+            router-link(:to='{ name: "wishlist" }')
+              button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
+      .container(v-else-if="basketFull && currentWishIsEmpty")
+          div(style="margin-top:50px;")
+            span Votre liste de course est complète ! Vous pouvez 
+              router-link(:to='{ name: "basket" }')
+                button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
+            span  pour finaliser la commande.
+    //- List.side
+    LeftBar.side
 </template>
 
 <script>
 import CurrentWish from './CurrentWish';
 import ProductItem from './ProductItem';
+import LeftBar from './LeftBar';
+import List from '../List/Index';
 
 const $ = window.$;
 
@@ -120,12 +125,27 @@ export default {
         this.maxProducts += 20;
       }
     },
+    nextWish() {
+      this.$store.dispatch('currentWish/next', this.currentWishId);
+    },
   },
-  components: { CurrentWish, ProductItem },
+  components: { CurrentWish, ProductItem, List, LeftBar },
 };
 </script>
 
 <style scoped>
+#wishes{
+  width: 100%;
+  display: table;
+}
+#wishes .main{
+  display: table-cell;
+  width: 80%;
+}
+#wishes .side{
+  display: table-cell;
+  width: 16%;
+}
 .waiting{
   background-color: white;
   width: 150px;

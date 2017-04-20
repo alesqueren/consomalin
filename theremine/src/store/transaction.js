@@ -4,19 +4,19 @@ const globalGetters = {
   basketAmount: (state, getters, rootState, rootGetters) => {
     const basket = rootGetters['selection/getOrdreredSelectedWishes'];
     return basket.reduce((prev, wid) => {
-      const product = rootGetters['selection/getMatchedWishes'][wid];
-      if (product) {
+      let priceProduct = 0;
+      const products = rootGetters['selection/getMatchedWishes'][wid];
+      for (const i in products) {
+        const product = products[i];
         const pid = product.pid;
         const quantity = product.quantity;
         const details = rootState.product.details[pid];
         if (details) {
           const price = details.price;
-          const priceProduct = price ? price * quantity : 0;
-          return prev + priceProduct;
+          priceProduct = price ? priceProduct + (price * quantity) : priceProduct + 0;
         }
-        return prev;
       }
-      return prev;
+      return prev + priceProduct;
     }, 0).toFixed(2);
   },
 };

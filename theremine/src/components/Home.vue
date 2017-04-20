@@ -31,12 +31,19 @@
         div.img
           img.logo(src="../assets/images/withdraw.png")
         div.txt Régle tes achats chez Auchan lors du retrait
-    div#registration
+    div#registration(v-if="!user")
       router-link(:to='{ name: "register" }')
         button.btn.btn-primary.connexion(type="button") Inscription
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
+export default {
+  computed: mapState({
+    user: state => state.user.username,
+  }),
+};
 </script>
 
 <style>

@@ -6,7 +6,7 @@
     div.right-part
       span.tooltip {{matchedWishesLength}} / {{selectedWishesNb}} produits<br/>
         span.tooltiptext.tooltip-bottom Vous avez encore {{remainingWishToMatch}} produits à choisir pour remplir votre panier
-      span.tooltip Total : {{total}}&nbsp;€
+      span Total : {{total}}&nbsp;€
 </template>
 
 <script>
@@ -68,47 +68,6 @@ export default {
   position: absolute;
   top: 9px;
   margin-left: 9px;
-}
-.tooltip {
-    position: relative;
-    opacity: 1;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  position: absolute;
-  width: 120px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  padding: 5px 0;
-  border-radius: 6px;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 1s;
-}
-
-.tooltip-bottom{
-  top: 135%;
-  left: 50%;
-  margin-left: -60px;
-}
-
-/* Tooltip arrow */
-.tooltip .tooltip-bottom::after {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent #555 transparent;
-}
-
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
 }
 
 </style>

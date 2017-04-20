@@ -9,16 +9,27 @@
     div.price
       div <b>{{product.price}}&nbsp;€</b>
       div.pu {{product.priceByQuantity}}&nbsp;€/u
-    div.btn-atb(@click="selectProduct()")
-      i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
+    div.btns-atb
+      div.btn-atb.tooltip(
+          @click="tmpSelectProduct",
+        )
+        span.tooltiptext.tooltip-bottom Ajouter au panier
+        i.fa.fa-shopping-basket.fa-xs.atb
+        i.fa.fa-plus.fa-xs.atb
+      div.btn-atb.tooltip(
+          @click="selectProduct()",
+        )
+        span.tooltiptext.tooltip-bottom Ajouter au panier et passer au produit suivant 
+        i.fa.fa-shopping-basket.fa-xs.atb-quick
+        i.fa.fa-flash.fa-xs.atb-quick
 </template>
-
 <script>
 export default {
   props: ['pid', 'maxProducts'],
   data() {
     return {
       quantity: 1,
+      tmpSelectedProduct: false,
     };
   },
   computed: {
@@ -31,15 +42,31 @@ export default {
     currentWish() {
       return this.$store.getters['wishGroup/getWish']({ wid: this.currentWishId });
     },
+    multiSelection() {
+      return this.$store.state.singleton && this.$store.state.singleton.multiSelection;
+    },
   },
   methods: {
     selectProduct() {
-      this.$store.dispatch('wishGroup/setWishProduct', {
-        wid: this.currentWish.id,
+      const products = [{
         pid: this.pid,
         quantity: parseInt(this.quantity, 10),
+      }];
+      this.$store.dispatch('wishGroup/setWishProducts', {
+        wid: this.currentWish.id,
+        products,
       });
       this.$store.dispatch('currentWish/next', this.currentWishId);
+    },
+    tmpSelectProduct() {
+      const products = [{
+        pid: this.pid,
+        quantity: parseInt(this.quantity, 10),
+      }];
+      this.$store.dispatch('wishGroup/setWishProducts', {
+        wid: this.currentWish.id,
+        products,
+      });
     },
     increase() {
       if (this.quantity < 64) {
@@ -72,18 +99,24 @@ export default {
 .product-name{
   height: 50px;
 }
-.btn-atb{
+.btns-atb{
   clear: both;
+  width: 100%;
+}
+.btn-atb{
   font-size: 1em;
   font-weight: bold;
-  background-color: #5bc0de;
+  /*background-color: #5bc0de;*/
   cursor: pointer;
   text-align: center;
   padding: 2px;
-  width: 163px;
-  margin-left: -6px;
+  width: 50%;
   height: 32px;
   line-height: 32px;
+  float: left;
+}
+.btn-atb:hover{
+  background-color: #5BC0B2;
 }
 .text-atb{
   line-height: 32px;
@@ -120,6 +153,20 @@ export default {
   outline: none;
 }
 .count-input .incr-btn {
+  display: none;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  font-size: 26px;
+  font-weight: 300;
+  text-align: center;
+  line-height: 30px;
+  top: 49%;
+  right: 0;
+  margin-top: -15px;
+  text-decoration:none;
+}
+.count-input:hover .incr-btn {
   display: block;
   position: absolute;
   width: 30px;
@@ -140,5 +187,13 @@ input[type=number]::-webkit-inner-spin-button {
   right: auto;
   left: 0;
   top: 46%;
+}
+.tooltip .tooltiptext {
+  width: 240px;
+}
+.tooltip-bottom{
+  top: 135%;
+  left: 0;
+  margin-left: -60px;
 }
 </style>

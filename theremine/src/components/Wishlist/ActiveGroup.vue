@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div
     div.activeGroup(v-if="wishgroup")
       div.notepad

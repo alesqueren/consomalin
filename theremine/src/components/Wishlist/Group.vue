@@ -23,7 +23,7 @@
       span {{ selectedWishesNb }} / {{ wishesNb }}
     div.buttns(v-if='!editing')
       i.fa.fa-pencil.fa-xs.action.edit(@click.stop="startEdition")
-      i.fa.fa-trash-o.fa-xs.action.delete(@click.stop="startDeletion")
+      i.fa.fa-eraser.fa-xs.action.delete(@click.stop="startDeletion")
 </template>
 
 <script>
