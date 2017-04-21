@@ -23,10 +23,12 @@ const mutations = {
     Vue.set(state, 'wishGroup', {});
     Vue.set(state, 'singleton', {
       selectedSlot: null,
-      currentWishId: null,
+      currentWid: null,
       actionnedEntity: {},
       activeGroupId: null,
       registering: null,
+      multiSelection: null,
+      previousWid: null,
     });
     Vue.set(state.product, 'searchs', {});
     Vue.set(state.product, 'details', {});
@@ -37,7 +39,7 @@ const mutations = {
       Vue.set(state, 'wishGroup', wishGroups);
       Vue.set(state, 'selection', currentBasket.selectedWishes);
       Vue.set(state.singleton, 'selectedSlot', currentBasket.currentSlot);
-      Vue.set(state.singleton, 'currentWishId', currentBasket.currentWishId);
+      Vue.set(state.singleton, 'currentWid', currentBasket.currentWishId);
       resolve();
     });
   },

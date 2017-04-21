@@ -37,11 +37,12 @@ export default {
   strict: true,
   state: {
     selectedSlot: null,
-    currentWishId: null,
+    currentWid: null,
     actionnedEntity: {},
     activeGroupId: null,
     registering: null,
     multiSelection: null,
+    previousWid: null,
   },
   actions,
   mutations,

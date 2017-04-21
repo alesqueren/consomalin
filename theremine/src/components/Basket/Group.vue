@@ -2,8 +2,8 @@
   div.wishgroup(v-if="selectedWishes.length")
     div.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
     Wish(v-for="wid in selectedWishes" 
-      v-bind:wid="wid" 
-      v-bind:gid="gid" 
+      v-bind:wid="wid",
+      v-bind:displayName="true",
       v-bind:key="wid")
 </template>
 
@@ -43,7 +43,6 @@ export default {
 <style scoped>
 .wishgroup {
   position: relative;
-  background-color: #eee;
   color: #555;
   clear: both;
 }

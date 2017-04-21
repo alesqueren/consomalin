@@ -1,34 +1,41 @@
 <template lang="pug">
-  div.product-item(v-bind:class="{'active': inCurrentBasket}")
+  div.product-item(v-bind:class="{'active': inCurrentWish}")
+    div.old(v-if="inCurrentBasket && !inCurrentWish")
+      span.fa.fa-check &nbsp;&nbsp;&nbsp;
+      span Deja au panier
     img.product-img.center(v-bind:src="product.imageUrl")
     .product-name.center {{product.name}}
-    div.count-input.space-bottom
-      a.incr-btn(@click.prevent.stop='decrease' href="#") –
-      input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='', disabled="disabled")
-      a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
-    div.price
-      div <b>{{product.price}}&nbsp;€</b>
-      div.pu {{product.priceByQuantity}}&nbsp;€/u
-    div.btns-atb
-      div.btn-atb.tooltip(
-          @click="tmpSelectProduct",
-        )
-        span.tooltiptext.tooltip-bottom Ajouter au panier
-        i.fa.fa-shopping-basket.fa-xs.atb
-        i.fa.fa-plus.fa-xs.atb
-      div.btn-atb.tooltip(
-          @click="selectProduct()",
-        )
-        span.tooltiptext.tooltip-bottom Ajouter au panier et passer au produit suivant 
-        i.fa.fa-shopping-basket.fa-xs.atb-quick
-        i.fa.fa-flash.fa-xs.atb-quick
+    div.bottom
+      div.price
+        div(style="font-size: 1.3em;") <b>{{product.price}}&nbsp;€</b>
+        div.pu {{product.priceByQuantity}}&nbsp;€/u
+      div.btns-atb(v-if="!inCurrentWish")
+        div.btn-atb.tooltip(
+            @click="selectProduct",
+          )
+          span.tooltiptext.tooltip-bottom Ajouter au panier
+          i.fa.fa-shopping-basket.fa-xs.atb
+          i.fa.fa-plus.fa-xs.atb
+        div.btn-atb.tooltip(
+            @click="quickSelectProduct()",
+          )
+          span.tooltiptext.tooltip-bottom Ajouter au panier et passer au produit suivant 
+          i.fa.fa-shopping-basket.fa-xs.atb-quick
+          i.fa.fa-flash.fa-xs.atb-quick
+      div.count-input.space-bottom(v-else)
+        a.incr-btn(@click.prevent.stop='decrease' href="#") –
+        input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256'
+          @click.prevent.stop='',
+          disabled="disabled")
+        a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
 </template>
 <script>
+import router from '../../router';
+
 export default {
   props: ['pid', 'maxProducts'],
   data() {
     return {
-      quantity: 1,
       tmpSelectedProduct: false,
     };
   },
@@ -36,17 +43,26 @@ export default {
     product() {
       return this.$store.state.product.details[this.pid];
     },
-    currentWishId() {
-      return this.$store.state.singleton.currentWishId;
-    },
     currentWish() {
-      return this.$store.getters['wishGroup/getWish']({ wid: this.currentWishId });
+      const currentWid = this.$store.state.singleton.currentWid;
+      return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
     },
     multiSelection() {
       return this.$store.state.singleton && this.$store.state.singleton.multiSelection;
     },
     inCurrentBasket() {
       return this.$store.getters['selection/getProductsInBasket'][this.pid];
+    },
+    inCurrentWish() {
+      const selection = this.$store.state.selection;
+      const pids = Object.keys(selection[this.currentWish.gid][this.currentWish.id]);
+      return pids && pids.indexOf(this.pid) !== -1;
+    },
+    quantity() {
+      const product = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
+      console.log(product);
+      console.log(product[this.pid]);
+      return product[this.pid] || 1;
     },
   },
   methods: {
@@ -59,9 +75,8 @@ export default {
         wid: this.currentWish.id,
         products,
       });
-      this.$store.dispatch('currentWish/next', this.currentWishId);
     },
-    tmpSelectProduct() {
+    quickSelectProduct() {
       const products = [{
         pid: this.pid,
         quantity: parseInt(this.quantity, 10),
@@ -70,15 +85,34 @@ export default {
         wid: this.currentWish.id,
         products,
       });
+      this.setCurrentAsLastProduct();
+      if (!this.$store.dispatch('currentWish/next', this.currentWish.id)) {
+        this.finish();
+      }
+    },
+    finish() {
+      router.push({ name: 'basket' });
+    },
+    setCurrentAsLastProduct() {
+      this.$store.dispatch('singleton/set', {
+        key: 'previousWid',
+        value: this.currentWish.id,
+      });
     },
     increase() {
       if (this.quantity < 64) {
-        this.quantity++;
+        const wid = this.currentWish.id;
+        const pid = this.pid;
+        const quantity = parseInt(this.quantity + 1, 10);
+        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
       }
     },
     decrease() {
       if (this.quantity > 1) {
-        this.quantity--;
+        const wid = this.currentWish.id;
+        const pid = this.pid;
+        const quantity = parseInt(this.quantity - 1, 10);
+        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
       }
     },
   },
@@ -94,9 +128,22 @@ export default {
   padding: 5px 5px 0 5px;
   float: left;
   margin: 5px;
+  position: relative;
 }
 .active{
   background-color: #5bc0de;
+}
+.old{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 25px;
+  background-color: #5bc0de;
+  /*color: white;*/
+  /*opacity: 0.5;*/
+  line-height: 25px;
+  text-align: center;
 }
 .product-img{
   width:150px;
@@ -105,46 +152,46 @@ export default {
 .product-name{
   height: 50px;
 }
-.btns-atb{
-  clear: both;
+.bottom{
+  display: table;
   width: 100%;
+}
+.btns-atb{
+  display: table-cell;
+  width: 50%;
+}
+.price{
+  font-size: 1.2em;
+  display: table-cell;
+  width: 50%;
+  vertical-align: middle;
 }
 .btn-atb{
   font-size: 1em;
   font-weight: bold;
-  /*background-color: #5bc0de;*/
   cursor: pointer;
   text-align: center;
   padding: 2px;
-  width: 50%;
   height: 32px;
   line-height: 32px;
-  float: left;
 }
 .btn-atb:hover{
-  background-color: #5BC0B2;
+  background-color: #4AB080;
 }
 .text-atb{
   line-height: 32px;
 }
-.price{
-  font-size: 1.2em;
-  float: right;
-}
 .pu{
-  font-size: 0.7em;
+  font-size: 0.9em;
 }
 .center{
   display: block;
   margin: 0 auto;
 }
-
 .count-input {
+  display: table-cell;
+  width: 50%;
   position: relative;
-  float: left;
-  width: 100%;
-  max-width: 75px;
-  margin: 5px 0;
 }
 .count-input input {
   width: 100%;
@@ -159,20 +206,6 @@ export default {
   outline: none;
 }
 .count-input .incr-btn {
-  display: none;
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  font-size: 26px;
-  font-weight: 300;
-  text-align: center;
-  line-height: 30px;
-  top: 49%;
-  right: 0;
-  margin-top: -15px;
-  text-decoration:none;
-}
-.count-input:hover .incr-btn {
   display: block;
   position: absolute;
   width: 30px;
@@ -181,10 +214,13 @@ export default {
   font-weight: 300;
   text-align: center;
   line-height: 30px;
-  top: 49%;
+  top: 14px;
   right: 0;
   margin-top: -15px;
   text-decoration:none;
+}
+.count-input .incr-btn:hover {
+  font-size: 30px;
 }
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -192,7 +228,7 @@ input[type=number]::-webkit-inner-spin-button {
 .count-input .incr-btn:first-child {
   right: auto;
   left: 0;
-  top: 46%;
+  top: 12px;
 }
 .tooltip .tooltiptext {
   width: 240px;

@@ -35,10 +35,12 @@
         div#startWishlist(v-else-if="!matchedWishesLength")
           router-link(:to='{ name: "section" }')
             button.btn.btn-success(type="button") Commencer mes courses
+    //- List.side
 </template>
 
 <script>
 import Group from './Group';
+import List from '../List/Index';
 
 export default {
   computed: {
@@ -58,7 +60,7 @@ export default {
       return this.$store.getters['transaction/basketAmount'];
     },
   },
-  components: { Group },
+  components: { Group, List },
 };
 </script>
 <style>

@@ -1,6 +1,6 @@
 <template lang="pug">
   div#wishes
-    div.main
+    div.leftSide
       CurrentWish
       div(v-if="!currentWishIsEmpty && currentWishResults")
         ProductItem(
@@ -22,30 +22,31 @@
         div.price
         div.btn-atb
           i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
-      //- SI aucun resultat
-      div.nothing-box(v-if="!currentWishIsEmpty && currentWishResults && !currentWishResults[0]")
-        div(style="width: 100%; text-align: center;")
-          span Aucun produit trouvé. <br/>
-          span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
-      .container(v-else-if="basket.length === 0")
-        div
-          span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
-            router-link(:to='{ name: "wishlist" }')
-              button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
-      .container(v-else-if="basketFull && currentWishIsEmpty")
-          div(style="margin-top:50px;")
-            span Votre liste de course est complète ! Vous pouvez 
-              router-link(:to='{ name: "basket" }')
-                button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
-            span  pour finaliser la commande.
+
+    RightBar.rightSide
+    //- SI aucun resultat
+    div.nothing-box(v-if="!currentWishIsEmpty && currentWishResults && !currentWishResults[0]")
+      div(style="width: 100%; text-align: center;")
+        span Aucun produit trouvé. <br/>
+        span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
+    .container(v-else-if="basket.length === 0")
+      div
+        span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
+          router-link(:to='{ name: "wishlist" }')
+            button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
+    .container(v-else-if="basketFull && currentWishIsEmpty")
+        div(style="margin-top:50px;")
+          span Votre liste de course est complète ! Vous pouvez 
+            router-link(:to='{ name: "basket" }')
+              button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
+          //- span  pour finaliser la commande.
     //- List.side
-    LeftBar.side
 </template>
 
 <script>
 import CurrentWish from './CurrentWish';
 import ProductItem from './ProductItem';
-import LeftBar from './LeftBar';
+import RightBar from './RightBar';
 import List from '../List/Index';
 
 const $ = window.$;
@@ -64,11 +65,9 @@ export default {
     window.removeEventListener('scroll', this.handleScroll);
   },
   computed: {
-    currentWishId() {
-      return this.$store.state.singleton.currentWishId;
-    },
     currentWish() {
-      return this.$store.getters['wishGroup/getWish']({ wid: this.currentWishId });
+      const currentWid = this.$store.state.singleton.currentWid;
+      return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
     },
     searchs() {
       return this.$store.state.searchs;
@@ -83,7 +82,10 @@ export default {
       return [];
     },
     currentWishIsEmpty() {
-      return !Object.keys(this.$store.state.singleton.currentWishId).length;
+      if (this.$store.state.singleton.currentWid) {
+        return !Object.keys(this.$store.state.singleton.currentWid).length;
+      }
+      return true;
     },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
@@ -120,32 +122,35 @@ export default {
     handleScroll() {
       const scrollTop = $(window).scrollTop();
       const height = $(window).height();
-      const nbResult = Object.keys(this.$store.state.singleton.currentWishId).length;
+      const nbResult = Object.keys(this.$store.state.singleton.currentWid).length;
       if (scrollTop + height > height - 100 && this.maxProducts < nbResult) {
         this.maxProducts += 20;
       }
     },
     nextWish() {
-      this.$store.dispatch('currentWish/next', this.currentWishId);
+      this.$store.dispatch('currentWish/next', this.currentWish.id);
     },
   },
-  components: { CurrentWish, ProductItem, List, LeftBar },
+  components: { CurrentWish, ProductItem, List, RightBar },
 };
 </script>
 
 <style scoped>
 #wishes{
   width: 100%;
-  display: table;
 }
 #wishes .main{
+  display: table;
+}
+#wishes .leftSide{
   display: table-cell;
   vertical-align: top;
-  width: 80%;
+  padding-right: 320px;
 }
-#wishes .side{
-  display: table-cell;
-  width: 16%;
+#wishes .rightSide{
+  position: fixed;
+  top: 110px;
+  right: 50px;
 }
 .waiting{
   background-color: white;

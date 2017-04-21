@@ -2,7 +2,7 @@
   div
     div.notepad
       .redLine
-      h2.title Mes listes de courses
+      h2.title Mes rubriques
       Group(v-for="gid in gids" 
         v-bind:gid="gid"
         v-bind:key="gid")

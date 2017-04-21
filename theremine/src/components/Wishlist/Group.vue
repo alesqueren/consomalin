@@ -12,7 +12,7 @@
       @keyup.enter="validEdition",
       v-on:blur="finishEdition",
       @keyup.esc="finishEdition")
-    button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click.stop="validEdition" onclick="event.stopPropagation()" @keyup.esc="finishEdition")
+    //- button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click.stop="validEdition" @keyup.esc="finishEdition")
       i.fa.fa-check.fa-xs
     label.name(v-else for="selected") {{ name }}
     div.fakeCheckbox(v-if='!editing && wishesNb' @click="toggleSelection")
@@ -24,6 +24,7 @@
     div.buttns(v-if='!editing')
       i.fa.fa-pencil.fa-xs.action.edit(@click.stop="startEdition")
       i.fa.fa-eraser.fa-xs.action.delete(@click.stop="startDeletion")
+        i Supprimer
 </template>
 
 <script>
@@ -145,5 +146,11 @@ export default {
 }
 .strong{
   font-weight: bold;
+}
+.action i{
+  display: none;
+}
+.action:hover i{
+  display: inherit;
 }
 </style>

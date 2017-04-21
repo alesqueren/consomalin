@@ -1,8 +1,10 @@
 <template lang="pug">
   div.wish(
     @click='select()')
-    span.wish-name {{ wish.name }}
-    span.fa.fa-check-square-o.fa-xs.wish-erase(@click.prevent.stop='erase()')
+    span.wish-name(v-if="displayName") {{ wish.name }}
+    span.fa.fa-check-square-o.fa-xs.wish-erase(
+      @click.prevent.stop='erase()',
+      v-if="displayName")
     Product(v-for="pid in productIds" 
       v-bind:pid="pid",
       v-bind:wid="wid",
@@ -14,7 +16,7 @@ import router from '../../router';
 import Product from './Product';
 
 export default {
-  props: ['wid', 'gid'],
+  props: ['wid', 'displayName'],
   data() {
     return {
       editingId: 'summary-' + this.wid,
@@ -73,6 +75,14 @@ export default {
 }
 .wish:hover .wish-name{
   text-decoration: underline
+}
+.wish:hover{
+  cursor: pointer;
+  background-color: #f0f0f0;
+  -webkit-transition: all 0.2s;
+  -moz-transition:    all 0.2s;
+  -ms-transition:     all 0.2s;
+  -o-transition:      all 0.2s;
 }
 .wish-erase{
   visibility: hidden;

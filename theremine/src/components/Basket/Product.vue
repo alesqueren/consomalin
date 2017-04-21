@@ -6,10 +6,11 @@
       span.fa.fa-trash-o.fa-xs.product-erase(@click.prevent.stop='erase()')
       img.product-left(v-bind:src='productInfos.imageUrl')
       div.product-right
-        span {{productInfos.name}}
+        div {{productInfos.name}}
         div.product-number
           div.count-input.space-bottom
             a.incr-btn(@click.prevent.stop='decrease' href="#") –
+            //- div.erase(v-if="eraseEdition", @click.prevent.stop='erase()' href="#") Supprimer
             input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='', disabled="disabled")
             a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
           span.total &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
@@ -25,6 +26,7 @@ export default {
     return {
       editingId: 'summary-' + this.wid,
       editingName: null,
+      eraseEdition: false,
     };
   },
   computed: {
@@ -78,10 +80,18 @@ export default {
         const pid = this.pid;
         const quantity = parseInt(this.productQuantity - 1, 10);
         this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
+      } else {
+        this.eraseStart();
       }
     },
     focus() {
       this.$refs.editinput.focus();
+    },
+    eraseStart() {
+      this.eraseEdition = true;
+    },
+    eraseStop() {
+      this.eraseEdition = false;
     },
     erase() {
       const wid = this.wid;
@@ -116,16 +126,15 @@ export default {
   display: table-cell;
   vertical-align: middle;
   text-align: center;
-  height: 125px;
+  height: auto;
   width: 100%;
   /*position: absolute;
   right: 20px;
   bottom: 50px;*/
 }
 .product-number {
-  position: absolute;
-  left: 0;
-  bottom: 10px;
+  position: relative;
+  display: table;
   width: 100%;
 }
 .product {
@@ -141,12 +150,10 @@ export default {
   font-weight: bold;
 }
 .total{
-  vertical-align: bottom;
-  float: right;
-  display: block;
+  display: table-cell;
+  width: 50%;
   height: 27px;
   line-height: 27px;
-  margin: 5px 0 5px 0;
   font-size: 1.5em;
   font-weight: bold;
 }
@@ -157,13 +164,13 @@ export default {
 }
 .count-input {
   position: relative;
-  float: left;
-  width: 100%;
+  display: table-cell;
+  width: 60px;
   max-width: 75px;
-  margin: 5px 0;
 }
 .count-input input {
-  width: 100%;
+  position: relative;
+  width: 60px;
   height: 27px;
   line-height: 27px;
   border: 1px solid #000;
@@ -184,7 +191,7 @@ export default {
   text-align: center;
   line-height: 30px;
   top: 49%;
-  right: 0;
+  right: 15px;
   margin-top: -15px;
   text-decoration:none;
 }
@@ -193,8 +200,8 @@ input[type=number]::-webkit-inner-spin-button {
 }
 .count-input .incr-btn:first-child {
   right: auto;
-  left: 0;
-  top: 46%;
+  left: 15px;
+  z-index: 2;
 }
 
 .product-erase{
@@ -205,6 +212,15 @@ input[type=number]::-webkit-inner-spin-button {
   right: 5px;
   color: #555;
   z-index: 1;
+}
+.erase{
+  position: absolute;
+  font-size: 1.5em;
+  top: 5px;
+  right: 5px;
+  color: white;
+  z-index: 2;
+  background-color: red;
 }
 .product:hover .product-erase{
   visibility: visible;

@@ -39,14 +39,11 @@
 .notepad .edition{
   width: 100%;
   font-family: gunny;
-}
-
-.notepad .edition {
   position: relative;
-  width: 100%;
   margin-left: -50px;
   z-index: 2;
 }
+
 .notepad .btn-edition {
   position: absolute;
   top: -1px;
