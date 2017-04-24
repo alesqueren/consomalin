@@ -66,6 +66,8 @@ export default {
   },
   computed: {
     currentWish() {
+      // scroll to top
+      window.$('html,body').scrollTop(0);
       const currentWid = this.$store.state.singleton.currentWid;
       return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
     },
@@ -127,9 +129,6 @@ export default {
         this.maxProducts += 20;
       }
     },
-    nextWish() {
-      this.$store.dispatch('currentWish/next', this.currentWish.id);
-    },
   },
   components: { CurrentWish, ProductItem, List, RightBar },
 };
@@ -153,7 +152,7 @@ export default {
   right: 50px;
 }
 .waiting{
-  background-color: white;
+  background-color: color(--white);
   width: 150px;
   height: 150px;
 }
@@ -168,7 +167,7 @@ export default {
   opacity: 0.3;
 }
 .product-img{
-  background-color: white;
+  background-color: color(--white);
   width:150px;
   height:150px;
 }
@@ -179,7 +178,7 @@ export default {
   clear: both;
   font-size: 1em;
   font-weight: bold;
-  background-color: white;
+  background-color: color(--white);
   cursor: pointer;
   text-align: center;
   padding: 2px;

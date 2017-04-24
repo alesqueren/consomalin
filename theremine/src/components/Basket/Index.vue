@@ -63,12 +63,12 @@ export default {
   components: { Group, List },
 };
 </script>
-<style>
+
+<style scoped>
 #wishlist{
   position: relative;
   height: auto;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  padding-bottom: 300px;
   clear: both;
 }
 #wishlist:after {
@@ -82,12 +82,12 @@ export default {
 button{
   cursor: pointer;
 }
+/*
 #recap{
   position: absolute;
   bottom: 0;
   left: 0;
   clear: both;
-  background-color: #e5e5e5;
   width: 100%;
   height: 250px;
 }
@@ -124,6 +124,7 @@ button{
   top: 100px;
   z-index: 2;
 }
+*/
 #force-continue{
   position: absolute;
   right: 50px;

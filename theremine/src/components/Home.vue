@@ -75,8 +75,8 @@ export default {
   padding: 15px 0 15px 0;
 }
 #presentation .item:nth-child(odd){
-  background-color: #2c3e60;
-  color: white;
+  color: var(--color4);
+  background-color: var(--color2);
 }
 #presentation .item>div{
   display: table-cell;
@@ -86,7 +86,7 @@ export default {
 }
 #presentation .item .num{
   vertical-align: center;
-  border: 1px solid #2c3e60;
+  border: 1px solid var(--color2);
   border-radius: 100%;
   display: block;
   width: 70px;
@@ -95,17 +95,17 @@ export default {
   font-size: 2em;
 }
 #presentation .item:nth-child(odd) .num{
-  background-color: white;
-  color: #2c3e60;
+  color: var(--color2);
+  background-color: var(--color4);
 }
 #presentation .item:nth-child(even) .num{
-  background-color: #2c3e60;
-  color: white;
+  color: var(--color4);
+  background-color: var(--color2);
 }
 #presentation .item .img{
   min-width: 700px;
   min-height: 245.45px;
-  background-color: white;
+  background-color: var(--color4);
 }
 #presentation .item .img img{
   max-width: 700px;

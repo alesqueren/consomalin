@@ -41,8 +41,4 @@ export default {
   },
   components: { Wish },
 };
-
 </script>
-
-<style scoped>
-</style>

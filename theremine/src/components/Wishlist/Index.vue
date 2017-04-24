@@ -7,7 +7,9 @@
           ActiveGroup.activegroup
           //- List.list
       router-link(:to='{ name: "basket" }')
-        button.btn.btn-success.right.validation(type="button") Valider ma selection
+        button.btn.right.validation(type="button") Voir le résumé
+      router-link(:to='{ name: "section" }')
+        button.btn.btn-success.right.validation(type="button") Commencer mes courses
 
 </template>
 
@@ -45,10 +47,5 @@ export default {
 #wishlist .content .list{
   width: 20%;
   display: table-cell;
-}
-#wishlist .validation {
-  position:absolute;
-  top:50px;
-  right:50px;
 }
 </style>

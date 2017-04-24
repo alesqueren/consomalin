@@ -75,6 +75,9 @@ router.beforeEach((to, from, next) => {
     }
   };
 
+  // jump to page top
+  window.$('html,body').scrollTop(0);
+
   if (to.name === 'replay') {
     replay.init(store, router, to.params.sid);
     return;

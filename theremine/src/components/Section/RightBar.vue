@@ -4,15 +4,17 @@
       span.input-group-addon.basket.grey-btn
         span Voir le panier
     // - current wish
-    div(v-if="productIds.length > 0")
+    div
       div.titleCurrent
         span Produit en cours : {{currentWish.name}}
-      div
+      div(v-if="productIds.length > 0")
         Wish(
           v-bind:wid="currentWish.id",
           v-bind:displayName="false"
           )
         div(style="clear:both")
+      div.currentWishProducts(v-else)
+        span Aucun produit selectionné
       div.next.input-group-addon.grey-btn(
           @click="next"
         )
@@ -98,6 +100,14 @@ export default {
 </script>
 
 <style scoped>
+.currentWishProducts {
+  height: auto;
+  min-width: 320px;
+  width: 320px;
+  padding: 5px;
+  background-color: color(--white);
+  border: 1px solid grey;
+}
 .titleCurrent {
   clear: both;
   font-size: 1.5em;

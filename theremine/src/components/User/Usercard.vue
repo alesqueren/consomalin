@@ -34,6 +34,9 @@ export default {
 };
 </script>
 <style>
+div.right > a {
+  display: inline;
+}
 .connexion{
   position: relative;
   cursor:pointer;
