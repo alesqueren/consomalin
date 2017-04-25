@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     select() {
-      this.$store.dispatch('currentWish/set', this.wid).then(() => {
+      this.$store.dispatch('sectionWishes/set', this.wid).then(() => {
         router.push({ name: 'section' });
       });
     },

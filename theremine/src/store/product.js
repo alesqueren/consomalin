@@ -27,7 +27,6 @@ const actions = {
       });
     }
   },
-
 };
 
 const mutations = {
@@ -43,7 +42,6 @@ const mutations = {
   addSearch: (state, { name, products }) => {
     Vue.set(state.searchs, name, products);
   },
-
 };
 
 export default {

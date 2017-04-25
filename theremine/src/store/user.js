@@ -51,6 +51,11 @@ const actions = {
           dispatch('product/fetchDetails', { ids: idsWithoutDetail }, { root: true });
         }
         commit('setUserData', { wishGroups, currentBasket }, { root: true });
+        if (currentBasket.currentWishId) {
+          dispatch('sectionWishes/set', currentBasket.currentWishId, { root: true });
+        } else {
+          dispatch('sectionWishes/next', () => null, { root: true });
+        }
         resolve();
       });
     });

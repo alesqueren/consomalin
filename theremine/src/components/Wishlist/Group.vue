@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.line(v-bind:class="{'active': isActive, 'strong': selectedWishesNb}"
+  div.line(v-bind:class="{'active': isActive, 'strong': selectedWishNb}"
       @click="setActivation")
     input(type="checkbox"
       name="selected"
@@ -20,7 +20,7 @@
       span.btn.btn-danger Confirmer la suppression
 
     div.filling
-      span {{ selectedWishesNb }} / {{ wishesNb }}
+      span {{ selectedWishNb }} / {{ wishesNb }}
     div.buttns(v-if='!editing')
       i.fa.fa-pencil.fa-xs.action.edit(@click.stop="startEdition")
       i.fa.fa-eraser.fa-xs.action.delete(@click.stop="startDeletion")
@@ -59,7 +59,7 @@ export default {
     selected() {
       return this.$store.getters['selection/getSelectedGroupsIds'].indexOf(this.gid) !== -1;
     },
-    selectedWishesNb() {
+    selectedWishNb() {
       return this.$store.getters['selection/getSelectedWishesByGroup']({ gid: this.gid }).length;
     },
     wishesNb() {

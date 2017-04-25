@@ -46,21 +46,18 @@ const actions = {
     commit('renameGroup', { gid, name });
   },
 
-  removeGroup: ({ commit }, { gid }) => {
+  removeGroup: ({ commit, dispatch }, { gid }) => {
     resources.wishgroup.delete({ gid }).then(() => {
-      commit('selection/unselectGroup', { gid }, { root: true });
+      dispatch('selection/unselectGroup', { gid }, { root: true });
       commit('removeGroup', { gid });
     });
   },
 
-  addWish({ commit }, { gid, name }) {
-    return new Promise((resolve) => {
-      resources.wish.bulk({ gid }, { names: [name] }).then((response) => {
-        const wid = response.body[0];
-        commit('addWish', { gid, wid, name });
-        commit('selection/selectWish', { gid, wid, selected: true }, { root: true });
-        resolve(wid);
-      });
+  addWish({ commit, dispatch }, { gid, name }) {
+    resources.wish.bulk({ gid }, { names: [name] }).then((response) => {
+      const wid = response.body[0];
+      commit('addWish', { gid, wid, name });
+      dispatch('selection/selectWish', { wid, selected: true }, { root: true });
     });
   },
 
@@ -70,31 +67,10 @@ const actions = {
     commit('renameWish', { wid, name });
   },
 
-  setWishProducts: ({ rootState, commit, getters }, { wid, products }) => {
-    const gid = getters.getWish({ wid }).gid;
-    return new Promise((resolve) => {
-      commit('selection/setWishProducts', { gid, wid, products }, { root: true });
-      resources.wishProduct.bulk({ gid, wid }, { products });
-      resolve();
-    });
-  },
-
-  updateWishProduct: ({ rootState, commit, getters }, { wid, pid, quantity }) => {
-    const gid = getters.getWish({ wid }).gid;
-    commit('selection/updateWishProduct', { gid, wid, pid, quantity }, { root: true });
-    resources.wishProduct.update({ gid, wid }, { pid, quantity });
-  },
-
-  removeWishProduct: ({ rootState, commit, getters }, { wid, pid }) => {
-    const gid = getters.getWish({ wid }).gid;
-    commit('selection/removeWishProduct', { gid, wid, pid }, { root: true });
-    resources.wishProduct.remove({ gid, wid }, { pid });
-  },
-
-  removeWish: ({ commit, getters }, { wid }) => {
+  removeWish: ({ commit, dispatch, getters }, { wid }) => {
     const gid = getters.getWish({ wid }).gid;
     resources.wish.delete({ gid, wid }).then();
-    commit('selection/unselectWish', { gid, wid }, { root: true });
+    dispatch('selection/selectWish', { wid, selected: false }, { root: true });
     commit('removeWish', { wid });
   },
 

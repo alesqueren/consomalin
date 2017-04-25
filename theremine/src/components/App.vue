@@ -35,8 +35,8 @@ export default {
     user() {
       return this.$store.state.user;
     },
-    selectedWishesNb() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
@@ -50,6 +50,14 @@ export default {
     },
   },
   created() {
+    // setInterval(() => {
+    //   if (this.$store.getters['sectionWishes/getCurrent']) {
+    //     console.log(this.$store.getters['sectionWishes/getCurrent'].name);
+    //   }
+    //   console.log(this.$store.getters['sectionWishes/getList'].map(wid =>
+    //     this.$store.getters['wishGroup/getWish']({ wid }).name,
+    //   ));
+    // }, 2000);
     $(document).keydown((e) => {
       if (e.which === 37) {
         replay.previous(this.$store, this.$router);

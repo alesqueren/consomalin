@@ -31,21 +31,13 @@ function seekInBasket(rootGetters, wishes, matchedWishes) {
   return null;
 }
 
-function setNextWish(commit, dispatch, lastWid, nextWish) {
-  commit('singleton/merge', {
-    previousWid: lastWid,
-    currentWid: nextWish.id,
-  }, { root: true });
-  resources.currentWish.save({}, {
-    gid: nextWish.gid,
-    wid: nextWish.id,
-  });
-}
-
-function unsetNextWish(commit, lastWid) {
-  commit('singleton/merge', {
-    previousWid: lastWid,
-    currentWid: {},
+function unsetNextWish(commit, currentWid) {
+  commit('singleton/set', {
+    key: 'sectionWishes',
+    value: {
+      previousWid: currentWid,
+      currentWid: {},
+    },
   }, { root: true });
   resources.currentWish.delete();
 }
@@ -53,11 +45,14 @@ function unsetNextWish(commit, lastWid) {
 const actions = {
   set({ rootGetters, commit, rootState, dispatch }, nextWid) {
     return new Promise((resolve) => {
-      const lastWid = rootState.singleton.currentWid;
+      const currentWid = rootState.singleton.currentWid;
       const nextWish = rootGetters['wishGroup/getWish']({ wid: nextWid });
-      commit('singleton/merge', {
-        previousWid: lastWid,
-        currentWid: nextWish.id,
+      commit('singleton/set', {
+        key: 'sectionWishes',
+        value: {
+          previousId: currentWid,
+          currentId: nextWish.id,
+        },
       }, { root: true });
       resources.currentWish.save({}, {
         gid: nextWish.gid,
@@ -69,13 +64,6 @@ const actions = {
             { root: true });
       }
       resolve();
-      // resources.currentWish.save({}, { wid }).then(() => {
-      //   commit('singleton/set', {
-      //     key: 'currentWid',
-      //     value: wid,
-      //   }, { root: true });
-      //   resolve();
-      // });
     });
   },
 
@@ -86,7 +74,7 @@ const actions = {
     const wid = wish ? wish.id : null;
     const gid = wish ? wish.gid : null;
     const matchedWishes = rootGetters['selection/getMatchedWishes'];
-    const wishesInBasket = rootGetters['selection/getOrdreredSelectedWishes'];
+    const wishesInBasket = rootGetters['selection/getOrderedSelectedWishes'];
 
     let nextWish;
     if (wid) {
@@ -111,4 +99,5 @@ const actions = {
 export default {
   namespaced: true,
   actions,
+  getters: globalGetters,
 };

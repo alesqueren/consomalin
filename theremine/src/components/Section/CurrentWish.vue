@@ -38,8 +38,7 @@ export default {
   },
   computed: {
     currentWish() {
-      const currentWid = this.$store.state.singleton.currentWid;
-      return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
+      return this.$store.getters['sectionWishes/getCurrent'];
     },
     productIds() {
       return Object.keys(this.$store.state.selection[this.currentWish.gid][this.currentWish.id]);
@@ -60,24 +59,11 @@ export default {
         this.$store.dispatch('product/fetchSearch', { name });
       }, 200);
     },
-    // addGroup() {
-    //   this.wishCreation = true;
-    //   const name = this.currentWish.name;
-    //   this.$store.dispatch('wishGroup/addGroup', { name }).then((gid) => {
-    //     this.$store.dispatch('wishGroup/removeWish', { wid: this.currentWish.id });
-    //     this.$store.dispatch('singleton/unset', { key: 'currentWish.id' });
-    //     this.$store.dispatch('singleton/set', {
-    //       key: 'activeGroupId',
-    //       value: gid,
-    //     });
-    //     router.push({ name: 'wishlist' });
-    //   });
-    // },
     remove() {
       const wid = this.currentWish.id;
       const selected = false;
       this.$store.dispatch('selection/selectWish', { wid, selected }).then(() => {
-        this.$store.dispatch('currentWish/next');
+        this.$store.dispatch('sectionWishes/next');
       });
     },
     focus() {

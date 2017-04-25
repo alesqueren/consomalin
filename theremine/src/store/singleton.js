@@ -1,5 +1,12 @@
 import Vue from 'vue';
 
+const defaultState = {
+  selectedSlot: null,
+  actionnedEntity: {},
+  activeGroupId: null,
+  registering: null,
+};
+
 const actions = {
   set({ commit }, { key, value }) {
     commit('set', { key, value });
@@ -17,6 +24,7 @@ const actions = {
 };
 
 const mutations = {
+  // TODO: use merge
   set: (state, { key, value }) => {
     Vue.set(state, key, value);
   },
@@ -41,14 +49,8 @@ const mutations = {
 export default {
   namespaced: true,
   strict: true,
-  state: {
-    selectedSlot: null,
-    currentWid: null,
-    actionnedEntity: {},
-    activeGroupId: null,
-    registering: null,
-    previousWid: null,
-  },
+  state: defaultState,
   actions,
   mutations,
+  defaultState,
 };

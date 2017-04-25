@@ -18,17 +18,16 @@
         span Aucun produit selectionné
         
       div.next.input-group-addon.grey-btn(
-        v-if="selectedWishesNb !== matchedWishesLength && productIds.length > 0",
+        v-if="selectedWishNb !== matchedWishesLength && productIds.length > 0",
         @click="nextProduct"
         )
         span Produit suivant
         span.fa.fa-arrow-right.special-fa
-      div.next.input-group-addon.grey-btn(
-        v-if="selectedWishesNb === matchedWishesLength && productIds.length > 0",
-        @click="gotoBasket"
-        )
-        span Voir le panier
-        span.fa.fa-arrow-right.special-fa
+      router-link(:to='{ name: "basket" }')
+        div.next.input-group-addon.grey-btn(
+          v-if="selectedWishNb === matchedWishesLength && productIds.length > 0")
+          span Voir le panier
+          span.fa.fa-arrow-right.special-fa
 
     // - previous wish
     div(v-if="previousProductIds.length > 0 && previousWid !== currentWish.id")
@@ -42,7 +41,6 @@
         div(style="clear:both")
 </template>
 <script>
-import router from '../../router';
 import Wish from '../Basket/Wish';
 
 export default {
@@ -53,8 +51,14 @@ export default {
     };
   },
   computed: {
-    previousWid() {
-      return this.$store.state.singleton && this.$store.state.singleton.previousWid;
+    currentWish() {
+      return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
+    },
+    matchedWishesLength() {
+      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
     previousWish() {
       if (this.previousWid) {
@@ -62,16 +66,16 @@ export default {
       }
       return null;
     },
+    previousWid() {
+      return this.$store.state.singleton && this.$store.state.singleton.previousWid;
+    },
+    // TODO: getter
     previousProductIds() {
       if (this.previousWid) {
         const previousWish = this.$store.state.selection[this.previousWish.gid][this.previousWid];
         return Object.keys(previousWish);
       }
       return 0;
-    },
-    currentWish() {
-      const currentWid = this.$store.state.singleton.currentWid;
-      return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
     },
     productIds() {
       if (this.currentWish) {
@@ -80,21 +84,10 @@ export default {
       }
       return 0;
     },
-    selectedWishesNb() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
-    },
-    matchedWishesLength() {
-      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
-    },
   },
   methods: {
     nextProduct() {
-      this.$store.dispatch('currentWish/next', () => {
-        router.push({ name: 'basket' });
-      });
-    },
-    gotoBasket() {
-      router.push({ name: 'basket' });
+      this.$store.dispatch('sectionWishes/next');
     },
   },
   components: { Wish },

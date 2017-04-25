@@ -1,39 +1,46 @@
 <template lang="pug">
   div#wishes
-    div.leftSide
-      CurrentWish
-      div(v-if="!currentWishIsEmpty && currentWishResults")
-        ProductItem(
-          v-for="(pid, key, i) in currentWishResults" 
-          v-if="i < maxProducts"
-          v-bind:maxProducts="maxProducts" 
-          v-bind:pid="pid" 
-          v-bind:key="i")
-      div.waiting-box(
-        v-if="!currentWishIsEmpty && !currentWishResults"
-        v-for="i in 40"
-        v-bind:key="i")
-        img.product-img.center
-        .product-name.center
-        div.count-input.space-bottom
-          a.incr-btn(href="#") –
-          input.quantity(type='number', value='1' disabled="disabled")
-          a.incr-btn(href="#") &plus;
-        div.price
-        div.btn-atb
-          i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
-
-    RightBar.rightSide
-    //- SI aucun resultat
-    div.nothing-box(v-if="!currentWishIsEmpty && currentWishResults && !currentWishResults[0]")
+    div(v-if="!currentWish") 
       div(style="width: 100%; text-align: center;")
-        span Aucun produit trouvé. <br/>
-        span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
-    .container(v-else-if="basket.length === 0")
-      div
-        span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
-          router-link(:to='{ name: "wishlist" }')
-            button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
+        span Tous les produits ont été ajoutés au panier. <br/><br/> 
+      router-link(style="margin-left: 45%; width: 10%;", :to='{ name: "basket" }')
+        span.input-group-addon.basket.grey-btn
+          span Voir le panier
+    div(v-else) 
+      div.leftSide
+        CurrentWish
+        div(v-if="currentWishResults")
+          ProductItem(
+            v-for="(pid, key, i) in currentWishResults" 
+            v-if="i < maxProducts"
+            v-bind:maxProducts="maxProducts" 
+            v-bind:pid="pid" 
+            v-bind:key="i")
+        div.waiting-box(
+          v-if="!currentWishResults"
+          v-for="i in 40"
+          v-bind:key="i")
+          img.product-img.center
+          .product-name.center
+          div.count-input.space-bottom
+            a.incr-btn(href="#") –
+            input.quantity(type='number', value='1' disabled="disabled")
+            a.incr-btn(href="#") &plus;
+          div.price
+          div.btn-atb
+            i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
+
+      RightBar.rightSide
+      //- SI aucun resultat
+      div.nothing-box(v-if="currentWishResults && !currentWishResults[0]")
+        div(style="width: 100%; text-align: center;")
+          span Aucun produit trouvé. <br/>
+          span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
+      .container(v-else-if="basket.length === 0")
+        div
+          span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
+            router-link(:to='{ name: "wishlist" }')
+              button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
 </template>
 
 <script>
@@ -58,35 +65,29 @@ export default {
     window.removeEventListener('scroll', this.handleScroll);
   },
   computed: {
+    // TODO:
+    // scroll to top
+    // window.$('html,body').scrollTop(0);
     currentWish() {
-      // scroll to top
-      window.$('html,body').scrollTop(0);
-      const currentWid = this.$store.state.singleton.currentWid;
-      return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
+      return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    basket() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'];
+    },
+    total() {
+      return this.$store.getters['transaction/basketAmount'];
+    },
+    matchedWishesLength() {
+      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
     searchs() {
       return this.$store.state.searchs;
-    },
-    basket() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'];
     },
     currentWishResults() {
       if (this.currentWish && this.currentWish.name) {
         return this.$store.state.product.searchs[this.currentWish.name];
       }
       return [];
-    },
-    currentWishIsEmpty() {
-      if (this.$store.state.singleton.currentWid) {
-        return !Object.keys(this.$store.state.singleton.currentWid).length;
-      }
-      return true;
-    },
-    matchedWishesLength() {
-      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
-    },
-    total() {
-      return this.$store.getters['transaction/basketAmount'];
     },
     nextInfos() {
       const length = this.basket.length;
@@ -101,13 +102,16 @@ export default {
     },
   },
   mounted() {
-    if (this.currentWish) {
-      const name = this.currentWish.name;
-      // TODO: useless ?
-      this.$store.dispatch('product/fetchSearch', { name });
-    } else {
-      this.$store.dispatch('currentWish/next');
-    }
+    // if (!this.currentWish) {
+    // }
+    // console.log(this.currentWish);
+    // if (this.currentWish) {
+    //   // TODO: rm ?
+    //   const name = this.currentWish.name;
+    //   this.$store.dispatch('product/fetchSearch', { name });
+    // } else {
+    //   this.$store.dispatch('sectionWishes/next');
+    // }
   },
   methods: {
     // lazyloading
@@ -115,7 +119,8 @@ export default {
     handleScroll() {
       const scrollTop = $(window).scrollTop();
       const height = $(window).height();
-      const nbResult = Object.keys(this.$store.state.singleton.currentWid).length;
+      const searchsRes = this.$store.state.product.searchs[this.currentWish.name];
+      const nbResult = searchsRes ? Object.keys(searchsRes).length : 0;
       if (scrollTop + height > height - 100 && this.maxProducts < nbResult) {
         this.maxProducts += 20;
       }

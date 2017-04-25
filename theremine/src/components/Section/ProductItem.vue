@@ -43,15 +43,14 @@ export default {
     };
   },
   computed: {
-    product() {
-      return this.$store.state.product.details[this.pid];
-    },
     currentWish() {
-      const currentWid = this.$store.state.singleton.currentWid;
-      return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
+      return this.$store.getters['sectionWishes/getCurrent'];
     },
     inCurrentBasket() {
       return this.$store.getters['selection/getProductsInBasket'][this.pid];
+    },
+    product() {
+      return this.$store.state.product.details[this.pid];
     },
     inCurrentWish() {
       const selection = this.$store.state.selection;
@@ -69,7 +68,7 @@ export default {
         pid: this.pid,
         quantity: parseInt(this.quantity, 10),
       }];
-      this.$store.dispatch('wishGroup/setWishProducts', {
+      this.$store.dispatch('selection/setWishProducts', {
         wid: this.currentWish.id,
         products,
       });
@@ -79,12 +78,14 @@ export default {
         pid: this.pid,
         quantity: parseInt(this.quantity, 10),
       }];
-      this.$store.dispatch('wishGroup/setWishProducts', {
+      this.$store.dispatch('selection/setWishProducts', {
         wid: this.currentWish.id,
         products,
       }).then(() => {
-        this.$store.dispatch('currentWish/next', () => {
-          router.push({ name: 'basket' });
+        this.$store.dispatch('sectionWishes/next', () => {
+          if (!this.$store.getters['sectionWishes/getCurrent']) {
+            router.push({ name: 'basket' });
+          }
         });
       });
     },

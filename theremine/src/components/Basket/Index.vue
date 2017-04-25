@@ -10,8 +10,8 @@
           button.btn.btn-primary.btn-sm(type="button") Editer ma liste de course
       div
         //- tous les wishs ne sont pas encore matchés
-        div#missingProduct(v-if="matchedWishesLength && matchedWishesLength < selectedWishesNb")
-          div Vous avez choisi {{matchedWishesLength}} / {{selectedWishesNb}} produits de votre liste de course
+        div#missingProduct(v-if="matchedWishesLength && matchedWishesLength < selectedWishNb")
+          div Vous avez choisi {{matchedWishesLength}} / {{selectedWishNb}} produits de votre liste de course
           div Total du panier : <span style="font-size: 2em;">{{total}} €</span>
           router-link(:to='{ name: "section" }')
             div(style="margin: 10px 0 0 10px;")
@@ -21,13 +21,13 @@
               button.btn.btn-warning.btn-sm(type="button") Passer au retrait 
 
         //- tous les wishs sont matchés
-        div#basketFull(v-else-if="matchedWishesLength && matchedWishesLength == selectedWishesNb")
+        div#basketFull(v-else-if="matchedWishesLength && matchedWishesLength == selectedWishNb")
           div Total du panier : <span style="font-size: 2em;">{{total}} €</span>
           router-link(:to='{ name: "withdraw" }')
             button.btn.btn-success(type="button") Passer au retrait
 
         //-  aucun wish
-        div#startBasket(v-else-if="!matchedWishesLength && !selectedWishesNb")
+        div#startBasket(v-else-if="!matchedWishesLength && !selectedWishNb")
           router-link(:to='{ name: "wishlist" }')
             button.btn.btn-success(type="button") Commencer une liste
 
@@ -48,10 +48,10 @@ export default {
       return this.$store.state.wishGroup.map(group => group.id);
     },
     basket() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'];
+      return this.$store.getters['selection/getOrderedSelectedWishes'];
     },
-    selectedWishesNb() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
