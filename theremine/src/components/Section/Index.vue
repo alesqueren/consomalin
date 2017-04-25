@@ -34,13 +34,6 @@
         span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
           router-link(:to='{ name: "wishlist" }')
             button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
-    .container(v-else-if="basketFull && currentWishIsEmpty")
-        div(style="margin-top:50px;")
-          span Votre liste de course est complète ! Vous pouvez 
-            router-link(:to='{ name: "basket" }')
-              button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
-          //- span  pour finaliser la commande.
-    //- List.side
 </template>
 
 <script>
@@ -92,9 +85,6 @@ export default {
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
-    basketFull() {
-      return this.matchedWishesLength === this.basket.length;
-    },
     total() {
       return this.$store.getters['transaction/basketAmount'];
     },
@@ -113,6 +103,7 @@ export default {
   mounted() {
     if (this.currentWish) {
       const name = this.currentWish.name;
+      // TODO: useless ?
       this.$store.dispatch('product/fetchSearch', { name });
     } else {
       this.$store.dispatch('currentWish/next');

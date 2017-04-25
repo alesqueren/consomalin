@@ -72,8 +72,11 @@ const actions = {
 
   setWishProducts: ({ rootState, commit, getters }, { wid, products }) => {
     const gid = getters.getWish({ wid }).gid;
-    commit('selection/setWishProducts', { gid, wid, products }, { root: true });
-    resources.wishProduct.bulk({ gid, wid }, { products });
+    return new Promise((resolve) => {
+      commit('selection/setWishProducts', { gid, wid, products }, { root: true });
+      resources.wishProduct.bulk({ gid, wid }, { products });
+      resolve();
+    });
   },
 
   updateWishProduct: ({ rootState, commit, getters }, { wid, pid, quantity }) => {

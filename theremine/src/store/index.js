@@ -27,7 +27,6 @@ const mutations = {
       actionnedEntity: {},
       activeGroupId: null,
       registering: null,
-      multiSelection: null,
       previousWid: null,
     });
     Vue.set(state.product, 'searchs', {});

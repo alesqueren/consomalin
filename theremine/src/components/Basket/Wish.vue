@@ -34,14 +34,9 @@ export default {
   },
   methods: {
     select() {
-      this.$store.dispatch('currentWish/set', {
-        wid: this.wid,
-      }).then(
-        this.$store.dispatch('product/fetchSearch', {
-          name: this.wish.name,
-        }),
-        router.push({ name: 'section' }),
-      );
+      this.$store.dispatch('currentWish/set', this.wid).then(() => {
+        router.push({ name: 'section' });
+      });
     },
     focus() {
       this.$refs.editinput.focus();

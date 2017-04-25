@@ -17,9 +17,15 @@ const actions = {
 };
 
 const mutations = {
-  set(state, { key, value }) {
-    // delete state.key;
+  set: (state, { key, value }) => {
     Vue.set(state, key, value);
+  },
+
+  merge: (state, object) => {
+    Object.keys(object).map((key) => {
+      Vue.set(state, key, object[key]);
+      return null;
+    });
   },
 
   unset: (state, { key }) => {
@@ -41,7 +47,6 @@ export default {
     actionnedEntity: {},
     activeGroupId: null,
     registering: null,
-    multiSelection: null,
     previousWid: null,
   },
   actions,

@@ -1,5 +1,7 @@
 <template lang="pug">
-  div.product-item(v-bind:class="{'active': inCurrentWish}", @click="selectProduct")
+  div.product-item(
+    v-bind:class="{'active': inCurrentWish}", 
+    @click="selectProduct")
     div.old(v-if="inCurrentBasket && !inCurrentWish")
       span.fa.fa-check &nbsp;&nbsp;&nbsp;
       span Deja au panier
@@ -11,13 +13,13 @@
         div.pu {{product.priceByQuantity}}&nbsp;€/u
       div.btns-atb(v-if="!inCurrentWish")
         div.btn-atb.tooltip(
-            @click="selectProduct",
+            @click.stop="selectProduct",
           )
           span.tooltiptext.tooltip-bottom Ajouter au panier
           i.fa.fa-shopping-basket.fa-xs.atb
           i.fa.fa-plus.fa-xs.atb
         div.btn-atb.tooltip(
-            @click="quickSelectProduct()",
+            @click.stop="quickSelectProduct()",
           )
           span.tooltiptext.tooltip-bottom Ajouter au panier et<br> passer au produit suivant 
           i.fa.fa-shopping-basket.fa-xs.atb-quick
@@ -47,9 +49,6 @@ export default {
     currentWish() {
       const currentWid = this.$store.state.singleton.currentWid;
       return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
-    },
-    multiSelection() {
-      return this.$store.state.singleton && this.$store.state.singleton.multiSelection;
     },
     inCurrentBasket() {
       return this.$store.getters['selection/getProductsInBasket'][this.pid];
@@ -83,19 +82,10 @@ export default {
       this.$store.dispatch('wishGroup/setWishProducts', {
         wid: this.currentWish.id,
         products,
-      });
-      this.setCurrentAsLastProduct();
-      if (!this.$store.dispatch('currentWish/next', this.currentWish.id)) {
-        this.finish();
-      }
-    },
-    finish() {
-      router.push({ name: 'basket' });
-    },
-    setCurrentAsLastProduct() {
-      this.$store.dispatch('singleton/set', {
-        key: 'previousWid',
-        value: this.currentWish.id,
+      }).then(() => {
+        this.$store.dispatch('currentWish/next', () => {
+          router.push({ name: 'basket' });
+        });
       });
     },
     increase() {

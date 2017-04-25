@@ -3,6 +3,7 @@
     router-link(:to='{ name: "basket" }')
       span.input-group-addon.basket.grey-btn
         span Voir le panier
+
     // - current wish
     div
       div.titleCurrent
@@ -15,12 +16,20 @@
         div(style="clear:both")
       div.currentWishProducts(v-else)
         span Aucun produit selectionné
+        
       div.next.input-group-addon.grey-btn(
-          @click="next"
+        v-if="selectedWishesNb !== matchedWishesLength && productIds.length > 0",
+        @click="nextProduct"
         )
-        span(v-if="selectedWishesNb === matchedWishesLength") Voir le panier
-        span(v-else) Produit suivant
+        span Produit suivant
         span.fa.fa-arrow-right.special-fa
+      div.next.input-group-addon.grey-btn(
+        v-if="selectedWishesNb === matchedWishesLength && productIds.length > 0",
+        @click="gotoBasket"
+        )
+        span Voir le panier
+        span.fa.fa-arrow-right.special-fa
+
     // - previous wish
     div(v-if="previousProductIds.length > 0 && previousWid !== currentWish.id")
       div.titlePrevious
@@ -60,9 +69,6 @@ export default {
       }
       return 0;
     },
-    multiSelection() {
-      return this.$store.state.singleton && this.$store.state.singleton.multiSelection;
-    },
     currentWish() {
       const currentWid = this.$store.state.singleton.currentWid;
       return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
@@ -82,16 +88,12 @@ export default {
     },
   },
   methods: {
-    next() {
-      this.$store.dispatch('singleton/set', {
-        key: 'previousWid',
-        value: this.currentWish.id,
+    nextProduct() {
+      this.$store.dispatch('currentWish/next', () => {
+        router.push({ name: 'basket' });
       });
-      if (!this.$store.dispatch('currentWish/next', this.currentWish.id)) {
-        this.finish();
-      }
     },
-    finish() {
+    gotoBasket() {
       router.push({ name: 'basket' });
     },
   },

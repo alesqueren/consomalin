@@ -1,11 +1,20 @@
 <template lang="pug">
-  div#currentWish(v-if="currentWish")
+  div#root(v-if="currentWish")
     div.input-group.stylish-input-group.search-wrapper
       span.input-group-addon.search-gname
         div {{ currentWish.gname }}
-      .input-wrapper.search-input(onclick="javascript:document.getElementById('search-text').focus();")
+      .input-wrapper.search-input(
+        v-bind:class="{'disabled': hasProducts, 'tooltip': hasProducts}", 
+        @click="focus")
         .input-input
-          input#search-text.form-control(type="text" v-model="currentWish.name" v-on:keyup="rename", tabindex="0" autofocus)
+          span.tooltiptext.tooltip-bottom(v-if="hasProducts") Retirez les produits du panier pour modifier la recherche 
+          input#search-text.form-control(
+            type="text",
+            v-bind:disabled="hasProducts",
+            v-model="currentWish.name",
+            v-on:keyup="rename", 
+            tabindex="0", 
+            autofocus)
         span.search-search
           span.fa.fa-search
       span.input-group-addon.search-uncheck(@click="remove")
@@ -28,15 +37,15 @@ export default {
     };
   },
   computed: {
-    multiSelection() {
-      return this.$store.state.singleton && this.$store.state.singleton.multiSelection;
-    },
     currentWish() {
       const currentWid = this.$store.state.singleton.currentWid;
       return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
     },
     productIds() {
       return Object.keys(this.$store.state.selection[this.currentWish.gid][this.currentWish.id]);
+    },
+    hasProducts() {
+      return this.productIds.length !== 0;
     },
   },
   methods: {
@@ -71,19 +80,25 @@ export default {
         this.$store.dispatch('currentWish/next');
       });
     },
+    focus() {
+      document.getElementById('search-text').focus();
+    },
   },
   components: { Wish },
 };
 </script>
 
 <style scoped>
-#currentWish{
+#root {
   padding-bottom: 25px;
 }
-.groupName{
+.groupName {
   font-size: 1.5em;
 }
-#search-text{
+#root {
+  padding-bottom: 25px;
+}
+#search-text {
   font-family: gunny;
   font-size: 2em;
   font-weight: bolder;
@@ -92,20 +107,28 @@ export default {
   line-height: 44px;
   width: 100%;
 }
-.input-wrapper{
+
+.input-wrapper {
   width: 100%;
   float:left;
   border: 1px solid rgba(0,0,0,.15);
   position: relative;
   display: table;
 }
-.input-wrapper:hover{
+.input-wrapper.disabled {
+  background-color: #eceeef;
+}
+.input-wrapper.disabled:hover {
+  cursor: no-drop;
+}
+.input-wrapper:not(.disabled):hover {
   cursor: text;
 }
-.input-input{
+
+.input-input {
   display: table-cell;
 }
-.input-badge{
+.input-badge {
   display: table-cell;
   top: 24px;
   left: 10px;
@@ -113,10 +136,10 @@ export default {
   padding-left: 10px;
   background-color: var(--white);
 }
-.search-wrapper{
+.search-wrapper {
   display: table;
 }
-.search-input{
+.search-input {
   position: relative;
   float: left;
   height: auto;
@@ -126,19 +149,19 @@ export default {
   background-color: var(--white);
   border: 1px solid grey;
 }
-.wish:hover .product-name{
+.wish:hover .product-name {
   text-decoration: underline;
 }
 
 .product-infos {
   display: table;
 }
-.search-gname{
+.search-gname {
   display: table-cell;
   font-size: 1.5em;
   width: 150px;
 }
-.search-search{
+.search-search {
   position: absolute;
   color: #0275d8;
   right: 10px;
@@ -146,30 +169,38 @@ export default {
   z-index: 10;
   font-size: 1.5em;
 }
-.search-text{
+.search-text {
   display: table-cell;
 }
 /* DESELECTIONNER */
-.search-uncheck{
+.search-uncheck {
   position: relative;
   cursor: pointer;
   display: table-cell;
   width: 130px;
   border-right: 1px solid rgba(0,0,0,.15);
 }
-.search-uncheck:hover{
+.search-uncheck:hover {
   background-color: #e6e6e6;
 }
-.search-uncheck .not-checked-box{
+.search-uncheck .not-checked-box {
   position: absolute;
   left: 16px;
   top: 13px;
   visibility: hidden;
 }
-.search-uncheck:hover .checked-box{
+.search-uncheck:hover .checked-box {
   visibility: hidden;
 }
-.search-uncheck:hover .not-checked-box{
+.search-uncheck:hover .not-checked-box {
   visibility: inherit;
+}
+.tooltip .tooltiptext {
+  width: 240px;
+}
+.tooltip-bottom{
+  top: 135%;
+  left: 0;
+  margin-left: -60px;
 }
 </style>
