@@ -4,9 +4,11 @@ import Vue from 'vue';
 //       and import mutations ?
 const defaultState = {
   selectedSlot: null,
-  actionnedEntity: {},
+  action: { name: '', value: {} },
   activeGroupId: null,
   registering: null,
+  multiSelection: null,
+  createEntity: {},
 };
 
 const actions = {

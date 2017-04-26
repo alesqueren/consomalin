@@ -1,5 +1,5 @@
 <template lang="pug">
-  #app(@click='finishDeletion', @keyup.esc="finishDeletion", tabindex="0")
+  #app(@click='finishAllActions', @keyup.esc="finishAllActions", tabindex="0")
     div#header
       div.left
         router-link.title(:to="{ name: 'home' }")
@@ -11,22 +11,24 @@
           li.header-tab
             router-link.title(:to="{ name: 'wishlist' }") Listes
           li.header-tab
-            router-link.title(:to="{ name: 'section' }") Rayon
+            router-link.title(:to="{ name: 'section' }") Rayons
           li.header-tab
             router-link.title(:to="{ name: 'basket' }") Panier
           li.header-tab
             router-link.title(:to="{ name: 'withdraw' }") Retrait
       Usercard
-      Basketcard
-    div#content
+      //- Basketcard
+    div#content(v-bind:class="{'marginalize' : navCarRequired}")
       div#replay
       router-view
+      NavCard(v-if='navCarRequired')
 </template>
 
 <script>
 import Basketcard from './Basketcard';
 import Usercard from './User/Usercard';
 import replay from '../replay';
+import NavCard from './NavCard';
 
 const $ = window.$;
 
@@ -41,14 +43,25 @@ export default {
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
+    routeName() {
+      return this.$store.state.route.name;
+    },
+    navCarRequired() {
+      const isWishlist = this.routeName === 'wishlist';
+      const isSection = this.routeName === 'section';
+      const isBasket = this.routeName === 'basket';
+      return this.user.username && (isWishlist || isSection || isBasket);
+    },
   },
   methods: {
-    finishDeletion() {
-      this.$store.dispatch('singleton/unset', 'actionnedEntity');
+    finishAllActions() {
+      // if (!$(event.target).is('.action')) {
+      this.$store.dispatch('singleton/unset', 'action');
+      // }
     },
   },
   created() {
-    this.$store.dispatch('sectionWishes/debug');
+    // this.$store.dispatch('sectionWishes/debug');
 
     $(document).keydown((e) => {
       if (e.which === 37) {
@@ -58,7 +71,7 @@ export default {
       }
     });
   },
-  components: { Usercard, Basketcard },
+  components: { Usercard, Basketcard, NavCard },
 };
 </script>
 
@@ -95,7 +108,11 @@ body{
   outline:none;
 }
 #content {
-  padding: 50px;
+  position: relative;
+  padding: 59px;
+}
+.marginalize {
+  margin-right: 320px;
 }
 
 body {

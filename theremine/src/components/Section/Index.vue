@@ -126,12 +126,10 @@ export default {
   width: 100%;
 }
 #wishes .main{
-  display: table;
 }
 #wishes .leftSide{
-  display: table-cell;
   vertical-align: top;
-  padding-right: 320px;
+  /*padding-right: 320px;*/
 }
 #wishes .rightSide{
   position: fixed;

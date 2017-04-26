@@ -5,11 +5,6 @@
       div.content
           Groups.groups
           ActiveGroup.activegroup
-          //- List.list
-      router-link(:to='{ name: "basket" }')
-        button.btn.right.validation(type="button") Voir le résumé
-      router-link(:to='{ name: "section" }')
-        button.btn.btn-success.right.validation(type="button") Commencer mes courses
 
 </template>
 

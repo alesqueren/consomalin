@@ -29,8 +29,6 @@ router.post('/groups/:gid/wishes/:wid/product/bulk',
       const quantity = product.quantity || 1;
       productManager.add(user._id, params.gid, params.wid, pid, quantity);
     }
-
-    const quantity = data.quantity || 1;
     res.json('OK');
   },
 );
@@ -44,8 +42,6 @@ router.put('/groups/:gid/wishes/:wid/product',
   }),
   ({ params, data, user }, res) => {
     productManager.update(user._id, params.gid, params.wid, data.pid, data.quantity);
-
-    const quantity = data.quantity || 1;
     res.json('OK');
   },
 );

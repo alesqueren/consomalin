@@ -6,7 +6,9 @@
       Group(v-for="gid in gids" 
         v-bind:gid="gid"
         v-bind:key="gid")
-      input#newGroup(v-model="newGroupName" v-on:keyup.enter="addWishGroup" placeholder="Ajouter une liste", tabindex="1")
+      input#newGroup(v-model="newName" @keyup.enter="add" placeholder="Ajouter une rubrique", tabindex="1", @click.stop="")
+      button.btn.btn-success.btn-sm.btn-create(v-if='creating' v-on:click="add")
+        i.fa.fa-check.fa-xs
 </template>
 
 <script>
@@ -18,10 +20,13 @@ const $ = window.$;
 export default {
   data() {
     return {
-      newGroupName: '',
+      newName: '',
     };
   },
   computed: {
+    creating() {
+      return this.$store.state.singleton.action.type === 'createGroup';
+    },
     gids() {
       return this.$store.state.wishGroup.map(group => group.id);
     },
@@ -32,17 +37,35 @@ export default {
     }
   },
   methods: {
-    addWishGroup() {
-      if (this.newGroupName !== '') {
+    add() {
+      if (this.newName !== '') {
         this.$store.dispatch('wishGroup/addGroup', {
-          name: this.newGroupName,
+          name: this.newName,
         }).then((gid) => {
           this.$store.dispatch('singleton/set', { activeGroupId: gid });
           Vue.nextTick(() => {
             $('#newWish').focus();
           });
         });
-        this.newGroupName = '';
+        this.newName = '';
+      }
+    },
+  },
+  watch: {
+    newName(val) {
+      if (val) {
+        this.$store.dispatch('singleton/set', {
+          action: {
+            type: 'createGroup',
+          },
+        });
+      } else {
+        this.$store.dispatch('singleton/unset', 'action');
+      }
+    },
+    creating(val) {
+      if (!val) {
+        this.newName = '';
       }
     },
   },

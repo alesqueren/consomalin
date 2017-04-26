@@ -8,20 +8,27 @@
           v-bind:wid="wish.id" 
           v-bind:gid="wishgroup.id" 
           v-bind:key="wish.id")
-        input#newWish(v-model="newWishName" v-on:keyup.enter="addWish" placeholder="Ajouter un produit" onclick="event.stopPropagation()")
+        input#newWish(v-model="newName" v-on:keyup.enter="add" placeholder="Ajouter un produit" @click.stop="")
+        button.btn.btn-success.btn-sm.btn-create(v-if='creating' v-on:click="add")
+          i.fa.fa-check.fa-xs
 </template>
 
 <script>
 import Wish from './Wish';
 
+const $ = window.$;
+
 export default {
   props: [],
   data() {
     return {
-      newWishName: '',
+      newName: '',
     };
   },
   computed: {
+    creating() {
+      return this.$store.state.singleton.action.type === 'createWish';
+    },
     wishgroup() {
       const gid = this.$store.state.singleton.activeGroupId;
       if (gid) {
@@ -31,12 +38,37 @@ export default {
     },
   },
   methods: {
-    addWish() {
+    add() {
       this.$store.dispatch('wishGroup/addWish', {
         gid: this.wishgroup.id,
-        name: this.newWishName,
+        name: this.newName,
       });
-      this.newWishName = '';
+      this.newName = '';
+    },
+  },
+  mounted() {
+    $(document).click((event) => {
+      if (!$(event.target).is('#newWish, .btn-create, .btn-edition')) {
+        this.$store.dispatch('singleton/unset', 'action');
+      }
+    });
+  },
+  watch: {
+    newName(val) {
+      if (val) {
+        this.$store.dispatch('singleton/set', {
+          action: {
+            type: 'createWish',
+          },
+        });
+      } else {
+        this.$store.dispatch('singleton/unset', 'action');
+      }
+    },
+    creating(val) {
+      if (!val) {
+        this.newName = '';
+      }
     },
   },
   components: { Wish },

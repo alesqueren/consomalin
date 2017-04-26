@@ -13,7 +13,7 @@ router.post('/groups/:gid/wishes/bulk',
   ({ params, data, user }, res) => {
     const resp = [];
     for (let i = 0; i < data.names.length; i += 1) {
-      resp.push(wishesManager.add(user._id, params.gid, data.names[i]));
+      resp.push(wishesManager.add(user._id, params.gid, data.names[i], true));
     }
     res.json(resp);
   },

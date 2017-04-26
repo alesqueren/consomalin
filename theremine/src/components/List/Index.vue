@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
   div#list
     Group(v-for="gid in selectedGroups" 
       v-bind:gid="gid" 

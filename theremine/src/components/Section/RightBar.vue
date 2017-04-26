@@ -1,9 +1,13 @@
 <template lang="pug">
-  div(v-if="currentWish")
-    router-link(:to='{ name: "basket" }')
-      span.input-group-addon.basket.grey-btn
-        span Voir le panier
-
+  div.root(v-if="currentWish")
+    //- div(style="clear:both;")
+    //-   router-link(:to='{ name: "basket" }')
+    //-     span.input-group-addon.basket.grey-btn
+    //-       span Editer mes listes
+    //- div
+    //-   router-link(:to='{ name: "basket" }')
+    //-     span.input-group-addon.basket.grey-btn
+    //-       span Voir le panier
     // - current wish
     div
       div.titleCurrent
@@ -16,18 +20,6 @@
         div(style="clear:both")
       div.currentWishProducts(v-else)
         span Aucun produit selectionné
-        
-      div.next.input-group-addon.grey-btn(
-        v-if="selectedWishNb !== matchedWishesLength && productIds.length > 0",
-        @click="nextProduct"
-        )
-        span Produit suivant
-        span.fa.fa-arrow-right.special-fa
-      router-link(:to='{ name: "basket" }')
-        div.next.input-group-addon.grey-btn(
-          v-if="selectedWishNb === matchedWishesLength && productIds.length > 0")
-          span Voir le panier
-          span.fa.fa-arrow-right.special-fa
 
     // - previous wish
     div(v-if="previousProductIds.length > 0 && previousWid !== currentWish.id")
@@ -85,16 +77,17 @@ export default {
       return 0;
     },
   },
-  methods: {
-    nextProduct() {
-      this.$store.dispatch('sectionWishes/next');
-    },
-  },
   components: { Wish },
 };
 </script>
 
 <style scoped>
+.root {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 80%;
+  margin-top: 75px
+}
 .currentWishProducts {
   height: auto;
   min-width: 320px;

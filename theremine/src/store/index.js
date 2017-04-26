@@ -22,6 +22,16 @@ const mutations = {
   resetStore: (state) => {
     Vue.set(state, 'wishGroup', {});
     Vue.set(state, 'singleton', singleton.defaultState);
+//    Vue.set(state, 'singleton', {
+//      selectedSlot: null,
+//      currentWid: null,
+//      action: {},
+//      activeGroupId: null,
+//      registering: null,
+//      multiSelection: null,
+//      previousWid: null,
+//      createEntity: null,
+//    });
     Vue.set(state.product, 'searchs', {});
     Vue.set(state.product, 'details', {});
   },
