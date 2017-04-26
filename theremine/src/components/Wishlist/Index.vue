@@ -43,9 +43,4 @@ export default {
   width: 20%;
   display: table-cell;
 }
-#wishlist .validation {
-  position:absolute;
-  top:50px;
-  right:50px;
-}
 </style>

@@ -111,13 +111,27 @@ export default {
   left: 10px;
   padding-right: 10px;
   padding-left: 10px;
-  background-color: white;
+  background-color: var(--white);
 }
 .search-wrapper{
   display: table;
 }
 .search-input{
   position: relative;
+  float: left;
+  height: auto;
+  min-width: 320px;
+  width: 320px;
+  padding: 5px;
+  background-color: var(--white);
+  border: 1px solid grey;
+}
+.wish:hover .product-name{
+  text-decoration: underline;
+}
+
+.product-infos {
+  display: table;
 }
 .search-gname{
   display: table-cell;

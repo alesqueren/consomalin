@@ -50,6 +50,7 @@ export default {
 button{
   cursor: pointer;
 }
+/*
 #recap{
   clear: both;
   background-color: #e5e5e5;
@@ -93,6 +94,7 @@ button{
   top: 100px;
   z-index: 2;
 }
+
 #force-continue{
   position: absolute;
   right: 50px;

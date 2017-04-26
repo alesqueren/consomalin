@@ -9,21 +9,17 @@
     //-     span.input-group-addon.basket.grey-btn
     //-       span Voir le panier
     // - current wish
-    div(v-if="productIds.length > 0")
+    div
       div.titleCurrent
         span Produit en cours : {{currentWish.name}}
-      div
+      div(v-if="productIds.length > 0")
         Wish(
           v-bind:wid="currentWish.id",
           v-bind:displayName="false"
           )
         div(style="clear:both")
-      //- div.next.input-group-addon.grey-btn(
-      //-     @click="next"
-      //-   )
-      //-   span(v-if="selectedWishesNb === matchedWishesLength") Voir le panier
-      //-   span(v-else) Produit suivant
-      //-   span.fa.fa-arrow-right.special-fa
+      div.currentWishProducts(v-else)
+        span Aucun produit selectionné
     // - previous wish
     div(v-if="previousProductIds.length > 0 && previousWid !== currentWish.id")
       div.titlePrevious
@@ -108,6 +104,14 @@ export default {
   overflow-x: hidden;
   max-height: 80%;
   margin-top: 75px
+}
+.currentWishProducts {
+  height: auto;
+  min-width: 320px;
+  width: 320px;
+  padding: 5px;
+  background-color: color(--white);
+  border: 1px solid grey;
 }
 .titleCurrent {
   clear: both;

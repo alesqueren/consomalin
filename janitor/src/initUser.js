@@ -2,15 +2,6 @@ const groupsManager = require('./managers/groups');
 const wishManager = require('./managers/wishes');
 
 module.exports = (uid) => {
-  const h1 = groupsManager.add(uid, 'Fajitas');
-  setTimeout(() => {
-    wishManager.add(uid, h1, 'Poulet');
-    wishManager.add(uid, h1, 'Poivrons');
-    wishManager.add(uid, h1, 'Emmental');
-    wishManager.add(uid, h1, 'Tomates');
-    groupsManager.unselect(uid, h1);
-  }, 100);
-
   const h2 = groupsManager.add(uid, 'Gratin Dauphinois');
   setTimeout(() => {
     wishManager.add(uid, h2, 'Pomme De Terre');
@@ -19,35 +10,6 @@ module.exports = (uid) => {
     wishManager.add(uid, h2, 'Beurre');
     wishManager.add(uid, h2, 'Lait');
     wishManager.add(uid, h2, 'Muscade');
-  }, 100);
-
-  const h3 = groupsManager.add(uid, 'Quiche Lorraine');
-  setTimeout(() => {
-    wishManager.add(uid, h3, 'Pate Brisée');
-    wishManager.add(uid, h3, 'Lardons');
-    wishManager.add(uid, h3, 'Beurre');
-    wishManager.add(uid, h3, 'Oeufs');
-    wishManager.add(uid, h3, 'Creme');
-    wishManager.add(uid, h3, 'Lait');
-    wishManager.add(uid, h3, 'Muscade');
-  }, 100);
-
-  const h4 = groupsManager.add(uid, 'Barbecue');
-  setTimeout(() => {
-    wishManager.add(uid, h4, 'Saucisses');
-    wishManager.add(uid, h4, 'Ketchup');
-    wishManager.add(uid, h4, 'Moutarde');
-    wishManager.add(uid, h4, 'Pain');
-    wishManager.add(uid, h4, 'Biere');
-  }, 100);
-
-  const h5 = groupsManager.add(uid, 'Fondant Au Chocolat');
-  setTimeout(() => {
-    wishManager.add(uid, h5, 'Chocolat Noir');
-    wishManager.add(uid, h5, 'Oeufs');
-    wishManager.add(uid, h5, 'Sucre En Poudre');
-    wishManager.add(uid, h5, 'Beurre');
-    wishManager.add(uid, h5, 'Farine');
   }, 100);
 
   const h6 = groupsManager.add(uid, 'Tiramisu');
@@ -61,19 +23,13 @@ module.exports = (uid) => {
     wishManager.add(uid, h6, 'Cacao');
   }, 100);
 
-  const h7 = groupsManager.add(uid, 'Fromages');
+  const h4 = groupsManager.add(uid, 'Barbecue');
   setTimeout(() => {
-    wishManager.add(uid, h7, 'Comté');
-    wishManager.add(uid, h7, 'Brie');
-    wishManager.add(uid, h7, 'Camembert');
-  }, 100);
-
-  const h8 = groupsManager.add(uid, 'Desserts');
-  setTimeout(() => {
-    wishManager.add(uid, h8, 'Yaourt Nature');
-    wishManager.add(uid, h8, 'Compote');
-    wishManager.add(uid, h8, 'Petit Suisse');
-    wishManager.add(uid, h8, 'Glace');
+    wishManager.add(uid, h4, 'Saucisses');
+    wishManager.add(uid, h4, 'Ketchup');
+    wishManager.add(uid, h4, 'Moutarde');
+    wishManager.add(uid, h4, 'Pain');
+    wishManager.add(uid, h4, 'Biere');
   }, 100);
 
   const h9 = groupsManager.add(uid, 'Petit Déjeuner');

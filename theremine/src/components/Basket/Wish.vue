@@ -65,7 +65,7 @@ export default {
   min-width: 320px;
   width: 320px;
   padding: 5px;
-  background-color: white;
+  background-color: color(--white);
   border: 1px solid grey;
 }
 .wish-name{
@@ -90,13 +90,12 @@ export default {
   font-size: 1.5em;
   top: 5px;
   right: 5px;
-  color: #555;
   z-index: 1;
 }
 .wish:hover .wish-erase{
   visibility: visible;
 }
 .wish .wish-erase:hover{
-  color: orange;
+  color: var(--warning);
 }
 </style>

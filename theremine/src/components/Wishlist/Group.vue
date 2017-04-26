@@ -144,7 +144,7 @@ export default {
 
 <style scoped>
 .line.active{
-  background-color: #5bc0de!important;
+  background-color: var(--color3);
 }
 .filling {
   display: block;

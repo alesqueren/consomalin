@@ -81,5 +81,3 @@ export default {
   components: { Group },
 };
 </script>
-<style>
-</style>

@@ -14,7 +14,6 @@
             router-link.title(:to="{ name: 'section' }") Rayons
           li.header-tab
             router-link.title(:to="{ name: 'basket' }") Panier
-
           li.header-tab
             router-link.title(:to="{ name: 'withdraw' }") Retrait
       Usercard
@@ -78,14 +77,34 @@ export default {
 
 <style>
 
-body{
-  background-color: #f2f4f7;
+:root{
+  /*
+  --color1: #1b5a7a;
+  --color2: #1aa59a;
+  --color3: #a6ed8e;
+  --color4: #f3ffb9;
+  --color1-bh-sl: #8BACBC;
+  --color1-bl-sh: #051016;
+  */
+
+  --color1: #146C78;
+  --color2: #0E91A1;
+  --color3: #7DCE94;
+  --color4: #EFEDE7;
+
+  --success: #48CE6E;
+  --warning: orange;
+  --white: white;
 }
+
+body{
+  background-color: var(--color4);
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e60;
   outline:none;
 }
 #content {
@@ -128,16 +147,16 @@ a:hover {
   /* plus de place pour le contenu
   position: fixed;
   z-index: 2; */
-line-height: 60px;
-height: 60px;
-width: 100%;
-background-color: #21314d;
+  line-height: 60px;
+  height: 60px;
+  width: 100%;
+  background-color: var(--color1);
 }
 
 #header .logo {
   height: 60px;
   width: 60px;
-  background-color: #f2f4f7;
+  background-color: var(--color4);
 }
 
 #header .brand {
@@ -156,7 +175,7 @@ background-color: #21314d;
   font-weight: 700;
   font-size: 22px;
   font-weight: bold;
-  color: #747e8f;
+  color: var(--color4);
 }
 
 #header .title-desc {
@@ -180,8 +199,8 @@ background-color: #21314d;
 }
 
 #steps .router-link-active {
-  color: #13181a !important;
-  background-color: #f2f4f7;
+  color: var(--color1) !important;
+  background-color: var(--color4);
   display: block;
 }
 #steps .header-tab:hover :not(.router-link-active) {
@@ -191,6 +210,11 @@ background-color: #21314d;
 }
 #steps .header-tab:hover .router-link-active {
   cursor: default;
+}
+.btn {
+  color: white;
+  background-color: var(--color2);
+  border-color: var(--color2);
 }
 
 </style>

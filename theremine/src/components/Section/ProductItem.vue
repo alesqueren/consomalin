@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.product-item(v-bind:class="{'active': inCurrentWish}")
+  div.product-item(v-bind:class="{'active': inCurrentWish}", @click="selectProduct")
     div.old(v-if="inCurrentBasket && !inCurrentWish")
       span.fa.fa-check &nbsp;&nbsp;&nbsp;
       span Déjà au panier
@@ -19,9 +19,10 @@
         div.btn-atb.tooltip(
             @click="quickSelectProduct()",
           )
-          span.tooltiptext.tooltip-bottom Ajouter au panier et passer au produit suivant 
+          span.tooltiptext.tooltip-bottom Ajouter au panier et<br> passer au produit suivant 
           i.fa.fa-shopping-basket.fa-xs.atb-quick
-          i.fa.fa-flash.fa-xs.atb-quick
+          i.fa.fa-plus.fa-xs.atb &nbsp;
+          span.fa.fa-arrow-right.special-fa
       div.count-input.space-bottom(v-else)
         a.incr-btn(@click.prevent.stop='decrease' href="#") –
         input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256'
@@ -125,8 +126,8 @@ export default {
 </script>
 
 <style scoped>
-.product-item{
-  background-color: white;
+.product-item {
+  background-color: var(--white);
   border: 1px solid rgba(0,0,0,.125);
   width:162px;
   height:275px;
@@ -135,8 +136,14 @@ export default {
   margin: 5px;
   position: relative;
 }
+
+.product-item:not(.active):hover {
+  cursor: pointer;
+  background-color: var(--color4);
+}
+
 .active{
-  background-color: #5bc0de;
+  background-color: var(--color2);
 }
 .old{
   position: absolute;
