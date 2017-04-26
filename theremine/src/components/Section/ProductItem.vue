@@ -134,7 +134,7 @@ export default {
 }
 
 .active{
-  background-color: var(--color2);
+  background-color: var(--active);
 }
 .old{
   position: absolute;
@@ -179,7 +179,7 @@ export default {
   line-height: 32px;
 }
 .btn-atb:hover{
-  background-color: #4AB080;
+  background-color: var(--success);
 }
 .text-atb{
   line-height: 32px;

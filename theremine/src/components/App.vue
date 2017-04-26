@@ -9,11 +9,11 @@
       div#steps.left(v-if="user && user.username")
         ul.header-tabs
           li.header-tab
-            router-link.title(:to="{ name: 'wishlist' }") Listes
+            router-link.title(:to="{ name: 'wishlist' }") Mes listes
           li.header-tab
             router-link.title(:to="{ name: 'section' }") Rayons
           li.header-tab
-            router-link.title(:to="{ name: 'basket' }") Panier
+            router-link.title(:to="{ name: 'basket' }") Mon panier
           li.header-tab
             router-link.title(:to="{ name: 'withdraw' }") Retrait
       Usercard
@@ -87,14 +87,21 @@ export default {
   --color1-bl-sh: #051016;
   */
 
+  /* TODO: rm -- */
   --color1: #146C78;
   --color2: #0E91A1;
+  --color2-br: #14CDE5;
   --color3: #7DCE94;
+  --color3-2: #63CE81;
+  --color3-3: #4DDD76;
   --color4: #EFEDE7;
 
   --success: #48CE6E;
+  --active: #7DDBD1;
   --warning: orange;
   --white: white;
+  --grey: #c6c6c6;
+  --danger: #d9534f;
 }
 
 body{

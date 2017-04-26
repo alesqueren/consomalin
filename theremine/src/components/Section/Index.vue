@@ -1,10 +1,11 @@
 <template lang="pug">
   div#wishes
+    // - TODO: move
     div(v-if="!currentWish") 
       div(style="width: 100%; text-align: center;")
         span Tous les produits ont été ajoutés au panier. <br/><br/> 
       router-link(style="margin-left: 45%; width: 10%;", :to='{ name: "basket" }')
-        span.input-group-addon.basket.grey-btn
+        span.input-group-addon.basket.nav-btn
           span Voir le panier
     div(v-else) 
       div.leftSide
@@ -217,5 +218,18 @@ input[type=number]::-webkit-inner-spin-button {
   right: auto;
   left: 0;
   top: 46%;
+}
+.nav-btn {
+  position: relative;
+  width: auto;
+  height: 47px;
+  cursor: pointer;
+  text-align: center;
+  color: var(--white);
+  font-weight: bolder;
+  background-color: var(--success);
+}
+.nav-btn:hover {
+  background-color: var(--color3-3);
 }
 </style>

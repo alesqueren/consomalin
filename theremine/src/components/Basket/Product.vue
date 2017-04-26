@@ -9,7 +9,7 @@
         div {{productInfos.name}}
         div.product-number
           div.count-input.space-bottom
-            div.erase(v-if="deleting", @click.prevent.stop='erase()' href="#") Supprimer ?
+            div.erase(v-if="deleting", @click.prevent.stop='erase()' href="#") Supprimer
             a.incr-btn(@click.prevent.stop='decrease' href="#") –
             input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='', disabled="disabled")
             a.incr-btn(@click.prevent.stop='increase' href="#") &plus;

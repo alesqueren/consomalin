@@ -23,10 +23,11 @@
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
         span.content renommer&nbsp;
-        span.icon.fa.fa-pencil.fa-xs
+        span.icon.fa.fa-pencil
       div.action.delete(@click.stop="startDeletion")
-        span.icon.fa.fa-eraser.fa-xs
-        span.content &nbsp;supprimer
+        span.icon.fa.fa-eraser
+        span.content &nbsp;&nbsp;&nbsp;&nbsp;effacer
+        // span.content &nbsp;&nbsp;valider ?
 </template>
 
 <script>
@@ -130,19 +131,16 @@ export default {
 
 <style scoped>
 .line.active{
-  background-color: var(--color3);
+  background-color: var(--active);
 }
 .filling {
   display: block;
   position: absolute;
   bottom: 0px;
-  right: 0px;
+  right: 5px;
 }
 .strong{
   font-weight: bold;
-}
-.content{
-  visibility: hidden;
 }
 .wrapper{
   height: 30px;

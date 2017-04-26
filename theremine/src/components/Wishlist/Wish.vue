@@ -14,8 +14,12 @@
       span.btn.btn-danger Confirmer la suppression
 
     div.buttns(v-if='!editing')
-      i.fa.fa-pencil.fa-xs.action.edit(@click.stop="startEdition")
-      i.fa.fa-eraser.fa-xs.action.delete(@click.stop="startDeletion")
+      div.action.edit(@click.stop="startEdition")
+        span.content renommer&nbsp;
+        span.icon.fa.fa-pencil
+      div.action.delete(@click.stop="startDeletion")
+        span.icon.fa.fa-eraser
+        span.content &nbsp;&nbsp;&nbsp;&nbsp;effacer
 </template>
 
 <script>

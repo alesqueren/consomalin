@@ -11,23 +11,23 @@
 
     div(v-if="routeName === 'wishlist'")
       router-link(:to='{ name: "section" }', v-if="matchedWishNb && matchedWishNb < selectedWishNb")
-        span.input-group-addon.grey-btn
+        span.input-group-addon.nav-btn.prefered
           span Continuer mes courses
       router-link(:to='{ name: "basket" }', v-else-if="selectedWishNb && matchedWishNb === selectedWishNb")
-        span.input-group-addon.grey-btn
+        span.input-group-addon.nav-btn.prefered
           span Voir le panier
       router-link(:to='{ name: "section" }', v-else-if="selectedWishNb")
-        span.input-group-addon.grey-btn
+        span.input-group-addon.nav-btn.prefered
           span Commencer mes courses
 
     div(v-if="routeName === 'section' && hasChoosenProduct")
       //- SI aucun resultat
-      div.next.input-group-addon.grey-btn(
+      div.next.input-group-addon.nav-btn.prefered(
         v-if="unmatchedWishNb && remainingWishesToChoose.length > 0", 
         @click="nextProduct")
         span Produit suivant
-      div.next.input-group-addon.grey-btn(v-else)
-        router-link(:to='{ name: "basket" }')
+      router-link(:to='{ name: "basket" }', v-else)
+        div.next.input-group-addon.nav-btn.prefered
           span Voir le panier
           span.fa.fa-arrow-right.special-fa
 
@@ -35,30 +35,30 @@
       //- tous les wishs ne sont pas encore matchés
       div#missingProduct(v-if="matchedWishNb && matchedWishNb < selectedWishNb")
         router-link(:to='{ name: "section" }')
-          span.input-group-addon.grey-btn
+          span.input-group-addon.nav-btn.prefered
             span Continuer mes courses
         div#force-continue
           router-link(:to='{ name: "withdraw" }')
-            span.input-group-addon.grey-btn
+            span.input-group-addon.nav-btn
               span Passer au retrait
 
       //- tous les wishs sont matchés
       div#basketFull(v-else-if="matchedWishNb && matchedWishNb == selectedWishNb")
         div Total du panier : <span style="font-size: 2em;">{{total}} €</span>
         router-link(:to='{ name: "withdraw" }')
-            span.input-group-addon.grey-btn
+            span.input-group-addon.nav-btn.prefered
               span Passer au retrait
 
       //-  aucun wish
       div#startBasket(v-else-if="!matchedWishNb && !selectedWishNb")
         router-link(:to='{ name: "wishlist" }')
-          span.input-group-addon.grey-btn
+          span.input-group-addon.nav-btn.prefered
             span Commencer une liste
 
       //- aucun wishs matchés
       div#startWishlist(v-else-if="!matchedWishNb")
         router-link(:to='{ name: "section" }')
-        span.input-group-addon.grey-btn
+        span.input-group-addon.nav-btn.prefered
           span Commencer mes courses
 </template>
 
@@ -144,19 +144,27 @@ export default {
   top: 9px;
   margin-left: 9px;
 }
-.grey-btn{
+.nav-btn {
   position: relative;
   width: auto;
   height: 47px;
   cursor: pointer;
   text-align: center;
 }
-.grey-btn .special-fa{
+.nav-btn:hover{
+  background-color: #e6e6e6;
+}
+.nav-btn .special-fa {
   position: absolute;
   right: 10px;
   top: 12px;
 }
-.grey-btn:hover{
-  background-color: #e6e6e6;
+.nav-btn.prefered {
+  color: var(--white);
+  font-weight: bolder;
+  background-color: var(--success);
+}
+.nav-btn.prefered:hover {
+  background-color: var(--color3-3);
 }
 </style>

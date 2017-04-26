@@ -37,7 +37,7 @@ const globalGetters = {
       res = res.concat(ordWishes);
     }
 
-    // removeMatchedWishes
+    // remove matched wishes
     const matchedW = rootGetters['selection/getMatchedWishesIds'];
     res = res.filter(id => (matchedW.indexOf(id) === -1 && id !== wid));
 
