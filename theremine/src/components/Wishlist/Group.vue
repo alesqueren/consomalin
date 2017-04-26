@@ -8,27 +8,31 @@
     input.edition(v-if='editing',
       ref="editinput",
       v-model="editingName",
-      @click.stop.prevent="",
+      @click.stop="",
       @keyup.enter="validEdition",
-      v-on:blur="finishEdition",
       @keyup.esc="finishEdition")
-    //- button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click.stop="validEdition" @keyup.esc="finishEdition")
+    button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click="validEdition")
       i.fa.fa-check.fa-xs
     label.name(v-else for="selected") {{ name }}
     div.fakeCheckbox(v-if='!editing && wishesNb' @click="toggleSelection")
-    div.confirmDeletion(v-if='deleting' @click.stop="remove" @keyup.esc="finishDeletion")
+    div.confirmDeletion(v-if='deleting' @click="remove")
       span.btn.btn-danger Confirmer la suppression
 
     div.filling
       span {{ selectedWishesNb }} / {{ wishesNb }}
     div.buttns(v-if='!editing')
-      i.fa.fa-pencil.fa-xs.action.edit(@click.stop="startEdition")
-      i.fa.fa-eraser.fa-xs.action.delete(@click.stop="startDeletion")
-        i Supprimer
+      div.action.edit(@click.stop="startEdition")
+        span.content renommer&nbsp;
+        span.icon.fa.fa-pencil.fa-xs
+      div.action.delete(@click.stop="startDeletion")
+        span.icon.fa.fa-eraser.fa-xs
+        span.content &nbsp;supprimer
 </template>
 
 <script>
 import Vue from 'vue';
+
+const $ = window.$;
 
 export default {
   props: ['gid'],
@@ -45,16 +49,16 @@ export default {
       return this.gid === this.$store.state.singleton.activeGroupId;
     },
     editing() {
-      const actionnedEntity = this.$store.state.singleton.actionnedEntity;
-      const actionnedEntityId = actionnedEntity.id;
-      const action = actionnedEntity.action;
-      return action === 'edit' && actionnedEntityId === this.gid;
+      const action = this.$store.state.singleton.action;
+      const gid = action.value ? action.value.gid : null;
+      const type = action.type;
+      return type === 'editGroup' && gid === this.gid;
     },
     deleting() {
-      const actionnedEntity = this.$store.state.singleton.actionnedEntity;
-      const actionnedEntityId = actionnedEntity.id;
-      const action = actionnedEntity.action;
-      return action === 'delete' && actionnedEntityId === this.gid;
+      const action = this.$store.state.singleton.action;
+      const gid = action.value && action.value.gid;
+      const type = action.type;
+      return type === 'deleteGroup' && gid === this.gid;
     },
     selected() {
       return this.$store.getters['selection/getSelectedGroupsIds'].indexOf(this.gid) !== -1;
@@ -84,10 +88,12 @@ export default {
     startEdition() {
       this.editingName = this.name;
       this.$store.dispatch('singleton/set', {
-        key: 'actionnedEntity',
+        key: 'action',
         value: {
-          action: 'edit',
-          id: this.gid,
+          type: 'editGroup',
+          value: {
+            gid: this.gid,
+          },
         },
       });
       Vue.nextTick(this.focus);
@@ -95,7 +101,7 @@ export default {
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', { key: 'actionnedEntity' });
+      this.$store.dispatch('singleton/unset', { key: 'action' });
     },
     validEdition() {
       this.$store.dispatch('wishGroup/renameGroup', {
@@ -106,17 +112,19 @@ export default {
     },
     startDeletion() {
       this.$store.dispatch('singleton/set', {
-        key: 'actionnedEntity',
+        key: 'action',
         value: {
-          action: 'delete',
-          id: this.gid,
+          type: 'deleteGroup',
+          value: {
+            gid: this.gid,
+          },
         },
       });
       this.setActivation();
     },
     finishDeletion() {
       this.$store.dispatch('singleton/unset', {
-        key: 'actionnedEntity',
+        key: 'action',
       });
     },
     remove() {
@@ -141,16 +149,19 @@ export default {
 .filling {
   display: block;
   position: absolute;
-  bottom: -2px;
-  right: 5px;
+  bottom: 0px;
+  right: 0px;
 }
 .strong{
   font-weight: bold;
 }
-.action i{
-  display: none;
+.content{
+  visibility: hidden;
 }
-.action:hover i{
-  display: inherit;
+.wrapper{
+  height: 30px;
+  vertical-align: middle;
+  line-height: 20px;
+  padding: 5px;
 }
 </style>

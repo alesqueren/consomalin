@@ -2,7 +2,7 @@
   div.product-item(v-bind:class="{'active': inCurrentWish}")
     div.old(v-if="inCurrentBasket && !inCurrentWish")
       span.fa.fa-check &nbsp;&nbsp;&nbsp;
-      span Deja au panier
+      span Déjà au panier
     img.product-img.center(v-bind:src="product.imageUrl")
     .product-name.center {{product.name}}
     div.bottom
@@ -60,9 +60,14 @@ export default {
     },
     quantity() {
       const product = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
-      console.log(product);
-      console.log(product[this.pid]);
       return product[this.pid] || 1;
+    },
+    deleting() {
+      const action = this.$store.state.singleton.action;
+      const wid = action.wid;
+      const pid = action.pid;
+      const type = action.type;
+      return type === 'deleteProduct' && this.wid === wid && this.pid === pid;
     },
   },
   methods: {

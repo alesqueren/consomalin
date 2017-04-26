@@ -1,7 +1,7 @@
 <template lang="pug">
   div#homepage
     div#title
-      h2 Consomalin est un site de course en ligne independant qui permet de commander chez Auchan drive sur une interface simple, rapide et sans publicité.
+      h2 Consomalin est un site de courses en ligne independant qui permet de commander chez Auchan drive sur une interface simple, rapide et sans publicité.
     div#rassurance
       div.item
         i.fa.fa-plus-circle
@@ -18,13 +18,13 @@
           span 1
         div.img
           img.logo(src="../assets/images/liste.png")
-        div.txt Fais ta liste de course comme à la maison
+        div.txt Fais ta liste de courses comme à la maison
       div.item
         div.num
           span 2
         div.img
           img.logo(src="../assets/images/basket.png")
-        div.txt Choisit tes produits en fonction de ta liste
+        div.txt Choisis tes produits en fonction de ta liste
       div.item
         div.num
           span 3

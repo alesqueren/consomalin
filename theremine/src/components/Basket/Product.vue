@@ -3,14 +3,14 @@
     @click='select()'
     v-if="productInfos")
     div.product-infos
-      span.fa.fa-trash-o.fa-xs.product-erase(@click.prevent.stop='erase()')
+      //- span.fa.fa-trash-o.fa-xs.product-erase(@click.prevent.stop='erase()')
       img.product-left(v-bind:src='productInfos.imageUrl')
       div.product-right
         div {{productInfos.name}}
         div.product-number
           div.count-input.space-bottom
+            div.erase(v-if="deleting", @click.prevent.stop='erase()' href="#") Supprimer ?
             a.incr-btn(@click.prevent.stop='decrease' href="#") –
-            //- div.erase(v-if="eraseEdition", @click.prevent.stop='erase()' href="#") Supprimer
             input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='', disabled="disabled")
             a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
           span.total &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
@@ -20,13 +20,13 @@
 <script>
 import router from '../../router';
 
+const $ = window.$;
+
 export default {
   props: ['wid', 'pid'],
   data() {
     return {
       editingId: 'summary-' + this.wid,
-      editingName: null,
-      eraseEdition: false,
     };
   },
   computed: {
@@ -53,6 +53,13 @@ export default {
     total() {
       const total = this.productInfos.price * this.productQuantity;
       return parseFloat(total).toFixed(2);
+    },
+    deleting() {
+      const action = this.$store.state.singleton.action;
+      const wid = action.wid;
+      const pid = action.pid;
+      const type = action.type;
+      return type === 'deleteProduct' && this.wid === wid && this.pid === pid;
     },
   },
   methods: {
@@ -81,14 +88,20 @@ export default {
         const quantity = parseInt(this.productQuantity - 1, 10);
         this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
       } else {
-        this.eraseStart();
+        this.startDeletion();
       }
     },
-    focus() {
-      this.$refs.editinput.focus();
-    },
-    eraseStart() {
-      this.eraseEdition = true;
+    startDeletion() {
+      const wid = this.wish.id;
+      const pid = this.pid;
+      this.$store.dispatch('singleton/set', {
+        key: 'action',
+        value: {
+          type: 'deleteProduct',
+          wid,
+          pid,
+        },
+      });
     },
     eraseStop() {
       this.eraseEdition = false;
@@ -165,12 +178,12 @@ export default {
 .count-input {
   position: relative;
   display: table-cell;
-  width: 60px;
+  width: 75px;
   max-width: 75px;
 }
 .count-input input {
   position: relative;
-  width: 60px;
+  width: 75px;
   height: 27px;
   line-height: 27px;
   border: 1px solid #000;
@@ -178,9 +191,9 @@ export default {
   background: none;
   text-align: center;
 }
-.count-input input:focus {
+/*.count-input input:focus {
   outline: none;
-}
+}*/
 .count-input .incr-btn {
   display: block;
   position: absolute;
@@ -215,17 +228,22 @@ input[type=number]::-webkit-inner-spin-button {
 }
 .erase{
   position: absolute;
-  font-size: 1.5em;
-  top: 5px;
-  right: 5px;
+  font-size: 13px;
+  top: 2px;
+  right: 11px;
+  width: 76px;
+  line-height: 27px;
+  height: 27px;
+  border-radius: 2px;
   color: white;
   z-index: 2;
-  background-color: red;
+  background-color: #d9534f;
+  border: 1px solid #000;
 }
 .product:hover .product-erase{
   visibility: visible;
 }
 .product .product-erase:hover{
-  color: red;
+  color: #d9534f;
 }
 </style>

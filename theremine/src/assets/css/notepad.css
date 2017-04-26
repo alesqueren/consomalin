@@ -50,6 +50,15 @@
   right: 0;
   width: 60px;
   height: 52px;
+  z-index: 2;
+}
+
+.notepad .btn-create {
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  width: 60px;
+  height: 52px;
   z-index: 3;
 }
 
@@ -92,22 +101,39 @@
 .line .buttns {
   visibility: hidden;
   position: absolute;
-  top: 2px;
-  right: 70px;
+  top: 6px;
+  right: -13px;
+  width: 220px;
+  line-height: 35px;
+  height: 35px;
 }
 .line:hover .buttns {
   visibility: visible;
   cursor: pointer;
 }
 .line .buttns .action {
-  width: 20px;
-  margin-left: 10px;
+  border: 1px solid rgba(0,0,0,.01);
+  position: relative;
+  display: table-cell;
+  width: 50%;
+}
+.line .buttns .action:hover {
+/*.line .buttns .wrapper {*/
+  border: 1px solid rgba(0,0,0,.15);
+  background-color: #d9534f;
+  color: white;
+  /*margin-right: 12px;*/
+  /*text-align: right;*/
+}
+.line .buttns .action:hover .content {
+/*.line .buttns .wrapper .content {*/
+  visibility: visible;
 }
 .buttns .action.edit:hover {
-  color: blue;
+  color: white;
 }
 .buttns .action.delete:hover {
-  color: red;
+  color: white;
 }
 .notepad [type="checkbox"]:not(:checked),
 .notepad [type="checkbox"]:checked {

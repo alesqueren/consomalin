@@ -1,8 +1,13 @@
 <template lang="pug">
-  div(v-if="currentWish")
-    router-link(:to='{ name: "basket" }')
-      span.input-group-addon.basket.grey-btn
-        span Voir le panier
+  div.root(v-if="currentWish")
+    //- div(style="clear:both;")
+    //-   router-link(:to='{ name: "basket" }')
+    //-     span.input-group-addon.basket.grey-btn
+    //-       span Editer mes listes
+    //- div
+    //-   router-link(:to='{ name: "basket" }')
+    //-     span.input-group-addon.basket.grey-btn
+    //-       span Voir le panier
     // - current wish
     div(v-if="productIds.length > 0")
       div.titleCurrent
@@ -13,12 +18,12 @@
           v-bind:displayName="false"
           )
         div(style="clear:both")
-      div.next.input-group-addon.grey-btn(
-          @click="next"
-        )
-        span(v-if="selectedWishesNb === matchedWishesLength") Voir le panier
-        span(v-else) Produit suivant
-        span.fa.fa-arrow-right.special-fa
+      //- div.next.input-group-addon.grey-btn(
+      //-     @click="next"
+      //-   )
+      //-   span(v-if="selectedWishesNb === matchedWishesLength") Voir le panier
+      //-   span(v-else) Produit suivant
+      //-   span.fa.fa-arrow-right.special-fa
     // - previous wish
     div(v-if="previousProductIds.length > 0 && previousWid !== currentWish.id")
       div.titlePrevious
@@ -98,6 +103,12 @@ export default {
 </script>
 
 <style scoped>
+.root {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 80%;
+  margin-top: 75px
+}
 .titleCurrent {
   clear: both;
   font-size: 1.5em;

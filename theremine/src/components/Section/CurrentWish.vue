@@ -19,7 +19,6 @@
 
 <script>
 import Wish from '../Basket/Wish';
-import router from '../../router';
 
 export default {
   props: [],

@@ -24,11 +24,12 @@ const mutations = {
     Vue.set(state, 'singleton', {
       selectedSlot: null,
       currentWid: null,
-      actionnedEntity: {},
+      action: {},
       activeGroupId: null,
       registering: null,
       multiSelection: null,
       previousWid: null,
+      createEntity: null,
     });
     Vue.set(state.product, 'searchs', {});
     Vue.set(state.product, 'details', {});

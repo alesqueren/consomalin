@@ -38,11 +38,12 @@ export default {
   state: {
     selectedSlot: null,
     currentWid: null,
-    actionnedEntity: {},
+    action: { name: '', value: {} },
     activeGroupId: null,
     registering: null,
     multiSelection: null,
     previousWid: null,
+    createEntity: {},
   },
   actions,
   mutations,

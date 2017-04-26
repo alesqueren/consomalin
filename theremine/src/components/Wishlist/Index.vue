@@ -5,9 +5,6 @@
       div.content
           Groups.groups
           ActiveGroup.activegroup
-          //- List.list
-      router-link(:to='{ name: "basket" }')
-        button.btn.btn-success.right.validation(type="button") Valider ma selection
 
 </template>
 
