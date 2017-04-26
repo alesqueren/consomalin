@@ -25,10 +25,10 @@
 </template>
 
 <script>
-import Basketcard from './Basketcard';
-import Usercard from './User/Usercard';
 import replay from '../replay';
-import NavCard from './NavCard';
+import NavCard from './NavCard/Index';
+import Usercard from './User/Usercard';
+import Basketcard from './Basketcard';
 
 const $ = window.$;
 
@@ -61,7 +61,7 @@ export default {
     },
   },
   created() {
-    // this.$store.dispatch('sectionWishes/debug');
+    this.$store.dispatch('sectionWishes/debug');
 
     $(document).keydown((e) => {
       if (e.which === 37) {

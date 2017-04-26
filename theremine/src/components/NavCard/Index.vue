@@ -5,27 +5,35 @@
         div.basket-logo
           i.fa.fa-shopping-basket
       div.right-part
-        span.tooltip {{matchedWishesLength}} / {{selectedWishesNb}} produits<br/>
-          span.tooltiptext.tooltip-bottom Vous avez encore {{remainingWishToMatch}} produits à choisir pour remplir votre panier
+        span.tooltip {{matchedWishNb}} / {{selectedWishNb}} produits<br/>
+          span.tooltiptext.tooltip-bottom Vous avez encore {{unmatchedWishNb}} produits à choisir pour compléter votre panier
         span Total : {{total}}&nbsp;€
 
     div(v-if="routeName === 'wishlist'")
-      router-link(:to='{ name: "section" }', v-if="matchedWishesLength && matchedWishesLength <= selectedWishesNb")
+      router-link(:to='{ name: "section" }', v-if="matchedWishNb && matchedWishNb < selectedWishNb")
         span.input-group-addon.grey-btn
           span Continuer mes courses
-      router-link(:to='{ name: "section" }', v-else)
+      router-link(:to='{ name: "basket" }', v-else-if="selectedWishNb && matchedWishNb === selectedWishNb")
+        span.input-group-addon.grey-btn
+          span Voir le panier
+      router-link(:to='{ name: "section" }', v-else-if="selectedWishNb")
         span.input-group-addon.grey-btn
           span Commencer mes courses
 
     div(v-if="routeName === 'section'")
       //- SI aucun resultat
-      div.next.input-group-addon.grey-btn(@click="nextProduct")
-        span(v-if="selectedWishesNb === matchedWishesLength") Voir le panier
-        span(v-else) Produit suivant
-        span.fa.fa-arrow-right.special-fa
+      div.next.input-group-addon.grey-btn(
+        v-if="unmatchedWishNb && remainingWishesToChoose.length > 0", 
+        @click="nextProduct")
+        span Produit suivant
+      router-link(v-else, :to='{ name: "section" }')
+        div.next.input-group-addon.grey-btn
+          span Voir le panier
+          span.fa.fa-arrow-right.special-fa
+
     div(v-if="routeName === 'basket'")
       //- tous les wishs ne sont pas encore matchés
-      div#missingProduct(v-if="matchedWishesLength && matchedWishesLength < selectedWishesNb")
+      div#missingProduct(v-if="matchedWishNb && matchedWishNb < selectedWishNb")
         router-link(:to='{ name: "section" }')
           span.input-group-addon.grey-btn
             span Continuer mes courses
@@ -35,20 +43,20 @@
               span Passer au retrait
 
       //- tous les wishs sont matchés
-      div#basketFull(v-else-if="matchedWishesLength && matchedWishesLength == selectedWishesNb")
+      div#basketFull(v-else-if="matchedWishNb && matchedWishNb == selectedWishNb")
         div Total du panier : <span style="font-size: 2em;">{{total}} €</span>
         router-link(:to='{ name: "withdraw" }')
             span.input-group-addon.grey-btn
               span Passer au retrait
 
       //-  aucun wish
-      div#startBasket(v-else-if="!matchedWishesLength && !selectedWishesNb")
+      div#startBasket(v-else-if="!matchedWishNb && !selectedWishNb")
         router-link(:to='{ name: "wishlist" }')
           span.input-group-addon.grey-btn
             span Commencer une liste
 
       //- aucun wishs matchés
-      div#startWishlist(v-else-if="!matchedWishesLength")
+      div#startWishlist(v-else-if="!matchedWishNb")
         router-link(:to='{ name: "section" }')
         span.input-group-addon.grey-btn
           span Commencer mes courses
@@ -61,14 +69,17 @@ export default {
     routeName() {
       return this.$store.state.route.name;
     },
-    selectedWishesNb() {
+    selectedWishNb() {
       return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
-    matchedWishesLength() {
+    matchedWishNb() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
-    remainingWishToMatch() {
-      return this.selectedWishesNb - this.matchedWishesLength;
+    unmatchedWishNb() {
+      return this.selectedWishNb - this.matchedWishNb;
+    },
+    remainingWishesToChoose() {
+      return this.$store.getters['sectionWishes/getOrder'];
     },
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
