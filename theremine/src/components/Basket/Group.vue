@@ -28,10 +28,7 @@ export default {
   },
   methods: {
     setActivation() {
-      this.$store.dispatch('singleton/set', {
-        key: 'activeGroupId',
-        value: this.gid,
-      });
+      this.$store.dispatch('singleton/set', { activeGroupId: this.gid });
       router.push({ name: 'wishlist' });
     },
   },

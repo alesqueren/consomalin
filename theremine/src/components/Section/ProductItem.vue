@@ -94,7 +94,7 @@ export default {
         const wid = this.currentWish.id;
         const pid = this.pid;
         const quantity = parseInt(this.quantity + 1, 10);
-        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
       }
     },
     decrease() {
@@ -102,7 +102,7 @@ export default {
         const wid = this.currentWish.id;
         const pid = this.pid;
         const quantity = parseInt(this.quantity - 1, 10);
-        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
       }
     },
   },

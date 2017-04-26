@@ -102,27 +102,6 @@ const globalGetters = {
     return res;
   },
 
-  // TODO: merge with getSelectedWishesByGroup
-  // getUnmatchedWishesByGroup: (state, getters, { wishGroup }) => ({ gid }) => {
-  //   let ordWishes = [];
-  //   for (let i = 0; i < wishGroup.length; i++) {
-  //     if (wishGroup[i].id === gid) {
-  //       ordWishes = wishGroup[i].wishes;
-  //       break;
-  //     }
-  //   }
-
-  //   const res = [];
-  //   for (let i = 0; i < ordWishes.length; i++) {
-  //     const wid = ordWishes[i].id;
-  //     if (state[gid] && state[gid][wid] &&
-  //         !Object.keys(state[gid][wid]).length) {
-  //       res.push(wid);
-  //     }
-  //   }
-  //   return res;
-  // },
-
   getSelectedWishesByGroup: (state, getters, { wishGroup }) => ({ gid }) => {
     let ordWishes = [];
     for (let i = 0; i < wishGroup.length; i++) {
@@ -143,9 +122,9 @@ const globalGetters = {
   },
 
   isSelectedWish: state => ({ wid }) => {
-    for (let i = 0; i < state.length; i++) {
-      for (let j = 0; j < state[i].length; j++) {
-        if (state[i][j] === wid) {
+    for (const g in state) {
+      for (const w in state[g]) {
+        if (w === wid) {
           return true;
         }
       }
@@ -156,7 +135,6 @@ const globalGetters = {
 
 const actions = {
 
-  // TODO: add Promise?
   selectGroup: ({ dispatch, rootState, commit }, { gid }) => {
     const selectWishes = {};
     for (const i in rootState.wishGroup) {
@@ -171,7 +149,6 @@ const actions = {
     dispatch('sectionWishes/update',
              () => commit('selectGroup', { gid, selectWishes }),
              { root: true });
-    // TODO: rm ?
     resources.wishgroup.update({ gid }, { selected: true });
   },
 
@@ -210,9 +187,11 @@ const actions = {
     resources.wishProduct.update({ gid, wid }, { pid, quantity });
   },
 
-  removeWishProduct: ({ commit, rootGetters }, { wid, pid }) => {
+  removeWishProduct: ({ commit, rootGetters, dispatch }, { wid, pid }) => {
     const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
-    commit('removeWishProduct', { gid, wid, pid });
+    dispatch('sectionWishes/update',
+             () => commit('removeWishProduct', { gid, wid, pid }),
+             { root: true });
     resources.wishProduct.remove({ gid, wid }, { pid });
   },
 

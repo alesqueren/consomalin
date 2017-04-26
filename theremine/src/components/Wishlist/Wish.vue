@@ -65,8 +65,7 @@ export default {
     startEdition() {
       this.editingName = this.name;
       this.$store.dispatch('singleton/set', {
-        key: 'actionnedEntity',
-        value: {
+        actionnedEntity: {
           action: 'edit',
           id: this.wid,
         },
@@ -82,21 +81,18 @@ export default {
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', { key: 'actionnedEntity' });
+      this.$store.dispatch('singleton/unset', 'actionnedEntity');
     },
     startDeletion() {
       this.$store.dispatch('singleton/set', {
-        key: 'actionnedEntity',
-        value: {
+        actionnedEntity: {
           action: 'delete',
           id: this.wid,
         },
       });
     },
     finishDeletion() {
-      this.$store.dispatch('singleton/unset', {
-        key: 'actionnedEntity',
-      });
+      this.$store.dispatch('singleton/unset', 'actionnedEntity');
     },
     remove() {
       this.$store.dispatch('wishGroup/removeWish', { wid: this.wid });

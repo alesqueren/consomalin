@@ -66,7 +66,7 @@ export default {
         const wid = this.wish.id;
         const pid = this.pid;
         const quantity = parseInt(this.productQuantity + 1, 10);
-        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
       }
     },
     decrease() {
@@ -74,7 +74,7 @@ export default {
         const wid = this.wish.id;
         const pid = this.pid;
         const quantity = parseInt(this.productQuantity - 1, 10);
-        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
       } else {
         this.eraseStart();
       }
@@ -90,7 +90,7 @@ export default {
     },
     erase() {
       const wid = this.wid;
-      this.$store.dispatch('wishGroup/removeWishProduct', { wid, pid: this.pid });
+      this.$store.dispatch('selection/removeWishProduct', { wid, pid: this.pid });
     },
   },
 };

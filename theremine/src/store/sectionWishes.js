@@ -1,7 +1,7 @@
 import resources from '../resources';
 import singleton from './singleton';
 
-function reorderFromValue(array, value) {
+function changeHead(array, value) {
   let indexFound = false;
   let beforeIndex = [];
   let afterIndex = [];
@@ -23,17 +23,17 @@ const globalGetters = {
   getCurrent: ({ wid }, getters, rootState, rootGetters) =>
     rootGetters['wishGroup/getWish']({ wid }),
 
-  getList: ({ wid }, getters, { wishGroup }, rootGetters) => {
+  getOrder: ({ wid }, getters, { wishGroup }, rootGetters) => {
     const wish = rootGetters['wishGroup/getWish']({ wid });
     const gid = wish ? wish.gid : null;
 
     const groups = rootGetters['selection/getSelectedGroupsIds'];
-    const ordGroups = reorderFromValue(groups, gid);
+    const ordGroups = changeHead(groups, gid);
 
     let res = [];
     for (let i = 0; i < ordGroups.length; i++) {
       const wishes = rootGetters['selection/getSelectedWishesByGroup']({ gid: ordGroups[i] });
-      const ordWishes = reorderFromValue(wishes, wid);
+      const ordWishes = changeHead(wishes, wid);
       res = res.concat(ordWishes);
     }
 
@@ -46,64 +46,78 @@ const globalGetters = {
 };
 
 const actions = {
-  set: ({ state, dispatch, commit, getters, rootGetters }, wid) => {
+
+  searchProducts: ({ dispatch, getters, rootGetters }) => {
+    dispatch('product/fetchSearch',
+             { name: getters.getCurrent.name },
+             { root: true });
+    const nextCurrentWish = rootGetters['wishGroup/getWish']({ wid: getters.getOrder[0] });
+    if (nextCurrentWish) {
+      dispatch('product/fetchSearch',
+               { name: nextCurrentWish.name },
+               { root: true });
+    }
+  },
+
+  set: ({ state, dispatch, commit, rootGetters }, wid) => {
     if (wid && rootGetters['wishGroup/getWish']({ wid })) {
       if (wid !== state.wid) {
-        console.log('set to ' + wid);
-        commit('set', { key: 'wid', value: wid });
-        dispatch('product/fetchSearch',
-                 { name: getters.getCurrent.name },
-                 { root: true });
-        resources.currentWish.save({}, { wid });
+        commit('set', { wid });
+        dispatch('searchProducts');
       }
     } else {
-      console.log('set to null');
-      commit('set', { key: 'wid', value: null });
+      commit('unset', 'wid');
       resources.currentWish.delete();
     }
   },
 
   next: ({ dispatch, getters }, cb) => {
-    const sectionList = getters.getList;
-    if (sectionList[0]) {
-      dispatch('set', sectionList[0]);
-    } else {
-      dispatch('set', null);
-    }
+    const nextWid = getters.getOrder[0] ? getters.getOrder[0] : null;
+    dispatch('set', nextWid);
     if (cb) { cb(); }
   },
 
   update: ({ state, dispatch, getters, rootGetters }, mutation) => {
-    // TODO:
-    //   current:
-    //     still selected: do nothing
-    //     not selected: oldList[0]
-    //   no current:
-    //     newList[0]
-
-    let sectionList;
-    if (getters.getCurrent) {
-      // get next currentWish from old list
-      sectionList = getters.getList;
+    const currentWid = state.wid;
+    if (currentWid) {
+      const oldList = getters.getOrder;
       mutation();
-    } else {
-      // get next currentWish from the new list
-      mutation();
-      sectionList = getters.getList;
-    }
-
-    for (let i = 0; i < sectionList.length; i++) {
-      const wid = sectionList[i];
-      const selectedWids = rootGetters['selection/getUnmatchedWishes'];
-      if (selectedWids.indexOf(wid) !== -1) {
-        dispatch('set', wid);
-        return;
+      if (!rootGetters['selection/isSelectedWish']({ wid: currentWid })) {
+        // currentWish exists and is not selected anymore
+        // => find the first selected wish from the list before mutation
+        let found = false;
+        const selectedWids = rootGetters['selection/getUnmatchedWishes'];
+        for (let i = 0; i < oldList.length; i++) {
+          const wid = oldList[i];
+          if (selectedWids.indexOf(wid) !== -1) {
+            dispatch('set', wid);
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          // all wishes from the list before mutation are unselected
+          dispatch('set', null);
+        }
       }
+    } else {
+      // currentWish does not exist
+      // => set the first wish from the list after mutation
+      mutation();
+      dispatch('set', getters.getOrder[0]);
     }
-
-    // all wishes are matched or unselected
-    dispatch('set', null);
   },
+
+  debug: ({ getters, rootGetters }) => {
+    setInterval(() => {
+      const currName = getters.getCurrent ? getters.getCurrent.name : 'null';
+      const getName = wid => rootGetters['wishGroup/getWish']({ wid }).name;
+      const nameList = getters.getOrder.map(getName).join(', ');
+      // eslint-disable-next-line
+      console.log(`${currName} [${nameList}]`);
+    }, 2000);
+  },
+
 };
 
 export default {

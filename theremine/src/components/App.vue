@@ -44,20 +44,12 @@ export default {
   },
   methods: {
     finishDeletion() {
-      this.$store.dispatch('singleton/unset', {
-        key: 'actionnedEntity',
-      });
+      this.$store.dispatch('singleton/unset', 'actionnedEntity');
     },
   },
   created() {
-    // setInterval(() => {
-    //   if (this.$store.getters['sectionWishes/getCurrent']) {
-    //     console.log(this.$store.getters['sectionWishes/getCurrent'].name);
-    //   }
-    //   console.log(this.$store.getters['sectionWishes/getList'].map(wid =>
-    //     this.$store.getters['wishGroup/getWish']({ wid }).name,
-    //   ));
-    // }, 2000);
+    this.$store.dispatch('sectionWishes/debug');
+
     $(document).keydown((e) => {
       if (e.which === 37) {
         replay.previous(this.$store, this.$router);

@@ -64,10 +64,13 @@ export default {
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll);
   },
+  watch: {
+    currentWish: () => {
+      // scroll to top
+      window.$('html,body').scrollTop(0);
+    },
+  },
   computed: {
-    // TODO:
-    // scroll to top
-    // window.$('html,body').scrollTop(0);
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
     },
@@ -100,18 +103,6 @@ export default {
         text: textLabelNext,
       };
     },
-  },
-  mounted() {
-    // if (!this.currentWish) {
-    // }
-    // console.log(this.currentWish);
-    // if (this.currentWish) {
-    //   // TODO: rm ?
-    //   const name = this.currentWish.name;
-    //   this.$store.dispatch('product/fetchSearch', { name });
-    // } else {
-    //   this.$store.dispatch('sectionWishes/next');
-    // }
   },
   methods: {
     // lazyloading

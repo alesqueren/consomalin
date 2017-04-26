@@ -44,7 +44,7 @@ const actions = {
   selectSlot({ commit }, { slotId, dateTime }) {
     const value = { id: slotId, dateTime };
     resources.slot.save({}, value).then(() => {
-      commit('singleton/set', { key: 'selectedSlot', value }, { root: true });
+      commit('singleton/set', { selectedSlot: value }, { root: true });
     });
   },
 };

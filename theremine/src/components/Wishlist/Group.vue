@@ -73,10 +73,7 @@ export default {
       this.$store.dispatch('selection/' + actionName, { gid: this.gid });
     },
     setActivation() {
-      this.$store.dispatch('singleton/set', {
-        key: 'activeGroupId',
-        value: this.gid,
-      });
+      this.$store.dispatch('singleton/set', { activeGroupId: this.gid });
     },
     focus() {
       this.$refs.editinput.focus();
@@ -84,8 +81,7 @@ export default {
     startEdition() {
       this.editingName = this.name;
       this.$store.dispatch('singleton/set', {
-        key: 'actionnedEntity',
-        value: {
+        actionnedEntity: {
           action: 'edit',
           id: this.gid,
         },
@@ -95,7 +91,7 @@ export default {
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', { key: 'actionnedEntity' });
+      this.$store.dispatch('singleton/unset', 'actionnedEntity');
     },
     validEdition() {
       this.$store.dispatch('wishGroup/renameGroup', {
@@ -106,8 +102,7 @@ export default {
     },
     startDeletion() {
       this.$store.dispatch('singleton/set', {
-        key: 'actionnedEntity',
-        value: {
+        actionnedEntity: {
           action: 'delete',
           id: this.gid,
         },
@@ -115,20 +110,13 @@ export default {
       this.setActivation();
     },
     finishDeletion() {
-      this.$store.dispatch('singleton/unset', {
-        key: 'actionnedEntity',
-      });
+      this.$store.dispatch('singleton/unset', 'actionnedEntity');
     },
     remove() {
       const gids = this.$store.state.wishGroup.map(group => group.id);
       const currentPosition = gids.indexOf(this.gid);
-
       this.$store.dispatch('wishGroup/removeGroup', { gid: this.gid });
-
-      this.$store.dispatch('singleton/set', {
-        key: 'activeGroupId',
-        value: gids[currentPosition - 1],
-      });
+      this.$store.dispatch('singleton/set', { activeGroupId: gids[currentPosition - 1] });
     },
   },
 };
