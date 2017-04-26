@@ -46,19 +46,6 @@ const globalGetters = {
 };
 
 const actions = {
-
-  searchProducts: ({ dispatch, getters, rootGetters }) => {
-    dispatch('product/fetchSearch',
-             { name: getters.getCurrent.name },
-             { root: true });
-    const nextCurrentWish = rootGetters['wishGroup/getWish']({ wid: getters.getOrder[0] });
-    if (nextCurrentWish) {
-      dispatch('product/fetchSearch',
-               { name: nextCurrentWish.name },
-               { root: true });
-    }
-  },
-
   set: ({ state, dispatch, commit, rootGetters }, wid) => {
     if (wid && rootGetters['wishGroup/getWish']({ wid })) {
       if (wid !== state.wid) {
@@ -66,7 +53,7 @@ const actions = {
         dispatch('searchProducts');
       }
     } else {
-      commit('unset', 'wid');
+      commit('set', { wid: null });
       resources.currentWish.delete();
     }
   },
@@ -105,6 +92,18 @@ const actions = {
       // => set the first wish from the list after mutation
       mutation();
       dispatch('set', getters.getOrder[0]);
+    }
+  },
+
+  searchProducts: ({ dispatch, getters, rootGetters }) => {
+    dispatch('product/fetchSearch',
+             { name: getters.getCurrent.name },
+             { root: true });
+    const nextCurrentWish = rootGetters['wishGroup/getWish']({ wid: getters.getOrder[0] });
+    if (nextCurrentWish) {
+      dispatch('product/fetchSearch',
+               { name: nextCurrentWish.name },
+               { root: true });
     }
   },
 

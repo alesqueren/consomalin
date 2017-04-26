@@ -20,14 +20,14 @@
         span.input-group-addon.grey-btn
           span Commencer mes courses
 
-    div(v-if="routeName === 'section'")
+    div(v-if="routeName === 'section' && hasChoosenProduct")
       //- SI aucun resultat
       div.next.input-group-addon.grey-btn(
         v-if="unmatchedWishNb && remainingWishesToChoose.length > 0", 
         @click="nextProduct")
         span Produit suivant
-      router-link(v-else, :to='{ name: "section" }')
-        div.next.input-group-addon.grey-btn
+      div.next.input-group-addon.grey-btn(v-else)
+        router-link(:to='{ name: "basket" }')
           span Voir le panier
           span.fa.fa-arrow-right.special-fa
 
@@ -78,11 +78,19 @@ export default {
     unmatchedWishNb() {
       return this.selectedWishNb - this.matchedWishNb;
     },
-    remainingWishesToChoose() {
-      return this.$store.getters['sectionWishes/getOrder'];
-    },
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    hasChoosenProduct() {
+      try {
+        const pds = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
+        return (Object.keys(pds).length !== 0);
+      } catch (e) {
+        return false;
+      }
+    },
+    remainingWishesToChoose() {
+      return this.$store.getters['sectionWishes/getOrder'];
     },
     total() {
       return this.$store.getters['transaction/basketAmount'];
