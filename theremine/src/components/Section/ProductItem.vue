@@ -71,23 +71,17 @@ export default {
   },
   methods: {
     selectProduct() {
-      const products = [{
-        pid: this.pid,
-        quantity: parseInt(this.quantity, 10),
-      }];
-      this.$store.dispatch('selection/setWishProducts', {
+      this.$store.dispatch('selection/addProduct', {
         wid: this.currentWish.id,
-        products,
+        pid: this.pid,
+        quantity: 1,
       });
     },
     quickSelectProduct() {
-      const products = [{
-        pid: this.pid,
-        quantity: parseInt(this.quantity, 10),
-      }];
-      this.$store.dispatch('selection/setWishProducts', {
+      this.$store.dispatch('selection/addProduct', {
         wid: this.currentWish.id,
-        products,
+        pid: this.pid,
+        quantity: 1,
       }).then(() => {
         this.$store.dispatch('sectionWishes/next', () => {
           if (!this.$store.getters['sectionWishes/getCurrent']) {
@@ -101,7 +95,7 @@ export default {
         const wid = this.currentWish.id;
         const pid = this.pid;
         const quantity = parseInt(this.quantity + 1, 10);
-        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateProduct', { wid, pid, quantity });
       }
     },
     decrease() {
@@ -109,7 +103,7 @@ export default {
         const wid = this.currentWish.id;
         const pid = this.pid;
         const quantity = parseInt(this.quantity - 1, 10);
-        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateProduct', { wid, pid, quantity });
       }
     },
   },

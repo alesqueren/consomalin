@@ -23,7 +23,7 @@ export default {
         const gid = this.wish.gid;
         const wid = this.wish.id;
         const pid = this.productId;
-        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+        this.$store.dispatch('updateProduct', { gid, wid, pid, quantity });
       },
     },
     wish() {
@@ -59,7 +59,7 @@ export default {
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = parseInt(this.productQuantity + 1, 10);
-        this.$store.dispatch('selection/setWishProducts', { wid, pid, quantity });
+        this.$store.dispatch('selection/setProducts', { wid, pid, quantity });
       }
     },
     decrease() {
@@ -67,7 +67,7 @@ export default {
         const wid = this.wish.id;
         const pid = this.productId;
         const quantity = parseInt(this.productQuantity - 1, 10);
-        this.$store.dispatch('selection/setWishProducts', { wid, pid, quantity });
+        this.$store.dispatch('selection/setProducts', { wid, pid, quantity });
       }
     },
     focus() {

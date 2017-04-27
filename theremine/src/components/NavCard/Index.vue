@@ -21,7 +21,6 @@
           span Commencer mes courses
 
     div(v-if="routeName === 'section' && hasChoosenProduct")
-      //- SI aucun resultat
       div.next.input-group-addon.nav-btn.prefered(
         v-if="unmatchedWishNb && remainingWishesToChoose.length > 0", 
         @click="nextProduct")

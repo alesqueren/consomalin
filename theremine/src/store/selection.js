@@ -172,25 +172,25 @@ const actions = {
     });
   },
 
-  setWishProducts: ({ commit, rootGetters }, { wid, products }) => {
+  addProduct: ({ commit, rootGetters }, { wid, pid, quantity }) => {
     const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
     return new Promise((resolve) => {
-      commit('setWishProducts', { gid, wid, products });
-      resources.wishProduct.bulk({ gid, wid }, { products });
+      commit('addProduct', { gid, wid, pid, quantity });
+      resources.wishProduct.bulk({ gid, wid }, { products: [{ pid, quantity }] });
       resolve();
     });
   },
 
-  updateWishProduct: ({ commit, rootGetters }, { wid, pid, quantity }) => {
+  updateProduct: ({ commit, rootGetters }, { wid, pid, quantity }) => {
     const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
-    commit('updateWishProduct', { gid, wid, pid, quantity });
+    commit('updateProduct', { gid, wid, pid, quantity });
     resources.wishProduct.update({ gid, wid }, { pid, quantity });
   },
 
-  removeWishProduct: ({ commit, rootGetters, dispatch }, { wid, pid }) => {
+  removeProduct: ({ commit, rootGetters, dispatch }, { wid, pid }) => {
     const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
     dispatch('sectionWishes/update',
-             () => commit('removeWishProduct', { gid, wid, pid }),
+             () => commit('removeProduct', { gid, wid, pid }),
              { root: true });
     resources.wishProduct.remove({ gid, wid }, { pid });
   },
@@ -198,29 +198,6 @@ const actions = {
 };
 
 const mutations = {
-
-  setWishProducts: (state, { gid, wid, products }) => {
-    const entity = state[gid][wid];
-    for (const i in products) {
-      const product = products[i];
-      const pid = product.pid;
-      const quantity = product.quantity;
-      Vue.set(entity, pid, parseInt(quantity, 10));
-    }
-  },
-
-  updateWishProduct: (state, { gid, wid, pid, quantity }) => {
-    const entity = state[gid][wid];
-    Vue.set(entity, pid, parseInt(quantity, 10));
-  },
-
-  removeWishProduct: (state, { gid, wid, pid }) => {
-    const entity = state[gid][wid];
-    Vue.set(entity, pid, null);
-    delete state[gid][wid][pid];
-    Vue.set(state, 'tmp');
-    delete state.tmp;
-  },
 
   selectGroup: (state, { gid, selectWishes }) => {
     Vue.set(state, gid, selectWishes);
@@ -258,6 +235,22 @@ const mutations = {
       delete state[gid];
     }
   },
+
+  addProduct: (state, { gid, wid, pid, quantity }) => {
+    Vue.set(state[gid][wid], pid, quantity);
+  },
+
+  updateProduct: (state, { gid, wid, pid, quantity }) => {
+    Vue.set(state[gid][wid], pid, parseInt(quantity, 10));
+  },
+
+  removeProduct: (state, { gid, wid, pid }) => {
+    Vue.set(state[gid][wid], pid, null);
+    delete state[gid][wid][pid];
+    Vue.set(state, 'tmp');
+    delete state.tmp;
+  },
+
 };
 
 export default {

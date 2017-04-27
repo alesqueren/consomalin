@@ -1,14 +1,16 @@
 <template lang="pug">
-  div.wish(
-    @click='select()')
-    span.wish-name(v-if="displayName") {{ wish.name }}
+  div.wish(@click='select()')
+    span.wish-name {{ wish.name }}
     span.fa.fa-check-square-o.fa-xs.wish-erase(
-      @click.prevent.stop='erase()',
-      v-if="displayName")
-    Product(v-for="pid in productIds" 
-      v-bind:pid="pid",
-      v-bind:wid="wid",
-      v-bind:key="pid")
+      @click.prevent.stop='erase()')
+    span.badge.badge-info.indicator(v-if="badgeLabel") {{badgeLabel}}
+    div(v-if="productIds.length > 0")
+      Product(v-for="pid in productIds" 
+        v-bind:pid="pid",
+        v-bind:wid="wid",
+        v-bind:key="pid")
+    div(v-else)
+      span.noproduct-text &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aucun produit selectionné
 </template>
 
 <script>
@@ -16,7 +18,7 @@ import router from '../../router';
 import Product from './Product';
 
 export default {
-  props: ['wid', 'displayName'],
+  props: ['wid', 'displayUnmatchText', 'badgeLabel'],
   data() {
     return {
       editingId: 'summary-' + this.wid,
@@ -80,17 +82,18 @@ export default {
   -o-transition:      all 0.2s;
 }
 .wish-erase{
-  visibility: hidden;
-  position: absolute;
+  float: right;
   font-size: 1.5em;
-  top: 5px;
-  right: 5px;
-  z-index: 1;
+  margin-left: 5px;
 }
-.wish:hover .wish-erase{
-  visibility: visible;
-}
-.wish .wish-erase:hover{
+.wish-erase:hover{
   color: var(--warning);
+}
+.badge {
+  font-size: 1.0em;
+  float: right;
+}
+.noproduct-text {
+  font-size: 1.1em;
 }
 </style>
