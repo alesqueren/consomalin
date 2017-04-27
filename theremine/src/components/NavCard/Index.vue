@@ -82,7 +82,7 @@ export default {
     },
     hasChoosenProduct() {
       try {
-        const pds = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
+        const pds = this.$store.state.selection.basket[this.currentWish.gid][this.currentWish.id];
         return (Object.keys(pds).length !== 0);
       } catch (e) {
         return false;

@@ -53,12 +53,12 @@ export default {
       return this.$store.state.product.details[this.pid];
     },
     inCurrentWish() {
-      const selection = this.$store.state.selection;
+      const selection = this.$store.state.selection.basket;
       const pids = Object.keys(selection[this.currentWish.gid][this.currentWish.id]);
       return pids && pids.indexOf(this.pid) !== -1;
     },
     quantity() {
-      const product = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
+      const product = this.$store.state.selection.basket[this.currentWish.gid][this.currentWish.id];
       return product[this.pid] || 1;
     },
     deleting() {

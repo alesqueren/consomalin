@@ -3,13 +3,13 @@ import resources from '../resources';
 
 const globalGetters = {
 
-  getOrderedSelectedWishes: (state, getters, { wishGroup }) => {
+  getOrderedSelectedWishes: ({ basket }, getters, { wishGroup }) => {
     const res = [];
     for (let i = 0; i < wishGroup.length; i++) {
       const group = wishGroup[i];
       for (let j = 0; j < group.wishes.length; j++) {
         const wish = wishGroup[i].wishes[j];
-        if (state[group.id] && state[group.id][wish.id]) {
+        if (basket[group.id] && basket[group.id][wish.id]) {
           res.push(wish.id);
         }
       }
@@ -17,11 +17,11 @@ const globalGetters = {
     return res;
   },
 
-  getUnmatchedWishes: (state) => {
+  getUnmatchedWishes: ({ basket }) => {
     const res = [];
-    for (const gid in state) {
-      for (const wid in state[gid]) {
-        if (Object.keys(state[gid][wid]).length === 0) {
+    for (const gid in basket) {
+      for (const wid in basket[gid]) {
+        if (Object.keys(basket[gid][wid]).length === 0) {
           res.push(wid);
         }
       }
@@ -29,14 +29,14 @@ const globalGetters = {
     return res;
   },
 
-  getMatchedWishes: (state, getters, { wishGroup }) => {
+  getMatchedWishes: ({ basket }, getters, { wishGroup }) => {
     const res = {};
     for (let i = 0; i < wishGroup.length; i++) {
       const group = wishGroup[i];
       for (let j = 0; j < group.wishes.length; j++) {
         const wish = wishGroup[i].wishes[j];
-        if (state[group.id] && state[group.id][wish.id]) {
-          const products = state[group.id][wish.id];
+        if (basket[group.id] && basket[group.id][wish.id]) {
+          const products = basket[group.id][wish.id];
           for (const k in products) {
             if (!res[wish.id]) {
               res[wish.id] = [];
@@ -52,14 +52,14 @@ const globalGetters = {
     return res;
   },
 
-  getProductsInBasket: (state, getters, { wishGroup }) => {
+  getProductsInBasket: ({ basket }, getters, { wishGroup }) => {
     const res = {};
     for (let i = 0; i < wishGroup.length; i++) {
       const group = wishGroup[i];
       for (let j = 0; j < group.wishes.length; j++) {
         const wish = wishGroup[i].wishes[j];
-        if (state[group.id] && state[group.id][wish.id]) {
-          const products = state[group.id][wish.id];
+        if (basket[group.id] && basket[group.id][wish.id]) {
+          const products = basket[group.id][wish.id];
           for (const k in products) {
             res[k] = true;
           }
@@ -69,32 +69,32 @@ const globalGetters = {
     return res;
   },
 
-  getSelectedGroupsIds: (state, getters, { wishGroup }) => {
+  getSelectedGroupsIds: ({ basket }, getters, { wishGroup }) => {
     const res = [];
     for (let i = 0; i < wishGroup.length; i++) {
       const e = wishGroup[i].id;
-      if (Object.keys(state).indexOf(e) !== -1) {
+      if (Object.keys(basket).indexOf(e) !== -1) {
         res.push(e);
       }
     }
     return res;
   },
 
-  getSelectedWishesIds: (state) => {
+  getSelectedWishesIds: ({ basket }) => {
     const res = [];
-    for (const gid in state) {
-      for (const wid in state[gid]) {
+    for (const gid in basket) {
+      for (const wid in basket[gid]) {
         res.push(wid);
       }
     }
     return res;
   },
 
-  getMatchedWishesIds: (state) => {
+  getMatchedWishesIds: ({ basket }) => {
     const res = [];
-    for (const gid in state) {
-      for (const wid in state[gid]) {
-        if (Object.keys(state[gid][wid]).length > 0) {
+    for (const gid in basket) {
+      for (const wid in basket[gid]) {
+        if (Object.keys(basket[gid][wid]).length > 0) {
           res.push(wid);
         }
       }
@@ -102,7 +102,7 @@ const globalGetters = {
     return res;
   },
 
-  getSelectedWishesByGroup: (state, getters, { wishGroup }) => ({ gid }) => {
+  getSelectedWishesByGroup: ({ basket }, getters, { wishGroup }) => ({ gid }) => {
     let ordWishes = [];
     for (let i = 0; i < wishGroup.length; i++) {
       if (wishGroup[i].id === gid) {
@@ -114,16 +114,16 @@ const globalGetters = {
     const res = [];
     for (let i = 0; i < ordWishes.length; i++) {
       const wid = ordWishes[i].id;
-      if (state[gid] && state[gid][wid]) {
+      if (basket[gid] && basket[gid][wid]) {
         res.push(wid);
       }
     }
     return res;
   },
 
-  isSelectedWish: state => ({ wid }) => {
-    for (const g in state) {
-      for (const w in state[g]) {
+  isSelectedWish: ({ basket }) => ({ wid }) => {
+    for (const g in basket) {
+      for (const w in basket[g]) {
         if (w === wid) {
           return true;
         }
@@ -199,63 +199,66 @@ const actions = {
 
 const mutations = {
 
-  selectGroup: (state, { gid, selectWishes }) => {
-    Vue.set(state, gid, selectWishes);
+  selectGroup: ({ basket }, { gid, selectWishes }) => {
+    Vue.set(basket, gid, selectWishes);
   },
 
-  unselectGroup: (state, { gid }) => {
-    if (state[gid]) {
-      Vue.set(state, gid, null);
-      delete state[gid];
-      Vue.set(state, 'tmp');
-      delete state.tmp;
+  unselectGroup: ({ basket }, { gid }) => {
+    if (basket[gid]) {
+      Vue.set(basket, gid, null);
+      delete basket[gid];
+      Vue.set(basket, 'tmp');
+      delete basket.tmp;
     }
   },
 
-  selectWish: (state, { gid, wid }) => {
-    if (!Object.prototype.hasOwnProperty.call(state, gid)) {
-      Vue.set(state, gid, {});
+  selectWish: ({ basket }, { gid, wid }) => {
+    if (!Object.prototype.hasOwnProperty.call(basket, gid)) {
+      Vue.set(basket, gid, {});
     }
-    Vue.set(state[gid], wid, {});
+    Vue.set(basket[gid], wid, {});
   },
 
-  unselectWish: (state, { gid, wid }) => {
-    Vue.set(state[gid], wid);
-    delete state[gid][wid];
+  unselectWish: ({ basket }, { gid, wid }) => {
+    Vue.set(basket[gid], wid);
+    delete basket[gid][wid];
 
-    Vue.set(state[gid], 'tmp');
-    delete state[gid].tmp;
+    Vue.set(basket[gid], 'tmp');
+    delete basket[gid].tmp;
 
     // delete the group if it doesn't contain selected wishes
-    if (!Object.keys(state[gid]).length) {
-      Vue.set(state, 'tmp');
-      delete state.tmp;
+    if (!Object.keys(basket[gid]).length) {
+      Vue.set(basket, 'tmp');
+      delete basket.tmp;
 
-      Vue.set(state, gid);
-      delete state[gid];
+      Vue.set(basket, gid);
+      delete basket[gid];
     }
   },
 
-  addProduct: (state, { gid, wid, pid, quantity }) => {
-    Vue.set(state[gid][wid], pid, quantity);
+  addProduct: ({ basket }, { gid, wid, pid, quantity }) => {
+    Vue.set(basket[gid][wid], pid, quantity);
   },
 
-  updateProduct: (state, { gid, wid, pid, quantity }) => {
-    Vue.set(state[gid][wid], pid, parseInt(quantity, 10));
+  updateProduct: ({ basket }, { gid, wid, pid, quantity }) => {
+    Vue.set(basket[gid][wid], pid, parseInt(quantity, 10));
   },
 
-  removeProduct: (state, { gid, wid, pid }) => {
-    Vue.set(state[gid][wid], pid, null);
-    delete state[gid][wid][pid];
-    Vue.set(state, 'tmp');
-    delete state.tmp;
+  removeProduct: ({ basket }, { gid, wid, pid }) => {
+    Vue.set(basket[gid][wid], pid, null);
+    delete basket[gid][wid][pid];
+    Vue.set(basket, 'tmp');
+    delete basket.tmp;
   },
 
 };
 
 export default {
   namespaced: true,
-  state: {},
+  state: {
+    addOrder: [],
+    basket: {},
+  },
   getters: globalGetters,
   actions,
   mutations,

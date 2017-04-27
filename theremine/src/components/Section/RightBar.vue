@@ -39,30 +39,6 @@ export default {
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
-    previousWish() {
-      if (this.previousWid) {
-        return this.$store.getters['wishGroup/getWish']({ wid: this.previousWid });
-      }
-      return null;
-    },
-    previousWid() {
-      return this.$store.state.singleton && this.$store.state.singleton.previousWid;
-    },
-    // TODO: getter
-    previousProductIds() {
-      if (this.previousWid) {
-        const previousWish = this.$store.state.selection[this.previousWish.gid][this.previousWid];
-        return Object.keys(previousWish);
-      }
-      return 0;
-    },
-    productIds() {
-      if (this.currentWish) {
-        const wish = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
-        return Object.keys(wish);
-      }
-      return 0;
-    },
   },
   components: { Wish },
 };

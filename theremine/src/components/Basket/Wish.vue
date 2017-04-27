@@ -30,7 +30,7 @@ export default {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
     productIds() {
-      const pids = Object.keys(this.$store.state.selection[this.wish.gid][this.wish.id]);
+      const pids = Object.keys(this.$store.state.selection.basket[this.wish.gid][this.wish.id]);
       return pids;
     },
   },

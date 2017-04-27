@@ -30,10 +30,10 @@ export default {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
     productId() {
-      return this.$store.state.selection[this.wish.gid][this.wish.id].pid;
+      return this.$store.state.selection.basket[this.wish.gid][this.wish.id].pid;
     },
     productQuantity() {
-      return this.$store.state.selection[this.wish.gid][this.wish.id].quantity;
+      return this.$store.state.selection.basket[this.wish.gid][this.wish.id].quantity;
     },
     productInfos() {
       return this.$store.state.product.details[this.productId];

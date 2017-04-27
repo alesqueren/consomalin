@@ -43,7 +43,7 @@ export default {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
     productQuantity() {
-      return this.$store.state.selection[this.wish.gid][this.wish.id][this.pid];
+      return this.$store.state.selection.basket[this.wish.gid][this.wish.id][this.pid];
     },
     productInfos() {
       return this.$store.state.product.details[this.pid];

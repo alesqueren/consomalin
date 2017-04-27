@@ -41,7 +41,9 @@ export default {
       return this.$store.getters['sectionWishes/getCurrent'];
     },
     productIds() {
-      return Object.keys(this.$store.state.selection[this.currentWish.gid][this.currentWish.id]);
+      const basket = this.$store.state.selection.basket;
+      const products = basket[this.currentWish.gid][this.currentWish.id];
+      return Object.keys(products);
     },
     hasProducts() {
       return this.productIds.length !== 0;

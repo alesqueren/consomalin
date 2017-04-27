@@ -38,7 +38,7 @@ export default {
     },
     selected() {
       try {
-        return Boolean(this.$store.state.selection[this.gid][this.wid]);
+        return Boolean(this.$store.state.selection.basket[this.gid][this.wid]);
       } catch (e) {
         return false;
       }
