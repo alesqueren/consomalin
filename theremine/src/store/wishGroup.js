@@ -2,17 +2,26 @@ import Vue from 'vue';
 import resources from '../resources';
 
 const globalGetters = {
+
+  getAllWishes: (state) => {
+    let res = [];
+    for (let i = 0; i < state.length; i++) {
+      res = res.concat(state[i].wishes);
+    }
+    return res;
+  },
+
   getWish: state => ({ wid }) => {
     for (let i = 0; i < state.length; i++) {
-      const wishGroup = state[i];
-      for (let j = 0; j < wishGroup.wishes.length; j++) {
-        const wish = wishGroup.wishes[j];
+      const group = state[i];
+      for (let j = 0; j < group.wishes.length; j++) {
+        const wish = group.wishes[j];
         if (wish.id === wid) {
           return {
             id: wish.id,
             name: wish.name,
-            gid: wishGroup.id,
-            gname: wishGroup.name,
+            gid: group.id,
+            gname: group.name,
           };
         }
       }
@@ -22,9 +31,9 @@ const globalGetters = {
 
   getGroup: state => ({ gid }) => {
     for (let i = 0; i < state.length; i++) {
-      const wishgroup = state[i];
-      if (wishgroup.id === gid) {
-        return wishgroup;
+      const group = state[i];
+      if (group.id === gid) {
+        return group;
       }
     }
     return null;

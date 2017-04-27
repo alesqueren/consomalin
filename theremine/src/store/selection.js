@@ -43,7 +43,7 @@ const globalGetters = {
             }
             res[wish.id].push({
               pid: k,
-              quantity: parseInt(products[k], 10),
+              quantity: products[k],
             });
           }
         }
@@ -131,6 +131,18 @@ const globalGetters = {
     }
     return false;
   },
+
+  isMatchedWish: ({ basket }) => (wid) => {
+    for (const g in basket) {
+      for (const w in basket[g]) {
+        if (w === wid) {
+          return (Object.keys(basket[g][w]).length > 0);
+        }
+      }
+    }
+    return false;
+  },
+
 };
 
 const actions = {
@@ -236,12 +248,16 @@ const mutations = {
     }
   },
 
-  addProduct: ({ basket }, { gid, wid, pid, quantity }) => {
-    Vue.set(basket[gid][wid], pid, quantity);
+  addProduct: (state, { gid, wid, pid, quantity }) => {
+    const lastAdd = state.addOrder[state.addOrder.length - 1];
+    if (lastAdd !== wid) {
+      state.addOrder.push(wid);
+    }
+    Vue.set(state.basket[gid][wid], pid, quantity);
   },
 
   updateProduct: ({ basket }, { gid, wid, pid, quantity }) => {
-    Vue.set(basket[gid][wid], pid, parseInt(quantity, 10));
+    Vue.set(basket[gid][wid], pid, quantity);
   },
 
   removeProduct: ({ basket }, { gid, wid, pid }) => {

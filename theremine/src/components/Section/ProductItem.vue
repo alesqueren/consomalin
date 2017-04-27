@@ -2,7 +2,7 @@
   div.product-item(
     v-bind:class="{'active': inCurrentWish}", 
     @click="selectProduct")
-    div.old(v-if="inCurrentBasket && !inCurrentWish")
+    div.old(v-if="inBasket && !inCurrentWish")
       span.fa.fa-check &nbsp;&nbsp;&nbsp;
       span Déjà au panier
     img.product-img.center(v-bind:src="product.imageUrl")
@@ -46,7 +46,7 @@ export default {
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
     },
-    inCurrentBasket() {
+    inBasket() {
       return this.$store.getters['selection/getProductsInBasket'][this.pid];
     },
     product() {
@@ -71,11 +71,13 @@ export default {
   },
   methods: {
     selectProduct() {
-      this.$store.dispatch('selection/addProduct', {
-        wid: this.currentWish.id,
-        pid: this.pid,
-        quantity: 1,
-      });
+      if (!this.inBasket) {
+        this.$store.dispatch('selection/addProduct', {
+          wid: this.currentWish.id,
+          pid: this.pid,
+          quantity: 1,
+        });
+      }
     },
     quickSelectProduct() {
       this.$store.dispatch('selection/addProduct', {

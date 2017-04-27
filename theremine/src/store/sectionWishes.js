@@ -43,6 +43,34 @@ const globalGetters = {
 
     return res;
   },
+
+  getLastAdded: ({ wid }, getters, rootState, rootGetters) => {
+    const addOrder = rootState.selection.addOrder;
+    for (let i = addOrder.length - 1; i >= 0; i--) {
+      const isMatched = rootGetters['selection/isMatchedWish'](addOrder[i]);
+      if (addOrder[i] !== wid && isMatched) {
+        return addOrder[i];
+      }
+    }
+    return null;
+  },
+
+  getSameNameWishIds: ({ wid }, getters, rootState, rootGetters) => {
+    const res = [];
+    if (wid) {
+      const name = rootGetters['wishGroup/getWish']({ wid }).name;
+      const wishes = rootGetters['wishGroup/getAllWishes'];
+
+      for (let i = 0; i < wishes.length; i++) {
+        if (wishes[i].name === name && wishes[i].id !== wid) {
+          if (rootGetters['selection/isMatchedWish'](wishes[i].id)) {
+            res.push(wishes[i].id);
+          }
+        }
+      }
+    }
+    return res;
+  },
 };
 
 const actions = {

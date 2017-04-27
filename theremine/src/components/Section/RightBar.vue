@@ -6,14 +6,17 @@
       v-bind:badgeLabel="\"En cours\"",
       )
     div(style="clear:both")
-    // - Wish(
-      v-bind:wid="currentWish.id",
+    Wish(
+      v-for="wid in sameNameWishIds",
+      v-bind:wid="wid",
+      v-bind:key="wid",
       v-bind:displayUnmatchText="true",
       v-bind:badgeLabel="\"Du même nom\"",
       )
     div(style="clear:both")
     Wish(
-      v-bind:wid="currentWish.id",
+      v-if="lastAddedWishId && sameNameWishIds.length === 0",
+      v-bind:wid="lastAddedWishId",
       v-bind:displayUnmatchText="true",
       v-bind:badgeLabel="\"Dernier ajout\"",
       )
@@ -32,6 +35,12 @@ export default {
   computed: {
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    lastAddedWishId() {
+      return this.$store.getters['sectionWishes/getLastAdded'];
+    },
+    sameNameWishIds() {
+      return this.$store.getters['sectionWishes/getSameNameWishIds'];
     },
     selectedWishNb() {
       return this.$store.getters['selection/getOrderedSelectedWishes'].length;
