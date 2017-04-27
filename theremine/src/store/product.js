@@ -15,7 +15,6 @@ const actions = {
       const uri = 'search?s="' + name + '"';
       resources.products.get({ uri }, {}).then(({ body }) => {
         const products = JSON.parse(body);
-        // todo: see array v-for
         commit('addDetails', { products });
         commit('addSearch', {
           name,
@@ -27,7 +26,6 @@ const actions = {
       });
     }
   },
-
 };
 
 const mutations = {
@@ -43,7 +41,6 @@ const mutations = {
   addSearch: (state, { name, products }) => {
     Vue.set(state.searchs, name, products);
   },
-
 };
 
 export default {

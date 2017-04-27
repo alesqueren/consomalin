@@ -61,10 +61,7 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch('singleton/set', {
-      key: 'registering',
-      value: true,
-    });
+    this.$store.dispatch('singleton/set', { registering: true });
   },
   computed: {
     registering() {
@@ -73,16 +70,10 @@ export default {
   },
   methods: {
     loginM() {
-      this.$store.dispatch('singleton/set', {
-        key: 'registering',
-        value: false,
-      });
+      this.$store.dispatch('singleton/set', { registering: false });
     },
     registerM() {
-      this.$store.dispatch('singleton/set', {
-        key: 'registering',
-        value: true,
-      });
+      this.$store.dispatch('singleton/set', { registering: true });
     },
     fail() {
       this.error = true;

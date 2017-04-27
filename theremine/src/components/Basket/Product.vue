@@ -9,7 +9,7 @@
         div {{productInfos.name}}
         div.product-number
           div.count-input.space-bottom
-            div.erase(v-if="deleting", @click.prevent.stop='erase()' href="#") Supprimer ?
+            div.erase(v-if="deleting", @click.prevent.stop='erase()' href="#") Supprimer
             a.incr-btn(@click.prevent.stop='decrease' href="#") –
             input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='', disabled="disabled")
             a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
@@ -19,8 +19,6 @@
 
 <script>
 import router from '../../router';
-
-const $ = window.$;
 
 export default {
   props: ['wid', 'pid'],
@@ -64,21 +62,16 @@ export default {
   },
   methods: {
     select() {
-      this.$store.dispatch('currentWish/set', {
-        wid: this.wid,
-      }).then(
-        this.$store.dispatch('product/fetchSearch', {
-          name: this.wish.name,
-        }),
-        router.push({ name: 'section' }),
-      );
+      this.$store.dispatch('sectionWishes/set', this.wid).then(() => {
+        router.push({ name: 'section' });
+      });
     },
     increase() {
       if (this.productQuantity < 64) {
         const wid = this.wish.id;
         const pid = this.pid;
         const quantity = parseInt(this.productQuantity + 1, 10);
-        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
       }
     },
     decrease() {
@@ -86,7 +79,7 @@ export default {
         const wid = this.wish.id;
         const pid = this.pid;
         const quantity = parseInt(this.productQuantity - 1, 10);
-        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
       } else {
         this.startDeletion();
       }
@@ -95,8 +88,7 @@ export default {
       const wid = this.wish.id;
       const pid = this.pid;
       this.$store.dispatch('singleton/set', {
-        key: 'action',
-        value: {
+        action: {
           type: 'deleteProduct',
           wid,
           pid,
@@ -108,7 +100,7 @@ export default {
     },
     erase() {
       const wid = this.wid;
-      this.$store.dispatch('wishGroup/removeWishProduct', { wid, pid: this.pid });
+      this.$store.dispatch('selection/removeWishProduct', { wid, pid: this.pid });
     },
   },
 };

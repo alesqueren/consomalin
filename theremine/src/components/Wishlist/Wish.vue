@@ -10,12 +10,15 @@
     button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click="validEdition")
       i.fa.fa-check.fa-xs
     label.name(v-else for="select") {{ name }}
-    div.confirmDeletion(v-if='deleting' @click="remove")
-      span.btn.btn-danger Confirmer la suppression
 
     div.buttns(v-if='!editing')
-      i.fa.fa-pencil.fa-xs.action.edit(@click.stop="startEdition")
-      i.fa.fa-eraser.fa-xs.action.delete(@click.stop="startDeletion")
+      div.action.edit(@click.stop="startEdition")
+        span.content renommer&nbsp;
+        span.icon.fa.fa-pencil
+      div.action.delete(@click.stop="erase")
+        span.icon.fa.fa-eraser
+        span &nbsp;
+        span.content {{ deleteWording }}
 </template>
 
 <script>
@@ -51,6 +54,9 @@ export default {
       const type = action.type;
       return type === 'deleteWish' && wid === this.wid;
     },
+    deleteWording() {
+      return this.deleting ? 'valider ?' : 'effacer';
+    },
   },
   methods: {
     select() {
@@ -62,11 +68,17 @@ export default {
     focus() {
       this.$refs.editinput.focus();
     },
+    erase() {
+      if (!this.deleting) {
+        this.startDeletion();
+      } else {
+        this.remove();
+      }
+    },
     startEdition() {
       this.editingName = this.name;
       this.$store.dispatch('singleton/set', {
-        key: 'action',
-        value: {
+        action: {
           type: 'editWish',
           value: {
             wid: this.wid,
@@ -84,12 +96,11 @@ export default {
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', { key: 'action' });
+      this.$store.dispatch('singleton/unset', 'action');
     },
     startDeletion() {
       this.$store.dispatch('singleton/set', {
-        key: 'action',
-        value: {
+        action: {
           type: 'deleteWish',
           value: {
             wid: this.wid,
@@ -98,9 +109,7 @@ export default {
       });
     },
     finishDeletion() {
-      this.$store.dispatch('singleton/unset', {
-        key: 'action',
-      });
+      this.$store.dispatch('singleton/unset', 'action');
     },
     remove() {
       this.$store.dispatch('wishGroup/removeWish', { wid: this.wid });
@@ -110,11 +119,10 @@ export default {
 </script>
 
 <style scoped>
-.line .buttns {
+/*.line .buttns {
   visibility: hidden;
   position: absolute;
   top: 2px;
   right: 5px;
-}
+}*/
 </style>
-

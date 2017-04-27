@@ -33,10 +33,7 @@ export default {
   },
   created() {
     if (!this.$store.state.singleton.activeGroupId) {
-      this.$store.dispatch('singleton/set', {
-        key: 'activeGroupId',
-        value: this.gids[0],
-      });
+      this.$store.dispatch('singleton/set', { activeGroupId: this.gids[0] });
     }
   },
   methods: {
@@ -45,10 +42,7 @@ export default {
         this.$store.dispatch('wishGroup/addGroup', {
           name: this.newName,
         }).then((gid) => {
-          this.$store.dispatch('singleton/set', {
-            key: 'activeGroupId',
-            value: gid,
-          });
+          this.$store.dispatch('singleton/set', { activeGroupId: gid });
           Vue.nextTick(() => {
             $('#newWish').focus();
           });
@@ -61,15 +55,12 @@ export default {
     newName(val) {
       if (val) {
         this.$store.dispatch('singleton/set', {
-          key: 'action',
-          value: {
+          action: {
             type: 'createGroup',
           },
         });
       } else {
-        this.$store.dispatch('singleton/unset', {
-          key: 'action',
-        });
+        this.$store.dispatch('singleton/unset', 'action');
       }
     },
     creating(val) {

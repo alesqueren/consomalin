@@ -2,7 +2,7 @@ import resources from '../resources';
 
 const globalGetters = {
   basketAmount: (state, getters, rootState, rootGetters) => {
-    const basket = rootGetters['selection/getOrdreredSelectedWishes'];
+    const basket = rootGetters['selection/getOrderedSelectedWishes'];
     return basket.reduce((prev, wid) => {
       let priceProduct = 0;
       const products = rootGetters['selection/getMatchedWishes'][wid];
@@ -22,7 +22,6 @@ const globalGetters = {
 };
 
 const actions = {
-
   order() {
     return new Promise((resolve) => {
       resources.order.save().then(() => {

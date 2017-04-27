@@ -20,7 +20,7 @@ export default {
 
 <style scoped>
 #wishlist {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 14px;
 }
 #wishlist h2 {
   text-align: center;

@@ -17,10 +17,10 @@ export default {
       return this.$store.state.wishGroup.map(group => group.id);
     },
     basket() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'];
+      return this.$store.getters['selection/getOrderedSelectedWishes'];
     },
-    selectedWishesNb() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
@@ -32,11 +32,12 @@ export default {
   components: { Group, List },
 };
 </script>
+
 <style scoped>
 #basket{
   position: relative;
   height: auto;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 14px;
   clear: both;
 }
 #basket:after {
@@ -50,7 +51,6 @@ export default {
 button{
   cursor: pointer;
 }
-/*
 #recap{
   clear: both;
   background-color: #e5e5e5;
@@ -58,9 +58,9 @@ button{
 }
 .groups{
   clear: both;
-  background-color: #e5e5e5;
+  /*background-color: #e5e5e5;*/
   /*height: 250px;*/
-/*}*/
+}
 #missingProduct{
   position: relative;
   text-align: center;

@@ -7,8 +7,8 @@ import schedule from './schedule';
 import wishGroup from './wishGroup';
 import selection from './selection';
 import singleton from './singleton';
-import currentWish from './currentWish';
 import transaction from './transaction';
+import sectionWishes from './sectionWishes';
 
 Vue.use(Vuex);
 
@@ -21,16 +21,7 @@ const actions = {
 const mutations = {
   resetStore: (state) => {
     Vue.set(state, 'wishGroup', {});
-    Vue.set(state, 'singleton', {
-      selectedSlot: null,
-      currentWid: null,
-      action: {},
-      activeGroupId: null,
-      registering: null,
-      multiSelection: null,
-      previousWid: null,
-      createEntity: null,
-    });
+    Vue.set(state, 'singleton', singleton.defaultState);
     Vue.set(state.product, 'searchs', {});
     Vue.set(state.product, 'details', {});
   },
@@ -40,7 +31,7 @@ const mutations = {
       Vue.set(state, 'wishGroup', wishGroups);
       Vue.set(state, 'selection', currentBasket.selectedWishes);
       Vue.set(state.singleton, 'selectedSlot', currentBasket.currentSlot);
-      Vue.set(state.singleton, 'currentWid', currentBasket.currentWishId);
+      // Vue.set(state.sectionWishes, 'wid', currentBasket.currentWishId);
       resolve();
     });
   },
@@ -58,7 +49,7 @@ export default new Vuex.Store({
     wishGroup,
     selection,
     singleton,
-    currentWish,
     transaction,
+    sectionWishes,
   },
 });

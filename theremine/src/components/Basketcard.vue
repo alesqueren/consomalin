@@ -4,7 +4,7 @@
       div.basket-logo
         i.fa.fa-shopping-basket
     div.right-part
-      span.tooltip {{matchedWishesLength}} / {{selectedWishesNb}} produits<br/>
+      span.tooltip {{matchedWishesLength}} / {{selectedWishNb}} produits<br/>
         span.tooltiptext.tooltip-bottom Vous avez encore {{remainingWishToMatch}} produits à choisir pour remplir votre panier
       span Total : {{total}}&nbsp;€
 </template>
@@ -20,16 +20,16 @@ export default {
       return this.$store.state.wishGroup.map(group => group.id);
     },
     basket() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'];
+      return this.$store.getters['selection/getOrderedSelectedWishes'];
     },
-    selectedWishesNb() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
     remainingWishToMatch() {
-      return this.selectedWishesNb - this.matchedWishesLength;
+      return this.selectedWishNb - this.matchedWishesLength;
     },
     total() {
       return this.$store.getters['transaction/basketAmount'];

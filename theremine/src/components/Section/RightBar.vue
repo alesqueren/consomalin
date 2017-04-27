@@ -20,6 +20,7 @@
         div(style="clear:both")
       div.currentWishProducts(v-else)
         span Aucun produit selectionné
+
     // - previous wish
     div(v-if="previousProductIds.length > 0 && previousWid !== currentWish.id")
       div.titlePrevious
@@ -32,7 +33,6 @@
         div(style="clear:both")
 </template>
 <script>
-import router from '../../router';
 import Wish from '../Basket/Wish';
 
 export default {
@@ -43,8 +43,14 @@ export default {
     };
   },
   computed: {
-    previousWid() {
-      return this.$store.state.singleton && this.$store.state.singleton.previousWid;
+    currentWish() {
+      return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
+    },
+    matchedWishesLength() {
+      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
     previousWish() {
       if (this.previousWid) {
@@ -52,6 +58,10 @@ export default {
       }
       return null;
     },
+    previousWid() {
+      return this.$store.state.singleton && this.$store.state.singleton.previousWid;
+    },
+    // TODO: getter
     previousProductIds() {
       if (this.previousWid) {
         const previousWish = this.$store.state.selection[this.previousWish.gid][this.previousWid];
@@ -59,39 +69,12 @@ export default {
       }
       return 0;
     },
-    multiSelection() {
-      return this.$store.state.singleton && this.$store.state.singleton.multiSelection;
-    },
-    currentWish() {
-      const currentWid = this.$store.state.singleton.currentWid;
-      return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
-    },
     productIds() {
       if (this.currentWish) {
         const wish = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
         return Object.keys(wish);
       }
       return 0;
-    },
-    selectedWishesNb() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
-    },
-    matchedWishesLength() {
-      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
-    },
-  },
-  methods: {
-    next() {
-      this.$store.dispatch('singleton/set', {
-        key: 'previousWid',
-        value: this.currentWish.id,
-      });
-      if (!this.$store.dispatch('currentWish/next', this.currentWish.id)) {
-        this.finish();
-      }
-    },
-    finish() {
-      router.push({ name: 'basket' });
     },
   },
   components: { Wish },

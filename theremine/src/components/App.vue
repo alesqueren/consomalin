@@ -9,13 +9,21 @@
       div#steps.left(v-if="user && user.username")
         ul.header-tabs
           li.header-tab
-            router-link.title.fa.fa-list(:to="{ name: 'wishlist' }") &nbsp;Listes
+            router-link.title(:to="{ name: 'wishlist' }")
+              span.fa.fa-list
+              span &nbsp;Mes listes
           li.header-tab
-            router-link.title.fa.fa-hand-pointer-o(:to="{ name: 'section' }") &nbsp;Rayons
+            router-link.title(:to="{ name: 'section' }")
+              span.fa.fa-hand-pointer-o
+              span &nbsp;Mes Rayons
           li.header-tab
-            router-link.title.fa.fa-shopping-cart(:to="{ name: 'basket' }") &nbsp;Panier
+            router-link.title(:to="{ name: 'basket' }")
+              span.fa.fa-shopping-cart
+              span &nbsp;Mon panier
           li.header-tab
-            router-link.title.fa.fa-car(:to="{ name: 'withdraw' }") &nbsp;Retrait
+            router-link.title(:to="{ name: 'withdraw' }")
+              span.fa.fa.fa-car
+              span &nbsp;Retrait
       Usercard
       //- Basketcard
     div#content(v-bind:class="{'marginalize' : navCarRequired}")
@@ -25,10 +33,10 @@
 </template>
 
 <script>
-import Basketcard from './Basketcard';
-import Usercard from './User/Usercard';
 import replay from '../replay';
-import NavCard from './NavCard';
+import NavCard from './NavCard/Index';
+import Usercard from './User/Usercard';
+import Basketcard from './Basketcard';
 
 const $ = window.$;
 
@@ -37,8 +45,8 @@ export default {
     user() {
       return this.$store.state.user;
     },
-    selectedWishesNb() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'].length;
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
@@ -56,13 +64,13 @@ export default {
   methods: {
     finishAllActions() {
       // if (!$(event.target).is('.action')) {
-      this.$store.dispatch('singleton/unset', {
-        key: 'action',
-      });
+      this.$store.dispatch('singleton/unset', 'action');
       // }
     },
   },
   created() {
+    this.$store.dispatch('sectionWishes/debug');
+
     $(document).keydown((e) => {
       if (e.which === 37) {
         replay.previous(this.$store, this.$router);
@@ -87,36 +95,43 @@ export default {
   --color1-bl-sh: #051016;
   */
 
+  /* TODO: rm -- */
   --color1: #146C78;
   --color2: #0E91A1;
+  --color2-br: #14CDE5;
   --color3: #7DCE94;
+  --color3-2: #63CE81;
+  --color3-3: #4DDD76;
   --color4: #EFEDE7;
 
   --success: #48CE6E;
+  --active: #7DDBD1;
   --warning: orange;
   --white: white;
+  --grey: #c6c6c6;
+  --danger: #d9534f;
 }
 
 body{
   background-color: var(--color4);
+  font-family: arial;
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   outline:none;
 }
 #content {
   position: relative;
-  padding: 59px;
+  padding: 119px 59px 59px 59px;
 }
 .marginalize {
   margin-right: 320px;
 }
 
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 14px;
 }
 
 a {
@@ -171,9 +186,10 @@ a:hover {
 #header .title {
   min-width: 200px;
   position:relative;
+  display: block;
   line-height: 50px;
   font-weight: 700;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: bold;
   color: var(--color4);
 }
@@ -203,12 +219,11 @@ a:hover {
   background-color: var(--color4);
   display: block;
 }
-#steps .header-tab:hover :not(.router-link-active) {
+#steps .title:not(.router-link-active):hover  {
   color:white !important;
   background-color: rgba(255, 255, 255, 0.14902);
-  display: block;
 }
-#steps .header-tab:hover .router-link-active {
+#steps .title.router-link-active:hover  {
   cursor: default;
 }
 .btn {

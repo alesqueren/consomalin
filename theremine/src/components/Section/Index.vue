@@ -1,46 +1,47 @@
 <template lang="pug">
   div#wishes
-    div.leftSide
-      CurrentWish
-      div(v-if="!currentWishIsEmpty && currentWishResults")
-        ProductItem(
-          v-for="(pid, key, i) in currentWishResults" 
-          v-if="i < maxProducts"
-          v-bind:maxProducts="maxProducts" 
-          v-bind:pid="pid" 
-          v-bind:key="i")
-      div.waiting-box(
-        v-if="!currentWishIsEmpty && !currentWishResults"
-        v-for="i in 40"
-        v-bind:key="i")
-        img.product-img.center
-        .product-name.center
-        div.count-input.space-bottom
-          a.incr-btn(href="#") –
-          input.quantity(type='number', value='1' disabled="disabled")
-          a.incr-btn(href="#") &plus;
-        div.price
-        div.btn-atb
-          i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
-
-    RightBar.rightSide
-    //- SI aucun resultat
-    div.nothing-box(v-if="!currentWishIsEmpty && currentWishResults && !currentWishResults[0]")
+    // - TODO: move
+    div(v-if="!currentWish") 
       div(style="width: 100%; text-align: center;")
-        span Aucun produit trouvé. <br/>
-        span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
-    .container(v-else-if="basket.length === 0")
-      div
-        span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
-          router-link(:to='{ name: "wishlist" }')
-            button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
-    .container(v-else-if="basketFull && currentWishIsEmpty")
-        div(style="margin-top:50px;")
-          span Votre liste de course est complète ! Vous pouvez 
-            router-link(:to='{ name: "basket" }')
-              button.btn(v-bind:class="nextInfos.class" type="button") Passer au panier 
-          //- span  pour finaliser la commande.
-    //- List.side
+        span Tous les produits ont été ajoutés au panier. <br/><br/> 
+      router-link(style="margin-left: 45%; width: 10%;", :to='{ name: "basket" }')
+        span.input-group-addon.basket.nav-btn
+          span Voir le panier
+    div(v-else) 
+      div.leftSide
+        CurrentWish
+        div(v-if="currentWishResults")
+          ProductItem(
+            v-for="(pid, key, i) in currentWishResults" 
+            v-if="i < maxProducts"
+            v-bind:maxProducts="maxProducts" 
+            v-bind:pid="pid" 
+            v-bind:key="i")
+        div.waiting-box(
+          v-if="!currentWishResults"
+          v-for="i in 40"
+          v-bind:key="i")
+          img.product-img.center
+          .product-name.center
+          div.count-input.space-bottom
+            a.incr-btn(href="#") –
+            input.quantity(type='number', value='1' disabled="disabled")
+            a.incr-btn(href="#") &plus;
+          div.price
+          div.btn-atb
+            i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
+
+      RightBar.rightSide
+      //- SI aucun resultat
+      div.nothing-box(v-if="currentWishResults && !currentWishResults[0]")
+        div(style="width: 100%; text-align: center;")
+          span Aucun produit trouvé. <br/>
+          span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
+      .container(v-else-if="basket.length === 0")
+        div
+          span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
+            router-link(:to='{ name: "wishlist" }')
+              button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
 </template>
 
 <script>
@@ -64,39 +65,33 @@ export default {
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll);
   },
-  computed: {
-    currentWish() {
+  watch: {
+    currentWish: () => {
       // scroll to top
       window.$('html,body').scrollTop(0);
-      const currentWid = this.$store.state.singleton.currentWid;
-      return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
+    },
+  },
+  computed: {
+    currentWish() {
+      return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    basket() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'];
+    },
+    total() {
+      return this.$store.getters['transaction/basketAmount'];
+    },
+    matchedWishesLength() {
+      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
     searchs() {
       return this.$store.state.searchs;
-    },
-    basket() {
-      return this.$store.getters['selection/getOrdreredSelectedWishes'];
     },
     currentWishResults() {
       if (this.currentWish && this.currentWish.name) {
         return this.$store.state.product.searchs[this.currentWish.name];
       }
       return [];
-    },
-    currentWishIsEmpty() {
-      if (this.$store.state.singleton.currentWid) {
-        return !Object.keys(this.$store.state.singleton.currentWid).length;
-      }
-      return true;
-    },
-    matchedWishesLength() {
-      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
-    },
-    basketFull() {
-      return this.matchedWishesLength === this.basket.length;
-    },
-    total() {
-      return this.$store.getters['transaction/basketAmount'];
     },
     nextInfos() {
       const length = this.basket.length;
@@ -110,21 +105,14 @@ export default {
       };
     },
   },
-  mounted() {
-    if (this.currentWish) {
-      const name = this.currentWish.name;
-      this.$store.dispatch('product/fetchSearch', { name });
-    } else {
-      this.$store.dispatch('currentWish/next');
-    }
-  },
   methods: {
     // lazyloading
     // lorsqu'on atteint le bas de la page a 100px pret on augmente le nombre de produits affichable
     handleScroll() {
       const scrollTop = $(window).scrollTop();
       const height = $(window).height();
-      const nbResult = Object.keys(this.$store.state.singleton.currentWid).length;
+      const searchsRes = this.$store.state.product.searchs[this.currentWish.name];
+      const nbResult = searchsRes ? Object.keys(searchsRes).length : 0;
       if (scrollTop + height > height - 100 && this.maxProducts < nbResult) {
         this.maxProducts += 20;
       }
@@ -230,5 +218,18 @@ input[type=number]::-webkit-inner-spin-button {
   right: auto;
   left: 0;
   top: 46%;
+}
+.nav-btn {
+  position: relative;
+  width: auto;
+  height: 47px;
+  cursor: pointer;
+  text-align: center;
+  color: var(--white);
+  font-weight: bolder;
+  background-color: var(--success);
+}
+.nav-btn:hover {
+  background-color: var(--color3-3);
 }
 </style>

@@ -1,5 +1,7 @@
 <template lang="pug">
-  div.product-item(v-bind:class="{'active': inCurrentWish}", @click="selectProduct")
+  div.product-item(
+    v-bind:class="{'active': inCurrentWish}", 
+    @click="selectProduct")
     div.old(v-if="inCurrentBasket && !inCurrentWish")
       span.fa.fa-check &nbsp;&nbsp;&nbsp;
       span Déjà au panier
@@ -11,12 +13,12 @@
         div.pu {{product.priceByQuantity}}&nbsp;€/u
       div.btns-atb(v-if="!inCurrentWish")
         div.btn-atb.tooltip(
-            @click="selectProduct",
+            @click.stop="selectProduct",
           )
           span.tooltiptext.tooltip-bottom Ajouter au panier
           i.fa.fa-cart-plus.fa-lg.atb
         div.btn-atb.tooltip(
-            @click="quickSelectProduct()",
+            @click.stop="quickSelectProduct()",
           )
           span.tooltiptext.tooltip-bottom Ajouter au panier et<br> passer au produit suivant 
           i.fa.fa-cart-plus.fa-lg.atb-quick &nbsp;
@@ -39,18 +41,14 @@ export default {
     };
   },
   computed: {
-    product() {
-      return this.$store.state.product.details[this.pid];
-    },
     currentWish() {
-      const currentWid = this.$store.state.singleton.currentWid;
-      return this.$store.getters['wishGroup/getWish']({ wid: currentWid });
-    },
-    multiSelection() {
-      return this.$store.state.singleton && this.$store.state.singleton.multiSelection;
+      return this.$store.getters['sectionWishes/getCurrent'];
     },
     inCurrentBasket() {
       return this.$store.getters['selection/getProductsInBasket'][this.pid];
+    },
+    product() {
+      return this.$store.state.product.details[this.pid];
     },
     inCurrentWish() {
       const selection = this.$store.state.selection;
@@ -75,7 +73,7 @@ export default {
         pid: this.pid,
         quantity: parseInt(this.quantity, 10),
       }];
-      this.$store.dispatch('wishGroup/setWishProducts', {
+      this.$store.dispatch('selection/setWishProducts', {
         wid: this.currentWish.id,
         products,
       });
@@ -85,22 +83,15 @@ export default {
         pid: this.pid,
         quantity: parseInt(this.quantity, 10),
       }];
-      this.$store.dispatch('wishGroup/setWishProducts', {
+      this.$store.dispatch('selection/setWishProducts', {
         wid: this.currentWish.id,
         products,
-      });
-      this.setCurrentAsLastProduct();
-      if (!this.$store.dispatch('currentWish/next', this.currentWish.id)) {
-        this.finish();
-      }
-    },
-    finish() {
-      router.push({ name: 'basket' });
-    },
-    setCurrentAsLastProduct() {
-      this.$store.dispatch('singleton/set', {
-        key: 'previousWid',
-        value: this.currentWish.id,
+      }).then(() => {
+        this.$store.dispatch('sectionWishes/next', () => {
+          if (!this.$store.getters['sectionWishes/getCurrent']) {
+            router.push({ name: 'basket' });
+          }
+        });
       });
     },
     increase() {
@@ -108,7 +99,7 @@ export default {
         const wid = this.currentWish.id;
         const pid = this.pid;
         const quantity = parseInt(this.quantity + 1, 10);
-        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
       }
     },
     decrease() {
@@ -116,7 +107,7 @@ export default {
         const wid = this.currentWish.id;
         const pid = this.pid;
         const quantity = parseInt(this.quantity - 1, 10);
-        this.$store.dispatch('wishGroup/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
       }
     },
   },
@@ -141,7 +132,7 @@ export default {
 }
 
 .active{
-  background-color: var(--color2);
+  background-color: var(--active);
 }
 .old{
   position: absolute;
@@ -165,6 +156,7 @@ export default {
 .bottom{
   display: table;
   width: 100%;
+  height: 65px;
 }
 .btns-atb{
   display: table-cell;
@@ -186,7 +178,7 @@ export default {
   line-height: 32px;
 }
 .btn-atb:hover{
-  background-color: #4AB080;
+  background-color: var(--success);
 }
 .text-atb{
   line-height: 32px;

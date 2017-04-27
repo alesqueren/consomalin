@@ -1,50 +1,46 @@
 import Vue from 'vue';
 
+// TODO: move to other store files
+//       and import mutations ?
+const defaultState = {
+  selectedSlot: null,
+  action: { name: '', value: {} },
+  activeGroupId: null,
+  registering: null,
+  multiSelection: null,
+  createEntity: {},
+};
+
 const actions = {
-  set({ commit }, { key, value }) {
-    commit('set', { key, value });
+  set({ commit }, object) {
+    commit('set', object);
   },
 
-  unset: ({ state, commit }, { key }) => {
-    if (Object.keys(state[key]).length) {
-      commit('unset', { key });
+  unset: ({ state, commit }, key) => {
+    if (key && Object.keys(state[key]).length) {
+      commit('unset', key);
     }
-  },
-
-  toggle: ({ commit }, { key, value }) => {
-    commit('toggle', { key, value });
   },
 };
 
 const mutations = {
-  set(state, { key, value }) {
-    // delete state.key;
-    Vue.set(state, key, value);
+  set: (state, object) => {
+    Object.keys(object).map((key) => {
+      Vue.set(state, key, object[key]);
+      return null;
+    });
   },
 
-  unset: (state, { key }) => {
+  unset: (state, key) => {
     Vue.set(state, key, {});
-  },
-
-  toggle: (state, { key, value }) => {
-    const newValue = (state[key] === value) ? null : value;
-    Vue.set(state, key, newValue);
   },
 };
 
 export default {
   namespaced: true,
   strict: true,
-  state: {
-    selectedSlot: null,
-    currentWid: null,
-    action: { name: '', value: {} },
-    activeGroupId: null,
-    registering: null,
-    multiSelection: null,
-    previousWid: null,
-    createEntity: {},
-  },
+  state: defaultState,
   actions,
   mutations,
+  defaultState,
 };

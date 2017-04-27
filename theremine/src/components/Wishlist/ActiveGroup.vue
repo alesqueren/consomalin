@@ -49,9 +49,7 @@ export default {
   mounted() {
     $(document).click((event) => {
       if (!$(event.target).is('#newWish, .btn-create, .btn-edition')) {
-        this.$store.dispatch('singleton/unset', {
-          key: 'action',
-        });
+        this.$store.dispatch('singleton/unset', 'action');
       }
     });
   },
@@ -59,15 +57,12 @@ export default {
     newName(val) {
       if (val) {
         this.$store.dispatch('singleton/set', {
-          key: 'action',
-          value: {
+          action: {
             type: 'createWish',
           },
         });
       } else {
-        this.$store.dispatch('singleton/unset', {
-          key: 'action',
-        });
+        this.$store.dispatch('singleton/unset', 'action');
       }
     },
     creating(val) {

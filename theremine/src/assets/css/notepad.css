@@ -3,7 +3,6 @@
   color: #555;
   font-size: 1em;
   padding: 0 !important;
-  font-family: courier, monospace;
   border: 1px solid #dedede;
   background-color: white;
 }
@@ -67,7 +66,6 @@
   cursor: pointer;
   position: absolute;
   font-size: 1.5em;
-  font-family: arial;
   top: 0;
   right: 5px;
   z-index: 2;
@@ -101,39 +99,52 @@
 .line .buttns {
   visibility: hidden;
   position: absolute;
-  top: 6px;
-  right: -13px;
-  width: 220px;
-  line-height: 35px;
-  height: 35px;
+  top: 11px;
+  right: 0px;
+  width: 159px;
+  line-height: 13px;
+  height: 13px;
+  font-weight: normal;
 }
 .line:hover .buttns {
+/*.line .buttns {*/
   visibility: visible;
   cursor: pointer;
 }
 .line .buttns .action {
   border: 1px solid rgba(0,0,0,.01);
+  border-radius: .25rem;
   position: relative;
   display: table-cell;
   width: 50%;
+  padding: 6px;
 }
+/*.line .buttns .action {*/
 .line .buttns .action:hover {
-/*.line .buttns .wrapper {*/
   border: 1px solid rgba(0,0,0,.15);
-  background-color: #d9534f;
-  color: white;
-  /*margin-right: 12px;*/
-  /*text-align: right;*/
+}
+.line .buttns .action.deleting {
+  border: 1px solid rgba(0,0,0,.15);
+}
+/*.line .buttns .action.delete {*/
+.line .buttns .action.delete:hover {
+  background-color: var(--danger);
+  color: var(--white);
+}
+.line .buttns .action.delete.deleting {
+  background-color: var(--danger);
+  color: var(--white);
 }
 .line .buttns .action:hover .content {
 /*.line .buttns .wrapper .content {*/
   visibility: visible;
 }
-.buttns .action.edit:hover {
-  color: white;
+.line .buttns .action.deleting .content {
+  visibility: visible;
 }
-.buttns .action.delete:hover {
-  color: white;
+.line .content{
+  font-size: 0.7em;
+  visibility: hidden;
 }
 .notepad [type="checkbox"]:not(:checked),
 .notepad [type="checkbox"]:checked {

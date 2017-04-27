@@ -3,22 +3,34 @@ import resources from '../resources';
 
 const globalGetters = {
 
-  getOrdreredSelectedWishes: (state, getters, { wishGroup }) => {
-    const wishes = [];
+  getOrderedSelectedWishes: (state, getters, { wishGroup }) => {
+    const res = [];
     for (let i = 0; i < wishGroup.length; i++) {
       const group = wishGroup[i];
       for (let j = 0; j < group.wishes.length; j++) {
         const wish = wishGroup[i].wishes[j];
         if (state[group.id] && state[group.id][wish.id]) {
-          wishes.push(wish.id);
+          res.push(wish.id);
         }
       }
     }
-    return wishes;
+    return res;
+  },
+
+  getUnmatchedWishes: (state) => {
+    const res = [];
+    for (const gid in state) {
+      for (const wid in state[gid]) {
+        if (Object.keys(state[gid][wid]).length === 0) {
+          res.push(wid);
+        }
+      }
+    }
+    return res;
   },
 
   getMatchedWishes: (state, getters, { wishGroup }) => {
-    const wishes = {};
+    const res = {};
     for (let i = 0; i < wishGroup.length; i++) {
       const group = wishGroup[i];
       for (let j = 0; j < group.wishes.length; j++) {
@@ -26,10 +38,10 @@ const globalGetters = {
         if (state[group.id] && state[group.id][wish.id]) {
           const products = state[group.id][wish.id];
           for (const k in products) {
-            if (!wishes[wish.id]) {
-              wishes[wish.id] = [];
+            if (!res[wish.id]) {
+              res[wish.id] = [];
             }
-            wishes[wish.id].push({
+            res[wish.id].push({
               pid: k,
               quantity: parseInt(products[k], 10),
             });
@@ -37,11 +49,11 @@ const globalGetters = {
         }
       }
     }
-    return wishes;
+    return res;
   },
 
   getProductsInBasket: (state, getters, { wishGroup }) => {
-    const results = {};
+    const res = {};
     for (let i = 0; i < wishGroup.length; i++) {
       const group = wishGroup[i];
       for (let j = 0; j < group.wishes.length; j++) {
@@ -49,40 +61,81 @@ const globalGetters = {
         if (state[group.id] && state[group.id][wish.id]) {
           const products = state[group.id][wish.id];
           for (const k in products) {
-            results[k] = true;
+            res[k] = true;
           }
         }
       }
     }
-    return results;
+    return res;
   },
 
-  getSelectedGroupsIds: state => Object.keys(state),
-
-  getSelectedWishesByGroup: state => ({ gid }) => {
-    if (gid in state) {
-      return Object.keys(state[gid]);
-    }
-    return [];
-  },
-
-  getSelectedWishes: state => () => {
-    let wishes = 0;
-    for (let i = 0; i < state.length; i++) {
-      const group = state[i];
-      for (let j = 0; j < group.wishes.length; j++) {
-        wishes++;
+  getSelectedGroupsIds: (state, getters, { wishGroup }) => {
+    const res = [];
+    for (let i = 0; i < wishGroup.length; i++) {
+      const e = wishGroup[i].id;
+      if (Object.keys(state).indexOf(e) !== -1) {
+        res.push(e);
       }
     }
-    return wishes;
+    return res;
   },
 
+  getSelectedWishesIds: (state) => {
+    const res = [];
+    for (const gid in state) {
+      for (const wid in state[gid]) {
+        res.push(wid);
+      }
+    }
+    return res;
+  },
+
+  getMatchedWishesIds: (state) => {
+    const res = [];
+    for (const gid in state) {
+      for (const wid in state[gid]) {
+        if (Object.keys(state[gid][wid]).length > 0) {
+          res.push(wid);
+        }
+      }
+    }
+    return res;
+  },
+
+  getSelectedWishesByGroup: (state, getters, { wishGroup }) => ({ gid }) => {
+    let ordWishes = [];
+    for (let i = 0; i < wishGroup.length; i++) {
+      if (wishGroup[i].id === gid) {
+        ordWishes = wishGroup[i].wishes;
+        break;
+      }
+    }
+
+    const res = [];
+    for (let i = 0; i < ordWishes.length; i++) {
+      const wid = ordWishes[i].id;
+      if (state[gid] && state[gid][wid]) {
+        res.push(wid);
+      }
+    }
+    return res;
+  },
+
+  isSelectedWish: state => ({ wid }) => {
+    for (const g in state) {
+      for (const w in state[g]) {
+        if (w === wid) {
+          return true;
+        }
+      }
+    }
+    return false;
+  },
 };
 
 const actions = {
 
-  // TODO: add Promise?
-  selectGroup: ({ rootState, commit }, { gid }) => {
+  selectGroup: ({ dispatch, rootState, commit }, { gid }) => {
     const selectWishes = {};
     for (const i in rootState.wishGroup) {
       const wg = rootState.wishGroup;
@@ -93,24 +146,53 @@ const actions = {
         }
       }
     }
-    commit('selectGroup', { gid, selectWishes });
+    dispatch('sectionWishes/update',
+             () => commit('selectGroup', { gid, selectWishes }),
+             { root: true });
     resources.wishgroup.update({ gid }, { selected: true });
   },
 
-  // TODO: add Promise?
-  unselectGroup: ({ rootState, commit }, { gid }) => {
-    commit('unselectGroup', { gid });
+  unselectGroup: ({ dispatch, commit }, { gid }) => {
+    dispatch('sectionWishes/update',
+             () => commit('unselectGroup', { gid }),
+             { root: true });
     resources.wishgroup.update({ gid }, { selected: false });
   },
 
-  selectWish({ commit, rootGetters }, { wid, selected }) {
+  selectWish({ dispatch, commit, rootGetters }, { wid, selected }) {
     return new Promise((resolve) => {
       const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
       resources.wish.update({ gid, wid }, { selected });
+
       const commitName = selected ? 'selectWish' : 'unselectWish';
-      commit(commitName, { gid, wid, selected });
+      dispatch('sectionWishes/update',
+               () => commit(commitName, { gid, wid, selected }),
+               { root: true });
       resolve();
     });
+  },
+
+  setWishProducts: ({ commit, rootGetters }, { wid, products }) => {
+    const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
+    return new Promise((resolve) => {
+      commit('setWishProducts', { gid, wid, products });
+      resources.wishProduct.bulk({ gid, wid }, { products });
+      resolve();
+    });
+  },
+
+  updateWishProduct: ({ commit, rootGetters }, { wid, pid, quantity }) => {
+    const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
+    commit('updateWishProduct', { gid, wid, pid, quantity });
+    resources.wishProduct.update({ gid, wid }, { pid, quantity });
+  },
+
+  removeWishProduct: ({ commit, rootGetters, dispatch }, { wid, pid }) => {
+    const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
+    dispatch('sectionWishes/update',
+             () => commit('removeWishProduct', { gid, wid, pid }),
+             { root: true });
+    resources.wishProduct.remove({ gid, wid }, { pid });
   },
 
 };

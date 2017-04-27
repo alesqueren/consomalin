@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.line(v-bind:class="{'active': isActive, 'strong': selectedWishesNb}"
+  div.line(v-bind:class="{'active': isActive, 'strong': selectedWishNb}"
       @click="setActivation")
     input(type="checkbox"
       name="selected"
@@ -15,24 +15,21 @@
       i.fa.fa-check.fa-xs
     label.name(v-else for="selected") {{ name }}
     div.fakeCheckbox(v-if='!editing && wishesNb' @click="toggleSelection")
-    div.confirmDeletion(v-if='deleting' @click="remove")
-      span.btn.btn-danger Confirmer la suppression
 
     div.filling
-      span {{ selectedWishesNb }} / {{ wishesNb }}
+      span {{ selectedWishNb }} / {{ wishesNb }}
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
         span.content renommer&nbsp;
-        span.icon.fa.fa-pencil.fa-xs
-      div.action.delete(@click.stop="startDeletion")
-        span.icon.fa.fa-eraser.fa-xs
-        span.content &nbsp;supprimer
+        span.icon.fa.fa-pencil
+      div.action.delete(@click.stop="erase", v-bind:class="{'deleting': deleting}")
+        span.icon.fa.fa-eraser
+        span &nbsp;
+        span.content {{ deleteWording }}
 </template>
 
 <script>
 import Vue from 'vue';
-
-const $ = window.$;
 
 export default {
   props: ['gid'],
@@ -63,12 +60,15 @@ export default {
     selected() {
       return this.$store.getters['selection/getSelectedGroupsIds'].indexOf(this.gid) !== -1;
     },
-    selectedWishesNb() {
+    selectedWishNb() {
       return this.$store.getters['selection/getSelectedWishesByGroup']({ gid: this.gid }).length;
     },
     wishesNb() {
       const predicate = e => (e.id === this.gid);
       return this.$store.state.wishGroup.filter(predicate)[0].wishes.length;
+    },
+    deleteWording() {
+      return this.deleting ? 'valider ?' : 'effacer';
     },
   },
   methods: {
@@ -77,19 +77,22 @@ export default {
       this.$store.dispatch('selection/' + actionName, { gid: this.gid });
     },
     setActivation() {
-      this.$store.dispatch('singleton/set', {
-        key: 'activeGroupId',
-        value: this.gid,
-      });
+      this.$store.dispatch('singleton/set', { activeGroupId: this.gid });
     },
     focus() {
       this.$refs.editinput.focus();
     },
+    erase() {
+      if (!this.deleting) {
+        this.startDeletion();
+      } else {
+        this.remove();
+      }
+    },
     startEdition() {
       this.editingName = this.name;
       this.$store.dispatch('singleton/set', {
-        key: 'action',
-        value: {
+        action: {
           type: 'editGroup',
           value: {
             gid: this.gid,
@@ -101,7 +104,7 @@ export default {
     },
     finishEdition() {
       this.editingName = null;
-      this.$store.dispatch('singleton/unset', { key: 'action' });
+      this.$store.dispatch('singleton/unset', 'action');
     },
     validEdition() {
       this.$store.dispatch('wishGroup/renameGroup', {
@@ -112,8 +115,7 @@ export default {
     },
     startDeletion() {
       this.$store.dispatch('singleton/set', {
-        key: 'action',
-        value: {
+        action: {
           type: 'deleteGroup',
           value: {
             gid: this.gid,
@@ -123,20 +125,13 @@ export default {
       this.setActivation();
     },
     finishDeletion() {
-      this.$store.dispatch('singleton/unset', {
-        key: 'action',
-      });
+      this.$store.dispatch('singleton/unset', 'action');
     },
     remove() {
       const gids = this.$store.state.wishGroup.map(group => group.id);
       const currentPosition = gids.indexOf(this.gid);
-
       this.$store.dispatch('wishGroup/removeGroup', { gid: this.gid });
-
-      this.$store.dispatch('singleton/set', {
-        key: 'activeGroupId',
-        value: gids[currentPosition - 1],
-      });
+      this.$store.dispatch('singleton/set', { activeGroupId: gids[currentPosition - 1] });
     },
   },
 };
@@ -144,24 +139,24 @@ export default {
 
 <style scoped>
 .line.active{
-  background-color: var(--color3);
+  background-color: var(--active);
 }
 .filling {
   display: block;
   position: absolute;
   bottom: 0px;
-  right: 0px;
+  right: 5px;
 }
 .strong{
   font-weight: bold;
-}
-.content{
-  visibility: hidden;
 }
 .wrapper{
   height: 30px;
   vertical-align: middle;
   line-height: 20px;
   padding: 5px;
+}
+.deleting{
+  visibility: visible;
 }
 </style>
