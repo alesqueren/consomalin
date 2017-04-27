@@ -14,14 +14,12 @@
             @click="selectProduct",
           )
           span.tooltiptext.tooltip-bottom Ajouter au panier
-          i.fa.fa-shopping-basket.fa-xs.atb
-          i.fa.fa-plus.fa-xs.atb
+          i.fa.fa-cart-plus.fa-lg.atb
         div.btn-atb.tooltip(
             @click="quickSelectProduct()",
           )
           span.tooltiptext.tooltip-bottom Ajouter au panier et<br> passer au produit suivant 
-          i.fa.fa-shopping-basket.fa-xs.atb-quick
-          i.fa.fa-plus.fa-xs.atb &nbsp;
+          i.fa.fa-cart-plus.fa-lg.atb-quick &nbsp;
           span.fa.fa-arrow-right.special-fa
       div.count-input.space-bottom(v-else)
         a.incr-btn(@click.prevent.stop='decrease' href="#") –

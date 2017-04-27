@@ -9,13 +9,13 @@
       div#steps.left(v-if="user && user.username")
         ul.header-tabs
           li.header-tab
-            router-link.title(:to="{ name: 'wishlist' }") Listes
+            router-link.title.fa.fa-list(:to="{ name: 'wishlist' }") &nbsp;Listes
           li.header-tab
-            router-link.title(:to="{ name: 'section' }") Rayons
+            router-link.title.fa.fa-hand-pointer-o(:to="{ name: 'section' }") &nbsp;Rayons
           li.header-tab
-            router-link.title(:to="{ name: 'basket' }") Panier
+            router-link.title.fa.fa-shopping-cart(:to="{ name: 'basket' }") &nbsp;Panier
           li.header-tab
-            router-link.title(:to="{ name: 'withdraw' }") Retrait
+            router-link.title.fa.fa-car(:to="{ name: 'withdraw' }") &nbsp;Retrait
       Usercard
       //- Basketcard
     div#content(v-bind:class="{'marginalize' : navCarRequired}")
@@ -144,18 +144,18 @@ a:hover {
 }
 
 #header{
-  /* plus de place pour le contenu
+   /*plus de place pour le contenu*/
   position: fixed;
-  z-index: 2; */
-  line-height: 60px;
-  height: 60px;
+  z-index: 4; 
+  line-height: 50px;
+  height: 50px;
   width: 100%;
   background-color: var(--color1);
 }
 
 #header .logo {
-  height: 60px;
-  width: 60px;
+  height: 50px;
+  width: 50px;
   background-color: var(--color4);
 }
 
@@ -171,7 +171,7 @@ a:hover {
 #header .title {
   min-width: 200px;
   position:relative;
-  line-height: 60px;
+  line-height: 50px;
   font-weight: 700;
   font-size: 22px;
   font-weight: bold;

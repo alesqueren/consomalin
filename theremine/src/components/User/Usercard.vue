@@ -51,7 +51,7 @@ div.right > a {
   left: -116px;
 }
 .user-name{
-  color: #747e8f;
+  color: white;
 }
 .pointer{
   cursor: pointer;

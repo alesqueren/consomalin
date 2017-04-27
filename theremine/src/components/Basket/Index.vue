@@ -60,7 +60,7 @@ button{
   clear: both;
   background-color: #e5e5e5;
   /*height: 250px;*/
-}
+/*}*/
 #missingProduct{
   position: relative;
   text-align: center;
