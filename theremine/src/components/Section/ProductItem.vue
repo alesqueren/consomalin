@@ -2,7 +2,7 @@
   div.product-item(
     v-bind:class="{'active': inCurrentWish}", 
     @click="selectProduct")
-    div.old(v-if="inCurrentBasket && !inCurrentWish")
+    div.old(v-if="inBasket && !inCurrentWish")
       span.fa.fa-check &nbsp;&nbsp;&nbsp;
       span Déjà au panier
     img.product-img.center(v-bind:src="product.imageUrl")
@@ -44,19 +44,19 @@ export default {
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
     },
-    inCurrentBasket() {
+    inBasket() {
       return this.$store.getters['selection/getProductsInBasket'][this.pid];
     },
     product() {
       return this.$store.state.product.details[this.pid];
     },
     inCurrentWish() {
-      const selection = this.$store.state.selection;
+      const selection = this.$store.state.selection.basket;
       const pids = Object.keys(selection[this.currentWish.gid][this.currentWish.id]);
       return pids && pids.indexOf(this.pid) !== -1;
     },
     quantity() {
-      const product = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
+      const product = this.$store.state.selection.basket[this.currentWish.gid][this.currentWish.id];
       return product[this.pid] || 1;
     },
     deleting() {
@@ -69,23 +69,21 @@ export default {
   },
   methods: {
     selectProduct() {
-      const products = [{
-        pid: this.pid,
-        quantity: parseInt(this.quantity, 10),
-      }];
-      this.$store.dispatch('selection/setWishProducts', {
-        wid: this.currentWish.id,
-        products,
-      });
+      if (!this.inBasket) {
+        this.$store.dispatch('selection/addProduct', {
+          wid: this.currentWish.id,
+          pid: this.pid,
+          quantity: 1,
+        });
+      } else {
+        this.erase();
+      }
     },
     quickSelectProduct() {
-      const products = [{
-        pid: this.pid,
-        quantity: parseInt(this.quantity, 10),
-      }];
-      this.$store.dispatch('selection/setWishProducts', {
+      this.$store.dispatch('selection/addProduct', {
         wid: this.currentWish.id,
-        products,
+        pid: this.pid,
+        quantity: 1,
       }).then(() => {
         this.$store.dispatch('sectionWishes/next', () => {
           if (!this.$store.getters['sectionWishes/getCurrent']) {
@@ -99,7 +97,7 @@ export default {
         const wid = this.currentWish.id;
         const pid = this.pid;
         const quantity = parseInt(this.quantity + 1, 10);
-        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateProduct', { wid, pid, quantity });
       }
     },
     decrease() {
@@ -107,8 +105,14 @@ export default {
         const wid = this.currentWish.id;
         const pid = this.pid;
         const quantity = parseInt(this.quantity - 1, 10);
-        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateProduct', { wid, pid, quantity });
+      } else {
+        this.erase();
       }
+    },
+    erase() {
+      const wid = this.currentWish.id;
+      this.$store.dispatch('selection/removeProduct', { wid, pid: this.pid });
     },
   },
 };
@@ -129,6 +133,9 @@ export default {
 .product-item:not(.active):hover {
   cursor: pointer;
   background-color: var(--color4);
+}
+.product-item.active:hover {
+  cursor: pointer;
 }
 
 .active{

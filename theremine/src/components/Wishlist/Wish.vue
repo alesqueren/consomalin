@@ -37,7 +37,7 @@ export default {
     },
     selected() {
       try {
-        return Boolean(this.$store.state.selection[this.gid][this.wid]);
+        return Boolean(this.$store.state.selection.basket[this.gid][this.wid]);
       } catch (e) {
         return false;
       }
@@ -117,12 +117,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/*.line .buttns {
-  visibility: hidden;
-  position: absolute;
-  top: 2px;
-  right: 5px;
-}*/
-</style>

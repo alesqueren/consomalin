@@ -20,7 +20,7 @@
       span.input-group-addon.search-uncheck(@click="remove")
         span.fa.fa-check-square-o.checked-box &nbsp;&nbsp;&nbsp;
         span.fa.fa-square-o.not-checked-box &nbsp;&nbsp;&nbsp;&#8239;
-        span Décocher
+        span Décocher de ma liste
       //- span.input-group-addon.search-addGroup(@click="addGroup")
       //-   span.fa.fa-list-ul &nbsp;&nbsp;&nbsp;
       //-   span Créer une liste de {{ currentWish.name }}
@@ -41,7 +41,9 @@ export default {
       return this.$store.getters['sectionWishes/getCurrent'];
     },
     productIds() {
-      return Object.keys(this.$store.state.selection[this.currentWish.gid][this.currentWish.id]);
+      const basket = this.$store.state.selection.basket;
+      const products = basket[this.currentWish.gid][this.currentWish.id];
+      return Object.keys(products);
     },
     hasProducts() {
       return this.productIds.length !== 0;
@@ -133,7 +135,7 @@ export default {
   /*width: 320px;*/
   padding: 5px;
   background-color: var(--white);
-  border: 1px solid grey;
+  border: 1px solid rgba(0,0,0,.15);;
   width: 100%;
 }
 .wish:hover .product-name {

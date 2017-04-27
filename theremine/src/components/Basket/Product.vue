@@ -9,7 +9,7 @@
         div {{productInfos.name}}
         div.product-number
           div.count-input.space-bottom
-            div.erase(v-if="deleting", @click.prevent.stop='erase()' href="#") Supprimer
+            div.erase(v-if="deleting", @click.prevent.stop='erase()' href="#") Retirer
             a.incr-btn(@click.prevent.stop='decrease' href="#") –
             input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256' @click.prevent.stop='', disabled="disabled")
             a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
@@ -36,14 +36,14 @@ export default {
         const gid = this.wish.gid;
         const wid = this.wish.id;
         const pid = this.pid;
-        this.$store.dispatch('updateWishProduct', { gid, wid, pid, quantity });
+        this.$store.dispatch('updateProduct', { gid, wid, pid, quantity });
       },
     },
     wish() {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
     productQuantity() {
-      return this.$store.state.selection[this.wish.gid][this.wish.id][this.pid];
+      return this.$store.state.selection.basket[this.wish.gid][this.wish.id][this.pid];
     },
     productInfos() {
       return this.$store.state.product.details[this.pid];
@@ -71,7 +71,7 @@ export default {
         const wid = this.wish.id;
         const pid = this.pid;
         const quantity = parseInt(this.productQuantity + 1, 10);
-        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateProduct', { wid, pid, quantity });
       }
     },
     decrease() {
@@ -79,7 +79,7 @@ export default {
         const wid = this.wish.id;
         const pid = this.pid;
         const quantity = parseInt(this.productQuantity - 1, 10);
-        this.$store.dispatch('selection/updateWishProduct', { wid, pid, quantity });
+        this.$store.dispatch('selection/updateProduct', { wid, pid, quantity });
       } else {
         this.startDeletion();
       }
@@ -100,7 +100,7 @@ export default {
     },
     erase() {
       const wid = this.wid;
-      this.$store.dispatch('selection/removeWishProduct', { wid, pid: this.pid });
+      this.$store.dispatch('selection/removeProduct', { wid, pid: this.pid });
     },
   },
 };

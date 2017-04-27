@@ -8,11 +8,12 @@
       span.btnText Decocher&nbsp;
       span.icon.eraseOff.fa.fa-check-square-o.fa-xs
       span.icon.eraseOn.fa.fa-square-o.fa-xs
+    span.badge.badge-info.indicator(v-if="badgeLabel") {{badgeLabel}}
     Product(v-for="pid in productIds" 
       v-bind:pid="pid",
       v-bind:wid="wid",
       v-bind:key="pid")
-    span.no-product.fa.fa-hand-pointer-o(v-if="productIds.length === 0") &nbsp;Selectionner un produit
+    span.no-product.fa.fa-hand-pointer-o(v-if="displayNoProduct") &nbsp;Selectionner un produit
 </template>
 
 <script>
@@ -20,7 +21,7 @@ import router from '../../router';
 import Product from './Product';
 
 export default {
-  props: ['wid', 'displayName'],
+  props: ['wid', 'displayName', 'displayUnmatchText', 'badgeLabel'],
   data() {
     return {
       editingId: 'summary-' + this.wid,
@@ -32,8 +33,11 @@ export default {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
     productIds() {
-      const pids = Object.keys(this.$store.state.selection[this.wish.gid][this.wish.id]);
+      const pids = Object.keys(this.$store.state.selection.basket[this.wish.gid][this.wish.id]);
       return pids;
+    },
+    displayNoProduct() {
+      return this.productIds.length === 0;
     },
   },
   methods: {
@@ -60,7 +64,7 @@ export default {
   cursor: pointer;
   position: relative;
   float: left;
-  height: 160px;
+  min-height: 160px;
   min-width: 320px;
   width: 320px;
   padding: 5px;
@@ -136,5 +140,12 @@ export default {
 }
 .wish:hover .no-product{
   opacity: 1;
+}
+.badge {
+  font-size: 1.0em;
+  float: right;
+}
+.noproduct-text {
+  font-size: 1.1em;
 }
 </style>

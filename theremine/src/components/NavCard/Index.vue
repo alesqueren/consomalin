@@ -21,7 +21,6 @@
           span Commencer mes courses
 
     div(v-if="routeName === 'section' && hasChoosenProduct")
-      //- SI aucun resultat
       div.next.input-group-addon.nav-btn.prefered(
         v-if="unmatchedWishNb && remainingWishesToChoose.length > 0", 
         @click="nextProduct")
@@ -83,7 +82,7 @@ export default {
     },
     hasChoosenProduct() {
       try {
-        const pds = this.$store.state.selection[this.currentWish.gid][this.currentWish.id];
+        const pds = this.$store.state.selection.basket[this.currentWish.gid][this.currentWish.id];
         return (Object.keys(pds).length !== 0);
       } catch (e) {
         return false;

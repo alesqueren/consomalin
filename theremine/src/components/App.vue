@@ -69,7 +69,7 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch('sectionWishes/debug');
+    // this.$store.dispatch('sectionWishes/debug');
 
     $(document).keydown((e) => {
       if (e.which === 37) {
