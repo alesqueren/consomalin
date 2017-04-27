@@ -108,12 +108,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.line .buttns {
-  visibility: hidden;
-  position: absolute;
-  top: 2px;
-  right: 5px;
-}
-</style>
