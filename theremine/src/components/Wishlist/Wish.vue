@@ -15,10 +15,10 @@
       div.action.edit(@click.stop="startEdition")
         span.content renommer&nbsp;
         span.icon.fa.fa-pencil
-      div.action.delete(@click.stop="erase")
+      div.action.delete(@click.stop="erase", v-bind:class="{'deleting': deleting}")
         span.icon.fa.fa-eraser
         span &nbsp;
-        span.content {{ deleteWording }}
+        span.content {{deleteWording}}
 </template>
 
 <script>
@@ -117,3 +117,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.deleting{
+  visibility: visible;
+}
+</style>
+

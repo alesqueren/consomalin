@@ -1,7 +1,9 @@
 <template lang="pug">
   div.wish(
     @click='select()')
-    span.wish-name(v-if="displayName") {{ wish.name }}
+    span.wish-name(v-if="displayName")
+      span {{ wish.name }}&nbsp;
+      span.details(v-if="detailProduct") ({{detailProduct}} / {{ productLength }})
     div.wish-erase(
       @click.prevent.stop='erase()',
       v-if="displayName")
@@ -13,6 +15,7 @@
       v-bind:pid="pid",
       v-bind:wid="wid",
       v-bind:key="pid")
+    div.emptyBox(v-if='productIds.length === 0')
     span.no-product.fa.fa-hand-pointer-o(v-if="displayNoProduct") &nbsp;Selectionner un produit
 </template>
 
@@ -21,7 +24,7 @@ import router from '../../router';
 import Product from './Product';
 
 export default {
-  props: ['wid', 'displayName', 'displayUnmatchText', 'badgeLabel'],
+  props: ['wid', 'displayName', 'displayUnmatchText', 'badgeLabel', 'pid', 'detailProduct'],
   data() {
     return {
       editingId: 'summary-' + this.wid,
@@ -33,8 +36,16 @@ export default {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
     productIds() {
-      const pids = Object.keys(this.$store.state.selection.basket[this.wish.gid][this.wish.id]);
-      return pids;
+      let response;
+      if (this.pid) {
+        response = [this.pid];
+      } else {
+        response = Object.keys(this.$store.state.selection.basket[this.wish.gid][this.wish.id]);
+      }
+      return response;
+    },
+    productLength() {
+      return Object.keys(this.$store.state.selection.basket[this.wish.gid][this.wish.id]).length;
     },
     displayNoProduct() {
       return this.productIds.length === 0;
@@ -64,17 +75,26 @@ export default {
   cursor: pointer;
   position: relative;
   float: left;
-  min-height: 160px;
+  height: auto;
   min-width: 320px;
   width: 320px;
   padding: 5px;
-  background-color: color(--white);
+  /*background-color: color(--white);*/
+  background-color: white;
   border: 1px solid grey;
 }
+.emptyBox {
+  height: 100px;
+}
 .wish-name{
-  font-family: gunny;
-  font-size: 1.5em;
+  font-size: 2em;
   font-weight: bold;
+  font-family: learningCurve;
+  text-transform: capitalize;
+}
+.wish-name .details{
+  font-family: helvetica;
+  font-size: 0.5em;
 }
 .wish:hover .wish-name{
   text-decoration: underline

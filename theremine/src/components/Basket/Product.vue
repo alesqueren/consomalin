@@ -6,7 +6,7 @@
       //- span.fa.fa-trash-o.fa-xs.product-erase(@click.prevent.stop='erase()')
       img.product-left(v-bind:src='productInfos.imageUrl')
       div.product-right
-        div {{productInfos.name}}
+        div.product-name {{productInfos.name}}
         div.product-number
           div.count-input.space-bottom
             div.erase(v-if="deleting", @click.prevent.stop='erase()' href="#") Retirer
@@ -113,10 +113,6 @@ export default {
   height: auto;
   min-width: 315px;
   width: 315px;
-  padding: 10px;
-}
-.wish:hover .product-name{
-  text-decoration: underline;
 }
 
 .product-infos {
@@ -133,9 +129,13 @@ export default {
   text-align: center;
   height: auto;
   width: 100%;
+  padding: 5px;
   /*position: absolute;
   right: 20px;
   bottom: 50px;*/
+}
+.product-name {
+  position: relative;
 }
 .product-number {
   position: relative;
@@ -145,14 +145,6 @@ export default {
 .product {
   width: 100%;
   max-width: 100%;
-}
-.product-name{
-  position: absolute;
-  top: 15px;
-  width: 75%;
-  font-family: gunny;
-  font-size: 1.5em;
-  font-weight: bold;
 }
 .total{
   display: table-cell;

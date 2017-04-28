@@ -114,7 +114,7 @@ export default {
 
 body{
   background-color: var(--color4);
-  font-family: arial;
+  font-family: helvetica;
 }
 
 #app {

@@ -1,7 +1,7 @@
 <template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
     div.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
-    Wish(v-for="wid in selectedWishes" 
+    SuperWish(v-for="wid in selectedWishes" 
       v-bind:wid="wid",
       v-bind:displayName="true",
       v-bind:key="wid")
@@ -9,15 +9,10 @@
 
 <script>
 import router from '../../router';
-import Wish from './Wish';
+import SuperWish from './SuperWish';
 
 export default {
   props: ['gid'],
-  data() {
-    return {
-      newWishName: '',
-    };
-  },
   computed: {
     name() {
       return this.$store.getters['wishGroup/getGroup']({ gid: this.gid }).name;
@@ -32,7 +27,7 @@ export default {
       router.push({ name: 'wishlist' });
     },
   },
-  components: { Wish },
+  components: { SuperWish },
 };
 
 </script>

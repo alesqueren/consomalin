@@ -16,6 +16,17 @@ a:hover {
   src: url('/static/fonts/gnyrwn971.ttf');
 }
 
+@font-face {
+  font-family: helvetica;
+  src:  url('/static/fonts/helvetica-normal.ttf') format('ttf'),
+        url('/static/fonts/HelveticaNeue-Thin.otf') format('otf');
+}
+
+@font-face {
+  font-family: learningCurve;
+  src: url('/static/fonts/LearningCurve.ttf');
+}
+
 .left{
   float:left;
 }

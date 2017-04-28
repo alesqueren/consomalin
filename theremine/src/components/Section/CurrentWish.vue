@@ -87,7 +87,7 @@ export default {
   padding-bottom: 25px;
 }
 #search-text {
-  font-family: gunny;
+  font-family: learningCurve;
   font-size: 2em;
   font-weight: bolder;
   border: none;
@@ -174,8 +174,8 @@ export default {
 }
 .search-uncheck .not-checked-box {
   position: absolute;
-  left: 18px;
-  top: 19px;
+  left: 12px;
+  top: 14px;
   visibility: hidden;
 }
 .search-uncheck:hover .checked-box {

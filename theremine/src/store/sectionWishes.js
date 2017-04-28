@@ -141,7 +141,7 @@ const actions = {
       const getName = wid => rootGetters['wishGroup/getWish']({ wid }).name;
       const nameList = getters.getOrder.map(getName).join(', ');
       // eslint-disable-next-line
-      console.log(`${currName} [${nameList}]`);
+      // console.log(`${currName} [${nameList}]`);
     }, 2000);
   },
 

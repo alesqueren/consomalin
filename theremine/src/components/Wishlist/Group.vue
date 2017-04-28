@@ -25,7 +25,7 @@
       div.action.delete(@click.stop="erase", v-bind:class="{'deleting': deleting}")
         span.icon.fa.fa-eraser
         span &nbsp;
-        span.content {{ deleteWording }}
+        span.content {{deleteWording}}
 </template>
 
 <script>
@@ -146,6 +146,7 @@ export default {
   position: absolute;
   bottom: 0px;
   right: 5px;
+  font-family: helvetica;
 }
 .strong{
   font-weight: bold;
