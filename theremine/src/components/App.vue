@@ -161,7 +161,7 @@ a:hover {
 #header{
    /*plus de place pour le contenu*/
   position: fixed;
-  z-index: 4; 
+  z-index: 10; 
   line-height: 50px;
   height: 50px;
   width: 100%;
