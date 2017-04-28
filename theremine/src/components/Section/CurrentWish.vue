@@ -155,7 +155,7 @@ export default {
   color: #0275d8;
   right: 10px;
   top: 10px;
-  z-index: 10;
+  z-index: 9;
   font-size: 1.5em;
 }
 .search-text {
