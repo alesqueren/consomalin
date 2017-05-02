@@ -57,7 +57,7 @@ const actions = {
 
   removeGroup: ({ commit, dispatch }, { gid }) => {
     resources.wishgroup.delete({ gid }).then(() => {
-      dispatch('selection/unselectGroup', { gid }, { root: true });
+      commit('selection/unselectGroup', { gid }, { root: true });
       commit('removeGroup', { gid });
     });
   },
@@ -79,7 +79,8 @@ const actions = {
   removeWish: ({ commit, dispatch, getters }, { wid }) => {
     const gid = getters.getWish({ wid }).gid;
     resources.wish.delete({ gid, wid }).then();
-    dispatch('selection/selectWish', { wid, selected: false }, { root: true });
+    // dispatch('selection/selectWish', { wid, selected: false }, { root: true });
+    commit('selectWish/unselectWish', { gid, wid }, { root: true });
     commit('removeWish', { wid });
   },
 

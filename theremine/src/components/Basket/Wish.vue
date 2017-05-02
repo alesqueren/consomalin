@@ -22,8 +22,6 @@
 import router from '../../router';
 import Product from './Product';
 
-const $ = window.$;
-
 export default {
   props: ['wid', 'displayUnmatchText', 'badgeLabel', 'pid', 'detailProduct'],
   data() {
