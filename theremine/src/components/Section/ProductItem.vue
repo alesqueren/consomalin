@@ -1,6 +1,6 @@
 <template lang="pug">
   div.product-item(
-    v-bind:class="{'active': inCurrentWish}", 
+    v-bind:class=" {'active': inCurrentWish}",
     @click="selectProduct")
     div.old(v-if="inBasket && !inCurrentWish")
       span.fa.fa-check &nbsp;&nbsp;&nbsp;
@@ -9,7 +9,7 @@
     .product-name.center {{product.name}}
     div.bottom
       div.price
-        div(style="font-size: 1.3em;") <b>{{product.price}}&nbsp;€</b>
+        div(style="font-size: 1.3em;") <b> {{product.price}}&nbsp;€</b>
         div.pu {{product.priceByQuantity}}&nbsp;€/u
       div.btns-atb(v-if="!inCurrentWish")
         div.btn-atb.tooltip(
@@ -123,7 +123,7 @@ export default {
   background-color: var(--white);
   border: 1px solid rgba(0,0,0,.125);
   width:162px;
-  height:275px;
+  height:285px;
   padding: 5px 5px 0 5px;
   float: left;
   margin: 5px;
@@ -138,10 +138,10 @@ export default {
   cursor: pointer;
 }
 
-.active{
+.active {
   background-color: var(--active);
 }
-.old{
+.old {
   position: absolute;
   top: 0;
   left: 0;
@@ -153,47 +153,51 @@ export default {
   line-height: 25px;
   text-align: center;
 }
-.product-img{
+.product-img {
   width:150px;
   height:150px;
 }
-.product-name{
-  height: 50px;
+.product-name {
+  line-height: 20px;
+  height: 60px;
+  overflow: hidden;
 }
-.bottom{
+.bottom {
   display: table;
   width: 100%;
   height: 65px;
 }
-.btns-atb{
-  display: table-cell;
-  width: 50%;
+.btns-atb {
+  position: absolute;
+  right: 0px;
+  width: 78px;
 }
-.price{
+.price {
   font-size: 1.2em;
   display: table-cell;
   width: 50%;
   vertical-align: middle;
 }
-.btn-atb{
+.btn-atb {
+  height: 34px;
+  width: 100%;
   font-size: 1em;
   font-weight: bold;
   cursor: pointer;
   text-align: center;
   padding: 2px;
-  height: 32px;
   line-height: 32px;
 }
-.btn-atb:hover{
+.btn-atb:hover {
   background-color: var(--success);
 }
-.text-atb{
+.text-atb {
   line-height: 32px;
 }
-.pu{
+.pu {
   font-size: 0.9em;
 }
-.center{
+.center {
   display: block;
   margin: 0 auto;
 }
@@ -242,7 +246,7 @@ input[type=number]::-webkit-inner-spin-button {
 .tooltip .tooltiptext {
   width: 240px;
 }
-.tooltip-bottom{
+.tooltip-bottom {
   top: 135%;
   left: 0;
   margin-left: -60px;
