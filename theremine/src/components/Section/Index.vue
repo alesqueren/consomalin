@@ -1,12 +1,13 @@
 <template lang="pug">
   div#wishes
-    // - TODO: move
-    div(v-if="!currentWish") 
-      div(style="width: 100%; text-align: center;")
-        span Tous les produits ont été ajoutés au panier. <br/><br/> 
-      router-link(style="margin-left: 45%; width: 10%;", :to='{ name: "basket" }')
-        span.input-group-addon.basket.nav-btn
-          span Voir le panier
+    div.filler(v-if="!currentWish && isBasketEmpty")
+      span Ta liste de course est vide.
+      div
+        img(src="https://www.oppermann.fr/387892-61468-thickbox/bloc-notes-et-stylo-recycles.jpg")
+    div.filler(v-else-if="!currentWish && !isBasketEmpty")
+      span Le panier est plein.
+      div
+        img(src="https://i.skyrock.net/2347/38502347/pics/3189543713_1_6_3ubLwyfJ.gif")
     div(v-else) 
       div.leftSide
         CurrentWish
@@ -31,17 +32,15 @@
           div.btn-atb
             i.fa.fa-shopping-basket.fa-xs.text-atb &nbsp;&nbsp;&nbsp;&nbsp;Ajouter au panier
 
-      RightBar.rightSide
-      //- SI aucun resultat
       div.nothing-box(v-if="currentWishResults && !currentWishResults[0]")
-        div(style="width: 100%; text-align: center;")
-          span Aucun produit trouvé. <br/>
-          span Vous pouvez modifier la recherche dans la barre ci dessus. <br/>
-      .container(v-else-if="basket.length === 0")
-        div
-          span Vous n'avez choisi aucun produit, ajoutez-en dans vos 
-            router-link(:to='{ name: "wishlist" }')
-              button.btn(v-bind:class="nextInfos.class" type="button") listes de courses
+        div.filler(style="width: 100%; text-align: center;")
+          span Aucun produit trouvé.
+          br
+          span Vous pouvez modifier la recherche dans la barre ci dessus.
+          br
+
+      RightBar.rightSide
+
 </template>
 
 <script>
@@ -72,37 +71,26 @@ export default {
     },
   },
   computed: {
+    searchs() {
+      return this.$store.state.searchs;
+    },
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
-    },
-    basket() {
-      return this.$store.getters['selection/getOrderedSelectedWishes'];
     },
     total() {
       return this.$store.getters['transaction/basketAmount'];
     },
+    isBasketEmpty() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length === 0;
+    },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
-    },
-    searchs() {
-      return this.$store.state.searchs;
     },
     currentWishResults() {
       if (this.currentWish && this.currentWish.name) {
         return this.$store.state.product.searchs[this.currentWish.name];
       }
       return [];
-    },
-    nextInfos() {
-      const length = this.basket.length;
-      const successClass = 'btn-outline-success';
-      const warningClass = 'btn-outline-warning';
-      const classButtonNext = length === this.matchedWishesLength ? successClass : warningClass;
-      const textLabelNext = classButtonNext === 'active' ? '' : 'Il reste des produits à ajouter';
-      return {
-        class: classButtonNext,
-        text: textLabelNext,
-      };
     },
   },
   methods: {
@@ -123,6 +111,16 @@ export default {
 </script>
 
 <style scoped>
+
+.filler {
+  font-size: 1.7em;
+  width: 100%;
+  text-align: center;
+}
+.filler img {
+  height: 200px;
+  margin-top: 100px;
+}
 #wishes{
   width: 100%;
 }

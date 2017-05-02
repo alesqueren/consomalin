@@ -13,15 +13,21 @@
         span.input-group-addon.nav-btn.prefered
           span Commencer mes courses
 
-    div(v-if="routeName === 'section' && hasChoosenProduct")
+    div(v-if="routeName === 'section'")
       div.next.input-group-addon.nav-btn.prefered(
-        v-if="unmatchedWishNb && remainingWishesToChoose.length > 0", 
+        v-if="hasChoosenProduct && remainingWishesToChoose.length > 0",
         @click="nextProduct")
         span Produit suivant
-      router-link(:to='{ name: "basket" }', v-else)
+      router-link(
+          v-else-if="!hasChoosenProduct && !hasCurrentWish && selectedWishNb === 0",
+          :to='{ name: "wishlist" }')
+        div.next.input-group-addon.nav-btn.prefered
+          span Gérer ma liste de course
+      router-link(
+          v-else-if="hasChoosenProduct || !hasCurrentWish",
+          :to='{ name: "basket" }')
         div.next.input-group-addon.nav-btn.prefered
           span Voir le panier
-          span.fa.fa-arrow-right.special-fa
 
     div(v-if="routeName === 'basket'")
       //- tous les wishs ne sont pas encore matchés
@@ -73,6 +79,9 @@ export default {
     },
     unmatchedWishNb() {
       return this.selectedWishNb - this.matchedWishNb;
+    },
+    hasCurrentWish() {
+      return Boolean(this.$store.getters['sectionWishes/getCurrent']);
     },
     hasChoosenProduct() {
       try {
