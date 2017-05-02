@@ -8,7 +8,7 @@
           v-bind:wid="wish.id" 
           v-bind:gid="wishgroup.id" 
           v-bind:key="wish.id")
-        div.newIcon.fa.fa-plus.fa-2x
+        div.newIcon.fa.fa-plus.fa-2x(@click="focus")
         input#newWish(v-model="newName" v-on:keyup.enter="add" placeholder="Ajouter un mémo" @click.stop="")
         button.btn.btn-success.btn-sm.btn-create(v-if='creating' v-on:click="add")
           i.fa.fa-check.fa-xs
@@ -39,6 +39,9 @@ export default {
     },
   },
   methods: {
+    focus() {
+      $('#newWish').focus();
+    },
     add() {
       this.$store.dispatch('wishGroup/addWish', {
         gid: this.wishgroup.id,
