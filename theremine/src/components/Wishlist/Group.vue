@@ -138,8 +138,14 @@ export default {
 </script>
 
 <style scoped>
-.line.active{
+.line.active {
   background-color: var(--active);
+}
+.line.active label {
+  text-decoration: underline;
+}
+.line:hover label {
+  text-decoration: underline;
 }
 .filling {
   display: block;
