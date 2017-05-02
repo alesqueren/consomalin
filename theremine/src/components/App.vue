@@ -158,10 +158,10 @@ a:hover {
   float: right;
 }
 
-#header{
+#header {
    /*plus de place pour le contenu*/
   position: fixed;
-  z-index: 10; 
+  z-index: 10000; 
   line-height: 50px;
   height: 50px;
   width: 100%;
