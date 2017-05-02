@@ -1,7 +1,7 @@
 <template lang="pug">
   div(style="position:relative;width:100%;")
     div#wishlist
-      h2 Je crée et gére ma liste de courses
+      h2 Je crée et gère ma liste de courses
       div.content
           Groups.groups
           ActiveGroup.activegroup

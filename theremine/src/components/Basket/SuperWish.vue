@@ -1,14 +1,12 @@
 <template lang="pug">
   div(v-if="productIds.length <= 1")
       Wish(
-        v-bind:displayName="true",
         v-bind:wid="wid",
         v-bind:key="wid")
   div(v-else)
     div(v-for="(pid, index) in productIds")
       Wish(
         v-bind:wid="wid",
-        v-bind:displayName="true",
         v-bind:detailProduct="index + 1",
         v-bind:pid="pid",
         v-bind:key="wid")

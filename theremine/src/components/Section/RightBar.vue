@@ -2,7 +2,6 @@
   div.root
     Wish(
       v-bind:wid="currentWish.id",
-      v-bind:displayUnmatchText="true",
       v-bind:badgeLabel="\"En cours\"",
       )
     div(style="clear:both")
@@ -10,14 +9,12 @@
       v-for="wid in sameNameWishIds",
       v-bind:wid="wid",
       v-bind:key="wid",
-      v-bind:displayUnmatchText="true",
       v-bind:badgeLabel="\"Du même nom\"",
       )
     div(style="clear:both")
     Wish(
       v-if="lastAddedWishId && sameNameWishIds.length === 0",
       v-bind:wid="lastAddedWishId",
-      v-bind:displayUnmatchText="true",
       v-bind:badgeLabel="\"Dernier ajout\"",
       )
     div(style="clear:both")

@@ -134,7 +134,7 @@ export default {
 }
 #wishes .rightSide{
   position: fixed;
-  top: 110px;
+  top: 130px;
   right: 50px;
 }
 .waiting{

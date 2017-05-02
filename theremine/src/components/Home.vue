@@ -24,7 +24,7 @@
           span 2
         div.img
           img.logo(src="../assets/images/basket.png")
-        div.txt Choisis tes produits en fonction de ta liste
+        div.txt Le site te popose les produits en fonction de ta liste
       div.item
         div.num
           span 3

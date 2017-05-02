@@ -8,7 +8,8 @@
           v-bind:wid="wish.id" 
           v-bind:gid="wishgroup.id" 
           v-bind:key="wish.id")
-        input#newWish(v-model="newName" v-on:keyup.enter="add" placeholder="Ajouter un produit" @click.stop="")
+        div.newIcon.fa.fa-plus.fa-2x
+        input#newWish(v-model="newName" v-on:keyup.enter="add" placeholder="Ajouter un mémo" @click.stop="")
         button.btn.btn-success.btn-sm.btn-create(v-if='creating' v-on:click="add")
           i.fa.fa-check.fa-xs
 </template>

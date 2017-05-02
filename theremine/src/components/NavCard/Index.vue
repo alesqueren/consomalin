@@ -3,11 +3,12 @@
     div.basket
       div.left-part
         div.basket-logo
-          i.fa.fa-shopping-basket
+          i.fa.fa-shopping-cart.fa-lg
       div.right-part
-        span.tooltip {{matchedWishNb}} / {{selectedWishNb}} produits<br/>
-          span.tooltiptext.tooltip-bottom Vous avez encore {{unmatchedWishNb}} produits à choisir pour compléter votre panier
-        span Total : {{total}}&nbsp;€
+        span.tooltip {{selectedWishNb}} mémos <br/>
+        span.tooltip(v-if="matchedWishNb") {{matchedWishNb}} choisis<br/>
+      div.right-part.total
+        span {{total}}&nbsp;€
 
     div(v-if="routeName === 'wishlist'")
       router-link(:to='{ name: "section" }', v-if="matchedWishNb && matchedWishNb < selectedWishNb")
@@ -43,7 +44,6 @@
 
       //- tous les wishs sont matchés
       div#basketFull(v-else-if="matchedWishNb && matchedWishNb == selectedWishNb")
-        div Total du panier : <span style="font-size: 2em;">{{total}} €</span>
         router-link(:to='{ name: "withdraw" }')
             span.input-group-addon.nav-btn.prefered
               span Passer au retrait
@@ -110,38 +110,41 @@ export default {
   top: 59px;
   right: 50px;
   width: 320px;
+  padding-bottom: 15px;
 }
 .basket{
   display: table;
-  color: black;
+  color: white;
   height: 60px;
   width: 100%;
-  padding-left: 60px;
+  margin: 0 0 15px 0;
+  background-color: var(--color2);
+  padding: 15px;
 }
 .basket .left-part {
   display: table-cell;
-  width: 70px;
-  max-width: 70px;
+  width: 50px;
 }
 .basket .right-part {
   display: table-cell;
-  width: 150px;
-  max-width: 150px;
-  line-height: 30px;
-  padding-top: 10px;
+  width: 90px;
+  vertical-align: middle;
 }
 .basket .basket-logo {
   position: absolute;
-  top: 15px;
-  width: 35px;
-  height: 35px;
+  top: 17px;
+  width: 39px;
+  height: 39px;
   border-radius: 21px;
-  border: 1px solid black;
+  border: 3px solid white;
 }
 .basket .basket-logo i {
   position: absolute;
-  top: 9px;
-  margin-left: 9px;
+  top: 10px;
+  margin-left: 7px;
+}
+.basket .total {
+  font-size: 2em;
 }
 .nav-btn {
   position: relative;

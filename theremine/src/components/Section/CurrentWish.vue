@@ -20,7 +20,7 @@
       span.input-group-addon.search-uncheck(@click="remove")
         span.fa.fa-check-square-o.checked-box &nbsp;&nbsp;&nbsp;
         span.fa.fa-square-o.not-checked-box &nbsp;&nbsp;&nbsp;&#8239;
-        span Décocher de ma liste
+        span Décocher
       //- span.input-group-addon.search-addGroup(@click="addGroup")
       //-   span.fa.fa-list-ul &nbsp;&nbsp;&nbsp;
       //-   span Créer une liste de {{ currentWish.name }}

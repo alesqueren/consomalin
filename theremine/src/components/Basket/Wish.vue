@@ -1,13 +1,12 @@
 <template lang="pug">
   div.wish(
     @click='select()')
-    span.wish-name(v-if="displayName")
+    span.wish-name
       span {{ wish.name }}&nbsp;
       span.details(v-if="detailProduct") ({{detailProduct}} / {{ productLength }})
     div.wish-erase(
-      @click.prevent.stop='erase()',
-      v-if="displayName")
-      span.btnText Decocher&nbsp;
+      @click.prevent.stop='erase()')
+      span.btnText Décocher&nbsp;
       span.icon.eraseOff.fa.fa-check-square-o.fa-xs
       span.icon.eraseOn.fa.fa-square-o.fa-xs
     span.badge.badge-info.indicator(v-if="badgeLabel") {{badgeLabel}}
@@ -16,15 +15,17 @@
       v-bind:wid="wid",
       v-bind:key="pid")
     div.emptyBox(v-if='productIds.length === 0')
-    span.no-product.fa.fa-hand-pointer-o(v-if="displayNoProduct") &nbsp;Selectionner un produit
+    span.no-product.fa.fa-hand-pointer-o(v-if="displayNoProduct") &nbsp;Choisir un produit
 </template>
 
 <script>
 import router from '../../router';
 import Product from './Product';
 
+const $ = window.$;
+
 export default {
-  props: ['wid', 'displayName', 'displayUnmatchText', 'badgeLabel', 'pid', 'detailProduct'],
+  props: ['wid', 'displayUnmatchText', 'badgeLabel', 'pid', 'detailProduct'],
   data() {
     return {
       editingId: 'summary-' + this.wid,
@@ -48,7 +49,7 @@ export default {
       return Object.keys(this.$store.state.selection.basket[this.wish.gid][this.wish.id]).length;
     },
     displayNoProduct() {
-      return this.productIds.length === 0;
+      return this.productIds.length === 0 && !this.badgeLabel;
     },
   },
   methods: {
@@ -65,6 +66,26 @@ export default {
       const selected = false;
       this.$store.dispatch('selection/selectWish', { wid, selected });
     },
+  },
+  created() {
+    // $(document).on({
+    //   mouseenter: () => {
+    //     console.log('laaaaaaaaaaaaaa');
+    //     $('.badge-info').hide();
+    //   },
+
+    //   mouseleave: () => {
+    //     console.log('laaaaaaaaaaaaala');
+    //     $('.badge-info').show();
+    //   },
+    // }, '.eraseOff');
+    // $(".my-elements")
+    // .hover() => ) {
+    //     $('.badge-info').hide();
+    // },
+    // () => ) {
+    //     $('.badge-info').show();
+    // });
   },
   components: { Product },
 };
@@ -148,9 +169,9 @@ export default {
 .wish .wish-erase:hover .eraseOn{
   visibility: visible;
 }
-.wish .wish-erase:hover .eraseOff{
-/*.wish .wish-erase .eraseOff{*/
-  visibility: hidden;
+/*.wish .wish-erase:hover .eraseOff{*/
+.wish .wish-erase .eraseOff{
+  visibility: visible;
 }
 .no-product{
   position: absolute;
@@ -164,6 +185,7 @@ export default {
 .badge {
   font-size: 1.0em;
   float: right;
+  margin: 5px 20px 5px 5px;
 }
 .noproduct-text {
   font-size: 1.1em;

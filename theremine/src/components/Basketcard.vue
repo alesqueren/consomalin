@@ -4,8 +4,8 @@
       div.basket-logo
         i.fa.fa-shopping-basket
     div.right-part
-      span.tooltip {{matchedWishesLength}} / {{selectedWishNb}} produits<br/>
-        span.tooltiptext.tooltip-bottom Vous avez encore {{remainingWishToMatch}} produits à choisir pour remplir votre panier
+      span {{matchedWishesLength}} / {{selectedWishNb}} produits<br/>
+    div.right-part
       span Total : {{total}}&nbsp;€
 </template>
 
@@ -43,6 +43,7 @@ export default {
   color: white;
   height: 60px;
   width: 185px;
+  padding-bottom: 15px;
 }
 #basketcard .left-part {
   display: table-cell;
@@ -51,8 +52,8 @@ export default {
 }
 #basketcard .right-part {
   display: table-cell;
-  width: 150px;
-  max-width: 150px;
+  width: 70px;
+  max-width: 70px;
   line-height: 30px;
   padding-top: 10px;
 }
