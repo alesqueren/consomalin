@@ -25,7 +25,6 @@
               span.fa.fa.fa-car
               span &nbsp;Retrait
       Usercard
-      //- Basketcard
     div#content(v-bind:class="{'marginalize' : navCarRequired}")
       div#replay
       router-view
@@ -36,7 +35,6 @@
 import replay from '../replay';
 import NavCard from './NavCard/Index';
 import Usercard from './User/Usercard';
-import Basketcard from './Basketcard';
 
 const $ = window.$;
 
@@ -79,7 +77,7 @@ export default {
       }
     });
   },
-  components: { Usercard, Basketcard, NavCard },
+  components: { Usercard, NavCard },
 };
 </script>
 
