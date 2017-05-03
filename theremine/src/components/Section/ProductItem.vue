@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     selectProduct() {
-      if (!this.inBasket) {
+      if (!this.inCurrentWish) {
         this.$store.dispatch('selection/addProduct', {
           wid: this.currentWish.id,
           pid: this.pid,
