@@ -9,7 +9,7 @@
       span.btnText Décocher&nbsp;
       span.icon.eraseOff.fa.fa-check-square-o.fa-xs
       span.icon.eraseOn.fa.fa-square-o.fa-xs
-    span.badge.badge-info.indicator(v-if="badgeLabel") {{badgeLabel}}
+    span.badge.badge-info.indicator(v-if="badgeLabel && !hoverErase", ref="badge") {{badgeLabel}}
     Product(v-for="pid in productIds" 
       v-bind:pid="pid",
       v-bind:wid="wid",
@@ -30,6 +30,7 @@ export default {
     return {
       editingId: 'summary-' + this.wid,
       editingName: null,
+      hoverErase: false,
     };
   },
   computed: {
@@ -79,13 +80,16 @@ export default {
     //     $('.badge-info').show();
     //   },
     // }, '.eraseOff');
-    // $(".my-elements")
-    // .hover() => ) {
-    //     $('.badge-info').hide();
-    // },
-    // () => ) {
-    //     $('.badge-info').show();
-    // });
+    $(document).on({
+      mouseenter: () => {
+        console.log('helo');
+        this.hoverErase = true;
+      },
+      mouseleave: () => {
+        console.log('bye');
+        this.hoverErase = false;
+      },
+    }, '.wish-erase');
   },
   components: { Product },
 };
@@ -172,6 +176,9 @@ export default {
 /*.wish .wish-erase:hover .eraseOff{*/
 .wish .wish-erase .eraseOff{
   visibility: visible;
+}
+.wish .wish-erase:hover .eraseOff{
+  visibility: hidden;
 }
 .no-product{
   position: absolute;

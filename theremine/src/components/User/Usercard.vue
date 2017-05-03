@@ -44,8 +44,16 @@ div.right > a {
   margin-right: 10px;
 }
 .dropdown{
-  top: 16px;
+  top: 11px;
   margin-right: 16px;
+}
+.dropdown-item{
+  background-color: var(--white);
+  color: black;
+}
+.dropdown-item:hover{
+  background-color: var(--active);
+  color: black;
 }
 .dropdown-menu{
   left: -116px;

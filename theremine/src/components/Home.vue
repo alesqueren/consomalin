@@ -34,6 +34,10 @@
     div#registration(v-if="!user")
       router-link(:to='{ name: "register" }')
         button.btn.btn-primary.connexion(type="button") Inscription
+    div#wishlist(v-else)
+      router-link(:to='{ name: "section" }')
+        span.input-group-addon.nav-btn.prefered
+          span Voir ma liste
 </template>
 
 <script>
@@ -122,6 +126,18 @@ export default {
   top: 5px;
 }
 #registration a{
+  display: block;
+  left: 50%;
+  position: absolute;
+  margin-left: -50px;
+}
+#wishlist{
+  position: relative;
+  text-align: center;
+  padding-bottom: 50px;
+  top: 5px;
+}
+#wishlist a{
   display: block;
   left: 50%;
   position: absolute;

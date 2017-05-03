@@ -5,7 +5,7 @@
     div.old(v-if="inBasket && !inCurrentWish")
       span.fa.fa-check &nbsp;&nbsp;&nbsp;
       span Déjà au panier
-    img.product-img.center(v-bind:src="product.imageUrl")
+    img.product-img.center(v-bind:src="product.imageUrl" v-bind:alt="product.name")
     .product-name.center {{product.name}}
     div.bottom
       div.price
@@ -201,6 +201,7 @@ export default {
   display: table-cell;
   width: 50%;
   position: relative;
+  vertical-align: middle;
 }
 .count-input input {
   width: 100%;
@@ -223,7 +224,7 @@ export default {
   font-weight: 300;
   text-align: center;
   line-height: 30px;
-  top: 14px;
+  top: 33px;
   right: 0;
   margin-top: -15px;
   text-decoration:none;
@@ -237,7 +238,7 @@ input[type=number]::-webkit-inner-spin-button {
 .count-input .incr-btn:first-child {
   right: auto;
   left: 0;
-  top: 12px;
+  top: 31px;
 }
 .tooltip .tooltiptext {
   width: 240px;

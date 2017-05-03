@@ -146,27 +146,4 @@ export default {
 .basket .total {
   font-size: 2em;
 }
-.nav-btn {
-  position: relative;
-  width: auto;
-  height: 47px;
-  cursor: pointer;
-  text-align: center;
-}
-.nav-btn:hover{
-  background-color: #e6e6e6;
-}
-.nav-btn .special-fa {
-  position: absolute;
-  right: 10px;
-  top: 12px;
-}
-.nav-btn.prefered {
-  color: var(--white);
-  font-weight: bolder;
-  background-color: var(--success);
-}
-.nav-btn.prefered:hover {
-  background-color: var(--color3-3);
-}
 </style>
