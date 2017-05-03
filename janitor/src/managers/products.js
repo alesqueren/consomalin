@@ -1,44 +1,45 @@
 const mongo = require('../bs/mongo');
 
-function update(uid, gid, wid, pid, quantity) {
+function add(uid, gid, wid, pid, quantity) {
   const users = mongo.db.collection('user');
-  const path = `currentBasket.selectedWishes.${gid}.${wid}.${pid}`;
+  const path = `currentBasket.selectedWishes.${gid}.${wid}`;
   users.updateOne(
     { _id: uid },
     {
-      $set: {
-        [path]: quantity,
+      $push: {
+        [path]: { pid, quantity },
       },
     },
   );
 }
-function add(uid, gid, wid, pid, quantity) {
+function update(uid, gid, wid, pid, quantity) {
   const users = mongo.db.collection('user');
-  const path = `currentBasket.selectedWishes.${gid}.${wid}.${pid}`;
+  const pathId = `currentBasket.selectedWishes.${gid}.${wid}.pid`;
+  const pathQuantity = `currentBasket.selectedWishes.${gid}.${wid}.$.quantity`;
   users.updateOne(
-    { _id: uid },
+    { [pathId]: pid },
     {
       $set: {
-        [path]: quantity,
+        [pathQuantity]: quantity,
       },
     },
   );
 }
 function remove(uid, gid, wid, pid) {
   const users = mongo.db.collection('user');
-  const path = `currentBasket.selectedWishes.${gid}.${wid}.${pid}`;
+  const path = `currentBasket.selectedWishes.${gid}.${wid}`;
   users.updateOne(
     { _id: uid },
     {
-      $unset: {
-        [path]: '',
+      $pull: {
+        [path]: { pid },
       },
     },
   );
 }
 
 module.exports = {
-  update,
   add,
+  update,
   remove,
 };

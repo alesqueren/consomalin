@@ -3,14 +3,14 @@
     @click='select()')
     span.wish-name
       span {{ wish.name }}&nbsp;
-      span.details(v-if="detailProduct") ({{detailProduct}} / {{ productLength }})
+      span.details(v-if="detailProduct") ({{detailProduct}} / {{ productIds.length }})
     div.wish-erase(
       @click.prevent.stop='erase()')
       span.btnText Décocher&nbsp;
       span.icon.eraseOff.fa.fa-check-square-o.fa-xs
       span.icon.eraseOn.fa.fa-square-o.fa-xs
     span.badge.badge-info.indicator(v-if="badgeLabel") {{badgeLabel}}
-    Product(v-for="pid in productIds" 
+    Product(v-for="pid in displayProductIds"
       v-bind:pid="pid",
       v-bind:wid="wid",
       v-bind:key="pid")
@@ -24,27 +24,16 @@ import Product from './Product';
 
 export default {
   props: ['wid', 'displayUnmatchText', 'badgeLabel', 'pid', 'detailProduct'],
-  data() {
-    return {
-      editingId: 'summary-' + this.wid,
-      editingName: null,
-    };
-  },
   computed: {
     wish() {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
-    productIds() {
-      let response;
-      if (this.pid) {
-        response = [this.pid];
-      } else {
-        response = Object.keys(this.$store.state.selection.basket[this.wish.gid][this.wish.id]);
-      }
-      return response;
+    displayProductIds() {
+      return this.pid ? [this.pid] : this.productIds;
     },
-    productLength() {
-      return Object.keys(this.$store.state.selection.basket[this.wish.gid][this.wish.id]).length;
+    productIds() {
+      const products = this.$store.state.selection.basket[this.wish.gid][this.wish.id];
+      return products.map(p => p.pid).reverse();
     },
     displayNoProduct() {
       return this.productIds.length === 0 && !this.badgeLabel;
@@ -64,26 +53,6 @@ export default {
       const selected = false;
       this.$store.dispatch('selection/selectWish', { wid, selected });
     },
-  },
-  created() {
-    // $(document).on({
-    //   mouseenter: () => {
-    //     console.log('laaaaaaaaaaaaaa');
-    //     $('.badge-info').hide();
-    //   },
-
-    //   mouseleave: () => {
-    //     console.log('laaaaaaaaaaaaala');
-    //     $('.badge-info').show();
-    //   },
-    // }, '.eraseOff');
-    // $(".my-elements")
-    // .hover() => ) {
-    //     $('.badge-info').hide();
-    // },
-    // () => ) {
-    //     $('.badge-info').show();
-    // });
   },
   components: { Product },
 };

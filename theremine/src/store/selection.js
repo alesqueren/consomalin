@@ -42,8 +42,8 @@ const globalGetters = {
               res[wish.id] = [];
             }
             res[wish.id].push({
-              pid: k,
-              quantity: products[k],
+              pid: products[k].pid,
+              quantity: products[k].quantity,
             });
           }
         }
@@ -53,7 +53,7 @@ const globalGetters = {
   },
 
   getProductsInBasket: ({ basket }, getters, { wishGroup }) => {
-    const res = {};
+    const res = [];
     for (let i = 0; i < wishGroup.length; i++) {
       const group = wishGroup[i];
       for (let j = 0; j < group.wishes.length; j++) {
@@ -61,7 +61,8 @@ const globalGetters = {
         if (basket[group.id] && basket[group.id][wish.id]) {
           const products = basket[group.id][wish.id];
           for (const k in products) {
-            res[k] = true;
+            const pid = products[k].pid;
+            res.push(pid);
           }
         }
       }
@@ -143,6 +144,16 @@ const globalGetters = {
     return false;
   },
 
+  getProduct: ({ basket }) => ({ gid, wid, pid }) => {
+    const products = basket[gid][wid];
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].pid === pid) {
+        return products[i];
+      }
+    }
+    return null;
+  },
+
 };
 
 const actions = {
@@ -154,7 +165,7 @@ const actions = {
       if (wg[i].id === gid) {
         for (const j in wg[i].wishes) {
           const wish = wg[i].wishes[j];
-          selectWishes[wish.id] = {};
+          selectWishes[wish.id] = [];
         }
       }
     }
@@ -228,7 +239,7 @@ const mutations = {
     if (!Object.prototype.hasOwnProperty.call(basket, gid)) {
       Vue.set(basket, gid, {});
     }
-    Vue.set(basket[gid], wid, {});
+    Vue.set(basket[gid], wid, []);
   },
 
   unselectWish: ({ basket }, { gid, wid }) => {
@@ -253,20 +264,32 @@ const mutations = {
     if (lastAdd !== wid) {
       state.addOrder.push(wid);
     }
-    Vue.set(state.basket[gid][wid], pid, quantity);
+    state.basket[gid][wid].push({ pid, quantity });
+    // Vue.set(state.basket[gid][wid], pid, quantity);
   },
 
   updateProduct: ({ basket }, { gid, wid, pid, quantity }) => {
-    Vue.set(basket[gid][wid], pid, quantity);
+    const products = basket[gid][wid];
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].pid === pid) {
+        Vue.set(products[i], 'quantity', quantity);
+        Vue.set(basket, 'tmp');
+        delete basket.tmp;
+        break;
+      }
+    }
+    // Vue.set(basket[gid][wid], pid, quantity);
   },
 
   removeProduct: ({ basket }, { gid, wid, pid }) => {
-    Vue.set(basket[gid][wid], pid, null);
-    delete basket[gid][wid][pid];
-    Vue.set(basket, 'tmp');
-    delete basket.tmp;
+    const products = basket[gid][wid];
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].pid === pid) {
+        products.splice(i, 1);
+        break;
+      }
+    }
   },
-
 };
 
 export default {
