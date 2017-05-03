@@ -25,7 +25,6 @@
               span.fa.fa.fa-car
               span &nbsp;Retrait
       Usercard
-      //- Basketcard
     div#content(v-bind:class="{'marginalize' : navCarRequired}")
       div#replay
       router-view
@@ -36,7 +35,6 @@
 import replay from '../replay';
 import NavCard from './NavCard/Index';
 import Usercard from './User/Usercard';
-import Basketcard from './Basketcard';
 
 const $ = window.$;
 
@@ -79,7 +77,7 @@ export default {
       }
     });
   },
-  components: { Usercard, Basketcard, NavCard },
+  components: { Usercard, NavCard },
 };
 </script>
 
@@ -98,11 +96,13 @@ export default {
   /* TODO: rm -- */
   --color1: #146C78;
   --color2: #0E91A1;
+  --color2-tr: rgba(14, 145, 161, 0.5);
   --color2-br: #14CDE5;
   --color3: #7DCE94;
   --color3-2: #63CE81;
   --color3-3: #4DDD76;
   --color4: #EFEDE7;
+  --main-font: rgb(85, 85, 85);
 
   --success: #48CE6E;
   --active: #7DDBD1;
@@ -121,6 +121,7 @@ body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   outline:none;
+  color: var(--main-font);
 }
 #content {
   position: relative;

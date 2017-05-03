@@ -6,7 +6,7 @@
       Group(v-for="gid in gids" 
         v-bind:gid="gid"
         v-bind:key="gid")
-      div.newIcon.fa.fa-plus.fa-2x
+      div.newIcon.fa.fa-plus.fa-2x(@click="focus")
       input#newGroup(v-model="newName" @keyup.enter="add" placeholder="Ajouter une rubrique", tabindex="1", @click.stop="")
       button.btn.btn-success.btn-sm.btn-create(v-if='creating' v-on:click="add")
         i.fa.fa-check.fa-xs
@@ -38,6 +38,9 @@ export default {
     }
   },
   methods: {
+    focus() {
+      $('#newGroup').focus();
+    },
     add() {
       if (this.newName !== '') {
         this.$store.dispatch('wishGroup/addGroup', {

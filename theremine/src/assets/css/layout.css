@@ -18,8 +18,7 @@ a:hover {
 
 @font-face {
   font-family: helvetica;
-  src:  url('/static/fonts/helvetica-normal.ttf') format('ttf'),
-        url('/static/fonts/HelveticaNeue-Thin.otf') format('otf');
+  src:  url('/static/fonts/HelveticaNeue.otf');
 }
 
 @font-face {

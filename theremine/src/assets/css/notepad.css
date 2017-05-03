@@ -89,6 +89,7 @@
   line-height: 50px;
   padding: 0 10px 0 50px;
   text-transform: capitalize;
+  text-align: left;
 }
 
 .line:hover {
@@ -154,7 +155,7 @@
   visibility: visible;
 }
 .line .content {
-  font-size: 0.7em;
+  font-size: 0.6em;
   visibility: hidden;
 }
 .notepad [type="checkbox"]:not(:checked),

@@ -50,9 +50,17 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+/*#content{
+  background-image: url('../assets/images/fly.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+}*/
 #homepage{
   padding: 50px 0 0 0;
+  font-weight: lighter;
 }
 #title{
   padding: 0 0 50px 0;
@@ -66,6 +74,7 @@ export default {
 #rassurance .item{
   width: 33%;
   float: left;
+  border-radius: 5px;
 }
 
 #presentation{
@@ -77,6 +86,7 @@ export default {
 #presentation .item{
   display: table;
   padding: 15px 0 15px 0;
+  border-radius: 5px;
 }
 #presentation .item:nth-child(odd){
   color: var(--color4);
@@ -89,27 +99,36 @@ export default {
   width: 33%;
 }
 #presentation .item .num{
-  vertical-align: center;
-  border: 1px solid var(--color2);
-  border-radius: 100%;
-  display: block;
-  width: 70px;
-  height: 70px;
-  margin: 40% 0 0 50%;
-  font-size: 2em;
+  width: 150px;
+  min-width: 150px;
+}
+#presentation .item .num{
 }
 #presentation .item:nth-child(odd) .num{
+  color: var(--color4);
+  background-color: var(--color2);
+}
+#presentation .item:nth-child(even) .num{
   color: var(--color2);
   background-color: var(--color4);
 }
-#presentation .item:nth-child(even) .num{
-  color: var(--color4);
-  background-color: var(--color2);
+#presentation .item .num span{
+  display: block;
+  border: 5px solid var(--color4);
+  border-radius: 100%;
+  width: 70px;
+  height: 70px;
+  margin: 40%;
+  font-size: 2em;
+}
+#presentation .item:nth-child(even) .num span{
+  border: 5px solid var(--color2);
 }
 #presentation .item .img{
   min-width: 700px;
   min-height: 245.45px;
   background-color: var(--color4);
+  border-radius: 5px;
 }
 #presentation .item .img img{
   max-width: 700px;
@@ -123,7 +142,7 @@ export default {
   position: relative;
   text-align: center;
   padding-bottom: 50px;
-  top: 5px;
+  top: 33px;
 }
 #registration a{
   display: block;
@@ -135,7 +154,7 @@ export default {
   position: relative;
   text-align: center;
   padding-bottom: 50px;
-  top: 5px;
+  top: 33px;
 }
 #wishlist a{
   display: block;

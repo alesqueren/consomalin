@@ -136,6 +136,8 @@ export default {
 }
 .product-name {
   position: relative;
+  max-height: 45px;
+  overflow: hidden;
 }
 .product-number {
   position: relative;

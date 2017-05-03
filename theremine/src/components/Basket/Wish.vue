@@ -69,17 +69,6 @@ export default {
     },
   },
   created() {
-    // $(document).on({
-    //   mouseenter: () => {
-    //     console.log('laaaaaaaaaaaaaa');
-    //     $('.badge-info').hide();
-    //   },
-
-    //   mouseleave: () => {
-    //     console.log('laaaaaaaaaaaaala');
-    //     $('.badge-info').show();
-    //   },
-    // }, '.eraseOff');
     $(document).on({
       mouseenter: () => {
         console.log('helo');
