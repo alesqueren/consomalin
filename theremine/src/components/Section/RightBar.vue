@@ -3,6 +3,7 @@
     Wish(
       v-bind:wid="currentWish.id",
       v-bind:badgeLabel="\"En cours\"",
+      v-bind:fillerMessage="\"Pas encore de produit ajouté.\"",
       )
     div(style="clear:both")
     Wish(
@@ -10,6 +11,7 @@
       v-bind:wid="wid",
       v-bind:key="wid",
       v-bind:badgeLabel="\"Du même nom\"",
+      v-bind:displayGroup="true",
       )
     div(style="clear:both")
     Wish(
