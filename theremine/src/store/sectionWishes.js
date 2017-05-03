@@ -79,6 +79,7 @@ const actions = {
       if (wid !== state.wid) {
         commit('set', { wid });
         dispatch('searchProducts');
+        resources.currentWish.save({ wid });
       }
     } else {
       commit('set', { wid: null });

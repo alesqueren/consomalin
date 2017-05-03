@@ -24,47 +24,51 @@
           i.fa.fa-cart-plus.fa-lg.atb-quick &nbsp;
           span.fa.fa-arrow-right.special-fa
       div.count-input.space-bottom(v-else)
-        a.incr-btn(@click.prevent.stop='decrease' href="#") –
+
+        // - TOOO: make a component
+        a.incr-btn(@click.prevent.stop='addQuantity(-1)' href="#") –
         input.quantity(type='number', v-model.number='quantity', step='1', value='0', min='1', max='256'
           @click.prevent.stop='',
           disabled="disabled")
-        a.incr-btn(@click.prevent.stop='increase' href="#") &plus;
+        a.incr-btn(@click.prevent.stop='addQuantity(1)' href="#") &plus;
+
 </template>
 <script>
 import router from '../../router';
 
 export default {
   props: ['pid', 'maxProducts'],
-  data() {
-    return {
-      tmpSelectedProduct: false,
-    };
-  },
   computed: {
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
     },
     inBasket() {
-      return this.$store.getters['selection/getProductsInBasket'][this.pid];
+      const basket = this.$store.getters['selection/getProductsInBasket'];
+      return (basket.indexOf(this.pid) !== -1);
     },
     product() {
       return this.$store.state.product.details[this.pid];
     },
     inCurrentWish() {
       const selection = this.$store.state.selection.basket;
-      const pids = Object.keys(selection[this.currentWish.gid][this.currentWish.id]);
-      return pids && pids.indexOf(this.pid) !== -1;
+      const products = selection[this.currentWish.gid][this.currentWish.id];
+      for (let i = 0; i < products.length; i++) {
+        if (products[i].pid === this.pid) {
+          return true;
+        }
+      }
+      return false;
     },
     quantity() {
-      const product = this.$store.state.selection.basket[this.currentWish.gid][this.currentWish.id];
-      return product[this.pid] || 1;
-    },
-    deleting() {
-      const action = this.$store.state.singleton.action;
-      const wid = action.wid;
-      const pid = action.pid;
-      const type = action.type;
-      return type === 'deleteProduct' && this.wid === wid && this.pid === pid;
+      if (this.inCurrentWish) {
+        const product = this.$store.getters['selection/getProduct']({
+          gid: this.currentWish.gid,
+          wid: this.currentWish.id,
+          pid: this.pid,
+        });
+        return product.quantity;
+      }
+      return 1;
     },
   },
   methods: {
@@ -92,21 +96,15 @@ export default {
         });
       });
     },
-    increase() {
-      if (this.quantity < 64) {
-        const wid = this.currentWish.id;
-        const pid = this.pid;
-        const quantity = parseInt(this.quantity + 1, 10);
-        this.$store.dispatch('selection/updateProduct', { wid, pid, quantity });
-      }
-    },
-    decrease() {
-      if (this.quantity > 1) {
-        const wid = this.currentWish.id;
-        const pid = this.pid;
-        const quantity = parseInt(this.quantity - 1, 10);
-        this.$store.dispatch('selection/updateProduct', { wid, pid, quantity });
-      } else {
+    addQuantity(value) {
+      const newQuantity = this.quantity + value;
+      if (newQuantity >= 1 && newQuantity <= 64) {
+        this.$store.dispatch('selection/updateProduct', {
+          wid: this.currentWish.id,
+          pid: this.pid,
+          quantity: newQuantity,
+        });
+      } else if (newQuantity === 0) {
         this.erase();
       }
     },

@@ -16,6 +16,12 @@ const actions = {
   resetStore: ({ commit }) => {
     commit('resetStore');
   },
+
+  setUserData: ({ commit }, data) =>
+    (new Promise((resolve) => {
+      commit('setUserData', data);
+      resolve();
+    })),
 };
 
 const mutations = {
@@ -27,13 +33,9 @@ const mutations = {
   },
 
   setUserData(state, { wishGroups, currentBasket }) {
-    return new Promise((resolve) => {
-      Vue.set(state, 'wishGroup', wishGroups);
-      Vue.set(state.selection, 'basket', currentBasket.selectedWishes);
-      Vue.set(state.singleton, 'selectedSlot', currentBasket.currentSlot);
-      // Vue.set(state.sectionWishes, 'wid', currentBasket.currentWishId);
-      resolve();
-    });
+    Vue.set(state, 'wishGroup', wishGroups);
+    Vue.set(state.selection, 'basket', currentBasket.selectedWishes);
+    Vue.set(state.singleton, 'selectedSlot', currentBasket.currentSlot);
   },
 };
 

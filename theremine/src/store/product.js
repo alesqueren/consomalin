@@ -3,11 +3,13 @@ import resources from '../resources';
 
 const actions = {
   fetchDetails: ({ commit }, { ids }) => {
-    const uri = 'details?pids=' + JSON.stringify(ids);
-    resources.products.get({ uri }, {}).then(({ body }) => {
-      const products = JSON.parse(body);
-      commit('addDetails', { products });
-    });
+    if (ids.length) {
+      const uri = 'details?pids=' + JSON.stringify(ids);
+      resources.products.get({ uri }, {}).then(({ body }) => {
+        const products = JSON.parse(body);
+        commit('addDetails', { products });
+      });
+    }
   },
 
   fetchSearch: ({ commit, state }, { name }) => {

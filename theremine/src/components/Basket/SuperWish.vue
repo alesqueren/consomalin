@@ -22,7 +22,8 @@ export default {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
     productIds() {
-      return Object.keys(this.$store.state.selection.basket[this.wish.gid][this.wish.id]);
+      const products = this.$store.state.selection.basket[this.wish.gid][this.wish.id];
+      return products.map(p => p.pid).reverse();
     },
   },
   components: { Wish },

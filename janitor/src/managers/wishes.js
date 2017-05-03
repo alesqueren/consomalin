@@ -9,7 +9,7 @@ function select(uid, gid, wid, selected) {
       { _id: uid },
       {
         $set: {
-          [path]: {},
+          [path]: [],
         },
       },
     );

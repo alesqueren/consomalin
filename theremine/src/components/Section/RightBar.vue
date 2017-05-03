@@ -39,12 +39,6 @@ export default {
     sameNameWishIds() {
       return this.$store.getters['sectionWishes/getSameNameWishIds'];
     },
-    selectedWishNb() {
-      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
-    },
-    matchedWishesLength() {
-      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
-    },
   },
   components: { Wish },
 };

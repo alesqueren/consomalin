@@ -26,7 +26,7 @@ const actions = {
       });
     }),
 
-  fetchUserData({ dispatch, commit }) {
+  fetchUserData({ dispatch, rootGetters }) {
     return new Promise((resolve) => {
       resources.wishlist.get().then(({ body }) => {
         const wishGroups = body.wishGroups;
@@ -34,23 +34,11 @@ const actions = {
         if (!currentBasket.selectedWishes) {
           currentBasket.selectedWishes = {};
         }
-        const idsWithoutDetail = [];
-        Object.keys(currentBasket.selectedWishes).map((wishgroupId) => {
-          const wishGroup = currentBasket.selectedWishes[wishgroupId];
-          Object.keys(wishGroup).map((wishId) => {
-            const wish = wishGroup[wishId];
-            Object.keys(wish).map((pid) => {
-              idsWithoutDetail.push(pid);
-              return null;
-            });
-            return null;
-          });
-          return null;
-        });
-        if (idsWithoutDetail.length) {
+
+        dispatch('setUserData', { wishGroups, currentBasket }, { root: true }).then(() => {
+          const idsWithoutDetail = rootGetters['selection/getProductsInBasket'];
           dispatch('product/fetchDetails', { ids: idsWithoutDetail }, { root: true });
-        }
-        commit('setUserData', { wishGroups, currentBasket }, { root: true });
+        });
         if (currentBasket.currentWishId) {
           dispatch('sectionWishes/set', currentBasket.currentWishId, { root: true });
         } else {

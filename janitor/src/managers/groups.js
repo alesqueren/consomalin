@@ -31,6 +31,7 @@ function rename(uid, gid, newName) {
   );
 }
 
+// TODO: use $ ?
 function select(uid, wishGroups, gid) {
   const selectWishes = {};
   for (const i in wishGroups) {
@@ -38,7 +39,7 @@ function select(uid, wishGroups, gid) {
     if (group.id === gid) {
       for (const j in group.wishes) {
         const wish = group.wishes[j];
-        selectWishes[wish.id] = {};
+        selectWishes[wish.id] = [];
       }
     }
   }
