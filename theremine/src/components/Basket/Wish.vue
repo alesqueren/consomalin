@@ -16,8 +16,9 @@
       v-bind:pid="pid",
       v-bind:wid="wid",
       v-bind:key="pid")
-    div(v-if='displayProductIds.length === 0')
+    div(v-if='displayProductIds.length === 0 && fillerMessage')
       span {{ fillerMessage }}
+    div.emptyBox(v-if='productIds.length === 0 && !fillerMessage')
     span.no-product.fa.fa-hand-pointer-o(v-if="displayNoProduct") &nbsp;Choisir un produit
 </template>
 
