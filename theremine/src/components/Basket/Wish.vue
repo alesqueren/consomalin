@@ -26,6 +26,13 @@ const $ = window.$;
 
 export default {
   props: ['wid', 'displayUnmatchText', 'badgeLabel', 'pid', 'detailProduct'],
+  data() {
+    return {
+      editingId: 'summary-' + this.wid,
+      editingName: null,
+      hoverErase: false,
+    };
+  },
   computed: {
     wish() {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });

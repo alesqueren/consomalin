@@ -1,7 +1,7 @@
 <template lang="pug">
   div.slotHour
     button(type="button" v-bind:disabled="pickupSlot.status == 'Past'" v-bind:class="classSlot" class="btn" @click="selectSlot()" v-bind:style="styleObject")
-      span {{frenchTime}}
+      span.time {{frenchTime}}
 </template>
 
 <script>
@@ -78,5 +78,12 @@ export default {
 <style scoped>
 .slotHour{
   float:left;
+}
+.time{
+  color: var(--main-font);
+  cursor: pointer;
+}
+.btn:disabled{
+  opacity: 0.2;
 }
 </style>
