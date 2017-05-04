@@ -14,7 +14,7 @@
         div.dropdown-divider
         a.dropdown-item.btn.btn-info.btn-sm.pointer(href="#", @click.prevent='logout')
           span.fa.fa-sign-out 
-          span Déconnection
+          span Déconnexion
 
 </template>
 
