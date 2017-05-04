@@ -1,5 +1,6 @@
 <template lang="pug">
   div#list
+    h2 Ma Liste
     Group(v-for="gid in selectedGroups" 
       v-bind:gid="gid" 
       v-bind:key="gid")
@@ -27,7 +28,13 @@ export default {
 
 <style scoped>
 #list{
-  text-align: right;
+  text-align: left;
   background-color: white;
+  padding: 15px;
+  border: 1px solid rgba(0,0,0,0.2);
+  max-height: 77%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 350px;
 }
 </style>

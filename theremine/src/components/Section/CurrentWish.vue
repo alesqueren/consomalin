@@ -88,7 +88,7 @@ export default {
 }
 #search-text {
   font-family: learningCurve;
-  font-size: 2em;
+  font-size: 1.5em;
   font-weight: bolder;
   border: none;
   height: 35px;
@@ -154,7 +154,7 @@ export default {
   position: absolute;
   color: #0275d8;
   right: 10px;
-  top: 10px;
+  top: 7px;
   z-index: 9;
   font-size: 1.5em;
 }

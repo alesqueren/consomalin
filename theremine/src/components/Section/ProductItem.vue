@@ -126,6 +126,8 @@ export default {
   float: left;
   margin: 5px;
   position: relative;
+  border-radius: 2px;
+  transition: background-color 0.2s;
 }
 
 .product-item:not(.active):hover {
@@ -138,6 +140,7 @@ export default {
 
 .active {
   background-color: var(--active);
+  transition: background-color 0.2s;
 }
 .old {
   position: absolute;
@@ -185,9 +188,11 @@ export default {
   text-align: center;
   padding: 2px;
   line-height: 32px;
+  border-radius: 2px;
 }
 .btn-atb:hover {
   background-color: var(--success);
+  transition: background-color 1s;
 }
 .text-atb {
   line-height: 32px;
@@ -240,7 +245,7 @@ input[type=number]::-webkit-inner-spin-button {
 .count-input .incr-btn:first-child {
   right: auto;
   left: 0;
-  top: 31px;
+  top: 34px;
 }
 .tooltip .tooltiptext {
   width: 240px;

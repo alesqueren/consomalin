@@ -95,12 +95,13 @@ export default {
   /*background-color: color(--white);*/
   background-color: white;
   border: 1px solid grey;
+  border-radius: 2px;
 }
 .emptyBox {
   height: 100px;
 }
 .wish-name{
-  font-size: 2em;
+  font-size: 1.5em;
   font-weight: bold;
   font-family: learningCurve;
   text-transform: capitalize;
@@ -173,14 +174,17 @@ export default {
   top: 70px;
   left: 100px;
   opacity: 0.2;
+  transition: opacity 0.2s;
 }
 .wish:hover .no-product{
+  transition: opacity 0.2s;
   opacity: 1;
 }
 .badge {
-  font-size: 1.0em;
+  font-size: 0.9em;
   float: right;
   margin: 5px 20px 5px 5px;
+  padding-top: 8px;
 }
 .noproduct-text {
   font-size: 1.1em;

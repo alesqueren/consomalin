@@ -3,14 +3,14 @@
       div.left-part
         div.basket-logo
           i.fa.fa-shopping-cart.fa-lg
-      div.middle-part(v-bind:class="{ large: !matchedWishNb}")
+      div.middle-part(v-bind:class="{ large: !matchedWishNb}" transition="fadeOut")
         span(v-if="selectedWishNb <= 1") {{selectedWishNb}} mémo <br/>
         span(v-if="selectedWishNb > 1") {{selectedWishNb}} mémos <br/>
         span(v-if="isBasketFull")
           b Panier rempli
           br
-        span(v-else-if="matchedWishNb === 1") {{matchedWishNb}} choisi<br/>
-        span(v-else-if="matchedWishNb > 1") {{matchedWishNb}} choisis<br/>
+        span(v-else-if="matchedWishNb === 1" transition="fadeOut") {{matchedWishNb}} choisi<br/>
+        span(v-else-if="matchedWishNb > 1" transition="fadeOut") {{matchedWishNb}} choisis<br/>
       div.right-part.total(v-if="matchedWishNb")
         span {{total}}&nbsp;€
 </template>
@@ -90,5 +90,16 @@ export default {
 }
 .basket .total {
   font-size: 2em;
+}
+
+/// CSS transition
+.fadeOut-transition {
+  visibility: visible;
+  opacity: 1;
+}
+
+.fadeOut-enter,
+.fadeOut-leave {
+  opacity: 0;
 }
 </style>

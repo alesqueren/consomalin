@@ -5,7 +5,7 @@
       div.content
           Groups.groups
           ActiveGroup.activegroup
-
+      //- List.rightSide
 </template>
 
 <script>
@@ -42,5 +42,10 @@ export default {
 #wishlist .content .list{
   width: 20%;
   display: table-cell;
+}
+.rightSide{
+  position: fixed;
+  top: 214px;
+  right: 16px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
-    span.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
+    ul.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
     Wish(v-for="wid in selectedWishes" 
       v-bind:wid="wid" 
       v-bind:gid="gid" 
@@ -42,8 +42,5 @@ export default {
   color: black;
   font-size: 1.5em;
   text-align: center;
-}
-.groupName:hover {
-  text-decoration: underline
 }
 </style>

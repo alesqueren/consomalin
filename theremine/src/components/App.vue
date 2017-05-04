@@ -125,7 +125,7 @@ body{
 }
 #content {
   position: relative;
-  padding: 119px 59px 59px 59px;
+  padding: 65px 59px 59px 15px;
 }
 .marginalize {
   margin-right: 320px;

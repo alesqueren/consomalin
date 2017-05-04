@@ -132,8 +132,9 @@ export default {
 }
 #wishes .rightSide{
   position: fixed;
-  top: 130px;
-  right: 50px;
+  top: 143px;
+  right: 31px;
+  width: 334px;
 }
 .waiting{
   background-color: color(--white);
