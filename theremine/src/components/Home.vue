@@ -35,7 +35,7 @@
       router-link(:to='{ name: "register" }')
         button.btn.btn-primary.connexion(type="button") Inscription
     div#wishlist(v-else)
-      router-link(:to='{ name: "section" }')
+      router-link(:to='{ name: "wishlist" }')
         span.input-group-addon.nav-btn.prefered
           span Voir ma liste
 </template>

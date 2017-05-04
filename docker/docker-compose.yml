@@ -19,6 +19,7 @@ services:
     networks: [big]
     environment:
       - METRONOME_HOST=http://metronome-cache
+      - KIVA_HOST=http://kiva
 
   recorder:
     build: ./recorder

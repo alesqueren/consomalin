@@ -24,7 +24,7 @@ export default {
   products: Vue.resource('/api/products/{uri}'),
   schedule: Vue.resource('/api/schedule'),
   slot: Vue.resource('/api/wishlist/basket/slot'),
-  basket: Vue.resource('/api/basket/order'),
+  order: Vue.resource('/api/wishlist/basket/order'),
   watcher: Vue.resource('/api/history', {}, {
     get: { method: 'GET', url: '/api/history/sessions{/sid}' },
     add: { method: 'POST', url: '/api/history/add' },
