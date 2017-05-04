@@ -4,7 +4,7 @@
       div.left
         router-link.title(:to="{ name: 'home' }")
           img.logo(src="../assets/images/ant.png")
-          span.brand &nbsp;&nbsp;&nbsp;Consomalin
+          span.brand &nbsp;&nbsp;&nbsp;Consomalin (b)
 
       div#steps.left(v-if="user && user.username")
         ul.header-tabs
