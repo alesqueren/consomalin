@@ -3,18 +3,21 @@
     @click='select()')
     span.wish-name
       span {{ wish.name }}&nbsp;
-      span.details(v-if="detailProduct") ({{detailProduct}} / {{ productIds.length }})
+      span.details(v-if="detailProduct") ({{ detailProduct }} / {{ productIds.length }})
     div.wish-erase(
       @click.prevent.stop='erase()')
       span.btnText Décocher&nbsp;
       span.icon.eraseOff.fa.fa-check-square-o.fa-xs
       span.icon.eraseOn.fa.fa-square-o.fa-xs
     span.badge.badge-info.indicator(v-if="badgeLabel && !hoverErase", ref="badge") {{badgeLabel}}
+    div.wish-name(v-if="displayGroup")
+      span {{ group.name }}&nbsp;
     Product(v-for="pid in displayProductIds"
       v-bind:pid="pid",
       v-bind:wid="wid",
       v-bind:key="pid")
-    div.emptyBox(v-if='productIds.length === 0')
+    div(v-if='displayProductIds.length === 0')
+      span {{ fillerMessage }}
     span.no-product.fa.fa-hand-pointer-o(v-if="displayNoProduct") &nbsp;Choisir un produit
 </template>
 
@@ -25,17 +28,19 @@ import Product from './Product';
 const $ = window.$;
 
 export default {
-  props: ['wid', 'displayUnmatchText', 'badgeLabel', 'pid', 'detailProduct'],
+  props: ['wid', 'displayUnmatchText', 'badgeLabel', 'pid',
+    'detailProduct', 'fillerMessage', 'displayGroup'],
   data() {
     return {
-      editingId: 'summary-' + this.wid,
-      editingName: null,
       hoverErase: false,
     };
   },
   computed: {
     wish() {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
+    },
+    group() {
+      return this.$store.getters['wishGroup/getGroup']({ gid: this.wish.gid });
     },
     displayProductIds() {
       return this.pid ? [this.pid] : this.productIds;

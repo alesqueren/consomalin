@@ -202,7 +202,7 @@ input[type=number]::-webkit-inner-spin-button {
 .erase{
   position: absolute;
   font-size: 13px;
-  top: 2px;
+  top: 0px;
   right: 13px;
   width: 76px;
   line-height: 27px;

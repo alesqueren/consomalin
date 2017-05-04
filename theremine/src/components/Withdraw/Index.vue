@@ -1,5 +1,6 @@
 <template lang="pug">
 div#slots
+  h2 Je choisis un horaire de retrait
   div
     .container-fluid
       .row.no-gutters
@@ -33,7 +34,13 @@ export default {
     },
     confirmationMessage() {
       if (this.selectedSlot) {
-        return 'Valider ma commande pour "' + this.selectedSlot.dateTime + '"';
+        const time = new Date(this.selectedSlot.dateTime);
+        const day = (time.getDay() < 10) ? ('0' + time.getDay()) : time.getDay();
+        const month = (time.getMonth() + 1 < 10) ? ('0' + (time.getMonth() + 1)) : time.getMonth() + 1;
+        const minute = (time.getMinutes() < 10) ? ('0' + time.getMinutes()) : time.getMinutes();
+        const hour = (time.getHours() < 10) ? ('0' + time.getHours()) : time.getHours();
+        const frenchTime = hour + 'h' + minute + ' le ' + day + '/' + month;
+        return 'Valider ma commande pour ' + frenchTime;
       }
       return 'Valider ma commande';
     },
