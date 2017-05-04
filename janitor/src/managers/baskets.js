@@ -52,7 +52,7 @@ function removeCurrentSlot(email) {
 }
 function setCurrentSlot(email, slot) {
   const users = mongo.db.collection(userCollectionName);
-  const path = 'currentBasket.currentSlot';
+  const path = 'currentBasket.slot';
   users.updateOne(
     { _id: email },
     {

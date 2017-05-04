@@ -31,7 +31,6 @@ router.delete('/basket/currentWish',
   },
 );
 
-// save the slot
 router.post('/basket/slot',
   mid.isAuthenticated,
   mid.parseData({
@@ -39,21 +38,21 @@ router.post('/basket/slot',
     dateTime: { required: true },
   }),
   ({ data, user }, res) => {
-    console.log(data.dateTime);
     const dateTime = new Date(data.dateTime);
     basketsManager.setCurrentSlot(user._id, { id: data.id, dateTime });
     res.json('OK');
   },
 );
 
-// Passer la commande
-router.post('/order',
+// TODO: refactor in manager
+router.post('/basket/order',
   mid.isAuthenticated,
-  (req, res) => {
-    const slotId = req.user.currentBasket.slot.id;
-    const slotDateTime = req.user.currentBasket.slot.dateTime;
-    const wishGroups = req.user.wishGroups;
-    const pSelectedWishes = req.user.currentBasket.selectedWishes;
+  ({ user }, res) => {
+    const idUser = user._id;
+    const slotId = user.currentBasket.slot.id;
+    const slotDateTime = user.currentBasket.slot.dateTime;
+    const wishGroups = user.wishGroups;
+    const pSelectedWishes = user.currentBasket.selectedWishes;
 
     const productsToDetail = [];
     const wishGroupsToSave = [];
@@ -64,16 +63,17 @@ router.post('/order',
       for (let j = 0; j < wishGroupLength; j++) {
         const wish = wishGroup.wishes[j];
         if (pSelectedWishes[wishGroup.id] && pSelectedWishes[wishGroup.id][wish.id]) {
-          const product = pSelectedWishes[wishGroup.id][wish.id];
-          // console.log('product' )
-          // console.log(product )
-          const wishToInsert = {
-            name: wish.name,
-            product: { id: product.id },
-            quantity: parseInt(product.quantity, 10),
-          };
-          wishesToInsert.push(wishToInsert);
-          productsToDetail.push(product.id);
+          const products = pSelectedWishes[wishGroup.id][wish.id];
+          for (let k = 0; k < products.length; k++) {
+            const product = products[k];
+            const wishToInsert = {
+              name: wish.name,
+              product: { id: product.pid },
+              quantity: parseInt(product.quantity, 10),
+            };
+            wishesToInsert.push(wishToInsert);
+            productsToDetail.push(product.pid);
+          }
         }
       }
       if (wishesToInsert.length) {
@@ -81,10 +81,9 @@ router.post('/order',
       }
     }
 
-    const detailsUrl = '/details?pids=' + JSON.stringify(productsToDetail);
+    const detailsUrl = 'details?pids=' + JSON.stringify(productsToDetail);
     kiva.send(detailsUrl).then((products) => {
       products = JSON.parse(products);
-      // console.log('body:', products);
       for (let i = 0; i < wishGroupsToSave.length; i++) {
         const wishGroup = wishGroupsToSave[i];
         const wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
@@ -94,10 +93,9 @@ router.post('/order',
           wish.product.image = product.imageUrl;
         }
       }
-      const idUser = req.user._id;
       const transactionId = transactionsManager.add(idUser, slotId, slotDateTime, wishGroupsToSave);
       const data = {
-        user: req.user._id,
+        user: idUser,
         transaction: transactionId,
       };
       // comment when dev
