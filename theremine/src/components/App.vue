@@ -11,11 +11,11 @@
           li.header-tab
             router-link.title(:to="{ name: 'wishlist' }")
               span.fa.fa-list
-              span &nbsp;Mes listes
+              span &nbsp;Ma liste
           li.header-tab
             router-link.title(:to="{ name: 'section' }")
               span.fa.fa-hand-pointer-o
-              span &nbsp;Mes Rayons
+              span &nbsp;Rayons
           li.header-tab
             router-link.title(:to="{ name: 'basket' }")
               span.fa.fa-shopping-cart

@@ -5,7 +5,7 @@
       div.content
           Groups.groups
           ActiveGroup.activegroup
-      //- List.rightSide
+      List.rightSide
 </template>
 
 <script>
