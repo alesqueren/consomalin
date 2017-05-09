@@ -5,7 +5,8 @@
   "scripts": {
     "build": "./node_modules/webpack/bin/webpack.js --config build/webpack.conf.js",
     "start": "npm run build && node bin/app.bundle.js",
-    "dev": "node build/dev-server.js"
+    "dev": "node build/dev-server.js",
+    "lint": "eslint --max-warnings 0 --ext .js,.vue src"
   },
   "dependencies": {
     "amqplib": "*",

@@ -23,6 +23,7 @@ HEALTHCHECK \
   CMD check localhost $MONGO_URI
 
 ADD . .
-RUN npm run build
+RUN npm run lint && \
+    npm run build
 
 CMD npm run start

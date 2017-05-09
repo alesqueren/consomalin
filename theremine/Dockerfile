@@ -20,6 +20,7 @@ HEALTHCHECK \
   CMD check localhost
 
 ADD . .
-RUN npm run build
+RUN npm run lint && \
+    npm run build
 
 CMD nginx -c /app/docker/nginx.conf -g "daemon off;"
