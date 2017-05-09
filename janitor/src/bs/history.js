@@ -15,8 +15,13 @@ module.exports = {
   sendPost(params, sid, reqbody) {
     return new Promise((resolve) => {
       const url = RECORDER_HOST + 'sessions/' + sid + '/' + encodeURI(params);
-      const data = { form: 'data=' + JSON.stringify(reqbody) };
-      request.post(url, data, (error, response, body) => {
+      const opts = {
+        url,
+        method: 'POST',
+        json: true,
+        body: reqbody,
+      };
+      request(opts, (error, response, body) => {
         resolve(body);
       });
     });

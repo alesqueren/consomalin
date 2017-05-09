@@ -33,7 +33,7 @@ router.get('/:sid',
 
 router.post('/:sid/add',
   ({ body, params }, res) => {
-    add(params.sid, JSON.parse(body.data));
+    add(params.sid, body);
     res.json('OK');
   },
 );

@@ -4,7 +4,7 @@ import resources from './resources';
 let buffer = [];
 let history = null;
 let historyIndex = 0;
-const syncInterval = 5000;
+const syncInterval = 2000;
 
 function flush() {
   if (buffer.length > 0) {

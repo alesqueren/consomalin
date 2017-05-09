@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const mid = require('../middlewares');
 const history = require('../bs/history');
 
 // TODO: * doesn't work for multiple words
@@ -11,6 +12,7 @@ router.get('/sessions/:sid',
 );
 
 router.post('/:history_uri*',
+  mid.isAuthenticated,
   (req, res) => {
     const sid = req.headers.cookie.substring(14)
       .split('/')
