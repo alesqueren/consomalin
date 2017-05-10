@@ -8,14 +8,14 @@ function get(sid, resolve) {
   records.findOne({ _id: sid }, resolve);
 }
 
-function add(sid, newStates) {
+function add(sid, newState) {
   const records = mongo.db.collection(collectionName);
   records.updateOne(
     { _id: sid },
     {
       $push: {
         states: {
-          $each: newStates,
+          $each: [newState],
         },
       },
     },
@@ -33,7 +33,7 @@ router.get('/:sid',
 
 router.post('/:sid/add',
   ({ body, params }, res) => {
-    add(params.sid, JSON.parse(body.data));
+    add(params.sid, body);
     res.json('OK');
   },
 );
