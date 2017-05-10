@@ -4,7 +4,7 @@
       div.left
         router-link.title(:to="{ name: 'home' }")
           img.logo(src="../assets/images/ant.png")
-          span.brand &nbsp;&nbsp;&nbsp;Consomalin (b)
+          span.brand &nbsp;&nbsp;&nbsp;Consomalin
 
       div#steps.left(v-if="user && user.username")
         ul.header-tabs
@@ -29,12 +29,14 @@
       div#replay
       router-view
       NavCard(v-if='navCarRequired')
+      List(v-if='navCarRequired')
 </template>
 
 <script>
 import replay from '../replay';
 import NavCard from './NavCard/Index';
 import Usercard from './User/Usercard';
+import List from './List/Index';
 
 const $ = window.$;
 
@@ -77,7 +79,7 @@ export default {
       }
     });
   },
-  components: { Usercard, NavCard },
+  components: { Usercard, NavCard, List },
 };
 </script>
 
@@ -126,9 +128,11 @@ body{
 }
 #content {
   position: relative;
-  padding: 65px 59px 59px 15px;
+  padding: 50px 0px 0px 0px;
+  height: 94vh;
 }
 .marginalize {
+  margin-left: 150px;
   margin-right: 320px;
 }
 

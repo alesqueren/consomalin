@@ -1,9 +1,11 @@
 <template lang="pug">
-  li.wish
-    span.product-name(v-bind:class="{'filled' : productIds.length > 0}") {{ wish.name }}
+  .wish(@click="select")
+    i.fa.fa-arrow-right.active(v-if="isCurrentWish") &nbsp;
+    span.product-name(v-bind:class="{'filled' : productIds.length > 0, 'active' : isCurrentWish}") {{ wish.name }}
 </template>
 
 <script>
+
 export default {
   props: ['wid', 'gid'],
   data() {
@@ -13,6 +15,9 @@ export default {
     };
   },
   computed: {
+    isCurrentWish() {
+      return this.wid === this.$store.getters['sectionWishes/getCurrent'].id;
+    },
     wish() {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
@@ -21,14 +26,24 @@ export default {
       return products.map(p => p.pid).reverse();
     },
   },
+  methods: {
+    select() {
+      this.$store.dispatch('sectionWishes/set', this.wid);
+    },
+  },
 };
 </script>
 
 <style scoped>
 .wish{
   margin-left: 50px;
+  cursor: pointer;
 }
 .filled{
   text-decoration: line-through;
+}
+.active{
+  color: green;
+  font-weight: bold;
 }
 </style>

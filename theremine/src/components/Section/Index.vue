@@ -123,6 +123,7 @@ export default {
 }
 #wishes{
   width: 100%;
+  padding: 45px;
 }
 #wishes .main{
 }
@@ -132,8 +133,8 @@ export default {
 }
 #wishes .rightSide{
   position: fixed;
-  top: 143px;
-  right: 31px;
+  top: 135px;
+  right: -44px;
   width: 334px;
 }
 .waiting{

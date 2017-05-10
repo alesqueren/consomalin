@@ -58,6 +58,9 @@ export default {
 </script>
 
 <style scoped>
+#slots{
+  padding: 45px;
+}
 .row.no-gutters{
   border: 1px solid grey;
   padding: 15px;

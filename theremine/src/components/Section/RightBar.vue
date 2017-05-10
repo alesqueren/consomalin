@@ -1,9 +1,16 @@
 <template lang="pug">
   div.root
     Wish(
+      v-if="!currentWishHasProduct",
       v-bind:wid="currentWish.id",
-      v-bind:badgeLabel="\"En cours\"",
-      v-bind:fillerMessage="\"Pas encore de produit ajouté.\"",
+      v-bind:badgeLabel="\"Choix en cours\"",
+      v-bind:fillerMessage="\"Faites votre selection.\"",
+      )
+    Wish(
+      v-else,
+      v-bind:wid="currentWish.id",
+      v-bind:badgeLabel="\"Produit choisis\"",
+      v-bind:fillerMessage="\"Faites votre selection.\"",
       )
     div(style="clear:both")
     Wish(
@@ -34,6 +41,15 @@ export default {
   computed: {
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    currentWishHasProduct() {
+      const gid = this.currentWish.gid;
+      const wid = this.currentWish.id;
+      let result = null;
+      if (this.currentWish) {
+        result = Object.keys(this.$store.state.selection.basket[gid][wid]).length;
+      }
+      return result;
     },
     lastAddedWishId() {
       return this.$store.getters['sectionWishes/getLastAdded'];

@@ -112,7 +112,7 @@
   position: absolute;
   top: 11px;
   right: 0px;
-  width: 159px;
+  width: 162px;
   line-height: 13px;
   height: 13px;
   font-weight: normal;
@@ -156,7 +156,7 @@
   visibility: visible;
 }
 .line .content {
-  font-size: 0.6em;
+  font-size: 1em;
   visibility: hidden;
 }
 .notepad [type="checkbox"]:not(:checked),

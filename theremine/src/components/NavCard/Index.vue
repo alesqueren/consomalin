@@ -28,6 +28,10 @@
           :to='{ name: "basket" }')
         div.next.input-group-addon.nav-btn.prefered
           span Voir le panier
+      div.next.input-group-addon.nav-btn(
+        v-else="!hasChoosenProduct && hasCurrentWish",
+        @click="erase")
+        span Je n'en veux plus
 
     div(v-if="routeName === 'basket'")
       //- tous les wishs ne sont pas encore matchés
@@ -97,6 +101,14 @@ export default {
     nextProduct() {
       this.$store.dispatch('sectionWishes/next');
     },
+    erase() {
+      const currentWish = this.$store.getters['sectionWishes/getCurrent'];
+      const wid = currentWish.id;
+      const selected = false;
+      this.$store.dispatch('selection/selectWish', { wid, selected }).then(() => {
+        this.nextProduct();
+      });
+    },
   },
   components: { Basket },
 };
@@ -105,8 +117,8 @@ export default {
 <style scoped>
 .root{
   position: fixed;
-  top: 65px;
-  right: 15px;
-  width: 349px;
+  top: 55px;
+  right: 3px;
+  width: 320px;
 }
 </style>

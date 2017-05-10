@@ -30,11 +30,17 @@ export default {
 #list{
   text-align: left;
   background-color: white;
-  padding: 15px;
+  padding: 5px;
   border: 1px solid rgba(0,0,0,0.2);
-  max-height: 77%;
+  max-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  width: 350px;
+  width: 184px;
+  position: absolute;
+  left: -145px;
+  top: 55px;
+}
+#list h2{
+  text-align: center;
 }
 </style>

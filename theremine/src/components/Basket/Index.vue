@@ -1,6 +1,6 @@
 <template lang="pug">
   div#basket
-    h2 Mon panier
+    h2 Résumé du panier en cours
     div.groups
       Group(v-for="gid in selectedGroups" 
         v-bind:gid="gid"
@@ -39,14 +39,15 @@ export default {
   height: auto;
   font: 14px;
   clear: both;
+  padding: 45px;
 }
 #basket:after {
-    content:"";
-    clear:both;
-    display:block;
+  content:"";
+  clear:both;
+  display:block;
 }
 #basket h2 {
-  text-align: center;
+  text-align: left;
 }
 button{
   cursor: pointer;

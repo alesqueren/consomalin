@@ -120,8 +120,8 @@ export default {
 .product-item {
   background-color: var(--white);
   border: 1px solid rgba(0,0,0,.125);
-  width:162px;
-  height:285px;
+  width:140px;
+  height:267px;
   padding: 5px 5px 0 5px;
   float: left;
   margin: 5px;
@@ -155,8 +155,8 @@ export default {
   text-align: center;
 }
 .product-img {
-  width:150px;
-  height:150px;
+  width:133px;
+  height:133px;
 }
 .product-name {
   line-height: 20px;
@@ -171,7 +171,7 @@ export default {
 .btns-atb {
   position: absolute;
   right: 0px;
-  width: 78px;
+  width: 65px;
 }
 .price {
   font-size: 1.2em;

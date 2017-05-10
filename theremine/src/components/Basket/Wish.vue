@@ -1,23 +1,24 @@
 <template lang="pug">
   div.wish(
     @click='select()')
+    input(type="checkbox", checked,
+          @click.prevent.stop='erase()')
     span.wish-name
-      span {{ wish.name }}&nbsp;
+      span &nbsp;&nbsp;{{ wish.name }}&nbsp;
       span.details(v-if="detailProduct") ({{ detailProduct }} / {{ productIds.length }})
-    div.wish-erase(
-      @click.prevent.stop='erase()')
-      span.btnText Décocher&nbsp;
-      span.icon.eraseOff.fa.fa-check-square-o.fa-xs
-      span.icon.eraseOn.fa.fa-square-o.fa-xs
+    //- div.wish-erase(
+    //-   @click.prevent.stop='erase()')
+    //-   span.btnText Décocher&nbsp;
+    //-   span.icon.eraseOff.fa.fa-check-square-o.fa-xs
+    //-   span.icon.eraseOn.fa.fa-square-o.fa-xs
     span.badge.badge-info.indicator(v-if="badgeLabel && !hoverErase", ref="badge") {{badgeLabel}}
-    div.wish-name(v-if="displayGroup")
-      span {{ group.name }}&nbsp;
+    div.wishgroup-name(v-if="displayGroup")
+      span ({{ group.name }})&nbsp;
     Product(v-for="pid in displayProductIds"
       v-bind:pid="pid",
       v-bind:wid="wid",
       v-bind:key="pid")
-    div(v-if='displayProductIds.length === 0 && fillerMessage')
-      span {{ fillerMessage }}
+    div(v-if='displayProductIds.length === 0 && fillerMessage') {{ fillerMessage }}
     div.emptyBox(v-if='productIds.length === 0 && !fillerMessage')
     span.no-product.fa.fa-hand-pointer-o(v-if="displayNoProduct") &nbsp;Choisir un produit
 </template>
@@ -89,8 +90,7 @@ export default {
   position: relative;
   float: left;
   height: auto;
-  min-width: 320px;
-  width: 320px;
+  width: 255px;
   padding: 5px;
   /*background-color: color(--white);*/
   background-color: white;
@@ -98,10 +98,16 @@ export default {
   border-radius: 2px;
 }
 .emptyBox {
-  height: 100px;
+  height: 82px;
 }
 .wish-name{
   font-size: 1.5em;
+  font-weight: bold;
+  font-family: learningCurve;
+  text-transform: capitalize;
+}
+.wishgroup-name{
+  font-size: 1em;
   font-weight: bold;
   font-family: learningCurve;
   text-transform: capitalize;

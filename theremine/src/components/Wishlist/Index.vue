@@ -5,25 +5,24 @@
       div.content
           Groups.groups
           ActiveGroup.activegroup
-      List.rightSide
 </template>
 
 <script>
 import Groups from './Groups';
 import ActiveGroup from './ActiveGroup';
-import List from '../List/Index';
 
 export default {
-  components: { Groups, ActiveGroup, List },
+  components: { Groups, ActiveGroup },
 };
 </script>
 
 <style scoped>
 #wishlist {
   font-size: 14px;
+  padding: 45px;
 }
 #wishlist h2 {
-  text-align: center;
+  text-align: left;
 }
 #wishlist .content {
   width: 100%;
@@ -45,7 +44,7 @@ export default {
 }
 .rightSide{
   position: fixed;
-  top: 214px;
-  right: 16px;
+  top: 250px;
+  right: 45px;
 }
 </style>
