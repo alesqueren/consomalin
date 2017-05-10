@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import router from '../../router';
 import Wish from './Wish';
 
 export default {
