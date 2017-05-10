@@ -19,7 +19,7 @@ import           Database.MongoDB
 import           Text.PrettyPrint.Leijen.Text
 
 import           Drive.Types
-import           Drive.Mongo
+import           Drive.Bs.Mongo
 import           Data.Aeson 
 import           GHC.Generics (Generic)
 

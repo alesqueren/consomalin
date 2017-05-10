@@ -4,7 +4,7 @@ module Drive.Transaction (Transaction(..), TStatus(..), findTransaction, changeS
 
 import           Protolude hiding (Product, product)
 import           Database.MongoDB
-import           Drive.Mongo
+import           Drive.Bs.Mongo
 
 data TStatus = Transferring | Done
   deriving (Typeable, Show, Eq, Generic)

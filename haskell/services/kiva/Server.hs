@@ -1,4 +1,4 @@
-module Drive.Server (startSrv) where
+module Server (startSrv) where
 
 import Prelude (read)
 import Protolude hiding (get)

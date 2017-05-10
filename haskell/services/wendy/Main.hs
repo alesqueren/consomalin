@@ -1,7 +1,7 @@
 module Main where
 
 import           Protolude
-import           Drive.Rabbitmq
+import           Drive.Bs.Rabbitmq
 import           Drive.Transaction
 import           Drive.Crawl.Auchan
 

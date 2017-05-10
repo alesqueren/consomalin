@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Drive.Rabbitmq (RabbitmqResource(..), TransactionMessage(..), listen) where
+module Drive.Bs.Rabbitmq (RabbitmqResource(..), TransactionMessage(..), listen) where
 
 import           Protolude hiding (msg)
 import           Network.AMQP

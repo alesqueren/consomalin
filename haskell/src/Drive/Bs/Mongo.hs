@@ -1,4 +1,4 @@
-module Drive.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doModify, doAggregate) where
+module Drive.Bs.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doModify, doAggregate) where
 
 import           Protolude                    hiding (Product, (<>), find, sort, Selector)
 import           Database.MongoDB

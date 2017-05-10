@@ -4,7 +4,7 @@ module Drive.Attendance (Attendance(..), findAttendance, getAttendance) where
 
 import           Protolude
 
-import           Drive.Mongo
+import           Drive.Bs.Mongo
 import           Database.MongoDB
 import qualified Data.Text       as T
 

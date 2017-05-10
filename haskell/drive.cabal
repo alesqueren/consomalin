@@ -24,12 +24,11 @@ library
                        Drive.Attendance
                        Drive.Product
                        Drive.Transaction
-                       Drive.Mongo
-                       Drive.Rabbitmq
+                       Drive.Bs.Mongo
+                       Drive.Bs.Rabbitmq
                        Drive.Utils
                        Drive.Re
                        Drive.Types
-                       Drive.Server
   ghc-options:         -W -Wall
   build-depends:       base >= 4.7 && < 5
                      , protolude
@@ -53,15 +52,12 @@ library
                      , network-uri
                      , regex-tdfa
                      , scalpel-core
-                     , scotty
                      , tagsoup
                      , text
                      , time
                      , transformers
                      , unordered-containers
                      , wl-pprint-text
-                     , wai
-                     , warp
                      , amqp
                      , containers
                      , cgi
@@ -69,7 +65,7 @@ library
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
 executable byte-diver
-  hs-source-dirs:      byte-diver
+  hs-source-dirs:      services/byte-diver
   main-is:             Main.hs
   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
@@ -84,18 +80,22 @@ executable byte-diver
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
 executable kiva
-  hs-source-dirs:      kiva
+  hs-source-dirs:      services/kiva
   main-is:             Main.hs
   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , protolude
                      , drive
                      , attoparsec
+                     , warp
+                     , aeson
+                     , text
+                     , scotty
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
 executable wendy
-  hs-source-dirs:      wendy
+  hs-source-dirs:      services/wendy
   main-is:             Main.hs
   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
@@ -105,7 +105,7 @@ executable wendy
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
 executable metronome
-  hs-source-dirs:      metronome
+  hs-source-dirs:      services/metronome
   main-is:             Main.hs
   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base

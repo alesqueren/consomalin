@@ -1,7 +1,7 @@
 module Main where
 
 import           Protolude
-import           Drive.Server
+import           Server
 import           Drive.Utils
 import           Data.Attoparsec.Text
 
