@@ -1,24 +1,29 @@
 const router = require('express').Router();
-const mid = require('../middlewares');
 const history = require('../bs/history');
+
+function parseSid(sid) {
+  return decodeURI(sid)
+    .split('%')
+    .join('_')
+    .split('/')
+    .join('_')
+    .split('.')
+    .join('_');
+}
 
 // TODO: * doesn't work for multiple words
 router.get('/sessions/:sid',
   (req, res) => {
-    history.sendGet(req.params.sid).then((response) => {
+    const sid = parseSid(req.params.sid);
+    history.sendGet(sid).then((response) => {
       res.json(response);
     });
   },
 );
 
 router.post('/:history_uri*',
-  mid.isAuthenticated,
   (req, res) => {
-    const sid = req.headers.cookie.substring(14)
-      .split('/')
-      .join('_')
-      .split('.')
-      .join('_');
+    const sid = parseSid(req.headers.cookie.substring(14));
     history.sendPost(req.params.history_uri, sid, req.body).then((response) => {
       res.json(response);
     });

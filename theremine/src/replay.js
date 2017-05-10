@@ -4,13 +4,13 @@ import resources from './resources';
 let buffer = [];
 let history = null;
 let historyIndex = 0;
-const syncInterval = 2000;
+const syncInterval = 1000;
 
 function flush() {
   if (buffer.length > 0) {
-    const unsavedMutations = buffer;
+    const lastUnsavedMutation = buffer[buffer.length - 1];
     buffer = [];
-    resources.watcher.add(unsavedMutations);
+    resources.watcher.add(lastUnsavedMutation);
   }
 }
 
