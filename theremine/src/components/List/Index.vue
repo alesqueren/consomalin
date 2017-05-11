@@ -37,8 +37,8 @@ export default {
   overflow-x: hidden;
   width: 184px;
   position: absolute;
-  left: -145px;
-  top: 55px;
+  left: -150px;
+  top: 50px;
 }
 #list h2{
   text-align: center;
