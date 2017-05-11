@@ -3,7 +3,6 @@ module Drive.Crawl.Auchan.Home (fetchCategoryUrls) where
 import           Protolude       hiding (Selector)
 import qualified Data.Text       as T
 import           Drive.Crawl
-import           Drive.Utils
 
 data CategoryNotFoundException = CategoryNotFoundException deriving (Show, Typeable)
 instance Exception CategoryNotFoundException
@@ -20,6 +19,7 @@ categoryLink _ = do
 entryCategories :: Scraper Text [TextURI]
 entryCategories = chroots categoryDivSel (categoryLink anySelector)
 
+-- TODO: use real url (in and out)
 fetchCategoryUrls :: Text -> Crawl [Text]
 fetchCategoryUrls url = do
   tags <- getPage url

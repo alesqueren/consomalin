@@ -1,8 +1,8 @@
 module Drive.Crawl.Account (Account(..), makeAccount) where
 
-import Protolude
-import Drive.Utils
+import           Protolude
 import qualified Data.Attoparsec.Text as A
+import           Utils.Env
 
 data Account = Account 
   { driveUser :: Text

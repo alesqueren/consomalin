@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
 
-module Drive.Crawl.Auchan (auchanCrawl, makeTransaction, makeSchedule) where
+module Drive.Crawl.Auchan (crawl, makeTransaction, fetchSchedule) where
 
 import           Protolude           hiding (Product)
 
@@ -11,6 +11,7 @@ import           Drive.Crawl hiding (html)
 import           Drive.Crawl.Auchan.ShopChoice
 import           Drive.Crawl.Auchan.Home
 import           Drive.Crawl.Auchan.Category
+import           Drive.Crawl.Auchan.Product
 import           Drive.Crawl.Auchan.Merchandising
 import           Drive.Crawl.Auchan.Schedule
 
@@ -21,53 +22,54 @@ import           Drive.Transaction
 import           Drive.Crawl.Auchan.Actions
 import           Drive.Crawl.Account
 
-data CrawlElement = ShopChoicePage
-                  | HomePage TextURI
-                  | CategoryPage TextURI
-                  | AuchanDataPage AuchanData
-                  | ProductPage Product
-                  deriving (Show, Typeable)
+data Node = ShopChoicePage
+            | HomePage TextURI
+            | CategoryPage TextURI
+            | AuchanDataPage SiteProduct
+            | ProductPage Product
+            deriving (Show, Typeable)
 
-crawl :: CrawlElement -> Crawl [CrawlElement]
-crawl ShopChoicePage =
+crawlNode :: Node -> Crawl [Node]
+crawlNode ShopChoicePage =
   do
     $(logDebug) "[ShopChoicePage]"
     return [HomePage "Toulouse-954"]
 
-crawl (HomePage shopName) =
+crawlNode (HomePage shopName) =
   do
     $(logDebug) $ "[HomePage] " <> shopName
     shopUrl <- chooseDrive shopName
     catUrls <- fetchCategoryUrls shopUrl
     return $ map CategoryPage catUrls
 
-crawl (CategoryPage url) =
+crawlNode (CategoryPage url) =
   do
     $(logDebug) $ "[CategoryPage] " <> url
     pds <- fetchAuchanData url
     return $ map AuchanDataPage pds
 
-crawl (AuchanDataPage hot) =
+crawlNode (AuchanDataPage sitePd) =
   do
-    $(logDebug) $ "[AuchanDataPage] " <> show hot
-    pd <- fetchProductAuchanData hot
+    $(logDebug) $ "[AuchanDataPage] " <> show sitePd
+    apiPd <- fetchProductAuchanData $ siteId sitePd
+    let pd = makeProduct sitePd apiPd
     return [ProductPage pd]
 
-crawl _ = return []
+crawlNode _ = return []
 
-crawlC :: (MonadFree CrawlF cr) => [CrawlElement] -> ConduitM () Product cr ()
-crawlC [] = return ()
-crawlC (x:xs) =
+crawlTree :: (MonadFree CrawlF cr) => [Node] -> ConduitM () Product cr ()
+crawlTree [] = return ()
+crawlTree (x:xs) =
   case x of
     (ProductPage pd) -> do
       yield pd
-      crawlC xs
+      crawlTree xs
     _ -> do
-      new <- lift . fromF $ crawl x
-      crawlC $ new ++ xs
+      new <- lift . fromF $ crawlNode x
+      crawlTree $ new ++ xs
 
-auchanCrawl :: (MonadFree CrawlF cr) => ConduitM () Product cr ()
-auchanCrawl = crawlC [ShopChoicePage]
+crawl :: (MonadFree CrawlF cr) => ConduitM () Product cr ()
+crawl = crawlTree [ShopChoicePage]
 
 makeTransaction :: Transaction -> IO ()
 makeTransaction t = do
@@ -76,8 +78,8 @@ makeTransaction t = do
   runNetCrawl man $ runConduit (doTransaction acc t)
   return ()
 
-makeSchedule :: IO [SlotInfo]
-makeSchedule = do
+fetchSchedule :: IO [SlotInfo]
+fetchSchedule = do
   acc <- makeAccount
   man <- newManager tlsManagerSettings
   runNetCrawl man $ runConduit (doSchedule acc)

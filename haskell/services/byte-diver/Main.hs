@@ -19,7 +19,7 @@ productsInsert = evalStateLC Set.empty (awaitForever ins) where
     seenIds <- lift get
     let dedup = filter (not . wasSeen seenIds) pds
     lift $ forM_ dedup (modify . Set.insert . pid)
-    liftIO $ insertProducts dedup
+    liftIO $ mongoInsert dedup
       where
         wasSeen s p = Set.member (pid p) s
 
@@ -27,6 +27,6 @@ main :: IO ()
 main = do
   man <- newManager tlsManagerSettings
   runNetCrawl man $ runConduit $
-    auchanCrawl
+    crawl
     .| chunksOf 50
     .| productsInsert

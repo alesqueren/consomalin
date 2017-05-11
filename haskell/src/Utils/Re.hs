@@ -1,5 +1,5 @@
-module Drive.Re
-  ( module Drive.Re
+module Utils.Re
+  ( module Utils.Re
   , Regex
   ) where
 

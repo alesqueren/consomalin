@@ -8,7 +8,6 @@ import           Protolude       hiding (Selector, inits)
 import           Prelude                    (String)
 import           Drive.Crawl
 import           Drive.Attendance
-import           Drive.Utils
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Text       as T
 import           Data.Aeson
@@ -22,6 +21,7 @@ data SlotStatus = Past | Available | Busy
   deriving (Show, Generic)
 instance ToJSON SlotStatus
 
+-- TODO: mv to Drive level
 data Slot = Slot 
   { id :: Maybe Text
   , day :: Day
@@ -56,7 +56,7 @@ skipSunday currDay n =
 
 makeSlot :: Attendance -> Day -> SlotInfo -> Slot
 makeSlot att currDay si =
-  Slot (sId si) d t (sStatus si) (getAttendance d t att)
+  Slot (sId si) d t (sStatus si) (mongoGet d t att)
     where 
       t = sTime si
       d = skipSunday currDay (sDayFromNow si)

@@ -1,17 +1,16 @@
 {-# LANGUAGE FlexibleContexts    #-}
 
-module Drive.Attendance (Attendance(..), findAttendance, getAttendance) where
+module Drive.Attendance (Attendance(..), mongoFind, mongoGet) where
 
 import           Protolude
+import           Database.MongoDB
+import           Network.CGI.Protocol
+import           Data.Time
+import           Data.Time.Calendar.WeekDate
+import qualified Data.Text       as T
+import qualified Data.Map.Strict as M
 
 import           Drive.Bs.Mongo
-import           Database.MongoDB
-import qualified Data.Text       as T
-
-import qualified Data.Map.Strict as M
-import Data.Time
-import Data.Time.Calendar.WeekDate
-import Network.CGI.Protocol
 
 newtype Attendance = Attendance (Map Int (Map TimeOfDay Float))
   deriving (Typeable, Show, Eq)
@@ -33,13 +32,11 @@ instance Val Attendance where
           return (l, v)
   cast' _ = Nothing
 
+mongoFind :: Text -> IO Attendance
+mongoFind s = doSelectOne AttendanceResource ["_id" =: s]
 
-findAttendance :: Text -> IO Attendance
-findAttendance s = 
-  doSelectOne AttendanceResource ["_id" =: s]
-
-getAttendance :: Day -> TimeOfDay -> Attendance -> Maybe Float
-getAttendance d t (Attendance m) = do
+mongoGet :: Day -> TimeOfDay -> Attendance -> Maybe Float
+mongoGet d t (Attendance m) = do
   day <- M.lookup dayOfWeek m
   let a = M.mapWithKey (\k v -> (abs (timeOfDayToTime k - timeOfDayToTime t), v)) day
   let (_,res) = minimumBy (\(k1,_) (k2,_) -> compare k1 k2) a

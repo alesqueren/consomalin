@@ -4,7 +4,7 @@ module Drive.Bs.Rabbitmq (RabbitmqResource(..), TransactionMessage(..), listen) 
 
 import           Protolude hiding (msg)
 import           Network.AMQP
-import           Drive.Utils
+import           Utils.Env
 import qualified Data.Attoparsec.Text as A
 import qualified Data.Text as T
 import           Data.Aeson

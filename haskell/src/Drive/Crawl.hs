@@ -23,7 +23,7 @@ import           Control.Monad.Logger    as X
 import qualified Data.Text               as T
 import qualified Data.Text.Encoding      as T
 import qualified Data.Text.Lazy.Encoding as LT
-import           Drive.Utils
+import           Utils.Misc              as X
 import           Drive.Types             as X
 import           Text.HTML.TagSoup
 import           System.Log.FastLogger
@@ -76,6 +76,7 @@ computeURI (Just baseUri) tUri = do
     then nu
     else nu `relativeTo` baseUri
 
+-- TODO: use real url type
 -- |Navigate from an URI (absolute or relative to the current page)
 goURI :: TextURI -> Crawl ()
 goURI u = do

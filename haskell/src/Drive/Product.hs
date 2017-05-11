@@ -1,74 +1,18 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE RecordWildCards #-}
-
 module Drive.Product (Product(..)
-                     , ProductSummary(..)
-                     , Price
-                     , toPrice, fromPrice
                      , summarize 
-                     , insertProducts 
-                     , findProducts 
-                     , searchProducts 
+                     , mongoInsert 
+                     , mongoFind
+                     , mongoSearch 
                      ) where
 
-import           Numeric
-import           Protolude                    hiding (Product, (<>), find, sort)
-
+import           Protolude                    hiding (Product, (<>))
 import           Database.MongoDB
 import           Text.PrettyPrint.Leijen.Text
-
-import           Drive.Types
-import           Drive.Bs.Mongo
 import           Data.Aeson 
-import           GHC.Generics (Generic)
-
--- | Price are stored in nanocents
-moneyScale :: Rational
-moneyScale = 100000000000
-
-newtype Price = Price { nanoCents :: Int64 } deriving (Typeable, Show, Eq, Num, Ord, Generic)
-
--- | Make a price from a fractional number
-toPrice :: RealFrac a => a -> Price
-toPrice v = Price $ round (toRational v * moneyScale)
-
-fromPrice :: RealFrac a => Price -> a
-fromPrice p = fromRational $ toRational (nanoCents p) / moneyScale
-
--- Pretty print
-instance Pretty Price where
-  pretty p = text $ toSL $ showFFloat (Just 2) (fromPrice p :: Double) ""
-
--- Used to convert to/from a MongoDB value
-instance Val Price where
-  val   (Price c) = val c
-  cast' (Int64 c) = Just $ Price c
-  cast' _         = Nothing
-
-data ProductSummary = ProductSummary
-  { psId              :: !Text
-  , psName            :: !Text
-  , psPrice           :: !Price
-  , psImageUrl        :: !TextURI
-  , psPriceByQuantity :: !Price
-  , psQuantity        :: Maybe Int64
-  , psQuantityUnit    :: Maybe Text
-  }
-  deriving (Typeable, Eq, Show, Generic)
-
-instance FromJSON Price
-instance ToJSON Price where
-  toJSON = Number . fromPrice
-instance FromJSON ProductSummary
-instance ToJSON ProductSummary where
-  toJSON ProductSummary{..} = 
-    object [ "name"            .= psName
-           , "imageUrl"        .= psImageUrl
-           , "price"           .= psPrice
-           , "priceByQuantity" .= psPriceByQuantity
-           , "quantityUnit"    .= psQuantityUnit
-           ]
+import           Drive.Types
+import           Drive.Price
+import qualified Drive.ViewProduct as V
+import           Drive.Bs.Mongo
 
 data Product = Product
   { pid             :: !Text
@@ -94,6 +38,8 @@ instance Pretty Product where
                              , pretty $ priceByQuantity p
                              ]
 
+-- Mongo
+
 instance Val Product where
   val p = val [ "_id" =: pid p
               , "price" =: val (price p)
@@ -108,44 +54,43 @@ instance Val Product where
               , "benefits" =: benefits p
               , "composition" =: composition p
               ]
+  -- TODO: improve
   cast' (Doc doc) = do
-    id <- lookup "_id" doc :: Maybe Text
-    price <- lookup "price" doc :: Maybe Price
-    priceByQuantity <- lookup "priceByQuantity" doc :: Maybe Price
-    name <- lookup "name" doc :: Maybe Text
-    nameShort <- lookup "nameShort" doc :: Maybe Text
-    nameLong <- lookup "nameLong" doc :: Maybe Text
-    imageUrl <- lookup "imageUrl" doc :: Maybe TextURI
-    let quantity = lookup "quantity" doc :: Maybe Int64
-    let quantityUnit = lookup "quantityUnit" doc :: Maybe Text
-    let description = lookup "description" doc :: Maybe Text
-    let benefits = lookup "benefits" doc :: Maybe Text
-    let composition = lookup "composition" doc :: Maybe Text
+    id <- lookup "_id" doc
+    price <- lookup "price" doc
+    priceByQuantity <- lookup "priceByQuantity" doc
+    name <- lookup "name" doc
+    nameShort <- lookup "nameShort" doc
+    nameLong <- lookup "nameLong" doc
+    imageUrl <- lookup "imageUrl" doc
+    let quantity = lookup "quantity" doc
+    let quantityUnit = lookup "quantityUnit" doc
+    let description = lookup "description" doc
+    let benefits = lookup "benefits" doc
+    let composition = lookup "composition" doc
     return $ Product id price priceByQuantity name nameShort nameLong imageUrl quantity quantityUnit description benefits composition
   cast' _ = Nothing
 
-summarize :: Product -> ProductSummary
-summarize p =
-  ProductSummary {
-    psId              = pid p
-  , psName            = name p
-  , psPrice           = price p
-  , psImageUrl        = imageUrl p
-  , psPriceByQuantity = priceByQuantity p
-  , psQuantity        = quantity p
-  , psQuantityUnit    = quantityUnit p
-  }
+mongoInsert :: [Product] -> IO ()
+mongoInsert = doInsert ProductResource
 
-
--- Mongo
-
-insertProducts :: [Product] -> IO ()
-insertProducts = doInsert ProductResource
-
-findProducts :: [Text] -> IO [Product]
-findProducts pids =
+mongoFind :: [Text] -> IO [Product]
+mongoFind pids =
   doSelect ProductResource (select ["_id" =: ["$in" =: pids]])
 
-searchProducts :: Text -> IO [Product]
-searchProducts s = 
+mongoSearch :: Text -> IO [Product]
+mongoSearch s = 
   doSelect ProductResource (select ["$text" =: ["$search" =: s]])
+
+
+summarize :: Product -> V.ViewProduct
+summarize p =
+  V.ViewProduct {
+    V.id              = pid p
+  , V.name            = name p
+  , V.price           = price p
+  , V.imageUrl        = imageUrl p
+  , V.priceByQuantity = priceByQuantity p
+  , V.quantity        = quantity p
+  , V.quantityUnit    = quantityUnit p
+  }

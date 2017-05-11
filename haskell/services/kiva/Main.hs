@@ -2,7 +2,7 @@ module Main where
 
 import           Protolude
 import           Server
-import           Drive.Utils
+import           Utils.Env
 import           Data.Attoparsec.Text
 
 main :: IO ()

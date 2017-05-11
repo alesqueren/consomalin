@@ -3,8 +3,7 @@ module Drive.Crawl.Auchan.ShopChoice (chooseDrive) where
 import           Protolude       hiding (Selector)
 import qualified Data.Text       as T
 import           Drive.Crawl
-import           Drive.Re
-import           Drive.Utils
+import           Utils.Re
 
 type ShopName = Text
 

@@ -10,7 +10,8 @@ import GHC.Exts
 import Control.Arrow
 import Data.Aeson hiding (json)
 
-import Drive.Product
+import Drive.Product as P
+import Drive.ViewProduct as V
 import qualified Data.Text as T
 
 
@@ -20,9 +21,9 @@ startSrv port = do
   scotty port $ do
     get "/search" $ do
       search <- param "s"
-      pds <- liftIO $ searchProducts search
-      json $ Object $ fromList $ map ((psId &&& toJSON) . summarize) pds
+      pds <- liftIO $ P.mongoSearch search
+      json $ Object $ fromList $ map ((V.id &&& toJSON) . P.summarize) pds
     get "/details" $ do
       pids <- param "pids" :: ActionM Text
-      pds <- liftIO $ findProducts $ read $ T.unpack pids
-      json $ Object $ fromList $ map ((psId &&& toJSON) . summarize) pds
+      pds <- liftIO $ P.mongoFind $ read $ T.unpack pids
+      json $ Object $ fromList $ map ((V.id &&& toJSON) . P.summarize) pds

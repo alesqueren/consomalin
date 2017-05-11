@@ -1,4 +1,4 @@
-module Drive.Utils (module Drive.Utils) where
+module Utils.Misc (module Utils.Misc) where
 
 import           Protolude
 import           Control.Monad.Catch

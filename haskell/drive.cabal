@@ -1,34 +1,37 @@
 name:                drive
 version:             0.1.0.0
 synopsis:            Scraper for drive sites
-description:         Please see README.md
 license:             AllRightsReserved
 author:              Drive
 copyright:           2017 Drive
 category:            Web
 build-type:          Simple
-extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Drive.Crawl
-                       Drive.Crawl.Auchan
-                       Drive.Crawl.Auchan.ShopChoice
-                       Drive.Crawl.Auchan.Home
-                       Drive.Crawl.Auchan.Category
-                       Drive.Crawl.Auchan.Merchandising
-                       Drive.Crawl.Auchan.Schedule
-                       Drive.Crawl.Auchan.Actions
-                       Drive.Crawl.Account
-                       Drive.Attendance
+  exposed-modules:     Utils.Env
+                       Utils.Re
+                       Utils.Misc
+                       Drive.Types
+                       Drive.Price
                        Drive.Product
+                       Drive.Attendance
+                       Drive.ViewProduct
                        Drive.Transaction
+                       Drive.Transaction.Status
                        Drive.Bs.Mongo
                        Drive.Bs.Rabbitmq
-                       Drive.Utils
-                       Drive.Re
-                       Drive.Types
+                       Drive.Crawl
+                       Drive.Crawl.Account
+                       Drive.Crawl.Auchan
+                       Drive.Crawl.Auchan.Home
+                       Drive.Crawl.Auchan.Actions
+                       Drive.Crawl.Auchan.Product
+                       Drive.Crawl.Auchan.Category
+                       Drive.Crawl.Auchan.Schedule
+                       Drive.Crawl.Auchan.ShopChoice
+                       Drive.Crawl.Auchan.Merchandising
   ghc-options:         -W -Wall
   build-depends:       base >= 4.7 && < 5
                      , protolude
@@ -83,6 +86,7 @@ executable kiva
   hs-source-dirs:      services/kiva
   main-is:             Main.hs
   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  other-modules:       Server
   build-depends:       base
                      , protolude
                      , drive

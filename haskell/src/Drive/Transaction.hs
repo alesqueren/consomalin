@@ -1,33 +1,20 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Drive.Transaction (Transaction(..), TStatus(..), findTransaction, changeStatus) where
+module Drive.Transaction (Transaction(..)
+                         , module Drive.Transaction.Status
+                         , mongoFind
+                         ) where
 
 import           Protolude hiding (Product, product)
 import           Database.MongoDB
+import           Drive.Transaction.Status
 import           Drive.Bs.Mongo
-
-data TStatus = Transferring | Done
-  deriving (Typeable, Show, Eq, Generic)
-
-mongoShow :: TStatus -> Text
-mongoShow Transferring = "transferring"
-mongoShow Done = "done"
--- instance Show TStatus where
---   show Transferring = (show "transferring" :: Text)
---  show Done = "done"
-
-instance Val TStatus where
-  val _ = val ([] :: [Text])
-  cast' (String "transferring") = Just Transferring
-  cast' (String "done") = Just Done
-  cast' _ = Nothing
-
 
 data Transaction = Transaction
   { driveUsername :: !Text
   , drivePassword :: !Text
   , slot :: !Text
-  , status :: TStatus
+  , status :: Status
   , basket :: [(Text, Int64)]
   }
   deriving (Typeable, Show, Eq, Generic)
@@ -40,14 +27,15 @@ extractPd doc = do
   return (pid, qty)
  
 instance Val Transaction where
-  val t = val [ "status" =: status t ] -- todo: finish
+  -- TODO: complete function
+  val t = val [ "status" =: status t ]
 
   cast' (Doc doc) = do
     du <- lookup "_id" doc :: Maybe Text
     p <- lookup "password" doc :: Maybe Text
 
     t <- lookup "transaction" doc
-    s <- lookup "status" t :: Maybe TStatus
+    s <- lookup "status" t :: Maybe Status
 
     sl <- lookup "slot" t
     slId <- lookup "id" sl :: Maybe Text
@@ -59,8 +47,8 @@ instance Val Transaction where
 
   cast' _ = Nothing
 
-findTransaction :: Text -> Text -> IO (Maybe Transaction)
-findTransaction uid tid = do
+mongoFind :: Text -> Text -> IO (Maybe Transaction)
+mongoFind uid tid = do
   ts <- doAggregate UserResource query
   return $ head ts
     where
@@ -69,10 +57,3 @@ findTransaction uid tid = do
               , [ "$match" =: [ "transactions.id" =: tid ] ]
               , [ "$project" =: [ "transaction" =: ("$transactions" :: Text)
                                 , "password" =: ("$password" :: Text) ] ] ]
-
-changeStatus :: Text -> Text -> TStatus -> IO ()
-changeStatus uid tid st =
-  doModify UserResource [(sel, doc, [])]
-    where 
-      sel = [ "_id" =: uid, "transactions.id" =: tid ]
-      doc = [ "$set" =: [ "transactions.$.status" =: mongoShow st] ]

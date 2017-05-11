@@ -1,8 +1,9 @@
-module Utils.Env (module Drive.Env) where
+module Utils.Env (module Utils.Env) where
 
 import           Protolude
 import           System.Environment
 import           Data.Attoparsec.Text
+import qualified Data.Text as T
 
 fromEnv :: Text -> Parser a -> IO (Maybe a)
 fromEnv envVar parser = do

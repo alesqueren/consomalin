@@ -2,6 +2,10 @@
 {-# LANGUAGE TemplateHaskell     #-}
 {-# LANGUAGE DeriveGeneric #-}
 
+-- TODO: change module name
+-- 1 module per page
+--    actions (doVisit ...)
+--    parsing (parse...)
 module Drive.Crawl.Auchan.Actions (doTransaction, doSchedule) where
 
 import           Protolude       hiding (Selector)
@@ -14,6 +18,7 @@ import           Drive.Crawl.Auchan.Schedule
 import           Drive.Crawl.Account
 import           Drive.Transaction
 
+-- Identification page
 connect :: Account -> Crawl ()
 connect acc = do
   $(logDebug) ""
@@ -34,6 +39,7 @@ connect acc = do
                , ("X-Requested-With", "XMLHttpRequest")
                ]
 
+-- Identification page
 addToBasket :: (Text, Int64) -> Crawl ()
 addToBasket (pid, qty) = do
   $(logDebug) ("add2basket: " <> pid <> ", " <> show qty <> " times")
@@ -46,6 +52,7 @@ addToBasket (pid, qty) = do
       headers = [("X-Requested-With", "XMLHttpRequest")]
       httpData = "t%3Azoneid=forceAjax"
 
+-- Basket page
 getBasket :: Crawl ()
 getBasket = do
   $(logDebug) ""
@@ -56,6 +63,7 @@ getBasket = do
     where
       url = "https://www.auchandrive.fr/drive/coffre"
 
+-- Schedule page
 goSchedule :: Crawl ()
 goSchedule = do
   $(logDebug) ""
@@ -66,6 +74,7 @@ goSchedule = do
     where
       url = "https://www.auchandrive.fr/drive/coffre.basketsummary.finalisercoffre"
 
+-- Payment page
 goPayment :: Crawl ()
 goPayment = do
   $(logDebug) ""
@@ -92,7 +101,7 @@ validatePayment = do
       httpData = "t%3Aformdata=H4sIAAAAAAAAAC2NIQ7CQBAADxJA4EBiEDjCVWHAgEM0pKEOt1w37ZL27rK3pe0L%2BAwP4FP8gZKgRkwm8%2FqoUbNR6wQIK7RyrC8oDCS7hqTIGBooPXQ%2FpWtLhqQLrA6Ocw0eTIFawGMQ7rbaOMaSbj0r72xfBH2iLEO7StgZDCGtbxWFQM5en8t5u3iPh2oQq6lxVtiVZ6hQ1Cy%2BwwOiEmwepcJk833rRU3%2B9y%2BC%2FiFRsQAAAA%3D%3D&unicity=0.6927108574186207&t%3Azoneid=zonePaiement"
 
 
-
+-- TODO: mv to Journey.hs (?)
 doTransaction :: (MonadFree CrawlF cr) => Account -> Transaction -> ConduitM () Void cr ()
 doTransaction acc t = do
 
@@ -107,6 +116,7 @@ doTransaction acc t = do
 
   return ()
 
+-- TODO: change function name
 doSchedule :: (MonadFree CrawlF cr) => Account -> ConduitM () Void cr [SlotInfo]
 doSchedule acc = do
   _ <- lift . fromF $ chooseDrive "Toulouse-954"

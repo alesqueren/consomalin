@@ -12,9 +12,9 @@ main = do
 
 processTransactionMessage :: TransactionMessage -> IO ()
 processTransactionMessage (TransactionMessage uid tid) = do
-  mt <- findTransaction uid tid
+  mt <- mongoFind uid tid
   case mt of
     Just t -> do
       makeTransaction t
-      changeStatus uid tid Done
+      mongoSet uid tid Done
     Nothing -> putStrLn ("Error: no transaction found" :: Text)

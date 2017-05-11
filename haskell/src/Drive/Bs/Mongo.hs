@@ -2,7 +2,8 @@ module Drive.Bs.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doMod
 
 import           Protolude                    hiding (Product, (<>), find, sort, Selector)
 import           Database.MongoDB
-import           Drive.Utils
+import           Utils.Env
+import           Utils.Misc
 import qualified Data.Attoparsec.Text as A
 import qualified Data.Text as T
 

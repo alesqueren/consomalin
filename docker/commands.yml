@@ -5,7 +5,7 @@ services:
   byte-diver:
     build:
       context: ./haskell
-      dockerfile: ./byte-diver/Dockerfile
+      dockerfile: ./services/byte-diver/Dockerfile
     networks: [big]
 
 networks:

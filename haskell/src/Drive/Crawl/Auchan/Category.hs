@@ -1,34 +1,19 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Drive.Crawl.Auchan.Category (AuchanData(..), fetchAuchanData) where
+module Drive.Crawl.Auchan.Category (fetchAuchanData) where
 
 import           Protolude                  hiding (Selector)
 import           Prelude                    (String)
-
 import           Data.Aeson
-import qualified Data.ByteString.Lazy.Char8 as BL
-import qualified Data.Text                  as T
-import           Drive.Crawl                hiding (html)
-import           Drive.Product
-import           Drive.Utils
-import           Text.HTML.TagSoup
-
 import           Data.List                  (nubBy)
-import qualified Data.Text.Read             as T
+import qualified Data.Text                  as T
+import qualified Data.ByteString.Lazy.Char8 as BL
+import           Text.HTML.TagSoup
 import           Text.Regex.TDFA
 
-data ProductsNotFoundException = ProductsNotFoundException deriving (Show, Typeable)
-instance Exception ProductsNotFoundException
-
-data AuchanData = AuchanData
-  { adId              :: !Text
-  , adName            :: !Text
-  , adImageUrl        :: !TextURI
-  , adPrice           :: !Price
-  , adPriceByQuantity :: !Price
-  , adQuantityUnit    :: !Text
-  }
-  deriving (Typeable, Show)
+import           Drive.Crawl                hiding (html)
+import           Drive.Price
+import           Drive.Crawl.Auchan.Product
 
 newtype Zone = Zone { itemsList :: Text }
   deriving (Show, Generic)
@@ -48,23 +33,11 @@ getHtmlCategoryPage html = do
   jsonResponse <- decode' $ BL.fromStrict $ encodeUtf8 html
   return $ parseTags $ itemsList $ zones jsonResponse
 
-fetchAuchanDataFromPageNb :: Text -> [Maybe AuchanData]
+fetchAuchanDataFromPageNb :: Text -> [Maybe SiteProduct]
 fetchAuchanDataFromPageNb html =
   maybe [] identity $ scrape entryProducts tags
   where tags = maybe [] identity $ getHtmlCategoryPage html
 
-extractPrice :: Text -> Maybe Price
-extractPrice txt =
-  do
-    priceStr <- head $ getAllTextMatches matches
-    either
-      (const Nothing)
-      (\(r,_) -> return $ toPrice (r :: Double))
-      (T.rational $ T.pack priceStr)
-  where
-    newTxt = T.unpack $ T.replace "," "." txt
-    re = "[0-9]+.[0-9][0-9]" :: String
-    matches = newTxt =~ re :: AllTextMatches [] String
 
 extractId :: Text -> Maybe Text
 extractId txt =
@@ -75,25 +48,26 @@ extractId txt =
     re = "-P([0-9]+)/$" :: String
     matches = T.unpack txt =~ re :: AllTextSubmatches [] String
 
-entryProducts :: Scraper Text [Maybe AuchanData]
+entryProducts :: Scraper Text [Maybe SiteProduct]
 entryProducts = chroots productDivSel (productInfo anySelector)
 
-buildAuchanData :: Text -> Text -> Text -> Text -> Text -> Text -> Maybe AuchanData
+-- TODO: merge with productInfo
+buildAuchanData :: Text -> Text -> Text -> Text -> Text -> Text -> Maybe SiteProduct
 buildAuchanData idTxt priceTxt nameTxt imageTxt priceByQuantityTxt quantityUnitTxt =
   do
     id <- extractId idTxt
-    pr <- extractPrice priceTxt
-    prByQ <- extractPrice priceByQuantityTxt
-    return AuchanData {
-      adId = id,
-      adName = nameTxt,
-      adImageUrl = T.append "http://www.auchandrive.fr" imageTxt,
-      adPrice = pr,
-      adPriceByQuantity = prByQ,
-      adQuantityUnit = quantityUnitTxt
+    pr <- readPrice priceTxt
+    prByQ <- readPrice priceByQuantityTxt
+    return SiteProduct {
+      siteId = id,
+      siteName = nameTxt,
+      siteImageUrl = T.append "http://www.auchandrive.fr" imageTxt,
+      sitePrice = pr,
+      sitePriceByQuantity = prByQ,
+      siteQuantityUnit = quantityUnitTxt
     }
 
-productInfo :: Selector -> Scraper Text (Maybe AuchanData)
+productInfo :: Selector -> Scraper Text (Maybe SiteProduct)
 productInfo _ = do
   idTxt <- attr "href" $ "a" @: [hasClass "seoActionLink"]
   nameTxt <- text $ "p" @: [hasClass "libelle-produit"]
@@ -109,25 +83,16 @@ productDivSel = "div" @: [hasClass "vignette",
                           notP $ hasClass "vignette-indispo"]
              // "div" @: [hasClass "vignette-content"]
 
-parseCategoryPage :: Integer -> Crawl [Maybe AuchanData]
+parseCategoryPage :: Integer -> Crawl [Maybe SiteProduct]
 parseCategoryPage pageNb =
   do
     resp <- postText (getCatUrl pageNb) [("X-Requested-With", "XMLHttpRequest")] ""
     return $ fetchAuchanDataFromPageNb resp
 
-fetchAuchanData :: Text -> Crawl [AuchanData]
+fetchAuchanData :: Text -> Crawl [SiteProduct]
 fetchAuchanData url =
   do
     goURI url
     _ <- getText "" []  -- FIXME: still needed?
     hotByPage <- takeWhileM (not . null) (map parseCategoryPage [1,2..])
-    return $ nubBy (\x y -> adId x == adId y) $ catMaybes $ concat hotByPage
-
--- case head $ getAllTextSubmatches matches of
---   Nothing -> return Nothing
---   Just id -> do
---     priceTxt <- text $ "p" @: [hasClass "prix-produit"]
---     return $ Just AuchanData {
---       adPid = T.init $ T.pack $ drop 2 id, -- not pretty
---       adPrice = extractPrice priceTxt
---     }
+    return $ nubBy (\x y -> siteId x == siteId y) $ catMaybes $ concat hotByPage

@@ -11,7 +11,7 @@ import Network.Wai.Handler.Warp
 import Data.Attoparsec.Text
 import Data.Time
 
-import Drive.Utils
+import Utils.Env
 import Drive.Crawl.Auchan
 import Drive.Crawl.Auchan.Schedule
 import Drive.Attendance
@@ -39,9 +39,9 @@ slotController :: ActionM ()
 slotController = do
   now <- liftIO getCurrentTime
 
-  att <- liftIO $ findAttendance "balma"
+  att <- liftIO $ mongoFind "balma"
 
-  si <- liftIO makeSchedule
+  si <- liftIO fetchSchedule
   let s = map (makeSlot att $ utctDay now) si
 
   if null s

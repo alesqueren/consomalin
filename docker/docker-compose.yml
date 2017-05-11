@@ -28,13 +28,13 @@ services:
   kiva:
     build: 
       context: ./haskell
-      dockerfile: ./kiva/Dockerfile
+      dockerfile: ./kiva/services/Dockerfile
     networks: [big]
 
   wendy:
     build:
       context: ./haskell
-      dockerfile: ./wendy/Dockerfile
+      dockerfile: ./wendy/services/Dockerfile
     environment:
       - DRIVE_USER=goto.devnull@mailoo.org
       - DRIVE_PASS=TTOjKLoXg1!
@@ -50,7 +50,7 @@ services:
   metronome:
     build:
       context: ./haskell
-      dockerfile: ./metronome/Dockerfile
+      dockerfile: ./metronome/services/Dockerfile
     environment:
       - DRIVE_USER=bitcoin.miner@mailoo.org
       - DRIVE_PASS=hDDqSUGmY3!
