@@ -203,8 +203,8 @@ input[type=number]::-webkit-inner-spin-button {
   position: absolute;
   font-size: 13px;
   top: 0px;
-  right: 13px;
-  width: 76px;
+  right: 4px;
+  width: 75px;
   line-height: 27px;
   height: 27px;
   border-radius: 2px;

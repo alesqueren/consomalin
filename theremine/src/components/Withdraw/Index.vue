@@ -10,10 +10,6 @@ div#slots
           v-bind:day="day" 
           v-bind:key="day"
           style="min-width:150px;")
-  a(href='/basket')
-    button.btn.btn-primary.left(type="button") Revenir au panier
-  a(href='#' @click="confirmSlot")
-    button.btn.btn-success.right(type="button" v-bind:disabled="!selectedSlot") {{ confirmationMessage }}
 </template>
 
 <script>
@@ -24,25 +20,10 @@ export default {
     days() {
       return this.$store.state.schedule.days;
     },
-    selectedSlot() {
-      return this.$store.state.singleton.selectedSlot;
-    },
     isScheduleDataValid() {
       // TODO: check expiration > now()
       //       fetch schedule if data is expired
       return this.$store.state.schedule.expiration;
-    },
-    confirmationMessage() {
-      if (this.selectedSlot) {
-        const time = new Date(this.selectedSlot.dateTime);
-        const day = (time.getDay() < 10) ? ('0' + time.getDay()) : time.getDay();
-        const month = (time.getMonth() + 1 < 10) ? ('0' + (time.getMonth() + 1)) : time.getMonth() + 1;
-        const minute = (time.getMinutes() < 10) ? ('0' + time.getMinutes()) : time.getMinutes();
-        const hour = (time.getHours() < 10) ? ('0' + time.getHours()) : time.getHours();
-        const frenchTime = hour + 'h' + minute + ' le ' + day + '/' + month;
-        return 'Valider ma commande pour ' + frenchTime;
-      }
-      return 'Valider ma commande';
     },
   },
   mounted() {

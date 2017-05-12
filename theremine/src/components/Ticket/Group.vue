@@ -1,11 +1,10 @@
 <template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
-    .group(@click.stop="setActivation")
-      .line.groupName {{ name }}
-      Wish(v-for="wid in selectedWishes" 
-        v-bind:wid="wid" 
-        v-bind:gid="gid" 
-        v-bind:key="wid")
+    h2 {{ name }}
+    Wish(v-for="wid in selectedWishes" 
+      v-bind:wid="wid" 
+      v-bind:gid="gid" 
+      v-bind:key="wid")
 </template>
 
 <script>
@@ -27,10 +26,6 @@ export default {
     },
   },
   methods: {
-    setActivation() {
-      this.$store.dispatch('singleton/set', { activeGroupId: this.gid });
-      // router.push({ name: 'wishlist' });
-    },
   },
   components: { Wish },
 };

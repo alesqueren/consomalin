@@ -56,3 +56,10 @@ a:hover {
 .nav-btn.prefered:hover {
   background-color: var(--color3-3);
 }
+/*LIST*/
+#list .line{
+  font-family: learningCurve;
+  height: 30px;
+  line-height: 40px;
+  font-size: 1.5em;
+}

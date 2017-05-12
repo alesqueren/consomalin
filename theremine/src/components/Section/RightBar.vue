@@ -9,7 +9,7 @@
     Wish(
       v-else,
       v-bind:wid="currentWish.id",
-      v-bind:badgeLabel="\"Produit choisis\"",
+      v-bind:badgeLabel="\"Choix en cours\"",
       v-bind:fillerMessage="\"Faites votre selection.\"",
       )
     div(style="clear:both")

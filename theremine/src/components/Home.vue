@@ -1,48 +1,78 @@
 <template lang="pug">
   div#homepage
     div#title
-      div#banner-title Retrouvez le gout des courses !
-      div.desciption Consomalin est un site de courses en ligne independant qui permet de commander chez Auchan drive sur une interface simple, rapide et sans publicité.
+      div#banner-title Retrouvez le gout des courses
+      div.desciption Consomalin est un site de courses en ligne independant qui permet de commander chez Auchan drive Balma.
       button.go-to-next
         i.fa.fa-angle-double-down.faa-bounce.animated
+      div#registration(v-if="!user")
+        router-link(:to='{ name: "register" }')
+          span.input-group-addon.nav-btn.prefered
+            span Commencer tout de suite
+      div#wishlist(v-else)
+        router-link(:to='{ name: "wishlist" }')
+          span.input-group-addon.nav-btn.prefered
+            span Voir ma liste
     div#rassurance
       div.about
         div Pourquoi Consomalin
-        div.why Grâce à votre liste de courses, le site vous propose seulement les produits dont vous avez besoin. Fini les sites lents et remplis de pub. Faites vos courses en un eclair sur Consomalin !
+        div.why Grâce à votre liste de courses, le site vous propose seulement les produits dont vous avez besoin. Fini les sites lents et remplis de pub. Faites vos courses en un éclair sur Consomalin !
         div.about-border
       div.section-item
         div.item
-          i.icon.fa.fa-clock-o
-          div &nbsp;Rapide
-          div.why Reduisez votre temps de courses par 4 !
+          i.icon.fa.fa-list
+          div &nbsp;Liste de courses
+          div.why Achetez seulement ce dont vous avez besoin.
+        div.item
+          i.icon.fa.fa-simplybuilt
+          div &nbsp;Simple
+          div.why Fini les sites qui vous donnent des boutons.
         div.item
           i.icon.fa.fa-check-circle-o
           div &nbsp;Maitrise du panier
-          div.why N'oubliez plus de produit grâce à votre liste
+          div.why N'oubliez plus de produit grâce à votre liste.
+        div.item
+          i.icon.fa.fa-clock-o
+          div &nbsp;Gagnez du temps
+          div.why Reduisez votre temps de courses par 4 !
         div.item
           i.icon.fa.fa-bullhorn
           div &nbsp;Sans pub !
+          div.why Le plaisir de naviguer à l'état pur.
+        div.item
+          i.icon.fa.fa-user-o
+          div &nbsp;Independant
+          div.why La liberté, c'est l'indépendance.
       button.go-to-next.blue-text
         i.fa.fa-angle-double-down.faa-bounce.animated
     div#presentation
+      div.about
+        div Comment Consommer Malin
+        div.about-border
       div.item
         div.num
           span 1
         div.img
-          img.logo(src="../assets/images/liste.png")
-        div.txt Faites votre liste de courses comme à la maison
+          img.logo(src="../assets/images/list.png")
+        div.txt Préparez votre liste de courses comme à la maison
       div.item
         div.num
           span 2
         div.img
-          img.logo(src="../assets/images/basket.png")
+          img.logo(src="../assets/images/section.png")
         div.txt Le site vous popose les produits de votre liste
       div.item
         div.num
           span 3
         div.img
+          img.logo(src="../assets/images/retrait.png")
+        div.txt Valider votre ticket de caisse et choisissez un horaire de retrait
+      div.item
+        div.num
+          span 4
+        div.img
           img.logo(src="../assets/images/withdraw.png")
-        div.txt Réglez vos achats chez Auchan lors du retrait
+        div.txt Réglez vos achats aux bornes de retrait Auchan
     div#registration(v-if="!user")
       router-link(:to='{ name: "register" }')
         button.btn.btn-primary.connexion(type="button") Inscription
@@ -55,10 +85,26 @@
 <script>
 import { mapState } from 'vuex';
 
+const $ = window.$;
+
 export default {
   computed: mapState({
     user: state => state.user.username,
   }),
+  mounted() {
+    $('#title .go-to-next').on('click', () => {
+      const page = $('#rassurance');
+      const speed = 750;
+      $('html, body').animate({ scrollTop: $(page).offset().top }, speed); // Go
+      return false;
+    });
+    $('#rassurance .go-to-next').on('click', () => {
+      const page = $('#presentation');
+      const speed = 750;
+      $('html, body').animate({ scrollTop: $(page).offset().top }, speed); // Go
+      return false;
+    });
+  },
 };
 </script>
 
@@ -80,7 +126,7 @@ export default {
   position: relative;
   text-align: center;
   background: url('../assets/images/brimstone-blue.jpg') center top no-repeat;
-  height: 100vh !important;
+  height: 100vh;
   border-bottom: 2px solid var(--color2);
 }
 #banner-title{
@@ -113,11 +159,12 @@ export default {
     -moz-animation-name: bounce;
     -o-animation-name: bounce;
     animation-name: bounce;
+    outline: 0;
 }
 .faa-bounce.animated{
   animation: bounce 2s ease infinite;
 }
-
+button:focus {outline:0;}
 /*LES PLUS*/
 #rassurance{
   position: relative;
@@ -125,26 +172,35 @@ export default {
   text-align: center;
   font-size: 2.5em;
   padding: 45px;
-  height: 100vh
+  height: 100vh;
+  background-color: var(--color4);
+  /*border-bottom: 2px solid var(--color2);*/
 }
 #rassurance .about{
   padding: 45px;
+  position: absolute;
+  left: 25%;
+  top: 45px;
+  width: 50%;
 }
 #rassurance .about-border {
   content: '';
   background: var(--color2);
   height: 2px;
-  width: 140px;
-  margin-left: 45%;
+  width: 50%;
+  margin-left: 25%;
   margin-top: 45px;
 }
 #rassurance .item{
   width: 33%;
   float: left;
   border-radius: 5px;
+  margin-top: 45px;
+  height: 200px;
 }
 .section-item{
   padding: 45px;
+  margin-top: 250px;
 }
 .icon{
   color: var(--color2);
@@ -162,6 +218,20 @@ export default {
   clear: both;
   text-align: center;
   font-size: 2em;
+  background-color: white;
+}
+#presentation .about{
+  height: 120px;
+  padding-top: 45px;
+  margin-bottom: 45px;
+}
+#presentation .about-border {
+  content: '';
+  background: var(--color2);
+  height: 2px;
+  width: 16%;
+  margin-left: 42%;
+  margin-top: 45px;
 }
 #presentation .item{
   display: table;
@@ -190,7 +260,7 @@ export default {
 }
 #presentation .item:nth-child(even) .num{
   color: var(--color2);
-  background-color: var(--color4);
+  /*background-color: var(--color4);*/
 }
 #presentation .item .num span{
   display: block;

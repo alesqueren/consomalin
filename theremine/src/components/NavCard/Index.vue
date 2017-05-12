@@ -59,8 +59,17 @@
       //- aucun wishs matchés
       div#startWishlist(v-else-if="!matchedWishNb")
         router-link(:to='{ name: "section" }')
+          span.input-group-addon.nav-btn.prefered
+            span Commencer mes courses
+
+    div(v-if="routeName === 'withdraw'")
+      router-link(:to='{ name: "basket" }')
+        span.input-group-addon.nav-btn
+          span Revenir au panier
+
+      router-link(:to='{ name: "confirmation" }', v-if="selectedSlot")
         span.input-group-addon.nav-btn.prefered
-          span Commencer mes courses
+          span {{ confirmationMessage }}
 </template>
 
 <script>
@@ -87,6 +96,9 @@ export default {
     hasCurrentWish() {
       return Boolean(this.$store.getters['sectionWishes/getCurrent']);
     },
+    selectedSlot() {
+      return this.$store.state.singleton.selectedSlot;
+    },
     hasChoosenProduct() {
       try {
         const currentWish = this.$store.getters['sectionWishes/getCurrent'];
@@ -95,6 +107,18 @@ export default {
       } catch (e) {
         return false;
       }
+    },
+    confirmationMessage() {
+      if (this.selectedSlot) {
+        const time = new Date(this.selectedSlot.dateTime);
+        const day = (time.getDay() < 10) ? ('0' + time.getDay()) : time.getDay();
+        const month = (time.getMonth() + 1 < 10) ? ('0' + (time.getMonth() + 1)) : time.getMonth() + 1;
+        const minute = (time.getMinutes() < 10) ? ('0' + time.getMinutes()) : time.getMinutes();
+        const hour = (time.getHours() < 10) ? ('0' + time.getHours()) : time.getHours();
+        const frenchTime = hour + 'h' + minute + ' le ' + day + '/' + month;
+        return 'Commander pour ' + frenchTime;
+      }
+      return 'Valider ma commande';
     },
   },
   methods: {
@@ -117,8 +141,11 @@ export default {
 <style scoped>
 .root{
   position: fixed;
-  top: 55px;
-  right: 3px;
+  top: 80px;
+  right: 30px;
   width: 320px;
+}
+a{
+    margin-top: 15px;
 }
 </style>

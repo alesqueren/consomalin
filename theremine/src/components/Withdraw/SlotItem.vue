@@ -1,7 +1,5 @@
 <template lang="pug">
-  div.slotHour
-    button.slot(type="button" v-bind:disabled="pickupSlot.status == 'Past'" v-bind:class="classSlot" class="btn" @click="selectSlot()" v-bind:style="styleObject")
-      span.time {{frenchTime}}
+  div.slotHour(v-bind:disabled="pickupSlot.status == 'Past'" v-bind:class="classSlot" @click="selectSlot()" v-bind:style="styleObject") {{frenchTime}}
 </template>
 
 <script>
@@ -79,16 +77,17 @@ export default {
 .slotHour{
   float:left;
   cursor: pointer;
-  width: 80px;
+  width: 60px;
   margin: 2px;
-}
-.slot{
-  width: 80px
-}
-.time{
   color: var(--main-font);
+  font-size: 15px;
+  line-height: 25px;
+  height: 25px;
+  text-align: center;
+  border: 1px solid rgba(0,0,0,0.25);
+  border-radius: 2px;
 }
-.time:hover{
+.slotHour:hover{
   font-weight: bolder;
 }
 .btn:disabled{

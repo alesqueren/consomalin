@@ -119,14 +119,15 @@ export default {
 <style scoped>
 .product-item {
   background-color: var(--white);
-  border: 1px solid rgba(0,0,0,.125);
-  width:140px;
+  width:145px;
   height:267px;
   padding: 5px 5px 0 5px;
   float: left;
-  margin: 5px;
+  /*margin: 5px;*/
   position: relative;
-  border-radius: 2px;
+  outline: 1px solid rgba(0,0,0,.125);
+  margin-top: 1px;
+  margin-left: 1px;
   transition: background-color 0.2s;
 }
 

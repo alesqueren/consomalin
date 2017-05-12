@@ -19,7 +19,7 @@ export default {
 <style scoped>
 #wishlist {
   font-size: 14px;
-  padding: 45px;
+  padding: 65px;
 }
 #wishlist h2 {
   text-align: left;

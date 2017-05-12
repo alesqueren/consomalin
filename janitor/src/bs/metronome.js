@@ -1,6 +1,6 @@
 const request = require('request');
 
-const METRONOME_HOST = process.env.METRONOME_HOST || 'http://localhost:8084/';
+const METRONOME_HOST = process.env.METRONOME_HOST || 'http://localhost:8086/';
 
 module.exports = {
   getSlots() {

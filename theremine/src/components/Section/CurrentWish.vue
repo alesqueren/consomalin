@@ -71,7 +71,7 @@ export default {
 
 <style scoped>
 #root {
-  padding-bottom: 25px;
+  padding-bottom: 15px;
 }
 .search-gname {
   font-size: 1.5em;

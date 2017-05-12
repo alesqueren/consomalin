@@ -20,7 +20,7 @@
       span {{ selectedWishNb }} / {{ wishesNb }}
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
-        span.content renommer&nbsp;
+        span.content Renommer&nbsp;
         span.icon.fa.fa-pencil
       div.action.delete(@click.stop="erase", v-bind:class="{'deleting': deleting}")
         span.icon.fa.fa-eraser

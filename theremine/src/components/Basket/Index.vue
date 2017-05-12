@@ -39,7 +39,7 @@ export default {
   height: auto;
   font: 14px;
   clear: both;
-  padding: 45px;
+  padding: 65px;
 }
 #basket:after {
   content:"";

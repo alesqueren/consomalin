@@ -1,7 +1,6 @@
 <template lang="pug">
-  .wish.line(@click="select")
-    i.fa.fa-arrow-right.active(v-if="isCurrentWish") &nbsp;
-    span.product-name(v-bind:class="{'filled' : productIds.length > 0, 'active' : isCurrentWish}") {{ wish.name }}
+  .wish.line(v-if="productIds.length > 0")
+    span.product-name {{ wish.name }}
 </template>
 
 <script>
@@ -15,9 +14,6 @@ export default {
     };
   },
   computed: {
-    isCurrentWish() {
-      return this.wid === this.$store.getters['sectionWishes/getCurrent'].id;
-    },
     wish() {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });
     },
@@ -27,16 +23,13 @@ export default {
     },
   },
   methods: {
-    select() {
-      this.$store.dispatch('sectionWishes/set', this.wid);
-    },
   },
 };
 </script>
 
 <style scoped>
 .wish{
-  padding-left: 10px;
+  padding-left: 5px;
   cursor: pointer;
   border-bottom: 1px dotted #72c4ff;
 }

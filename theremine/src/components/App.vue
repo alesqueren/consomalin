@@ -3,8 +3,7 @@
     div#header
       div.left
         router-link.title(:to="{ name: 'home' }")
-          img.logo(src="../assets/images/ant.png")
-          span.brand &nbsp;&nbsp;&nbsp;Consomalin
+          img.logo(src="../assets/images/logo.png")
 
       div#steps.left(v-if="user && user.username")
         ul.header-tabs
@@ -25,11 +24,11 @@
               span.fa.fa.fa-car
               span &nbsp;Retrait
       Usercard
-    div#content(v-bind:class="{'marginalize' : navCarRequired}")
+    div#content(v-bind:class="{'marginalize-left' : listRequired, 'marginalize-right' : navCarRequired}")
       div#replay
       router-view
       NavCard(v-if='navCarRequired')
-      List(v-if='navCarRequired')
+      List(v-if='listRequired')
 </template>
 
 <script>
@@ -55,6 +54,13 @@ export default {
       return this.$store.state.route.name;
     },
     navCarRequired() {
+      const isWishlist = this.routeName === 'wishlist';
+      const isSection = this.routeName === 'section';
+      const isBasket = this.routeName === 'basket';
+      const isWithdraw = this.routeName === 'withdraw';
+      return this.user.username && (isWishlist || isSection || isBasket || isWithdraw);
+    },
+    listRequired() {
       const isWishlist = this.routeName === 'wishlist';
       const isSection = this.routeName === 'section';
       const isBasket = this.routeName === 'basket';
@@ -131,8 +137,10 @@ body{
   padding: 50px 0px 0px 0px;
   height: 94vh;
 }
-.marginalize {
+.marginalize-left {
   margin-left: 150px;
+}
+.marginalize-right {
   margin-right: 320px;
 }
 
@@ -175,9 +183,9 @@ a:hover {
 }
 
 #header .logo {
-  height: 50px;
-  width: 50px;
-  background-color: var(--color4);
+  height: 43px;
+  width: 83px;
+  margin-left: 30px;
 }
 
 #header .brand {
