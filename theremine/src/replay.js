@@ -1,12 +1,14 @@
 import Vue from 'vue';
-import jsondiffpatch from 'jsondiffpatch';
+import { DiffPatcher } from 'jsondiffpatch/src/diffpatcher';
 import resources from './resources';
+
+const jsondiffpatch = new DiffPatcher();
+const syncInterval = 1000;
 
 let buffer = [];
 let history = null;
 let historyIndex = 0;
 let previousState = {};
-const syncInterval = 1000;
 
 function deepCopy(data) {
   return JSON.parse(JSON.stringify(data));
