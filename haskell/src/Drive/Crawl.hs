@@ -23,6 +23,7 @@ import           Control.Monad.Logger    as X
 import qualified Data.Text               as T
 import qualified Data.Text.Encoding      as T
 import qualified Data.Text.Lazy.Encoding as LT
+import qualified Data.ByteString.Lazy.Char8 as BL
 import           Utils.Misc              as X
 import           Drive.Types             as X
 import           Text.HTML.TagSoup
@@ -55,9 +56,6 @@ curUri = liftF $ CurUri identity
 chUri :: MonadFree CrawlF m => URI -> m ()
 chUri u = liftF $ ChUri u ()
 
-httpRequest :: MonadFree CrawlF m => TextURI -> Method -> RequestHeaders -> ByteString -> m (Response LByteString)
-httpRequest tUri met headers body = liftF $ HttpRequest tUri met headers body identity
-
 -- log :: MonadFree CrawlF m => Text -> m ()
 -- log t = liftF $ Log t ()
 
@@ -84,17 +82,46 @@ goURI u = do
   nUri <- maybe (throwM InvalidURIException) return (computeURI mcu u)
   chUri nUri
 
+data Req = Req 
+  { uri :: TextURI
+  , met :: Method
+  , headers :: RequestHeaders 
+  , body :: Text
+  }
+
+request :: Req -> Crawl (Response LByteString)
+request req = do
+  liftF $ HttpRequest (uri req) (met req) (headers req) (T.encodeUtf8 $ body req) identity
+
+requestTag :: Req -> Crawl [Tag Text]
+requestTag req = do
+  resp <- request req
+  return . parseTags . toStrict . LT.decodeUtf8 . responseBody $ resp
+
+requestJson :: Req -> Crawl BL.ByteString
+requestJson req = do
+  resp <- request req
+  return . BL.fromStrict . encodeUtf8 . toStrict . LT.decodeUtf8 . responseBody $ resp
+
+-- TODO: rm
+httpRequest :: MonadFree CrawlF m => TextURI -> Method -> RequestHeaders -> ByteString -> m (Response LByteString)
+httpRequest tUri met headers body = liftF $ HttpRequest tUri met headers body identity
+
+-- TODO: rm
 httpReqText :: TextURI -> Method -> RequestHeaders -> Text -> Crawl Text
 httpReqText tUri met h body = do
   resp <- httpRequest tUri met h (T.encodeUtf8 body)
   return . toStrict . LT.decodeUtf8 . responseBody $ resp
 
+-- TODO: rm
 postText :: TextURI -> RequestHeaders -> Text -> Crawl Text
 postText tUri = httpReqText tUri "POST"
 
+-- TODO: rm
 getText :: TextURI -> RequestHeaders -> Crawl Text
 getText tUri h = httpReqText tUri "GET" h ""
 
+-- TODO: rm
 -- |Get the tags of a page
 getPage :: TextURI -> Crawl [Tag Text]
 getPage tUri = do

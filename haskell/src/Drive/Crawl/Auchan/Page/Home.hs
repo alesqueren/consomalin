@@ -1,12 +1,12 @@
-module Drive.Crawl.Auchan.Home (fetchCategoryUrls) where
+module Drive.Crawl.Auchan.Page.Home (load, extractCategoryUrls) where
 
 import           Protolude       hiding (Selector)
 import qualified Data.Text       as T
+import           Text.HTML.TagSoup
 import           Drive.Crawl
 
-data CategoryNotFoundException = CategoryNotFoundException deriving (Show, Typeable)
-instance Exception CategoryNotFoundException
-
+load :: Text -> Crawl [Tag Text]
+load url = requestTag $ Req url "GET" [] ""
 
 categoryDivSel :: Selector
 categoryDivSel = "div" @: [hasClass "blocLayer", hasClass "float"] // "p"
@@ -19,8 +19,7 @@ categoryLink _ = do
 entryCategories :: Scraper Text [TextURI]
 entryCategories = chroots categoryDivSel (categoryLink anySelector)
 
--- TODO: use real url (in and out)
-fetchCategoryUrls :: Text -> Crawl [Text]
-fetchCategoryUrls url = do
-  tags <- getPage url
-  maybeOrThrow CategoryNotFoundException $ scrape entryCategories tags
+-- TODO: use real url Type (in and out)
+extractCategoryUrls :: [Tag Text] -> [Text]
+extractCategoryUrls tags =
+  fromMaybe [] $ scrape entryCategories tags

@@ -1,9 +1,14 @@
 module Drive.Crawl.Auchan.Product (SiteProduct(..)
                                   , ApiProduct(..)
+                                  , extractSiteId 
+                                  , makeSiteProduct
                                   , makeProduct
                                   ) where
 
 import           Protolude      hiding (Product)
+import           Prelude                    (String)
+import qualified Data.Text                  as T
+import           Text.Regex.TDFA
 import           Drive.Types
 import           Drive.Price
 import           Drive.Product
@@ -21,32 +26,52 @@ data SiteProduct = SiteProduct
 
 -- Product info fetched from merchandising.io
 data ApiProduct = ApiProduct
-  { apiId           :: !Text
-  , apiNameShort    :: !Text
+  { apiNameShort    :: !Text
   , apiNameLong     :: !Text
-  , apiImageUrl     :: !TextURI
   , apiQuantity     :: Maybe Int64
-  , apiQuantityUnit :: Maybe Text
   , apiDescription  :: Maybe Text
   , apiBenefits     :: Maybe Text
   , apiComposition  :: Maybe Text
   }
   deriving (Typeable, Show, Eq)
 
-makeProduct :: SiteProduct -> ApiProduct -> Product
+extractSiteId :: Text -> Maybe Text
+extractSiteId txt =
+  do
+    idStr <- head $ getAllTextSubmatches matches
+    return $ T.init $ T.drop 2 $ T.pack idStr
+  where
+    re = "-P([0-9]+)/$" :: String
+    matches = T.unpack txt =~ re :: AllTextSubmatches [] String
+
+makeSiteProduct :: Text -> Text -> Text -> Text -> Text -> Text -> Maybe SiteProduct
+makeSiteProduct idTxt priceTxt nameTxt imageTxt priceByQuantityTxt quantityUnitTxt =
+  do
+    id <- extractSiteId idTxt
+    pr <- readPrice priceTxt
+    prByQ <- readPrice priceByQuantityTxt
+    return SiteProduct {
+      siteId = id,
+      siteName = nameTxt,
+      siteImageUrl = T.append "http://www.auchandrive.fr" imageTxt,
+      sitePrice = pr,
+      sitePriceByQuantity = prByQ,
+      siteQuantityUnit = quantityUnitTxt
+    }
+
+makeProduct :: SiteProduct -> Maybe ApiProduct -> Product
 makeProduct sitePd apiPd =
   Product
-    { pid             = apiId apiPd
+    { pid             = siteId sitePd
     , price           = sitePrice sitePd
     , priceByQuantity = sitePriceByQuantity sitePd
-    , Drive.Product.name = siteName sitePd
-    , nameShort       = apiNameShort apiPd
-    , nameLong        = apiNameLong apiPd
+    , name            = siteName sitePd
+    , nameShort       = maybe "" apiNameShort apiPd
+    , nameLong        = maybe "" apiNameLong apiPd
     , imageUrl        = siteImageUrl sitePd
-    , quantity        = apiQuantity apiPd
-    , quantityUnit    = Just $ siteQuantityUnit sitePd
-    -- , quantityUnit    = fromMaybe (apiQuantityUnit apiPd) (siteQuantityUnit sitePd)
-    , benefits        = apiBenefits apiPd
-    , Drive.Product.description = apiDescription apiPd
-    , Drive.Product.composition = apiComposition apiPd
+    , quantity        = maybe Nothing apiQuantity apiPd
+    , quantityUnit    = siteQuantityUnit sitePd
+    , benefits        = maybe Nothing apiBenefits apiPd
+    , description     = maybe Nothing apiDescription apiPd
+    , composition     = maybe Nothing apiComposition apiPd
   }

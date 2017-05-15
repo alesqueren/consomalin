@@ -1,14 +1,18 @@
-module Drive.Crawl.Auchan.ShopChoice (chooseDrive) where
+module Drive.Crawl.Auchan.Page.Landing (load, doChooseDrive) where
 
 import           Protolude       hiding (Selector)
 import qualified Data.Text       as T
-import           Drive.Crawl
+import           Text.HTML.TagSoup
 import           Utils.Re
+import           Drive.Crawl
 
 type ShopName = Text
 
 data ShopNotFoundException = ShopNotFoundException deriving (Show, Typeable)
 instance Exception ShopNotFoundException
+
+load :: Crawl [Tag Text] 
+load = requestTag $ Req "http://www.auchandrive.fr" "GET" [] ""
 
 shopListSel :: Selector
 shopListSel = "div" @: ["id" @= "liste_drives"] // "ul"
@@ -25,30 +29,22 @@ entryShopLink sn = do
     matchHref r = "a" @: ["href" @=~ r ]
     shopLinkRe =  "^/drive.*/" ++ T.unpack sn ++ "/"
 
-
--- |Returns a link to a shop from its name
-selectCityShop :: ShopName -> Crawl TextURI
-selectCityShop shop = do
-  goURI "http://www.auchandrive.fr"
-  startP <- getPage "/"
-
-  -- get the shop link
-  maybeOrThrow ShopNotFoundException $ scrape (entryShopLink shop) startP
-
 -- |Directly goes into a drive from a shop name
 -- after that, the same Crawl object can be used to crawl in parallel
-chooseDrive :: ShopName -> Crawl Text
-chooseDrive shop = do
-  shopURI <- selectCityShop shop
+doChooseDrive :: ShopName -> Crawl Text
+doChooseDrive shop = do
+  tags <- load
+
+  shopRelUri <- maybeOrThrow ShopNotFoundException $ scrape (entryShopLink shop) tags
+  let shopAbsUri = "http://www.auchandrive.fr" <> shopRelUri
  
-  -- FIXME: does not work if commented. why ?
   -- set auchanCook cookie
-  _ <- getText "http://www.auchandrive.fr/drive/faq" []
+  _ <- request $ Req "http://www.auchandrive.fr/drive/faq" "GET" [] ""
 
   -- validate selection
-  _ <- getText ("http://www.auchandrive.fr" <> shopURI) []
+  _ <- request $ Req shopAbsUri "GET" [] ""
 
   -- set new jsession cookie
-  _ <- getText ("http://www.auchandrive.fr" <> shopURI) []
+  _ <- request $ Req shopAbsUri "GET" [] ""
 
-  return $ "http://www.auchandrive.fr" <> shopURI
+  return shopAbsUri

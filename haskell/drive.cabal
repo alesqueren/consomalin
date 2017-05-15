@@ -13,6 +13,7 @@ library
   exposed-modules:     Utils.Env
                        Utils.Re
                        Utils.Misc
+                       Drive.Slot
                        Drive.Types
                        Drive.Price
                        Drive.Product
@@ -25,13 +26,15 @@ library
                        Drive.Crawl
                        Drive.Crawl.Account
                        Drive.Crawl.Auchan
-                       Drive.Crawl.Auchan.Home
                        Drive.Crawl.Auchan.Actions
                        Drive.Crawl.Auchan.Product
-                       Drive.Crawl.Auchan.Category
                        Drive.Crawl.Auchan.Schedule
-                       Drive.Crawl.Auchan.ShopChoice
-                       Drive.Crawl.Auchan.Merchandising
+                       Drive.Crawl.Auchan.Page.Home
+                       Drive.Crawl.Auchan.Page.Login
+                       Drive.Crawl.Auchan.Page.Basket
+                       Drive.Crawl.Auchan.Page.Landing
+                       Drive.Crawl.Auchan.Page.Category
+                       Drive.Crawl.Auchan.Page.Merchandising
   ghc-options:         -W -Wall
   build-depends:       base >= 4.7 && < 5
                      , protolude

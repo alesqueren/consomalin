@@ -14,9 +14,8 @@ data ViewProduct= ViewProduct
   , name            :: !Text
   , price           :: !Price
   , imageUrl        :: !TextURI
+  , quantityUnit    :: Text
   , priceByQuantity :: !Price
-  , quantity        :: Maybe Int64
-  , quantityUnit    :: Maybe Text
   }
   deriving (Typeable, Eq, Show, Generic)
 
@@ -24,8 +23,8 @@ instance FromJSON ViewProduct
 instance ToJSON ViewProduct where
   toJSON ViewProduct{..} = 
     object [ "name"            .= name
-           , "imageUrl"        .= imageUrl
            , "price"           .= price
-           , "priceByQuantity" .= priceByQuantity
+           , "imageUrl"        .= imageUrl
            , "quantityUnit"    .= quantityUnit
+           , "priceByQuantity" .= priceByQuantity
            ]

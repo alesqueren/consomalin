@@ -2,66 +2,23 @@
 {-# LANGUAGE TemplateHaskell     #-}
 {-# LANGUAGE DeriveGeneric #-}
 
--- TODO: change module name
--- 1 module per page
---    actions (doVisit ...)
---    parsing (parse...)
+-- TODO: RM THIS FILE
 module Drive.Crawl.Auchan.Actions (doTransaction, doSchedule) where
 
 import           Protolude       hiding (Selector)
 import           Control.Monad.Trans.Free.Church
-import           Conduit hiding (connect)
+import           Conduit
+import           Data.Time
 
-import           Drive.Crawl
-import           Drive.Crawl.Auchan.ShopChoice
-import           Drive.Crawl.Auchan.Schedule
-import           Drive.Crawl.Account
+import           Drive.Slot
 import           Drive.Transaction
-
--- Identification page
-connect :: Account -> Crawl ()
-connect acc = do
-  $(logDebug) ""
-  $(logDebug) ""
-  $(logDebug) ("connect" <> show acc)
-
-  _ <- getText "https://www.auchandrive.fr/drive/client/identification" []
-  _ <- postText url header httpData
-
-  return ()
-    where
-      url = "https://www.auchandrive.fr/drive/client/identification.formidentification"
-      -- TODO: Get from html: #formIdentification > div:nth-child(1) 
-      formdata = "t%3Aformdata=XviXyDb4kGDnwAyJ6fsR0LFe0p4%3D%3AH4sIAAAAAAAAAFvzloG1XJVBOTknMzWvRN8zBUhmpmUmJ5Zk5udZpeYmZuaUJeZkpiSWpBYXMZjmF6XrJRYkJmek6pUkFqQWlxRVmuol5xel5mQm6SUlFqfqOSYBBROTS9wyU3NSVIJTS0oLVEMPcz8UPf6HiYHRh4E7OT%2BvpCg%2Fxy8xN7WEQcgnK7EsUT8nMS9dP7ikKDMv3bqioISBF2xxGNRi4t3nSKr7Aoryk1OLi4NLk3Izi4uBRh5el2KS9m3eOSYGhoqCcg0GNewWFyQWF5fnF6XA7S5kqGNgKGEQgEnA3U60ESATWMvlGGSwKy8GObEE6EcHvH5Mzs8tyM8D6izWA3uqBNOLM4M%2FSW7d0uLMxMDkw8ABsc0zBWQ9KHpSc1JzgQKg6AELgaKDA2J5vCGCaQAALR8OljkCAAA%3D"
-      httpData = formdata <> "&emailValidate=" <> driveUser acc <> "&passwordValidate=" <> drivePass acc <> "&t%3Asubmit=%5B%22submit_1%22%2C%22submit_0%22%5D&t%3Azoneid=identification"
-      header = [("User-Agent", "curl/7.53.1" )
-               , ("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
-               , ("X-Requested-With", "XMLHttpRequest")
-               ]
-
--- Identification page
-addToBasket :: (Text, Int64) -> Crawl ()
-addToBasket (pid, qty) = do
-  $(logDebug) ("add2basket: " <> pid <> ", " <> show qty <> " times")
-
-  _ <- mapM (const $ postText url headers httpData) [1..qty]
-
-  return ()
-    where
-      url = "http://www.auchandrive.fr/drive/rayon.productlist.thumbnailproduct.thumbnailproduct_addproducttobasket2/" <> pid <> "/1/thumbnailProduct_addToBasketZone_" <> pid <> "/-margin_last_30_days_shop/$N/$N/1/$N/$B?t:ac=3686969/3686338"
-      headers = [("X-Requested-With", "XMLHttpRequest")]
-      httpData = "t%3Azoneid=forceAjax"
-
--- Basket page
-getBasket :: Crawl ()
-getBasket = do
-  $(logDebug) ""
-  $(logDebug) "getBasket"
-  _ <- getText url []
-
-  return ()
-    where
-      url = "https://www.auchandrive.fr/drive/coffre"
+import           Drive.Attendance
+import           Drive.Crawl
+import           Drive.Crawl.Account
+import           Drive.Crawl.Auchan.Schedule
+import           Drive.Crawl.Auchan.Page.Landing as L
+import           Drive.Crawl.Auchan.Page.Basket as B
+import           Drive.Crawl.Auchan.Page.Login as Lo
 
 -- Schedule page
 goSchedule :: Crawl ()
@@ -105,10 +62,10 @@ validatePayment = do
 doTransaction :: (MonadFree CrawlF cr) => Account -> Transaction -> ConduitM () Void cr ()
 doTransaction acc t = do
 
-  _ <- lift . fromF $ chooseDrive "Toulouse-954"
-  _ <- lift . fromF $ connect acc
+  _ <- lift . fromF $ doChooseDrive "Toulouse-954"
+  _ <- lift . fromF $ Lo.login acc
   _ <- mapM (lift . fromF . addToBasket) $ basket t
-  _ <- lift . fromF $ getBasket
+  _ <- lift . fromF $ B.load
   _ <- lift . fromF $ goSchedule
   _ <- lift . fromF $ selectSchedule $ slot t
   _ <- lift . fromF $ goPayment
@@ -116,14 +73,14 @@ doTransaction acc t = do
 
   return ()
 
--- TODO: change function name
-doSchedule :: (MonadFree CrawlF cr) => Account -> ConduitM () Void cr [SlotInfo]
-doSchedule acc = do
-  _ <- lift . fromF $ chooseDrive "Toulouse-954"
-  _ <- lift . fromF $ connect acc
+-- TODO: return Slot and not SlotInfo
+doSchedule :: (MonadFree CrawlF cr) => Account -> Attendance -> Day -> ConduitM () Void cr [Slot]
+doSchedule acc attendance today = do
+  _ <- lift . fromF $ doChooseDrive "Toulouse-954"
+  _ <- lift . fromF $ Lo.login acc
   -- TODO: make sure to add an existing product
   _ <- lift . fromF $ addToBasket ("141418", 1)
   -- a non empty basket is needed for getting schedule
-  _ <- lift . fromF $ getBasket
+  _ <- lift . fromF $ B.load
   _ <- lift . fromF $ goSchedule
-  lift . fromF $ getSchedule
+  lift . fromF $ getSchedule attendance today 

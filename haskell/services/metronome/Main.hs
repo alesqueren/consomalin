@@ -12,6 +12,7 @@ import Data.Attoparsec.Text
 import Data.Time
 
 import Utils.Env
+import Drive.Slot
 import Drive.Crawl.Auchan
 import Drive.Crawl.Auchan.Schedule
 import Drive.Attendance
@@ -38,14 +39,10 @@ startSrv port = do
 slotController :: ActionM ()
 slotController = do
   now <- liftIO getCurrentTime
-
-  att <- liftIO $ mongoFind "balma"
-
-  si <- liftIO fetchSchedule
-  let s = map (makeSlot att $ utctDay now) si
-
-  if null s
+  attendance <- liftIO $ mongoFind "balma"
+  slots <- liftIO $ fetchSchedule attendance $ utctDay now
+  if null slots
     then raise "no slot found"
     else do
       let exp = addUTCTime (60*5) now
-      json $ Response s exp
+      json $ Response slots exp

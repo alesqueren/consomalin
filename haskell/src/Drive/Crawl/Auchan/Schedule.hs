@@ -2,35 +2,21 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
 
-module Drive.Crawl.Auchan.Schedule (getSchedule, selectSchedule, Slot, SlotInfo, makeSlot) where
+module Drive.Crawl.Auchan.Schedule (getSchedule, selectSchedule) where
 
 import           Protolude       hiding (Selector, inits)
 import           Prelude                    (String)
-import           Drive.Crawl
-import           Drive.Attendance
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Text       as T
 import           Data.Aeson
 import           Text.Regex.TDFA
 import           Text.HTML.TagSoup
+import           Drive.Crawl
+import           Drive.Slot
+import           Drive.Attendance
 
 import Data.Time
 import Data.Time.Calendar.WeekDate
-
-data SlotStatus = Past | Available | Busy
-  deriving (Show, Generic)
-instance ToJSON SlotStatus
-
--- TODO: mv to Drive level
-data Slot = Slot 
-  { id :: Maybe Text
-  , day :: Day
-  , time :: TimeOfDay
-  , status :: SlotStatus
-  , attendanceLevel :: Maybe Float
-  }
-  deriving (Show, Generic)
-instance ToJSON Slot
 
 data SlotInfo = SlotInfo 
   { sId :: Maybe Text
@@ -53,13 +39,6 @@ skipSunday currDay n =
     else addDays n currDay
   where
     (_,_,wd) = toWeekDate currDay
-
-makeSlot :: Attendance -> Day -> SlotInfo -> Slot
-makeSlot att currDay si =
-  Slot (sId si) d t (sStatus si) (mongoGet d t att)
-    where 
-      t = sTime si
-      d = skipSunday currDay (sDayFromNow si)
 
 
 newtype Link = Link { url :: Text }
@@ -177,26 +156,29 @@ getDay2 day = do
   $(logDebug) ("getDay2 " <> show day)
   resp <- postText dayUrl headers httpData
 
-  -- d <- getCurrentTime >>= toGregorian . utctDay
-  -- $(logDebug) (show d)
-  
   case parseIds2 resp day of
     Nothing -> return []
     Just res -> do
       $(logDebug) (show res)
       return res
-
     where
       dayUrl = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.changejour/" <> show day <> ""
       headers = [("X-Requested-With", "XMLHttpRequest")]
       httpData = "t%3Azoneid=forceAjax"
 
+makeSlot :: Attendance -> Day -> SlotInfo -> Slot
+makeSlot att currDay si =
+  Slot (sId si) d t (sStatus si) (mongoGet d t att)
+    where 
+      t = sTime si
+      d = skipSunday currDay (sDayFromNow si)
 
-getSchedule :: Crawl [SlotInfo]
-getSchedule = do
+getSchedule :: Attendance -> Day -> Crawl [Slot]
+getSchedule attendance today = do
   $(logDebug) ""
   $(logDebug) $ "getSchedule"
 
   slotsByDay <- mapM getDay2 [0..6]
 
-  return $ concat slotsByDay
+  return $ map (makeSlot attendance today) $ concat slotsByDay
+  -- return $ concat slotsByDay

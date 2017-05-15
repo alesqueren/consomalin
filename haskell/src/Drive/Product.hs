@@ -8,7 +8,6 @@ module Drive.Product (Product(..)
 import           Protolude                    hiding (Product, (<>))
 import           Database.MongoDB
 import           Text.PrettyPrint.Leijen.Text
-import           Data.Aeson 
 import           Drive.Types
 import           Drive.Price
 import qualified Drive.ViewProduct as V
@@ -22,8 +21,8 @@ data Product = Product
   , nameShort       :: !Text
   , nameLong        :: !Text
   , imageUrl        :: !TextURI
+  , quantityUnit    :: !Text
   , quantity        :: Maybe Int64
-  , quantityUnit    :: Maybe Text
   , description     :: Maybe Text
   , benefits        :: Maybe Text
   , composition     :: Maybe Text
@@ -63,12 +62,12 @@ instance Val Product where
     nameShort <- lookup "nameShort" doc
     nameLong <- lookup "nameLong" doc
     imageUrl <- lookup "imageUrl" doc
+    quantityUnit <- lookup "quantityUnit" doc
     let quantity = lookup "quantity" doc
-    let quantityUnit = lookup "quantityUnit" doc
     let description = lookup "description" doc
     let benefits = lookup "benefits" doc
     let composition = lookup "composition" doc
-    return $ Product id price priceByQuantity name nameShort nameLong imageUrl quantity quantityUnit description benefits composition
+    return $ Product id price priceByQuantity name nameShort nameLong imageUrl quantityUnit quantity description benefits composition
   cast' _ = Nothing
 
 mongoInsert :: [Product] -> IO ()
@@ -90,7 +89,6 @@ summarize p =
   , V.name            = name p
   , V.price           = price p
   , V.imageUrl        = imageUrl p
-  , V.priceByQuantity = priceByQuantity p
-  , V.quantity        = quantity p
   , V.quantityUnit    = quantityUnit p
+  , V.priceByQuantity = priceByQuantity p
   }

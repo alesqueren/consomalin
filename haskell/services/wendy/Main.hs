@@ -7,8 +7,9 @@ import           Drive.Crawl.Auchan
 
 main :: IO ()
 main = do
-  listen TransactionResource processTransactionMessage
-  forever $ threadDelay 100000000
+  mymytest
+  -- listen TransactionResource processTransactionMessage
+  -- forever $ threadDelay 100000000
 
 processTransactionMessage :: TransactionMessage -> IO ()
 processTransactionMessage (TransactionMessage uid tid) = do
