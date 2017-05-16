@@ -1,9 +1,6 @@
 <template lang="pug">
 div#confirmation
   h2 Votre commande est en cours de préparation.
-  
-
-    
 </template>
 
 <script>

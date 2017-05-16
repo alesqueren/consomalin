@@ -9,7 +9,24 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import Wish from './Wish';
+
+const $ = window.$;
+
+function manageScrollButton() {
+  const th = $('#groups').height();
+  const ch = $('#groups .wish.line:last').position().top;
+  console.log('th : ' + th);
+  console.log('ch : ' + ch);
+  if (ch < th) {
+    console.log('hide');
+    $('#list .bottom').hide();
+  } else {
+    console.log('show');
+    $('#list .bottom').show();
+  }
+}
 
 export default {
   props: ['gid'],
@@ -31,6 +48,21 @@ export default {
       this.$store.dispatch('singleton/set', { activeGroupId: this.gid });
       // router.push({ name: 'wishlist' });
     },
+  },
+  watch: {
+    selectedWishes: () => {
+      console.log('1');
+      // TODO : Trouver un autre moyen d'attendre la nouvelle valeur/hauteur, nextTick ?
+      setTimeout(() => {
+        manageScrollButton();
+      }, 200);
+    },
+  },
+  mounted() {
+    manageScrollButton();
+    $('#groups').scroll(() => {
+      manageScrollButton();
+    });
   },
   components: { Wish },
 };

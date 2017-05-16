@@ -1,15 +1,8 @@
 <template lang="pug">
   div.root
     Wish(
-      v-if="!currentWishHasProduct",
       v-bind:wid="currentWish.id",
-      v-bind:badgeLabel="\"Choix en cours\"",
-      v-bind:fillerMessage="\"Faites votre selection.\"",
-      )
-    Wish(
-      v-else,
-      v-bind:wid="currentWish.id",
-      v-bind:badgeLabel="\"Choix en cours\"",
+      v-bind:badgeLabel="currentWishBadge",
       v-bind:fillerMessage="\"Faites votre selection.\"",
       )
     div(style="clear:both")
@@ -41,6 +34,17 @@ export default {
   computed: {
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    currentWishBadge() {
+      let text = '';
+      if (!this.currentWishHasProduct) {
+        text = 'Choix en cours';
+      } else if (this.currentWishHasProduct === 1) {
+        text = 'Produit choisi';
+      } else {
+        text = 'Produits choisis';
+      }
+      return text;
     },
     currentWishHasProduct() {
       const gid = this.currentWish.gid;

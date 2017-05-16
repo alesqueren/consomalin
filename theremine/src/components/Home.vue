@@ -135,7 +135,7 @@ export default {
   font-size: 65px;
   font-weight: 900;
   text-transform: uppercase;
-  padding-top: 20%;
+  padding-top: 19%;
 }
 .desciption{
   color: #a3b1bf;
@@ -298,7 +298,7 @@ button:focus {outline:0;}
   display: block;
   left: 50%;
   position: absolute;
-  margin-left: -50px;
+  margin-left: -103px;
 }
 #wishlist{
   position: relative;

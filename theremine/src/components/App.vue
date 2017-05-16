@@ -2,7 +2,7 @@
   #app(@click='finishAllActions', @keyup.esc="finishAllActions", tabindex="0")
     div#header
       div.left
-        router-link.title(:to="{ name: 'home' }")
+        router-link.title(:to="{ name: main }")
           img.logo(src="../assets/images/logo.png")
 
       div#steps.left(v-if="user && user.username")
@@ -65,6 +65,9 @@ export default {
       const isSection = this.routeName === 'section';
       const isBasket = this.routeName === 'basket';
       return this.user.username && (isWishlist || isSection || isBasket);
+    },
+    main() {
+      return this.user.username ? 'wishlist' : 'home';
     },
   },
   methods: {
@@ -164,8 +167,7 @@ a:hover {
 
 #steps {
   position: absolute;
-  left: 50%;
-  margin-left: -300px;
+  margin-left: 184px;
 }
 
 .right{

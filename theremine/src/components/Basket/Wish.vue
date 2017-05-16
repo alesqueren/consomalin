@@ -13,7 +13,7 @@
       span.btnText Je n'en veux plus&nbsp;
       //- span.icon.eraseOff.fa.fa-remove.fa-xs
       span.icon.eraseOn.fa.fa-remove.fa-lg
-    span.badge.badge-info.indicator(v-if="badgeLabel && !hoverErase", ref="badge") {{badgeLabel}}
+    span.badge.badge-info.indicator(v-if="badgeLabel", ref="badge") {{badgeLabel}}
     div.wishgroup-name(v-if="displayGroup")
       span ({{ group.name }})&nbsp;
     Product(v-for="pid in displayProductIds"
@@ -101,6 +101,7 @@ export default {
 }
 .large{
   width: 320px;
+  padding-left: 30px;
 }
 .emptyBox {
   height: 82px;
@@ -163,6 +164,7 @@ export default {
 .wish .wish-erase:hover {
 /*.wish .wish-erase {*/
   border: 1px solid rgba(0,0,0,.25);
+  background-color: #f0f0f0;
 }
 .wish .wish-erase .btnText{
   visibility: hidden;

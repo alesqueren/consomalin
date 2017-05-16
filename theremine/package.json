@@ -59,7 +59,7 @@
     "webpack-merge": "^2.6.1",
     "@websanova/vue-auth": "",
     "jsondiffpatch": "",
-    "scrollmagic": ""
+    "vue-perfect-scrollbar": ""
   },
   "engines": {
     "node": ">= 4.0.0",

@@ -4,13 +4,15 @@
     .hole
     .hole
     h2 Ma Liste
-    .groups
+    .bottom.fa.fa-arrow-circle-down.fa-2x
+    VuePerfectScrollbar#groups.groups
       Group(v-for="gid in selectedGroups" 
         v-bind:gid="gid" 
         v-bind:key="gid")
 </template>
 
 <script>
+import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import Group from './Group';
 
 export default {
@@ -25,16 +27,16 @@ export default {
       return this.$store.state.wishGroup.map(group => group.id);
     },
   },
-  components: { Group },
+  components: { Group, VuePerfectScrollbar },
 };
 
 </script>
 
 <style scoped>
 #list{
+  position: fixed;
   text-align: left;
   width: 184px;
-  position: fixed;
   left: 0;
   top: 50px;
   font-size: 0.9em;
@@ -53,8 +55,8 @@ export default {
   top: 125px;
   background-color: white;
   padding-bottom: 10px;
-  min-height: 90vh;
-  max-height: 90vh;
+  min-height: 86vh;
+  max-height: 86vh;
   background-size: 100% 21px;
 }
 #list h2{
@@ -73,5 +75,14 @@ export default {
   margin-left: 30px;
   margin-top: 2px;
   background: linear-gradient(0deg, var(--color2), var(--color2-tr));
+}
+.bottom{
+  position: fixed;
+  z-index: 2;
+  bottom: 2px;
+  left: 75px;
+}
+.hidden{
+  visibility: hidden;
 }
 </style>

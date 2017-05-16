@@ -9,8 +9,8 @@
     .product-name.center {{product.name}}
     div.bottom
       div.price
-        div(style="font-size: 1.3em;") <b> {{product.price}}&nbsp;€</b>
-        div.pu {{product.priceByQuantity}}&nbsp;€/u
+        div(style="font-size: 1.3em;") <b> {{price}}&nbsp;€</b>
+        div.pu {{priceByQuantity}}&nbsp;€/u
       div.btns-atb(v-if="!inCurrentWish")
         div.btn-atb.tooltip(
             @click.stop="selectProduct",
@@ -69,6 +69,12 @@ export default {
         return product.quantity;
       }
       return 1;
+    },
+    price() {
+      return this.product.price.toFixed(2);
+    },
+    priceByQuantity() {
+      return this.product.priceByQuantity.toFixed(2);
     },
   },
   methods: {
