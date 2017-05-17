@@ -64,7 +64,7 @@ doTransaction acc t = do
 
   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
   _ <- lift . fromF $ Lo.login acc
-  _ <- mapM (lift . fromF . addToBasket) $ basket t
+  -- _ <- mapM (lift . fromF . addToBasket) $ basket t
   _ <- lift . fromF $ B.load
   _ <- lift . fromF $ goSchedule
   _ <- lift . fromF $ selectSchedule $ slot t
@@ -79,7 +79,7 @@ doSchedule acc attendance today = do
   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
   _ <- lift . fromF $ Lo.login acc
   -- TODO: make sure to add an existing product
-  _ <- lift . fromF $ addToBasket ("141418", 1)
+  _ <- lift . fromF $ addToBasket "141418" 1
   -- a non empty basket is needed for getting schedule
   _ <- lift . fromF $ B.load
   _ <- lift . fromF $ goSchedule

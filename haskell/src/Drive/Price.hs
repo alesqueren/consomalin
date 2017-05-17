@@ -7,7 +7,7 @@ module Drive.Price (Price
                    , readPrice
                    ) where
 
-import           Protolude
+import           Protolude hiding (from, to)
 import           Prelude                    (String)
 import           Data.Aeson 
 import           Numeric
@@ -53,6 +53,7 @@ readPrice txt =
       (\(r,_) -> return $ toPrice (r :: Double))
       (T.rational $ T.pack priceStr)
   where
-    newTxt = T.unpack $ T.replace "," "." txt
+    newTxt = T.unpack $ foldr (\(from, to) t -> T.replace from to t) txt mapping
+    mapping = [(",", "."), (" ", ""), ("\n", ""), ("\t", ""), ("\8364", "")]
     re = "[0-9]+.[0-9][0-9]" :: String
     matches = newTxt =~ re :: AllTextMatches [] String

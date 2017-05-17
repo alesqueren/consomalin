@@ -1,6 +1,6 @@
 module Drive.Crawl.Auchan.Product (SiteProduct(..)
                                   , ApiProduct(..)
-                                  , extractSiteId 
+                                  , readSiteId 
                                   , makeSiteProduct
                                   , makeProduct
                                   ) where
@@ -35,8 +35,8 @@ data ApiProduct = ApiProduct
   }
   deriving (Typeable, Show, Eq)
 
-extractSiteId :: Text -> Maybe Text
-extractSiteId txt =
+readSiteId :: Text -> Maybe Text
+readSiteId txt =
   do
     idStr <- head $ getAllTextSubmatches matches
     return $ T.init $ T.drop 2 $ T.pack idStr
@@ -47,7 +47,7 @@ extractSiteId txt =
 makeSiteProduct :: Text -> Text -> Text -> Text -> Text -> Text -> Maybe SiteProduct
 makeSiteProduct idTxt priceTxt nameTxt imageTxt priceByQuantityTxt quantityUnitTxt =
   do
-    id <- extractSiteId idTxt
+    id <- readSiteId idTxt
     pr <- readPrice priceTxt
     prByQ <- readPrice priceByQuantityTxt
     return SiteProduct {

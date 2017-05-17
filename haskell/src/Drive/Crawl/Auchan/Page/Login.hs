@@ -5,7 +5,7 @@ module Drive.Crawl.Auchan.Page.Login (login) where
 import           Protolude       hiding (Selector)
 import           Text.HTML.TagSoup
 import           Control.Monad.Catch
-import Network.HTTP.Types.Status (statusCode)
+import           Network.HTTP.Types.Status (statusCode)
 
 import           Drive.Crawl
 import           Drive.Crawl.Account
@@ -18,15 +18,12 @@ load :: Crawl [Tag Text]
 load =
   requestTag $ Req "https://www.auchandrive.fr/drive/client/identification" "GET" [] ""
 
--- Identification page
 login :: Account -> Crawl ()
 login acc = do
   $(logDebug) ("login" <> show acc)
 
   _ <- load
   res <- request $ Req url "POST" header httpData
-
-  $(logDebug) (show $ statusCode $ responseStatus res)
 
   -- a successful identification set new cookies
   when ((statusCode . responseStatus $ res) /= 200 ||

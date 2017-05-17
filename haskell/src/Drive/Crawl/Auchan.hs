@@ -84,7 +84,8 @@ doTransaction2 :: (MonadFree CrawlF cr) => Account -> ConduitM () Void cr ()
 doTransaction2 acc = do
   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
   _ <- lift . fromF $ LO.login acc
-  _ <- lift . fromF $ B.addToBasket ("800542", 1)
+  _ <- lift . fromF $ B.addToBasket "31455" 3
+  _ <- lift . fromF $ B.getBasket
   return ()
 
 
