@@ -19,24 +19,31 @@ newtype Page = Page { zones :: Zone }
   deriving (Show, Generic)
 instance FromJSON Page
 
+data SelectorType = PdS | PdIdS | PdNameS | PdImageS | PdPriceS | PdPriceByQS | PdQtyUnitS
+getSel :: SelectorType -> Selector
+getSel PdS         = "div" @: [hasClass "vignette", notP $ hasClass "vignette-indispo"] // 
+                     "div" @: [hasClass "vignette-content"]
+getSel PdIdS       = "a" @: [hasClass "seoActionLink"]
+getSel PdNameS     = "p" @: [hasClass "libelle-produit"]
+getSel PdImageS    = "div" @: [hasClass "visuel-produit"] // "img"
+getSel PdPriceS    = "p" @: [hasClass "prix-produit"]
+getSel PdPriceByQS = "p" @: [hasClass "prix-unitaire"]
+getSel PdQtyUnitS  = "p" @: [hasClass "prix-unitaire"] // "abbr"
+
+
 productInfo :: Selector -> Scraper Text (Maybe SiteProduct)
 productInfo _ = do
-  idTxt <- attr "href" $ "a" @: [hasClass "seoActionLink"]
-  nameTxt <- text $ "p" @: [hasClass "libelle-produit"]
-  imageTxt <- attr "data-src" $ "div" @: [hasClass "visuel-produit"] // "img"
-  priceTxt <- text $ "p" @: [hasClass "prix-produit"]
-  priceByQuantityTxt <- text $ "p" @: [hasClass "prix-unitaire"]
-  quantityUnitTxt <- text $ "p" @: [hasClass "prix-unitaire"] // "abbr"
+  idTxt <- attr "href" $ getSel PdIdS
+  nameTxt <- text $ getSel PdNameS
+  imageTxt <- attr "data-src" $ getSel PdImageS
+  priceTxt <- text $ getSel PdPriceS
+  priceByQuantityTxt <- text $ getSel PdPriceByQS
+  quantityUnitTxt <- text $ getSel PdQtyUnitS
 
   return $ makeSiteProduct idTxt priceTxt nameTxt imageTxt priceByQuantityTxt quantityUnitTxt
 
-productSelector :: Selector
-productSelector = "div" @: [hasClass "vignette",
-                          notP $ hasClass "vignette-indispo"]
-             // "div" @: [hasClass "vignette-content"]
-
 entryProducts :: Scraper Text [Maybe SiteProduct]
-entryProducts = chroots productSelector (productInfo anySelector)
+entryProducts = chroots (getSel PdS) (productInfo anySelector)
 
 extractProducts :: Page -> [SiteProduct]
 extractProducts page =

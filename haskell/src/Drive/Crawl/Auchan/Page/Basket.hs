@@ -34,6 +34,21 @@ data Basket = Basket
   }
   deriving (Typeable, Show, Eq)
 
+data SelectorType = TotalPriceS | LineS | LinePidS | LineQuantityS | LineUnitPriceS | LineTotalPriceS
+getSel :: SelectorType -> Selector
+getSel TotalPriceS     = "div" @: [hasClass "recapInfos"] //
+                         "div" @: [hasClass "recapInfos-prixContent"] //
+                         "div" @: [hasClass "recapInfos-prix"]
+getSel LineS           = "li" @: [hasClass "productInfo"]
+getSel LinePidS        = "div" @: [hasClass "productInfo-imageContent"] //
+                         "a" @: [hasClass "seoActionLink"]
+getSel LineQuantityS   = "input" @: [hasClass "productInfo-changeQteNumber"]
+getSel LineUnitPriceS  = "div" @: [hasClass "productInfo-prixUnitContent"] //
+                         "div" @: [hasClass "productInfo-prixUnit"]
+getSel LineTotalPriceS = "div" @: [hasClass "productInfo-prixTotalContent"] //
+                         "div" @: [hasClass "productInfo-prixUnit"]
+
+
 load :: Crawl [Tag Text]
 load = requestTag $ Req "https://www.auchandrive.fr/drive/coffre" "GET" [] ""
 
@@ -70,29 +85,19 @@ makeLine pidTxt unitPriceTxt qty tot = do
 
 lineInfo :: Selector -> Scraper Text (Maybe Line)
 lineInfo _ = do
-  pidTxt <- attr "href" $ "div" @: [hasClass "productInfo-imageContent"] //
-                          "a" @: [hasClass "seoActionLink"]
-  quantityTxt <- attr "value" $ "input" @: [hasClass "productInfo-changeQteNumber"]
-  unitPriceTxt <- text $ "div" @: [hasClass "productInfo-prixUnitContent"] //
-                         "div" @: [hasClass "productInfo-prixUnit"]
-  totalPriceTxt <- text $ "div" @: [hasClass "productInfo-prixTotalContent"] //
-                          "div" @: [hasClass "productInfo-prixUnit"]
+  pidTxt <- attr "href" $ getSel LinePidS
+  quantityTxt <- attr "value" $ getSel LineQuantityS
+  unitPriceTxt <- text $ getSel LineUnitPriceS
+  totalPriceTxt <- text $ getSel LineTotalPriceS
   return $ makeLine pidTxt unitPriceTxt quantityTxt totalPriceTxt
 
-lineSelector :: Selector
-lineSelector = "li" @: [hasClass "productInfo"]
-
 entryLines :: Scraper Text [Maybe Line]
-entryLines = chroots lineSelector (lineInfo anySelector)
-
+entryLines = chroots (getSel LineS) (lineInfo anySelector)
 
 entryTotalPrice :: Scraper Text (Maybe Price)
 entryTotalPrice = do
-  priceTxt <- text $ "div" @: [hasClass "recapInfos"] //
-                     "div" @: [hasClass "recapInfos-prixContent"] //
-                     "div" @: [hasClass "recapInfos-prix"]
+  priceTxt <- text $ getSel TotalPriceS
   return $ readPrice priceTxt
-
 
 getBasket :: Crawl Basket
 getBasket = do
@@ -100,8 +105,7 @@ getBasket = do
 
   tags <- load
 
-  mtotPrice <- maybeOrThrow ParseBasketException $ scrape entryTotalPrice tags
-  totPrice <- maybeOrThrow ParseBasketException mtotPrice
+  totPrice <- maybeOrThrow ParseBasketException $ join $ scrape entryTotalPrice tags
 
   let res = Basket { 
       lines = maybe [] catMaybes $ scrape entryLines tags
