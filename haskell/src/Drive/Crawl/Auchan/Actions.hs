@@ -15,21 +15,10 @@ import           Drive.Transaction
 import           Drive.Attendance
 import           Drive.Crawl
 import           Drive.Crawl.Account
-import           Drive.Crawl.Auchan.Schedule
-import           Drive.Crawl.Auchan.Page.Landing as L
-import           Drive.Crawl.Auchan.Page.Basket as B
 import           Drive.Crawl.Auchan.Page.Login as Lo
-
--- Schedule page
-goSchedule :: Crawl ()
-goSchedule = do
-  $(logDebug) ""
-  $(logDebug) "goSchedule"
-  _ <- getText url []
-
-  return ()
-    where
-      url = "https://www.auchandrive.fr/drive/coffre.basketsummary.finalisercoffre"
+import           Drive.Crawl.Auchan.Page.Basket as B
+import           Drive.Crawl.Auchan.Page.Landing as L
+import           Drive.Crawl.Auchan.Page.Schedule as S
 
 -- Payment page
 goPayment :: Crawl ()
@@ -66,7 +55,7 @@ doTransaction acc t = do
   _ <- lift . fromF $ Lo.login acc
   -- _ <- mapM (lift . fromF . addToBasket) $ basket t
   _ <- lift . fromF $ B.load
-  _ <- lift . fromF $ goSchedule
+  _ <- lift . fromF $ S.load
   _ <- lift . fromF $ selectSchedule $ slot t
   _ <- lift . fromF $ goPayment
   -- _ <- lift . fromF $ validatePayment
@@ -82,5 +71,5 @@ doSchedule acc attendance today = do
   _ <- lift . fromF $ addToBasket "141418" 1
   -- a non empty basket is needed for getting schedule
   _ <- lift . fromF $ B.load
-  _ <- lift . fromF $ goSchedule
+  _ <- lift . fromF $ S.load
   lift . fromF $ getSchedule attendance today 

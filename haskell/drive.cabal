@@ -28,11 +28,11 @@ library
                        Drive.Crawl.Auchan
                        Drive.Crawl.Auchan.Actions
                        Drive.Crawl.Auchan.Product
-                       Drive.Crawl.Auchan.Schedule
                        Drive.Crawl.Auchan.Page.Home
                        Drive.Crawl.Auchan.Page.Login
                        Drive.Crawl.Auchan.Page.Basket
                        Drive.Crawl.Auchan.Page.Landing
+                       Drive.Crawl.Auchan.Page.Schedule
                        Drive.Crawl.Auchan.Page.Category
                        Drive.Crawl.Auchan.Page.Merchandising
   ghc-options:         -W -Wall

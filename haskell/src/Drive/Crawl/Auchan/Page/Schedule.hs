@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
 
-module Drive.Crawl.Auchan.Schedule (getSchedule, selectSchedule) where
+module Drive.Crawl.Auchan.Page.Schedule (load, getSchedule, selectSchedule) where
 
 import           Protolude       hiding (Selector, inits)
 import           Prelude                    (String)
@@ -11,6 +11,7 @@ import qualified Data.Text       as T
 import           Data.Aeson
 import           Text.Regex.TDFA
 import           Text.HTML.TagSoup
+
 import           Drive.Crawl
 import           Drive.Slot
 import           Drive.Attendance
@@ -172,6 +173,11 @@ makeSlot att currDay si =
     where 
       t = sTime si
       d = skipSunday currDay (sDayFromNow si)
+
+
+load :: Crawl [Tag Text]
+load = requestTag $ Req url "GET" [] ""
+  where url = "https://www.auchandrive.fr/drive/coffre.basketsummary.finalisercoffre"
 
 getSchedule :: Attendance -> Day -> Crawl [Slot]
 getSchedule attendance today = do

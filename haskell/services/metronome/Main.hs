@@ -14,7 +14,6 @@ import Data.Time
 import Utils.Env
 import Drive.Slot
 import Drive.Crawl.Auchan
-import Drive.Crawl.Auchan.Schedule
 import Drive.Attendance
 
 data Response = Response 
