@@ -34,12 +34,11 @@ export default {
   mounted() {
     const height = $(window).height();
     const halfHeight = height / 2;
-    $('#groups .wish').on('click', function () {
-      const wid = $(this).data('wid');
+    $('#groups .wish').on('click', (e) => {
+      const wid = $(e.currentTarget).data('wid');
       const element = $('#basket [data-wid="' + wid + '"]');
       $('html, body').animate({ scrollTop: element.offset().top - halfHeight }, 'slow');
       // $('#basket [data-wid="' + wid + '"]');
-      element.find('.wish').animate({ backgroundColor: 'blue' }, 'slow').delay(1000).animate({ backgroundColor: 'white' }, 'slow');
     });
   },
   created() {
