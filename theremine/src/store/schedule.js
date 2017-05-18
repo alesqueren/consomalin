@@ -3,15 +3,34 @@ import resources from '../resources';
 
 const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
+function getDateStr(date) {
+  const d = ('0' + date.getDate()).slice(-2);
+  const m = ('0' + (date.getMonth() + 1)).slice(-2);
+  return date.getFullYear() + '-' + m + '-' + d;
+}
+
 const byDay = (slots) => {
   const res = [];
   let currentDay = {};
   let currentHour = {};
 
+  const todayStr = getDateStr(new Date());
+  const tommorow = new Date(todayStr);
+  tommorow.setDate(tommorow.getDate() + 1);
+  const tomorrowStr = getDateStr(tommorow);
+
   for (let i = 0; i < slots.length; i++) {
     const slot = slots[i];
     // change day
-    const name = dayNames[new Date(slot.day).getDay()];
+    let name;
+    if (slot.day === todayStr) {
+      name = 'Aujourd\'hui';
+    } else if (slot.day === tomorrowStr) {
+      name = 'Demain';
+    } else {
+      name = dayNames[new Date(slot.day).getDay()];
+    }
+
     if (name !== currentDay.name) {
       currentDay = { name, hours: [] };
       res.push(currentDay);
@@ -24,6 +43,7 @@ const byDay = (slots) => {
     }
     currentHour.slots.push(slot);
   }
+
   return res;
 };
 
