@@ -48,6 +48,7 @@ import CurrentWish from './CurrentWish';
 import ProductItem from './ProductItem';
 import RightBar from './RightBar';
 import List from '../List/Index';
+import router from '../../router';
 
 const $ = window.$;
 
@@ -56,10 +57,6 @@ export default {
     return {
       maxProducts: 40,
     };
-  },
-  created() {
-    // on ecoute le scroll pour augmenter le nombre de produits visibles
-    window.addEventListener('scroll', this.handleScroll);
   },
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll);
@@ -82,6 +79,9 @@ export default {
     },
     isBasketEmpty() {
       return this.$store.getters['selection/getOrderedSelectedWishes'].length === 0;
+    },
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
@@ -106,6 +106,12 @@ export default {
       }
     },
   },
+  created() {
+    window.addEventListener('scroll', this.handleScroll);
+    if (!this.selectedWishNb) {
+      router.push({ name: 'wishlist' });
+    }
+  },
   components: { CurrentWish, ProductItem, List, RightBar },
 };
 </script>
@@ -123,7 +129,7 @@ export default {
 }
 #wishes{
   width: 100%;
-  padding: 65px;
+  padding: 30px 65px 65px 65px;
 }
 #wishes .main{
 }

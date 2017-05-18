@@ -156,9 +156,9 @@ export default {
   width: 100%;
   height: 25px;
   background-color: #5bc0de;
-  /*color: white;*/
+  color: white;
   /*opacity: 0.5;*/
-  line-height: 25px;
+  line-height: 28px;
   text-align: center;
 }
 .product-img {

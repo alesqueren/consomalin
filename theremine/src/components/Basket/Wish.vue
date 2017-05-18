@@ -14,8 +14,7 @@
       //- span.icon.eraseOff.fa.fa-remove.fa-xs
       span.icon.eraseOn.fa.fa-remove.fa-lg
     span.badge.badge-info.indicator(v-if="badgeLabel", ref="badge") {{badgeLabel}}
-    div.wishgroup-name(v-if="displayGroup")
-      span ({{ group.name }})&nbsp;
+    div.wishgroup-name(v-if="displayGroup") {{ group.name }}
     Product(v-for="pid in displayProductIds"
       v-bind:pid="pid",
       v-bind:wid="wid",
@@ -95,7 +94,7 @@ export default {
   width: 255px;
   padding: 5px;
   background-color: white;
-  outline: 1px solid rgba(0,0,0,.15);
+  outline: 1px solid #dedede;
   margin-top: 1px;
   margin-left: 1px;
 }
@@ -111,20 +110,21 @@ export default {
   font-weight: bold;
   font-family: learningCurve;
   margin-left: 5px;
+  display: block;
+  max-height: 31px;
+  overflow: hidden;
+
   /*text-transform: capitalize;*/
 }
 .wishgroup-name{
-  font-size: 1em;
-  font-weight: bold;
+  font-size: 1.5em;
   font-family: learningCurve;
+  margin-left: 5px;
   /*text-transform: capitalize;*/
 }
 .wish-name .details{
   font-family: helvetica;
   font-size: 0.5em;
-}
-.wish:hover .wish-name{
-  text-decoration: underline
 }
 .wish:hover{
   cursor: pointer;

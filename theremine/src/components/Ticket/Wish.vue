@@ -1,9 +1,13 @@
 <template lang="pug">
-  .wish.line(v-if="productIds.length > 0")
-    span.product-name {{ wish.name }}
+  .products
+    Product(v-for="pid in productIds" 
+      v-bind:wid="wid" 
+      v-bind:pid="pid" 
+      v-bind:key="pid")
 </template>
 
 <script>
+import Product from './Product';
 
 export default {
   props: ['wid', 'gid'],
@@ -22,23 +26,12 @@ export default {
       return products.map(p => p.pid).reverse();
     },
   },
-  methods: {
-  },
+  components: { Product },
 };
 </script>
 
 <style scoped>
-.wish{
-  padding-left: 5px;
-  cursor: pointer;
-  border-bottom: 1px dotted #72c4ff;
-}
-.filled{
-  text-decoration: line-through;
-/*  text-decoration: underline;
-  text-decoration: overline;*/
-}
-.active{
-  color: green;
+.wishName {
+  font-size: 0.9em;
 }
 </style>

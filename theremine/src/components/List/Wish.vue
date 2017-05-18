@@ -1,5 +1,5 @@
 <template lang="pug">
-  .wish.line(@click="select")
+  .wish.line(@click="select", :data-wid="wid")
     i.fa.fa-arrow-right.active(v-if="isCurrentWish") &nbsp;
     span.product-name(v-bind:class="{'filled' : productIds.length > 0, 'active' : isCurrentWish}") {{ wish.name }}
 </template>
@@ -39,6 +39,7 @@ export default {
   padding-left: 10px;
   cursor: pointer;
   border-bottom: 1px dotted #72c4ff;
+  overflow: hidden;
 }
 .filled{
   text-decoration: line-through;

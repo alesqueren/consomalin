@@ -11,18 +11,22 @@
             router-link.title(:to="{ name: 'wishlist' }")
               span.fa.fa-list
               span &nbsp;Ma liste
-          li.header-tab
+          li.header-tab(v-bind:class="{'inactive': selectedWishNb === 0}")
             router-link.title(:to="{ name: 'section' }")
               span.fa.fa-hand-pointer-o
               span &nbsp;Rayons
-          li.header-tab
+          li.header-tab(v-bind:class="{'inactive': selectedWishNb === 0}")
             router-link.title(:to="{ name: 'basket' }")
               span.fa.fa-shopping-cart
               span &nbsp;Mon panier
-          li.header-tab
-            router-link.title(:to="{ name: 'withdraw' }")
+          li.header-tab(v-bind:class="{'inactive': matchedWishesLength === 0}")
+            router-link.title(:to="{ name: 'ticket' }")
               span.fa.fa.fa-car
               span &nbsp;Retrait
+          li.header-tab
+            router-link.title(:to="{ name: 'help' }")
+              span.fa.fa.fa-question-circle-o
+              span &nbsp;Help
       Usercard
     div#content(v-bind:class="{'marginalize-left' : listRequired, 'marginalize-right' : navCarRequired}")
       div#replay
@@ -58,7 +62,10 @@ export default {
       const isSection = this.routeName === 'section';
       const isBasket = this.routeName === 'basket';
       const isWithdraw = this.routeName === 'withdraw';
-      return this.user.username && (isWishlist || isSection || isBasket || isWithdraw);
+      const isTicket = this.routeName === 'ticket';
+      const isHelp = this.routeName === 'help';
+      const username = this.user.username;
+      return username && (isWishlist || isSection || isBasket || isWithdraw || isTicket || isHelp);
     },
     listRequired() {
       const isWishlist = this.routeName === 'wishlist';
@@ -187,7 +194,7 @@ a:hover {
 #header .logo {
   height: 43px;
   width: 83px;
-  margin-left: 30px;
+  margin-left: 50px;
 }
 
 #header .brand {
@@ -208,6 +215,14 @@ a:hover {
   font-size: 20px;
   font-weight: bold;
   color: var(--color4);
+}
+
+#header .inactive .title {
+  color: grey;
+}
+
+#header .inactive a {
+  cursor: default;
 }
 
 #header .title-desc {
@@ -231,11 +246,11 @@ a:hover {
 }
 
 #steps .router-link-active {
-  color: var(--color1) !important;
-  background-color: var(--color4);
+  color: white !important;
+  background-color: var( --color2);
   display: block;
 }
-#steps .title:not(.router-link-active):hover  {
+#steps .header-tab:not(.inactive) .title:not(.router-link-active):hover  {
   color:white !important;
   background-color: rgba(255, 255, 255, 0.14902);
 }

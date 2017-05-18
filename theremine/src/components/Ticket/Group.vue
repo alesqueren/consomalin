@@ -1,6 +1,6 @@
 <template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
-    h2 {{ name }}
+    .groupName {{ name }}
     Wish(v-for="wid in selectedWishes" 
       v-bind:wid="wid" 
       v-bind:gid="gid" 
@@ -22,7 +22,7 @@ export default {
       return this.$store.getters['wishGroup/getGroup']({ gid: this.gid }).name;
     },
     selectedWishes() {
-      return this.$store.getters['selection/getSelectedWishesByGroup']({ gid: this.gid });
+      return this.$store.getters['selection/getMatchedWishesByGroup']({ gid: this.gid });
     },
   },
   methods: {
@@ -36,7 +36,5 @@ export default {
 .groupName {
   font-size: 1em;
   font-weight: bold;
-  text-align: center;
-  border-bottom: 1px dotted #72c4ff;
 }
 </style>

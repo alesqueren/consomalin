@@ -5,7 +5,8 @@
       SuperWish(v-for="wid in selectedWishes" 
         v-bind:wid="wid",
         v-bind:displayName="true",
-        v-bind:key="wid")
+        v-bind:key="wid",
+        :data-wid="wid")
 </template>
 
 <script>
@@ -44,7 +45,7 @@ export default {
   cursor: pointer;
   font-family: learningCurve;
   color: black;
-  font-size: 2.5em;
+  font-size: 2em;
   text-align: left;
 }
 .groupName:hover {

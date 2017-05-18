@@ -55,7 +55,7 @@ export default {
       return type === 'deleteWish' && wid === this.wid;
     },
     deleteWording() {
-      return this.deleting ? 'valider ?' : 'effacer';
+      return this.deleting ? 'Valider ?' : 'Effacer';
     },
   },
   methods: {

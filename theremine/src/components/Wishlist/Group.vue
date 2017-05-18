@@ -68,7 +68,7 @@ export default {
       return this.$store.state.wishGroup.filter(predicate)[0].wishes.length;
     },
     deleteWording() {
-      return this.deleting ? 'valider ?' : 'effacer';
+      return this.deleting ? 'Valider ?' : 'Effacer';
     },
   },
   methods: {

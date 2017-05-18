@@ -79,7 +79,7 @@ export default {
       this.error = true;
     },
     succeed() {
-      this.$router.push({ name: 'wishlist' });
+      this.$router.push({ name: 'presentation' });
     },
     register() {
       const data = {

@@ -34,7 +34,7 @@
         div.item
           i.icon.fa.fa-clock-o
           div &nbsp;Gagnez du temps
-          div.why Reduisez votre temps de courses par 4 !
+          div.why Faites vos courses 4 fois plus vite.
         div.item
           i.icon.fa.fa-bullhorn
           div &nbsp;Sans pub !
@@ -42,7 +42,7 @@
         div.item
           i.icon.fa.fa-user-o
           div &nbsp;Independant
-          div.why La liberté, c'est l'indépendance.
+          div.why Soyez maître des produits que vous achetez.
       button.go-to-next.blue-text
         i.fa.fa-angle-double-down.faa-bounce.animated
     div#presentation

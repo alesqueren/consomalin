@@ -8,8 +8,10 @@
 </template>
 
 <script>
+import $ from 'jquery';
 import Group from './Group';
 import List from '../List/Index';
+import router from '../../router';
 
 export default {
   computed: {
@@ -28,6 +30,22 @@ export default {
     total() {
       return this.$store.getters['transaction/basketAmount'];
     },
+  },
+  mounted() {
+    const height = $(window).height();
+    const halfHeight = height / 2;
+    $('#groups .wish').on('click', function () {
+      const wid = $(this).data('wid');
+      const element = $('#basket [data-wid="' + wid + '"]');
+      $('html, body').animate({ scrollTop: element.offset().top - halfHeight }, 'slow');
+      // $('#basket [data-wid="' + wid + '"]');
+      element.find('.wish').animate({ backgroundColor: 'blue' }, 'slow').delay(1000).animate({ backgroundColor: 'white' }, 'slow');
+    });
+  },
+  created() {
+    if (!this.selectedWishNb) {
+      router.push({ name: 'wishlist' });
+    }
   },
   components: { Group, List },
 };

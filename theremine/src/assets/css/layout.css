@@ -26,6 +26,11 @@ a:hover {
   src: url('/static/fonts/Cursive_standard.ttf');
 }
 
+@font-face {
+  font-family: receipt;
+  src: url('/static/fonts/receipt.regular.ttf');
+}
+
 .left{
   float:left;
 }

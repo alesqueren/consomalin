@@ -7,7 +7,9 @@ import Wishlist from '@/components/Wishlist/Index';
 import Section from '@/components/Section/Index';
 import Basket from '@/components/Basket/Index';
 import Withdraw from '@/components/Withdraw/Index';
+import Presentation from '@/components/Presentation/Index';
 import Confirmation from '@/components/Confirmation/Index';
+import Help from '@/components/Help/Index';
 import Ticket from '@/components/Ticket/Index';
 import NotFound from '@/components/NotFound';
 import store from '../store';
@@ -68,6 +70,18 @@ const router = new Router({
       path: '/ticket',
       meta: { auth: true },
       component: Ticket,
+    },
+    {
+      name: 'presentation',
+      path: '/Presentation',
+      meta: { auth: true },
+      component: Presentation,
+    },
+    {
+      name: 'help',
+      path: '/Help',
+      meta: { auth: true },
+      component: Help,
     },
     {
       name: 'replay',

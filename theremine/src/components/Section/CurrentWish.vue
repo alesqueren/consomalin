@@ -77,9 +77,6 @@ export default {
   font-size: 1.5em;
   font-family: learningCurve;
 }
-#root {
-  padding-bottom: 25px;
-}
 #search-text {
   font-family: learningCurve;
   font-size: 1.5em;

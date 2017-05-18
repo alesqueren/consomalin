@@ -1,7 +1,7 @@
 <template lang="pug">
   div.root
 
-    Basket
+    Basket(v-if="routeName !== 'help'")
     div(v-if="routeName === 'wishlist'")
       router-link(:to='{ name: "section" }', v-if="matchedWishNb && matchedWishNb < selectedWishNb")
         span.input-group-addon.nav-btn.prefered
@@ -40,15 +40,15 @@
           span.input-group-addon.nav-btn.prefered
             span Continuer mes courses
         div#force-continue
-          router-link(:to='{ name: "withdraw" }')
+          router-link(:to='{ name: "ticket" }')
             span.input-group-addon.nav-btn
-              span Passer au retrait
+              span Je valide mon panier
 
       //- tous les wishs sont matchés
       div#basketFull(v-else-if="matchedWishNb && matchedWishNb == selectedWishNb")
-        router-link(:to='{ name: "withdraw" }')
+        router-link(:to='{ name: "ticket" }')
             span.input-group-addon.nav-btn.prefered
-              span Passer au retrait
+              span Je valide mon panier
 
       //-  aucun wish
       div#startBasket(v-else-if="!matchedWishNb && !selectedWishNb")
@@ -70,6 +70,19 @@
       router-link(:to='{ name: "confirmation" }', v-if="selectedSlot")
         span.input-group-addon.nav-btn.prefered
           span {{ confirmationMessage }}
+
+    div(v-if="routeName === 'ticket'")
+      router-link(:to='{ name: "basket" }')
+        span.input-group-addon.nav-btn
+          span Revenir au panier
+
+      router-link(:to='{ name: "withdraw" }')
+        span.input-group-addon.nav-btn.prefered
+          span Je valide mon ticket
+
+    div(v-if="routeName === 'help'")
+      h5 Un question, une suggestion ?
+      span Contactez nous : af@consomalin.ovh
 </template>
 
 <script>
@@ -146,6 +159,6 @@ export default {
   width: 320px;
 }
 a{
-    margin-top: 15px;
+  margin-top: 15px;
 }
 </style>
