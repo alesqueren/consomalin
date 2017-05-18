@@ -153,7 +153,6 @@ body{
 .marginalize-right {
   margin-right: 320px;
 }
-
 body {
   font-size: 14px;
 }
@@ -249,6 +248,23 @@ a:hover {
   color: white !important;
   background-color: var( --color2);
   display: block;
+  text-shadow: 0 0 0 #000;
+}
+*:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+}
+
+button::-moz-focus-inner {
+  border: 0;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance:textfield;
 }
 #steps .header-tab:not(.inactive) .title:not(.router-link-active):hover  {
   color:white !important;

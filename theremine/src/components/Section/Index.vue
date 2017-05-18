@@ -155,7 +155,6 @@ export default {
   height: 275px;
   padding: 5px 5px 0 5px;
   float: left;
-  margin: 5px;
   opacity: 0.3;
 }
 .product-img{

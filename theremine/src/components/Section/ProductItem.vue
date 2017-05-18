@@ -131,9 +131,7 @@ export default {
   float: left;
   /*margin: 5px;*/
   position: relative;
-  outline: 1px solid rgba(0,0,0,.125);
-  margin-top: 1px;
-  margin-left: 1px;
+  border: 1px solid #dedede;
   transition: background-color 0.2s;
 }
 
