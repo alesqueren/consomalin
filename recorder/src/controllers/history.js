@@ -20,6 +20,19 @@ function add(sid, newStates) {
       },
     },
     { upsert: true },
+    () => {
+      records.updateOne(
+        {
+          _id: sid,
+          startTime: { $exists: false },
+        },
+        {
+          $set: {
+            startTime: new Date(),
+          },
+        },
+      );
+    },
   );
 }
 
