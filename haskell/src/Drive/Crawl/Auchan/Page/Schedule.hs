@@ -2,14 +2,14 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
 
-module Drive.Crawl.Auchan.Page.Schedule (load, getSchedule, selectSchedule) where
+module Drive.Crawl.Auchan.Page.Schedule (load, makeSlot, getSchedule, selectSchedule) where
 
 import           Protolude       hiding (Selector, inits)
 import           Prelude                    (String)
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Text       as T
 import           Data.Aeson
-import           Text.Regex.TDFA
+import           Text.Regex.TDFA hiding (extract)
 import           Text.HTML.TagSoup
 
 import           Drive.Crawl
@@ -32,6 +32,13 @@ type ParsedSlotInfo = (Maybe Text, TimeOfDay, SlotStatus)
 
 makeSlotInfo :: Integer -> ParsedSlotInfo -> SlotInfo
 makeSlotInfo d (i,t,s) = SlotInfo i d t s
+
+makeSlot :: Attendance -> Day -> SlotInfo -> Slot
+makeSlot att currDay si =
+  Slot (sId si) d t (sStatus si) (mongoGet d t att)
+    where 
+      t = sTime si
+      d = skipSunday currDay (sDayFromNow si)
 
 skipSunday :: Day -> Integer -> Day
 skipSunday currDay n =
@@ -61,9 +68,23 @@ data DailySchedule = DailySchedule
   deriving (Show, Generic)
 instance FromJSON DailySchedule
 
-parseIds :: Text -> Maybe [Text]
-parseIds response = do
-  jsonResponse <- decode' $ BL.fromStrict $ encodeUtf8 response
+load :: Crawl [Tag Text]
+load = requestTag $ Req url "GET" [] ""
+  where url = "https://www.auchandrive.fr/drive/coffre.basketsummary.finalisercoffre"
+
+loadDay :: Integer -> Crawl BL.ByteString
+loadDay dayNb = do
+  $(logDebug) ("getDay " <> show dayNb)
+  requestJson $ Req dayUrl "POST" headers httpData
+  where
+    dayUrl = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.changejour/" <> show dayNb
+    headers = [("X-Requested-With", "XMLHttpRequest")]
+    httpData = "t%3Azoneid=forceAjax"
+
+
+parseIds :: BL.ByteString -> Maybe [Text]
+parseIds resp = do
+  jsonResponse <- decode' resp
   h <- head $ inits jsonResponse
   let res = mapMaybe (head . getAllTextSubmatches . matches . T.unpack . url) $ linkZone h
   return $ map T.pack res
@@ -71,18 +92,15 @@ parseIds response = do
       re = "[0-9][0-9]+$" :: String
       matches x = (x :: String) =~ re :: AllTextSubmatches [] String
 
-getDay :: Int -> Crawl [Text] 
-getDay day = do
-  $(logDebug) ("getDay " <> show day)
-  resp <- postText dayUrl headers httpData
+getDay :: Integer -> Crawl [Text] 
+getDay dayNb = do
+  $(logDebug) ("getDay " <> show dayNb)
+  resp <- loadDay dayNb
+
   case parseIds resp of
     Nothing -> return []
     Just res -> return res
 
-    where
-      dayUrl = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.changejour/" <> show day
-      headers = [("X-Requested-With", "XMLHttpRequest")]
-      httpData = "t%3Azoneid=forceAjax"
 
 selectDay :: Text -> Crawl ()
 selectDay slotId = do
@@ -98,11 +116,12 @@ selectSchedule slotId = do
   $(logDebug) ""
   $(logDebug) $ "selectSchedule" <> slotId
   _ <- selectDay slotId
-  _ <- postText scheduleUrl headers httpData
+  -- _ <- postText scheduleUrl headers httpData
+  resp <- requestTag $ Req url "POST" headers httpData
 
   return ()
     where
-      scheduleUrl = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.selectslot/" <> slotId
+      url = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.selectslot/" <> slotId
       headers = [("X-Requested-With", "XMLHttpRequest")]
       httpData = "t%3Azoneid=forceAjax"
 
@@ -111,17 +130,18 @@ selectSchedule slotId = do
 shopListSel :: Selector
 shopListSel = "li" @: [hasClass "slotHoraire-listeHeureItem"]
 
+-- TODO: EXTRACT SELECTORS !
 entryShopLink :: Scraper Text [Maybe ParsedSlotInfo]
-entryShopLink = chroots shopListSel (parseAvailableSlot anySelector <|> parsePastSlot anySelector)
+entryShopLink = chroots shopListSel (parseAvailableSlot <|> parsePastSlot)
 
-parsePastSlot :: Selector -> Scraper Text (Maybe ParsedSlotInfo)
-parsePastSlot _ = do
+parsePastSlot :: Scraper Text (Maybe ParsedSlotInfo)
+parsePastSlot = do
   t <- text $ "span" @: [hasClass "slotHoraire-listeHeureLink"]
   let tod = parseTimeOrError False defaultTimeLocale "%lh%M" (T.unpack t)
   return $ Just (Nothing, tod, Past)
 
-parseAvailableSlot :: Selector -> Scraper Text (Maybe ParsedSlotInfo)
-parseAvailableSlot _ = do
+parseAvailableSlot :: Scraper Text (Maybe ParsedSlotInfo)
+parseAvailableSlot = do
   t <- text $ "a" @: [hasClass "slotHoraire-listeHeureLink"]
   let tod = parseTimeOrError False defaultTimeLocale "%lh%M" (T.unpack t)
 
@@ -138,53 +158,19 @@ parseAvailableSlot _ = do
 
 
 
+extractSlotInfo :: Integer -> DailySchedule -> [SlotInfo]
+extractSlotInfo dayNb ds =
+  map (makeSlotInfo dayNb) $
+    catMaybes $
+      fromMaybe [] $
+        scrape entryShopLink $ parseTags $ 
+          zoneSlotGrid $ zones ds
 
-
-parseIds2 :: Text -> Integer -> Maybe [SlotInfo]
-parseIds2 response day = do
-
-  jsonResponse <- decode' $ BL.fromStrict $ encodeUtf8 response :: Maybe DailySchedule
-  let tags = parseTags $ zoneSlotGrid $ zones jsonResponse
-
-  slotInfo <- scrape entryShopLink tags
-  let slots = map (makeSlotInfo day) $ catMaybes slotInfo 
-
-  return slots
-
-getDay2 :: Integer -> Crawl [SlotInfo] 
-getDay2 day = do
-
-  $(logDebug) ("getDay2 " <> show day)
-  resp <- postText dayUrl headers httpData
-
-  case parseIds2 resp day of
-    Nothing -> return []
-    Just res -> do
-      $(logDebug) (show res)
-      return res
-    where
-      dayUrl = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.changejour/" <> show day <> ""
-      headers = [("X-Requested-With", "XMLHttpRequest")]
-      httpData = "t%3Azoneid=forceAjax"
-
-makeSlot :: Attendance -> Day -> SlotInfo -> Slot
-makeSlot att currDay si =
-  Slot (sId si) d t (sStatus si) (mongoGet d t att)
-    where 
-      t = sTime si
-      d = skipSunday currDay (sDayFromNow si)
-
-
-load :: Crawl [Tag Text]
-load = requestTag $ Req url "GET" [] ""
-  where url = "https://www.auchandrive.fr/drive/coffre.basketsummary.finalisercoffre"
-
-getSchedule :: Attendance -> Day -> Crawl [Slot]
-getSchedule attendance today = do
+getSchedule :: Crawl [SlotInfo]
+getSchedule = do
   $(logDebug) ""
   $(logDebug) $ "getSchedule"
 
-  slotsByDay <- mapM getDay2 [0..6]
+  extSlots <- mapM (\d -> extractFromJson (extractSlotInfo d) $ loadDay d) [0..6]
 
-  return $ map (makeSlot attendance today) $ concat slotsByDay
-  -- return $ concat slotsByDay
+  return $ concat extSlots

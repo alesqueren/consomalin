@@ -58,6 +58,7 @@ addToBasket pid qty = do
 
   res <- request $ Req url "POST" hdr httpData
 
+  -- TODO: try to catch "unkown product exception"
   when ((statusCode . responseStatus $ res) /= 200) $
     throwM AddToBasketException
 
@@ -83,8 +84,8 @@ makeLine pidTxt unitPriceTxt qty tot = do
     , totalPrice = price
     }
 
-lineInfo :: Selector -> Scraper Text (Maybe Line)
-lineInfo _ = do
+lineInfo :: Scraper Text (Maybe Line)
+lineInfo = do
   pidTxt <- attr "href" $ getSel LinePidS
   quantityTxt <- attr "value" $ getSel LineQuantityS
   unitPriceTxt <- text $ getSel LineUnitPriceS
@@ -92,7 +93,7 @@ lineInfo _ = do
   return $ makeLine pidTxt unitPriceTxt quantityTxt totalPriceTxt
 
 entryLines :: Scraper Text [Maybe Line]
-entryLines = chroots (getSel LineS) (lineInfo anySelector)
+entryLines = chroots (getSel LineS) lineInfo
 
 entryTotalPrice :: Scraper Text (Maybe Price)
 entryTotalPrice = do
@@ -107,10 +108,9 @@ getBasket = do
 
   totPrice <- maybeOrThrow ParseBasketException $ join $ scrape entryTotalPrice tags
 
-  let res = Basket { 
-      lines = maybe [] catMaybes $ scrape entryLines tags
-      , total = totPrice
-      }
+  let res = Basket { lines = maybe [] catMaybes $ scrape entryLines tags
+                   , total = totPrice
+                   }
 
   $(logDebug) (show res)
   return res

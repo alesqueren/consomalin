@@ -26,7 +26,6 @@ library
                        Drive.Crawl
                        Drive.Crawl.Account
                        Drive.Crawl.Auchan
-                       Drive.Crawl.Auchan.Actions
                        Drive.Crawl.Auchan.Product
                        Drive.Crawl.Auchan.Page.Home
                        Drive.Crawl.Auchan.Page.Login
@@ -89,7 +88,6 @@ executable kiva
   hs-source-dirs:      services/kiva
   main-is:             Main.hs
   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
-  other-modules:       Server
   build-depends:       base
                      , protolude
                      , drive

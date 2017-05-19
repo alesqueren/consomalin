@@ -13,19 +13,21 @@ import Data.Time
 
 import Utils.Env
 import Drive.Slot
-import Drive.Crawl.Auchan
 import Drive.Attendance
+import Drive.Crawl
+import Drive.Crawl.Auchan
+import Drive.Crawl.Account
 
-data Response = Response 
+data ResponseTmp = ResponseTmp 
   { slots :: [Slot]
   , expiration :: UTCTime
   }
   deriving (Show, Generic)
-instance ToJSON Response
+instance ToJSON ResponseTmp
 
 main :: IO ()
 main = do
-  port <- fromEnvOr "SERVER_PORT" decimal 80 :: IO Int
+  port <- fromEnvOr "SERVER_PORT" decimal 80
   startSrv port
 
 startSrv :: Port -> IO()
@@ -39,9 +41,10 @@ slotController :: ActionM ()
 slotController = do
   now <- liftIO getCurrentTime
   attendance <- liftIO $ mongoFind "balma"
-  slots <- liftIO $ fetchSchedule attendance $ utctDay now
+  acc <- liftIO $ makeAccount
+  slots <- liftIO $ runConduitCrawl $ doSchedule acc attendance $ utctDay now
   if null slots
     then raise "no slot found"
     else do
       let exp = addUTCTime (60*5) now
-      json $ Response slots exp
+      json $ ResponseTmp slots exp

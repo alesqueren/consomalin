@@ -9,14 +9,14 @@ module Drive.Crawl
   , module X
   ) where
 
-import           Protolude               hiding (try)
+import           Protolude               hiding (try, Selector)
 
 import           Network.HTTP.Conduit    as X
-import           Network.HTTP.Types.Header
+import           Network.HTTP.Types.Header as X
 
 import           Network.URI
-import           Text.HTML.Scalpel.Core  as X
 
+import           Text.HTML.Scalpel.Core  as X
 import           Control.Lens            (makeLenses, use, (.=))
 import           Control.Monad.Catch
 import           Control.Monad.Logger    as X
@@ -24,12 +24,14 @@ import qualified Data.Text               as T
 import qualified Data.Text.Encoding      as T
 import qualified Data.Text.Lazy.Encoding as LT
 import qualified Data.ByteString.Lazy.Char8 as BL
-import           Utils.Misc              as X
-import           Drive.Types             as X
+import           Data.Aeson (FromJSON, decode')
 import           Text.HTML.TagSoup
 import           System.Log.FastLogger
-
 import           Control.Monad.Trans.Free.Church
+import           Conduit
+
+import           Utils.Misc              as X
+import           Drive.Types             as X
 
 -- |Some exception types for this module
 -- Should these provide an extra string description?
@@ -50,11 +52,11 @@ data CrawlF next =
 
 type Crawl = F CrawlF
 
-curUri :: MonadFree CrawlF m => m (Maybe URI)
-curUri = liftF $ CurUri identity
+-- curUri :: MonadFree CrawlF m => m (Maybe URI)
+-- curUri = liftF $ CurUri identity
 
-chUri :: MonadFree CrawlF m => URI -> m ()
-chUri u = liftF $ ChUri u ()
+-- chUri :: MonadFree CrawlF m => URI -> m ()
+-- chUri u = liftF $ ChUri u ()
 
 -- log :: MonadFree CrawlF m => Text -> m ()
 -- log t = liftF $ Log t ()
@@ -76,11 +78,11 @@ computeURI (Just baseUri) tUri = do
 
 -- TODO: use real url type
 -- |Navigate from an URI (absolute or relative to the current page)
-goURI :: TextURI -> Crawl ()
-goURI u = do
-  mcu <- curUri
-  nUri <- maybe (throwM InvalidURIException) return (computeURI mcu u)
-  chUri nUri
+-- goURI :: TextURI -> Crawl ()
+-- goURI u = do
+--   mcu <- curUri
+--   nUri <- maybe (throwM InvalidURIException) return (computeURI mcu u)
+--   chUri nUri
 
 data Req = Req 
   { uri :: TextURI
@@ -103,30 +105,30 @@ requestJson req = do
   resp <- request req
   return . BL.fromStrict . encodeUtf8 . toStrict . LT.decodeUtf8 . responseBody $ resp
 
--- TODO: rm
-httpRequest :: MonadFree CrawlF m => TextURI -> Method -> RequestHeaders -> ByteString -> m (Response LByteString)
-httpRequest tUri met headers body = liftF $ HttpRequest tUri met headers body identity
-
--- TODO: rm
-httpReqText :: TextURI -> Method -> RequestHeaders -> Text -> Crawl Text
-httpReqText tUri met h body = do
-  resp <- httpRequest tUri met h (T.encodeUtf8 body)
-  return . toStrict . LT.decodeUtf8 . responseBody $ resp
-
--- TODO: rm
-postText :: TextURI -> RequestHeaders -> Text -> Crawl Text
-postText tUri = httpReqText tUri "POST"
-
--- TODO: rm
-getText :: TextURI -> RequestHeaders -> Crawl Text
-getText tUri h = httpReqText tUri "GET" h ""
-
--- TODO: rm
--- |Get the tags of a page
-getPage :: TextURI -> Crawl [Tag Text]
-getPage tUri = do
-  resp <- getText tUri []
-  return . parseTags $ resp
+-- -- TODO: rm
+-- httpRequest :: MonadFree CrawlF m => TextURI -> Method -> RequestHeaders -> ByteString -> m (Response LByteString)
+-- httpRequest tUri met headers body = liftF $ HttpRequest tUri met headers body identity
+-- 
+-- -- TODO: rm
+-- httpReqText :: TextURI -> Method -> RequestHeaders -> Text -> Crawl Text
+-- httpReqText tUri met h body = do
+--   resp <- httpRequest tUri met h (T.encodeUtf8 body)
+--   return . toStrict . LT.decodeUtf8 . responseBody $ resp
+-- 
+-- -- TODO: rm
+-- postText :: TextURI -> RequestHeaders -> Text -> Crawl Text
+-- postText tUri = httpReqText tUri "POST"
+-- 
+-- -- TODO: rm
+-- getText :: TextURI -> RequestHeaders -> Crawl Text
+-- getText tUri h = httpReqText tUri "GET" h ""
+-- 
+-- -- TODO: rm
+-- -- |Get the tags of a page
+-- getPage :: TextURI -> Crawl [Tag Text]
+-- getPage tUri = do
+--   resp <- getText tUri []
+--   return . parseTags $ resp
 
 
 {-
@@ -187,3 +189,36 @@ runNetCrawl m c = evalStateT (iterTM go c) (newNetSession m)
       putStr (fromLogStr $ defaultLogStr loc source level s)
       f
     go (Throw e) = throwIO e
+
+
+runConduitCrawl :: ConduitM () Void (FT CrawlF IO) a -> IO a
+runConduitCrawl pipe = do
+  man <- newManager tlsManagerSettings
+  runNetCrawl man $ runConduit pipe
+
+
+-- |apply an extractor function on a json page
+extractFromJson :: (FromJSON page) => (page -> [a]) -> Crawl BL.ByteString -> Crawl [a]
+extractFromJson extract page = do
+  p <- page
+  return $ maybe [] extract $ (decode' p)
+
+data EntityScraper a = EntityScraper
+  { rootSelector     :: Selector
+  , elementSelectors :: Map Text (Scraper Text Text)
+  , entityMaker      :: Map Text Text -> Maybe a
+  }
+
+toto :: Map Text (Scraper Text Text) -> (Map Text Text -> Maybe a) -> Scraper Text (Maybe a)
+toto selectors maker =
+  do
+    elementTxts <- mapM identity selectors
+    return $ maker elementTxts
+
+tata :: EntityScraper a -> Scraper Text [Maybe a]
+tata (EntityScraper rs es em) = 
+  chroots rs (toto es em) 
+
+entityScrape :: EntityScraper a -> [Tag Text] -> [Maybe a]
+entityScrape scraper page =
+  fromMaybe [] $ scrape (tata scraper) page

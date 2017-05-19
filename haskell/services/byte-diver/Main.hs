@@ -24,9 +24,13 @@ productsInsert = evalStateLC Set.empty (awaitForever ins) where
         wasSeen s p = Set.member (pid p) s
 
 main :: IO ()
-main = do
-  man <- newManager tlsManagerSettings
-  runNetCrawl man $ runConduit $
+main =
+  runConduitCrawl $
     crawl
     .| chunksOf 50
     .| productsInsert
+  -- man <- newManager tlsManagerSettings
+  -- runNetCrawl man $ runConduit $
+  --   crawl
+  --   .| chunksOf 50
+  --   .| productsInsert

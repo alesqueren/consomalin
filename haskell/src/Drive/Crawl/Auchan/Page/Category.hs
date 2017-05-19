@@ -6,6 +6,7 @@ import           Protolude                  hiding (Selector)
 import           Data.Aeson
 import           Data.List                  (nubBy)
 import qualified Data.ByteString.Lazy.Char8 as BL
+import qualified Data.Map.Strict as M
 import           Text.HTML.TagSoup
 
 import           Drive.Crawl                hiding (html)
@@ -19,60 +20,45 @@ newtype Page = Page { zones :: Zone }
   deriving (Show, Generic)
 instance FromJSON Page
 
-data SelectorType = PdS | PdIdS | PdNameS | PdImageS | PdPriceS | PdPriceByQS | PdQtyUnitS
-getSel :: SelectorType -> Selector
-getSel PdS         = "div" @: [hasClass "vignette", notP $ hasClass "vignette-indispo"] // 
-                     "div" @: [hasClass "vignette-content"]
-getSel PdIdS       = "a" @: [hasClass "seoActionLink"]
-getSel PdNameS     = "p" @: [hasClass "libelle-produit"]
-getSel PdImageS    = "div" @: [hasClass "visuel-produit"] // "img"
-getSel PdPriceS    = "p" @: [hasClass "prix-produit"]
-getSel PdPriceByQS = "p" @: [hasClass "prix-unitaire"]
-getSel PdQtyUnitS  = "p" @: [hasClass "prix-unitaire"] // "abbr"
-
-
-productInfo :: Selector -> Scraper Text (Maybe SiteProduct)
-productInfo _ = do
-  idTxt <- attr "href" $ getSel PdIdS
-  nameTxt <- text $ getSel PdNameS
-  imageTxt <- attr "data-src" $ getSel PdImageS
-  priceTxt <- text $ getSel PdPriceS
-  priceByQuantityTxt <- text $ getSel PdPriceByQS
-  quantityUnitTxt <- text $ getSel PdQtyUnitS
-
-  return $ makeSiteProduct idTxt priceTxt nameTxt imageTxt priceByQuantityTxt quantityUnitTxt
-
-entryProducts :: Scraper Text [Maybe SiteProduct]
-entryProducts = chroots (getSel PdS) (productInfo anySelector)
+siteProductScraper :: EntityScraper SiteProduct
+siteProductScraper = EntityScraper 
+  { rootSelector = "div" @: [hasClass "vignette", notP $ hasClass "vignette-indispo"] // 
+                   "div" @: [hasClass "vignette-content"]
+  , elementSelectors = M.fromList 
+      [ ("id", attr "href" $ "a" @: [hasClass "seoActionLink"])
+      , ("name", text $ "p" @: [hasClass "libelle-produit"])
+      , ("image", attr "data-src" $ "div" @: [hasClass "visuel-produit"] // "img")
+      , ("price", text $ "p" @: [hasClass "prix-produit"])
+      , ("priceByQ", text $ "p" @: [hasClass "prix-unitaire"])
+      , ("qtyUnit", text $ "p" @: [hasClass "prix-unitaire"] // "abbr")
+      ]
+  , entityMaker = makeSiteProduct2
+  }
 
 extractProducts :: Page -> [SiteProduct]
 extractProducts page =
   nubBy (\x y -> siteId x == siteId y) $ 
     catMaybes $ 
-      fromMaybe [] $ 
-        scrape entryProducts $
-          parseTags . itemsList . zones $
-            page
+      entityScrape siteProductScraper $
+        parseTags . itemsList . zones $
+          page
 
-extract :: (Page -> [a]) -> Crawl BL.ByteString -> Crawl [a]
-extract f page =
-  do
-    p <- page
-    return $ maybe [] f $ decode' p
-
-load :: Integer -> Crawl BL.ByteString
-load pageNb =
+loadPage :: Integer -> Crawl BL.ByteString
+loadPage pageNb =
   requestJson $ Req url "POST" [("X-Requested-With", "XMLHttpRequest")] ""
   where url = "http://www.auchandrive.fr/drive/rayon.productlist.pagination_0.topage/"
               <> show pageNb
               <> "?t:ac=3686969/3686339"
 
+load :: Text -> Crawl [Tag Text]
+load url = requestTag $ Req url "GET" [] ""
+
 loadAndExtract :: Text -> (Page -> [a]) -> Crawl [a]
-loadAndExtract url f = 
+loadAndExtract url extractor = 
   do
     -- Set current category in Auchan website state
-    _ <- requestTag $ Req url "GET" [] ""
+    _ <- load url
 
     -- Load and extract every pages of the current category
-    itemByPage <- takeWhileM (not . null) (map (extract f . load) [1,2..])
-    return . concat $ itemByPage
+    itemByPage <- takeWhileM (not . null) (map (extractFromJson extractor . loadPage) [1,2..])
+    return $ concat itemByPage
