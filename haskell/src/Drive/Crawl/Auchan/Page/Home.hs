@@ -1,28 +1,22 @@
 module Drive.Crawl.Auchan.Page.Home (load, extractCategoryUrls) where
 
 import           Protolude       hiding (Selector)
-import qualified Data.Text       as T
+import qualified Data.Map.Strict as M
 import           Text.HTML.TagSoup
 import           Drive.Crawl
 
-data SelectorType = CategoryS | CategoryUrlS 
-getSel :: SelectorType -> Selector
-getSel CategoryS    = "div" @: [hasClass "blocLayer", hasClass "float"] // "p"
-getSel CategoryUrlS = "a"
-
+categoryUrlScraper :: EntityScraper Text
+categoryUrlScraper = EntityScraper 
+  { rootSelector = "div" @: [hasClass "blocLayer", hasClass "float"] // "p"
+  , elementSelectors = M.fromList [("urls", attr "href" "a")]
+  , entityMaker = M.lookup "urls"
+  }
 
 load :: Text -> Crawl [Tag Text]
 load url = requestTag $ Req url "GET" [] ""
 
-categoryLink :: Scraper Text Text
-categoryLink = do
-  relUrl <- attr "href" $ getSel CategoryUrlS
-  return (T.pack $ T.unpack "https://www.auchandrive.fr" ++ T.unpack relUrl)
-
-entryCategories :: Scraper Text [TextURI]
-entryCategories = chroots (getSel CategoryS) categoryLink
-
 -- TODO: use real url Type (in and out)
-extractCategoryUrls :: [Tag Text] -> [Text]
-extractCategoryUrls tags =
-  fromMaybe [] $ scrape entryCategories tags
+extractCategoryUrls :: Text -> Crawl [Text]
+extractCategoryUrls url = do
+  page <- load url
+  return $ catMaybes $ entityScrap categoryUrlScraper page

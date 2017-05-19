@@ -41,8 +41,8 @@ crawlNode (HomePage shopName) =
   do
     $(logDebug) $ "[HomePage] " <> shopName
     shopUrl <- L.doChooseDrive shopName
-    homePage <- H.load shopUrl
-    return $ map CategoryPage $ H.extractCategoryUrls homePage
+    catUrls <- H.extractCategoryUrls shopUrl
+    return $ map CategoryPage catUrls
 
 crawlNode (CategoryPage url) =
   do
@@ -79,8 +79,11 @@ doTransaction2 :: (MonadFree CrawlF cr) => Account -> ConduitM () Void cr ()
 doTransaction2 acc = do
   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
   _ <- lift . fromF $ Lo.login acc
-  _ <- lift . fromF $ B.addToBasket "666" 3
-  _ <- lift . fromF $ B.getBasket
+  -- a non empty basket is needed for getting schedule
+  -- _ <- lift . fromF $ addToBasket "141418" 1
+  _ <- lift . fromF $ B.load
+  _ <- lift . fromF $ S.load
+  slotInfo <- lift . fromF $ getSchedule
   return ()
 -- TODO: rm
 mymytest :: IO ()

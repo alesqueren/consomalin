@@ -2,7 +2,6 @@ module Drive.Crawl.Auchan.Product (SiteProduct(..)
                                   , ApiProduct(..)
                                   , readSiteId 
                                   , makeSiteProduct
-                                  , makeSiteProduct2
                                   , makeProduct
                                   ) where
 
@@ -46,28 +45,12 @@ readSiteId txt =
     re = "-P([0-9]+)/$" :: String
     matches = T.unpack txt =~ re :: AllTextSubmatches [] String
 
-makeSiteProduct2 :: Map Text Text -> Maybe SiteProduct
-makeSiteProduct2 elementsMap =
+makeSiteProduct :: Map Text Text -> Maybe SiteProduct
+makeSiteProduct elementsMap =
   do
     [idTxt, priceTxt, nameTxt, imageTxt, priceByQuantityTxt, quantityUnitTxt] 
       <- mapM (`lookup` elementsMap)
         ["id", "name", "image", "price", "priceByQ", "qtyUnit"]
-    id <- readSiteId idTxt
-    pr <- readPrice priceTxt
-    prByQ <- readPrice priceByQuantityTxt
-    return SiteProduct {
-      siteId = id,
-      siteName = nameTxt,
-      siteImageUrl = T.append "http://www.auchandrive.fr" imageTxt,
-      sitePrice = pr,
-      sitePriceByQuantity = prByQ,
-      siteQuantityUnit = quantityUnitTxt
-    }
-
-
-makeSiteProduct :: Text -> Text -> Text -> Text -> Text -> Text -> Maybe SiteProduct
-makeSiteProduct idTxt priceTxt nameTxt imageTxt priceByQuantityTxt quantityUnitTxt =
-  do
     id <- readSiteId idTxt
     pr <- readPrice priceTxt
     prByQ <- readPrice priceByQuantityTxt

@@ -8,6 +8,7 @@ import           Protolude       hiding (Selector, inits)
 import           Prelude                    (String)
 import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.Text       as T
+import qualified Data.Map.Strict as M
 import           Data.Aeson
 import           Text.Regex.TDFA hiding (extract)
 import           Text.HTML.TagSoup
@@ -47,6 +48,23 @@ skipSunday currDay n =
     else addDays n currDay
   where
     (_,_,wd) = toWeekDate currDay
+
+pastSlotInfoScraper :: EntityScraper ParsedSlotInfo
+pastSlotInfoScraper = EntityScraper 
+  { rootSelector = "li" @: [hasClass "slotHoraire-listeHeureItem"]
+  , elementSelectors = M.fromList
+    [ ("time", text $ "span" @: [hasClass "slotHoraire-listeHeureLink"]) ]
+  , entityMaker = makePastSlot 
+  }
+
+slotInfoScraper :: EntityScraper ParsedSlotInfo
+slotInfoScraper = EntityScraper 
+  { rootSelector = "li" @: [hasClass "slotHoraire-listeHeureItem"]
+  , elementSelectors = M.fromList
+    [ ("time", text $ "a" @: [hasClass "slotHoraire-listeHeureLink"])
+    , ("href", attr "href" $ "a" @: [hasClass "slotHoraire-listeHeureLink"])]
+  , entityMaker = makeAvailableSlot 
+  }
 
 
 newtype Link = Link { url :: Text }
@@ -126,51 +144,39 @@ selectSchedule slotId = do
       httpData = "t%3Azoneid=forceAjax"
 
 
-
-shopListSel :: Selector
-shopListSel = "li" @: [hasClass "slotHoraire-listeHeureItem"]
-
--- TODO: EXTRACT SELECTORS !
-entryShopLink :: Scraper Text [Maybe ParsedSlotInfo]
-entryShopLink = chroots shopListSel (parseAvailableSlot <|> parsePastSlot)
-
-parsePastSlot :: Scraper Text (Maybe ParsedSlotInfo)
-parsePastSlot = do
-  t <- text $ "span" @: [hasClass "slotHoraire-listeHeureLink"]
+makePastSlot :: Map Text Text -> Maybe ParsedSlotInfo
+makePastSlot m = do
+  t <- M.lookup "time" m
   let tod = parseTimeOrError False defaultTimeLocale "%lh%M" (T.unpack t)
-  return $ Just (Nothing, tod, Past)
+  return (Nothing, tod, Past)
 
-parseAvailableSlot :: Scraper Text (Maybe ParsedSlotInfo)
-parseAvailableSlot = do
-  t <- text $ "a" @: [hasClass "slotHoraire-listeHeureLink"]
+makeAvailableSlot :: Map Text Text -> Maybe ParsedSlotInfo
+makeAvailableSlot m = do
+  t <- M.lookup "time" m
   let tod = parseTimeOrError False defaultTimeLocale "%lh%M" (T.unpack t)
 
-  href <- attr "href" $ "a" @: [hasClass "slotHoraire-listeHeureLink"]
-  let id = head $ getAllTextSubmatches $ matches $ T.unpack href
+  href <- M.lookup "href" m
+  id <- head $ getAllTextSubmatches $ matches $ T.unpack href
 
-  case id of
-    Nothing -> return Nothing
-    Just id2 -> return $ Just (Just $ T.pack id2, tod, Available)
+  return (Just $ T.pack id, tod, Available)
 
-    where 
-      re = "[0-9][0-9]+$" :: String
-      matches x = (x :: String) =~ re :: AllTextSubmatches [] String
-
+  where 
+    re = "[0-9][0-9]+$" :: String
+    matches x = (x :: String) =~ re :: AllTextSubmatches [] String
 
 
 extractSlotInfo :: Integer -> DailySchedule -> [SlotInfo]
 extractSlotInfo dayNb ds =
   map (makeSlotInfo dayNb) $
     catMaybes $
-      fromMaybe [] $
-        scrape entryShopLink $ parseTags $ 
-          zoneSlotGrid $ zones ds
+      entityScrap pastSlotInfoScraper page
+      ++
+      entityScrap slotInfoScraper page
+
+  where page = parseTags $ zoneSlotGrid $ zones ds
 
 getSchedule :: Crawl [SlotInfo]
 getSchedule = do
-  $(logDebug) ""
   $(logDebug) $ "getSchedule"
-
-  extSlots <- mapM (\d -> extractFromJson (extractSlotInfo d) $ loadDay d) [0..6]
-
-  return $ concat extSlots
+  slotsByDay <- mapM (\d -> extractFromJson (extractSlotInfo d) $ loadDay d) [0..6]
+  return $ concat slotsByDay

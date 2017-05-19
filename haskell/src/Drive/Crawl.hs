@@ -105,31 +105,6 @@ requestJson req = do
   resp <- request req
   return . BL.fromStrict . encodeUtf8 . toStrict . LT.decodeUtf8 . responseBody $ resp
 
--- -- TODO: rm
--- httpRequest :: MonadFree CrawlF m => TextURI -> Method -> RequestHeaders -> ByteString -> m (Response LByteString)
--- httpRequest tUri met headers body = liftF $ HttpRequest tUri met headers body identity
--- 
--- -- TODO: rm
--- httpReqText :: TextURI -> Method -> RequestHeaders -> Text -> Crawl Text
--- httpReqText tUri met h body = do
---   resp <- httpRequest tUri met h (T.encodeUtf8 body)
---   return . toStrict . LT.decodeUtf8 . responseBody $ resp
--- 
--- -- TODO: rm
--- postText :: TextURI -> RequestHeaders -> Text -> Crawl Text
--- postText tUri = httpReqText tUri "POST"
--- 
--- -- TODO: rm
--- getText :: TextURI -> RequestHeaders -> Crawl Text
--- getText tUri h = httpReqText tUri "GET" h ""
--- 
--- -- TODO: rm
--- -- |Get the tags of a page
--- getPage :: TextURI -> Crawl [Tag Text]
--- getPage tUri = do
---   resp <- getText tUri []
---   return . parseTags $ resp
-
 
 {-
    NetCrawl: crawl with http requests
@@ -203,22 +178,29 @@ extractFromJson extract page = do
   p <- page
   return $ maybe [] extract $ (decode' p)
 
+-- TODO:
+-- data EntityScraper elements entity = EntityScraper !!
+-- scrapingData:
+--   time:
+--     selector: Selector
+--     value: Maybe Text
+-- data EntityScraper entity scrapingData = EntityScraper
+--   { rootSelector     :: Selector
+--   , elementSelectors :: scrapingData (bof)
+--   , entityMaker      :: scrapingData -> Maybe entity
+--   }
 data EntityScraper a = EntityScraper
   { rootSelector     :: Selector
   , elementSelectors :: Map Text (Scraper Text Text)
   , entityMaker      :: Map Text Text -> Maybe a
   }
 
-toto :: Map Text (Scraper Text Text) -> (Map Text Text -> Maybe a) -> Scraper Text (Maybe a)
-toto selectors maker =
-  do
-    elementTxts <- mapM identity selectors
-    return $ maker elementTxts
+scrap :: Map Text (Scraper Text Text) -> (Map Text Text -> Maybe a) -> Scraper Text (Maybe a)
+scrap selectors maker = do
+  elementTxts <- mapM identity selectors
+  return $ maker elementTxts
 
-tata :: EntityScraper a -> Scraper Text [Maybe a]
-tata (EntityScraper rs es em) = 
-  chroots rs (toto es em) 
-
-entityScrape :: EntityScraper a -> [Tag Text] -> [Maybe a]
-entityScrape scraper page =
-  fromMaybe [] $ scrape (tata scraper) page
+entityScrap :: EntityScraper a -> [Tag Text] -> [Maybe a]
+entityScrap (EntityScraper rootSel elmtSel em) page =
+  fromMaybe [] $ 
+    scrape (chroots rootSel (scrap elmtSel em)) page

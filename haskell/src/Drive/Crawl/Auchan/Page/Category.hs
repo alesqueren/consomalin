@@ -32,14 +32,14 @@ siteProductScraper = EntityScraper
       , ("priceByQ", text $ "p" @: [hasClass "prix-unitaire"])
       , ("qtyUnit", text $ "p" @: [hasClass "prix-unitaire"] // "abbr")
       ]
-  , entityMaker = makeSiteProduct2
+  , entityMaker = makeSiteProduct
   }
 
 extractProducts :: Page -> [SiteProduct]
 extractProducts page =
   nubBy (\x y -> siteId x == siteId y) $ 
     catMaybes $ 
-      entityScrape siteProductScraper $
+      entityScrap siteProductScraper $
         parseTags . itemsList . zones $
           page
 
