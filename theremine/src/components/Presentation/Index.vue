@@ -11,11 +11,11 @@ div#presentation
     h3.text Achetez seulement ce dont vous avez besoin en constituant un ensemble des produits dont vous pourriez avoir besoin
     img(src="../../assets/images/wishlist-800.png")
   .plus.three
-    h3.text Ne deambulez plus dans les rayons.
-    img(src="../../assets/images/wishlist-800.png")
-    router-link(:to='{ name: "wishlist" }')
-      span.input-group-addon.nav-btn.prefered
-        span Commencer l'aventure !
+    h3.text Ne deambulez plus dans les rayons grâce à la recherche automatiue.
+    img(src="../../assets/images/search.png")
+  router-link.begin(:to='{ name: "wishlist" }')
+    span.input-group-addon.nav-btn.prefered
+      span Commencer l'aventure !
 </template>
 
 <script>
@@ -35,27 +35,42 @@ export default {
 #presentation{
     margin: 45px;
     text-align: center;
+    font-size: 1.2em;
 }
 .one{
-    width: 700px;
-    margin-left: 400px;
+    float: left;
+    width: 400px;
 }
 .one .text{
-    width: 700px;
+    width: 400px;
 }
 .one img{
     width: 150px;
 }
 
 .two{
-    width: 700px;
-    margin-left: 400px;
+    float: left;
+    width: 400px;
 }
 .two .text{
-    width: 700px;
+    width: 400px;
 }
 .two img{
     width: 400px;
 }
 
+.three{
+    float: left;
+    width: 400px;
+}
+.three .text{
+    width: 400px;
+}
+.three img{
+    width: 400px;
+}
+
+.begin{
+    clear: both;
+}
 </style>

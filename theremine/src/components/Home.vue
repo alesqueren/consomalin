@@ -83,14 +83,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import config from '../../config';
 
 const $ = window.$;
 
 export default {
-  computed: mapState({
-    user: state => state.user.username,
-  }),
+  computed: {
+    user() {
+      return this.$store.state.user.username;
+    },
+    demo() {
+      return config.MODE_DEMO;
+    },
+  },
   mounted() {
     $('#title .go-to-next').on('click', () => {
       const page = $('#rassurance');

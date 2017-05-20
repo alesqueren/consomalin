@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.slotHour(v-bind:disabled="pickupSlot.status == 'Past'" v-bind:class="classSlot" @click="selectSlot()" v-bind:style="styleObject") {{frenchTime}}
+  div.slotHour.classSlot(v-bind:class="{'disabled': pickupSlot.status == 'Past'}" @click="selectSlot()" v-bind:style="styleObject") {{frenchTime}}
 </template>
 
 <script>
@@ -64,10 +64,12 @@ export default {
   },
   methods: {
     selectSlot() {
-      this.$store.dispatch('schedule/selectSlot', {
-        slotId: this.pickupSlot.id,
-        dateTime: this.pickupSlot.day + ' ' + this.pickupSlot.time,
-      });
+      if (this.pickupSlot.status !== 'Past') {
+        this.$store.dispatch('schedule/selectSlot', {
+          slotId: this.pickupSlot.id,
+          dateTime: this.pickupSlot.day + ' ' + this.pickupSlot.time,
+        });
+      }
     },
   },
 };
@@ -87,10 +89,11 @@ export default {
   border: 1px solid rgba(0,0,0,0.25);
   border-radius: 2px;
 }
-.slotHour:hover{
+.slotHour:not(.disabled):hover{
   font-weight: bolder;
 }
-.btn:disabled{
+.slotHour.disabled{
   opacity: 0.2;
+  cursor: default;
 }
 </style>

@@ -8,10 +8,16 @@
 </template>
 
 <script>
+import config from '../../../config';
 import Groups from './Groups';
 import ActiveGroup from './ActiveGroup';
 
 export default {
+  computed: {
+    demo() {
+      return config.MODE_DEMO;
+    },
+  },
   components: { Groups, ActiveGroup },
 };
 </script>

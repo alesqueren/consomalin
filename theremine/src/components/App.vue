@@ -23,11 +23,11 @@
             router-link.title(:to="{ name: 'ticket' }")
               span.fa.fa.fa-car
               span &nbsp;Retrait
-          li.header-tab
-            router-link.title(:to="{ name: 'help' }")
-              span.fa.fa.fa-question-circle-o
-              span &nbsp;Help
       Usercard
+      li.header-tab.right
+        router-link.title(:to="{ name: 'help' }")
+          span.fa.fa.fa-question-circle-o
+          span &nbsp;Help
     div#content(v-bind:class="{'marginalize-left' : listRequired, 'marginalize-right' : navCarRequired}")
       div#replay
       router-view
@@ -188,6 +188,7 @@ a:hover {
   height: 50px;
   width: 100%;
   background-color: var(--color1);
+  min-width: 1400px;
 }
 
 #header .logo {
@@ -240,23 +241,15 @@ a:hover {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  width: 150px;
+  width: 200px;
   text-align: center;
 }
 
-#steps .router-link-active {
+.header-tab .router-link-active {
   color: white !important;
   background-color: var( --color2);
   display: block;
   text-shadow: 0 0 0 #000;
-}
-*:-moz-focusring {
-    color: transparent;
-    text-shadow: 0 0 0 #000;
-}
-
-button::-moz-focus-inner {
-  border: 0;
 }
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
@@ -266,11 +259,11 @@ input[type=number]::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance:textfield;
 }
-#steps .header-tab:not(.inactive) .title:not(.router-link-active):hover  {
+.header-tab:not(.inactive) .title:not(.router-link-active):hover  {
   color:white !important;
   background-color: rgba(255, 255, 255, 0.14902);
 }
-#steps .title.router-link-active:hover  {
+.title.router-link-active:hover  {
   cursor: default;
 }
 .btn {

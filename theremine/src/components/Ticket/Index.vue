@@ -55,6 +55,9 @@ export default {
 </script>
 
 <style scoped>
+#ticket{
+  margin: 45px;
+}
 .box{
   font-family: receipt;
   position: absolute;

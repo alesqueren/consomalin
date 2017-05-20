@@ -71,7 +71,7 @@ export default {
   top: 125px;
   background-color: white;
   /*padding-bottom: 10px;*/
-  height: 84%;
+  height: 88%;
   /*max-height: 86vh;*/
   background-size: 100% 21px;
   border: 1px solid #dedede;

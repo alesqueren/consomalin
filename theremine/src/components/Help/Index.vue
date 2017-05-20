@@ -45,7 +45,7 @@ export default {
 
 <style scoped>
 #help{
-  margin: 45px;
+  margin: 30px 45px 45px 30px;
 }
 /*PRESENTATION*/
 #presentation{

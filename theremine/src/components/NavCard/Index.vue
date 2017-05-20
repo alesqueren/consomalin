@@ -29,6 +29,7 @@
         div.next.input-group-addon.nav-btn.prefered
           span Voir le panier
       div.next.input-group-addon.nav-btn(
+        v-bind:class="{'prefered': currentWishResults && !currentWishResults[0]}"
         v-else="!hasChoosenProduct && hasCurrentWish",
         @click="erase")
         span Je n'en veux plus
@@ -80,7 +81,7 @@
         span.input-group-addon.nav-btn.prefered
           span Je valide mon ticket
 
-    div(v-if="routeName === 'help'")
+    div.contact-us(v-if="routeName === 'help'")
       h5 Un question, une suggestion ?
       span Contactez nous : af@consomalin.ovh
 </template>
@@ -114,8 +115,7 @@ export default {
     },
     hasChoosenProduct() {
       try {
-        const currentWish = this.$store.getters['sectionWishes/getCurrent'];
-        const pds = this.$store.state.selection.basket[currentWish.gid][currentWish.id];
+        const pds = this.$store.state.selection.basket[this.currentWish.gid][this.currentWish.id];
         return (Object.keys(pds).length !== 0);
       } catch (e) {
         return false;
@@ -132,6 +132,15 @@ export default {
         return 'Commander pour ' + frenchTime;
       }
       return 'Valider ma commande';
+    },
+    currentWish() {
+      return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    currentWishResults() {
+      if (this.currentWish && this.currentWish.name) {
+        return this.$store.state.product.searchs[this.currentWish.name];
+      }
+      return [];
     },
   },
   methods: {
@@ -160,5 +169,11 @@ export default {
 }
 a{
   margin-top: 15px;
+}
+.contact-us{
+  background-color: white;
+  border: 1px solid #dedede;
+  padding: 15px;
+  border-radius: 4px;
 }
 </style>
