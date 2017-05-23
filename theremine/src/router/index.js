@@ -80,7 +80,6 @@ const router = new Router({
     {
       name: 'help',
       path: '/Help',
-      meta: { auth: true },
       component: Help,
     },
     {

@@ -1,15 +1,21 @@
 <template lang="pug">
   #app(@click='finishAllActions', @keyup.esc="finishAllActions", tabindex="0")
     div#header
+      div#demo(v-if="demo") Site de démonstration, aucune commande n'est envoyée aux magasins. Aidez-nous en remplissant ce 
+        a(href="https://goo.gl/forms/fso29Uz3ItSfkNAl1" target="blank") questionnaire
+        span .
       div.left
         router-link.title(:to="{ name: main }")
-          img.logo(src="../assets/images/logo.png")
+          div.live(v-if="demo") Live demo
+          img.logo(
+          v-bind:class="{'inlive': demo}"
+          src="../assets/images/logo.png")
 
       div#steps.left(v-if="user && user.username")
         ul.header-tabs
           li.header-tab
             router-link.title(:to="{ name: 'wishlist' }")
-              span.fa.fa-list
+              span.fa.fa-edit
               span &nbsp;Ma liste
           li.header-tab(v-bind:class="{'inactive': selectedWishNb === 0}")
             router-link.title(:to="{ name: 'section' }")
@@ -20,13 +26,13 @@
               span.fa.fa-shopping-cart
               span &nbsp;Mon panier
           li.header-tab(v-bind:class="{'inactive': matchedWishesLength === 0}")
-            router-link.title(:to="{ name: 'ticket' }")
+            router-link.title(:to="{ name: 'withdraw' }")
               span.fa.fa.fa-car
               span &nbsp;Retrait
       Usercard
-      li.header-tab.right
-        router-link.title(:to="{ name: 'help' }")
-          span.fa.fa.fa-question-circle-o
+      li.header-tab.right.help
+        router-link.title.help(:to="{ name: 'help' }")
+          span.fa.fa.fa-question-circle
           span &nbsp;Help
     div#content(v-bind:class="{'marginalize-left' : listRequired, 'marginalize-right' : navCarRequired}")
       div#replay
@@ -36,6 +42,7 @@
 </template>
 
 <script>
+import config from '../../config';
 import replay from '../replay';
 import NavCard from './NavCard/Index';
 import Usercard from './User/Usercard';
@@ -44,6 +51,11 @@ import List from './List/Index';
 const $ = window.$;
 
 export default {
+  data() {
+    return {
+      demo: config.MODE_DEMO,
+    };
+  },
   computed: {
     user() {
       return this.$store.state.user;
@@ -64,8 +76,7 @@ export default {
       const isWithdraw = this.routeName === 'withdraw';
       const isTicket = this.routeName === 'ticket';
       const isHelp = this.routeName === 'help';
-      const username = this.user.username;
-      return username && (isWishlist || isSection || isBasket || isWithdraw || isTicket || isHelp);
+      return isWishlist || isSection || isBasket || isWithdraw || isTicket || isHelp;
     },
     listRequired() {
       const isWishlist = this.routeName === 'wishlist';
@@ -94,6 +105,14 @@ export default {
         replay.next(this.$store, this.$router);
       }
     });
+  },
+  mounted() {
+    if (this.demo) {
+      $('#content').css('margin-top', '+=50px');
+      $('#contentNavcard').css('top', '+=50px');
+      $('##header').css('top', '+=50px');
+      // $('#contentList').css('top', '+=50px');
+    }
   },
   components: { Usercard, NavCard, List },
 };
@@ -124,6 +143,7 @@ export default {
 
   --success: #48CE6E;
   --active: #7DDBD1;
+  --inactive: #999;
   --warning: orange;
   --white: white;
   --grey: #c6c6c6;
@@ -141,11 +161,12 @@ body{
   -moz-osx-font-smoothing: grayscale;
   outline:none;
   color: var(--main-font);
+  margin-top: 50px;
 }
 #content {
   position: relative;
-  padding: 50px 0px 0px 0px;
   height: 94vh;
+  margin-top: 50px;
 }
 .marginalize-left {
   margin-left: 150px;
@@ -189,6 +210,7 @@ a:hover {
   width: 100%;
   background-color: var(--color1);
   min-width: 1400px;
+  top: 0;
 }
 
 #header .logo {
@@ -196,7 +218,16 @@ a:hover {
   width: 83px;
   margin-left: 50px;
 }
-
+#header .inlive {
+  margin-left: 35px;
+}
+#header .live{
+  color: red;
+  position: absolute;
+  font-size: 12px;
+  bottom: -16px;
+  right: 22px;
+}
 #header .brand {
   font-size: 20px;
   font-weight: bold;
@@ -218,7 +249,7 @@ a:hover {
 }
 
 #header .inactive .title {
-  color: grey;
+  color: var(--inactive);
 }
 
 #header .inactive a {
@@ -271,5 +302,27 @@ input[type=number] {
   background-color: var(--color2);
   border-color: var(--color2);
 }
-
+.help{
+  min-width: 120px !important;
+  max-width: 120px !important;
+}
+#demo{
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: #d9534f;
+  height: 50px;
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  line-height: 50px;
+  color: white;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  z-index: 10001;
+}
+#demo a{
+  display: inline;
+  color: var(--color1);
+}
 </style>

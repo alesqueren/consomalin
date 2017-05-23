@@ -2,7 +2,7 @@
   div#homepage
     div#title
       div#banner-title Retrouvez le gout des courses
-      div.desciption Consomalin est un site de courses en ligne independant qui permet de commander chez Auchan drive Balma.
+      div.desciption {{ presText }}
       button.go-to-next
         i.fa.fa-angle-double-down.faa-bounce.animated
       div#registration(v-if="!user")
@@ -13,14 +13,16 @@
         router-link(:to='{ name: "wishlist" }')
           span.input-group-addon.nav-btn.prefered
             span Voir ma liste
+      div.huit(v-if='demo')
+        .text 8€ offerts pour 50€ d'achat
     div#rassurance
       div.about
         div Pourquoi Consomalin
-        div.why Grâce à votre liste de courses, le site vous propose seulement les produits dont vous avez besoin. Fini les sites lents et remplis de pub. Faites vos courses en un éclair sur Consomalin !
+        div.why Grâce à votre liste de courses, le site vous propose seulement les produits dont vous avez besoin. Fini les sites lents et remplis de pub.
         div.about-border
       div.section-item
         div.item
-          i.icon.fa.fa-list
+          i.icon.fa.fa-edit
           div &nbsp;Liste de courses
           div.why Achetez seulement ce dont vous avez besoin.
         div.item
@@ -42,7 +44,7 @@
         div.item
           i.icon.fa.fa-user-o
           div &nbsp;Independant
-          div.why Soyez maître des produits que vous achetez.
+          div.why Nous ne sommes pas sponsorisés par les marques ou les distributeurs.
       button.go-to-next.blue-text
         i.fa.fa-angle-double-down.faa-bounce.animated
     div#presentation
@@ -53,26 +55,26 @@
         div.num
           span 1
         div.img
-          img.logo(src="../assets/images/list.png")
+          img.logo(src="../assets/images/myList.png")
         div.txt Préparez votre liste de courses comme à la maison
       div.item
         div.num
           span 2
         div.img
           img.logo(src="../assets/images/section.png")
-        div.txt Le site vous popose les produits de votre liste
+        div.txt Le site vous popose les<br/>produits de votre liste
       div.item
         div.num
           span 3
         div.img
           img.logo(src="../assets/images/retrait.png")
-        div.txt Valider votre ticket de caisse et choisissez un horaire de retrait
+        div.txt Valider votre ticket de caisse et<br/>choisissez un horaire de retrait
       div.item
         div.num
           span 4
         div.img
           img.logo(src="../assets/images/withdraw.png")
-        div.txt Réglez vos achats aux bornes de retrait Auchan
+        div.txt {{ secondText }} 
     div#registration(v-if="!user")
       router-link(:to='{ name: "register" }')
         button.btn.btn-primary.connexion(type="button") Inscription
@@ -94,6 +96,20 @@ export default {
     },
     demo() {
       return config.MODE_DEMO;
+    },
+    presText() {
+      let text = 'Consomalin est un site de courses en ligne independant qui permet de commander chez Auchan drive Balma.';
+      if (this.demo) {
+        text = 'Consomalin est un site de courses en ligne independant dans votre drive préféré.';
+      }
+      return text;
+    },
+    secondText() {
+      let text = 'Réglez vos achats aux bornes de retrait Auchan.';
+      if (this.demo) {
+        text = 'Réglez vos achats aux bornes de retrait.';
+      }
+      return text;
     },
   },
   mounted() {
@@ -130,7 +146,7 @@ export default {
 #title{
   position: relative;
   text-align: center;
-  background: url('../assets/images/brimstone-blue.jpg') center top no-repeat;
+  background: url('../assets/images/brimstone-blue2.jpg') center top no-repeat;
   height: 100vh;
   border-bottom: 2px solid var(--color2);
 }
@@ -143,11 +159,33 @@ export default {
   padding-top: 19%;
 }
 .desciption{
-  color: #a3b1bf;
+  color: #dedede;
   font-family: 'Raleway';
   font-size: 24px;
   line-height: 30px;
   padding: 20px;
+}
+.huit{
+  color: white;
+  height: 110px;
+  width: 110px;
+  border-radius: 55px;
+  background: #d9534f;
+  /*background: linear-gradient(120deg,  #db556f, var(--danger));*/
+  /*background-color: var(--danger);*/
+  box-shadow: 2px;
+  position: absolute;
+  top: 69%;
+  right: 13%;
+  box-shadow: 0 0 5px rgba(0,0,0,0.50);
+/*  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);*/
+}
+.huit .text{
+  margin-top: 38px;
 }
 .go-to-next{
   position: absolute;
@@ -160,11 +198,11 @@ export default {
   font-size: 25px;
 }
 .faa-bounce.animated {
-    -webkit-animation-name: bounce;
-    -moz-animation-name: bounce;
-    -o-animation-name: bounce;
-    animation-name: bounce;
-    outline: 0;
+  -webkit-animation-name: bounce;
+  -moz-animation-name: bounce;
+  -o-animation-name: bounce;
+  animation-name: bounce;
+  outline: 0;
 }
 .faa-bounce.animated{
   animation: bounce 2s ease infinite;
@@ -240,7 +278,7 @@ button:focus {outline:0;}
 }
 #presentation .item{
   display: table;
-  padding: 15px 0 15px 0;
+  padding: 30px 0 30px 0;
   border-radius: 5px;
 }
 #presentation .item:nth-child(odd){

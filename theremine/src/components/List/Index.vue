@@ -8,23 +8,31 @@
       Group(v-for="gid in selectedGroups" 
         v-bind:gid="gid" 
         v-bind:key="gid")
+      .empty(v-if="selectedWishNb === 0") Sélectionnez une rubrique ou un produit pour commencer votre liste
 </template>
 
 <script>
+import config from '../../../config';
 // import $ from 'jquery';
 // import 'jquery.scrollbar';
 import Group from './Group';
+
+const $ = window.$;
 
 export default {
   props: [],
   data() {
     return {
       newWishName: '',
+      demo: config.MODE_DEMO,
     };
   },
   computed: {
     selectedGroups() {
       return this.$store.state.wishGroup.map(group => group.id);
+    },
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
   },
   mounted() {
@@ -41,6 +49,12 @@ export default {
     // }, 1000);
     // $(() => {
     // });
+    if (this.demo) {
+      $('#list').css('top', '+=50px');
+      $('#list > h2').css('top', '+=50px');
+      $('#groups').css('top', '+=50px');
+      $('#groups').css('height', '82%');
+    }
   },
   components: { Group },
 };
@@ -60,6 +74,7 @@ export default {
   overflow-x: hidden;
   height: 100%;
   border: 1px solid #dedede;
+  z-index: 10003;
 }
 #list .groups{
   border-top: 1px solid red;
@@ -71,7 +86,7 @@ export default {
   top: 125px;
   background-color: white;
   /*padding-bottom: 10px;*/
-  height: 88%;
+  height: 86%;
   /*max-height: 86vh;*/
   background-size: 100% 21px;
   border: 1px solid #dedede;
@@ -103,5 +118,8 @@ export default {
 .hidden{
   visibility: hidden;
 }
-
+.empty{
+  padding: 15px;
+  font-size: 15px;
+}
 </style>

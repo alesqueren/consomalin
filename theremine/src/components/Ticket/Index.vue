@@ -1,6 +1,7 @@
 <template lang="pug">
 div#ticket
-  h2 Je valide mon ticket de caisse
+  h2 Validation de la commande
+  .border
   .box
     img.logo(src="../../assets/images/logo.jpg")
     .date {{ today }}
@@ -10,21 +11,33 @@ div#ticket
     .total
       .text TOTAL :
       .amount {{ total }}€
+    .payment Retrait à {{ slotFrenchTime }}
     .payment Réglement au retrait
     .thanks Merci de votre visite, à bientôt !
 </template>
 
 <script>
 import Group from './Group';
+import date from '../Utils/date';
 import router from '../../router';
 
 export default {
   computed: {
     selectedGroups() {
+      console.log(this.$store.state);
+      console.log(this.$store.state.wishGroup);
       return this.$store.state.wishGroup.map(group => group.id);
     },
     selectedWishes() {
       return this.$store.getters['selection/getMatchedWishes'];
+    },
+    selectedSlot() {
+      return this.$store.state.singleton.selectedSlot;
+    },
+    slotFrenchTime() {
+      const time = new Date(this.selectedSlot.dateTime);
+      const t = date.toFrenchTime(time);
+      return t.hours + 'h' + t.minutes + ' le ' + t.dayName + ' ' + t.day + ' ' + t.monthName;
     },
     today() {
       let today = new Date();
@@ -56,7 +69,7 @@ export default {
 
 <style scoped>
 #ticket{
-  margin: 45px;
+  padding: 65px;
 }
 .box{
   font-family: receipt;
@@ -67,10 +80,25 @@ export default {
   background-color: white;
   border: 1px dotted black;
   padding: 30px;
+  margin-top: 45px;
 }
 .date{
   text-align: center;
   margin-bottom: 15px;
+}
+h2 {
+  text-align: center;
+}
+.border{
+  position: absolute;
+  content: '';
+  background: var(--color2);
+  height: 2px;
+  width: 320px;
+  margin-left: -160px;
+  margin-top: 5px;
+  margin-bottom: 30px;
+  left: 50%;
 }
 .logo{
   margin: 30px 0 15px 160px;

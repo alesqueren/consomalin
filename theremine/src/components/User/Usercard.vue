@@ -7,7 +7,7 @@
   div.user.right(v-else)
     .dropdown
       #dropdownMenuButton.dropdown-toggle.user-name(data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-        span.fa.fa-user-o
+        span.fa.fa-user
       .dropdown-menu(aria-labelledby='dropdownMenuButton')
         a.dropdown-item.btn.btn-info.btn-sm.pointer(href="#")
           span {{ user }}
@@ -15,7 +15,6 @@
         a.dropdown-item.btn.btn-info.btn-sm.pointer(href="#", @click.prevent='logout')
           span.fa.fa-sign-out 
           span Déconnexion
-
 </template>
 
 <script>
@@ -43,18 +42,19 @@ div.right > a {
   margin-right: 10px;
 }
 .user{
-  width: 200px;
+  width: 120px;
 }
 .dropdown{
   display: table-cell;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  width: 200px;
+  width: 120px;
   height: 50px;
   text-align: center;
   line-height: 50px;
   cursor: pointer;
+  font-size: 18px;
 }
 .dropdown-item{
   background-color: var(--white);

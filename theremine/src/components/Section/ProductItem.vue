@@ -132,6 +132,8 @@ export default {
   /*margin: 5px;*/
   position: relative;
   border: 1px solid #dedede;
+  margin-right: -1px;
+  margin-bottom: -1px;
   transition: background-color 0.2s;
 }
 

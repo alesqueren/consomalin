@@ -32,6 +32,9 @@ export default {
     };
   },
   computed: {
+    user() {
+      return this.$store.state.user;
+    },
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
     },

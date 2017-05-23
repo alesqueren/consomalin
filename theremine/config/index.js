@@ -35,5 +35,5 @@ module.exports = {
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
   },
-  MODE_DEMO: process.env.MODE_DEMO || false,
+  MODE_DEMO: process.env.MODE_DEMO || false,
 }

@@ -24,6 +24,8 @@
   text-align: center;
   margin-left: 65px;
   padding-top: 10px;
+  max-height: 50px;
+  overflow: hidden;
 }
 
 .activeGroup .notepad .title {
@@ -91,11 +93,11 @@
   line-height: 50px;
   padding: 0 10px 0 50px;
   /*text-transform: capitalize;*/
+  /*overflow: hidden;*/
   text-align: left;
-  overflow: hidden;
 }
 
-.notepad .line:hover {
+.notepad .line:not(.active):hover {
   cursor: pointer;
   background-color: #f0f0f0;
   -webkit-transition: all 0.2s;
@@ -107,6 +109,11 @@
 .notepad .line .name {
   cursor: pointer;
   font-size: 1.5em;
+  max-width: 90%;
+  max-height: 50px;
+}
+.notepad .line .name{
+  /*overflow: hidden;*/
 }
 
 .notepad .line .buttns {

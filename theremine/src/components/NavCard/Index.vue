@@ -41,7 +41,7 @@
           span.input-group-addon.nav-btn.prefered
             span Continuer mes courses
         div#force-continue
-          router-link(:to='{ name: "ticket" }')
+          router-link(:to='{ name: "withdraw" }')
             span.input-group-addon.nav-btn
               span Je valide mon panier
 
@@ -64,33 +64,46 @@
             span Commencer mes courses
 
     div(v-if="routeName === 'withdraw'")
-      router-link(:to='{ name: "basket" }')
-        span.input-group-addon.nav-btn
-          span Revenir au panier
-
-      router-link(:to='{ name: "confirmation" }', v-if="selectedSlot")
-        span.input-group-addon.nav-btn.prefered
+      router-link(:to='{ name: "ticket" }', v-if="selectedSlot")
+        span.input-group-addon.nav-btn.prefered(style="white-space: inherit")
           span {{ confirmationMessage }}
 
-    div(v-if="routeName === 'ticket'")
       router-link(:to='{ name: "basket" }')
         span.input-group-addon.nav-btn
           span Revenir au panier
 
+    div(v-if="routeName === 'ticket'")
+      router-link(:to='{ name: "confirmation" }')
+        span.input-group-addon.nav-btn.prefered(style="white-space: inherit")
+          span Je valide ma commande de {{ total }}€ à {{ frenchTime }}
+          
       router-link(:to='{ name: "withdraw" }')
-        span.input-group-addon.nav-btn.prefered
-          span Je valide mon ticket
+        span.input-group-addon.nav-btn
+          span Modifier mon horaire de retrait
+
+      router-link(:to='{ name: "basket" }')
+        span.input-group-addon.nav-btn
+          span Revenir au panier
 
     div.contact-us(v-if="routeName === 'help'")
-      h5 Un question, une suggestion ?
-      span Contactez nous : af@consomalin.ovh
+      h5 Une question, une suggestion ?
+      span Contactez nous : contact@consomalin.ovh
 </template>
 
 <script>
+import config from '../../../config';
+import date from '../Utils/date';
 import Basket from './Basket';
+
+const $ = window.$;
 
 export default {
   props: [],
+  data() {
+    return {
+      demo: config.MODE_DEMO,
+    };
+  },
   computed: {
     routeName() {
       return this.$store.state.route.name;
@@ -121,15 +134,16 @@ export default {
         return false;
       }
     },
+    total() {
+      return this.$store.getters['transaction/basketAmount'];
+    },
+    frenchTime() {
+      const t = date.toFrenchTime(new Date(this.selectedSlot.dateTime));
+      return t.hours + 'h' + t.minutes + ' le ' + t.dayName + ' ' + t.day + ' ' + t.monthName;
+    },
     confirmationMessage() {
-      if (this.selectedSlot) {
-        const time = new Date(this.selectedSlot.dateTime);
-        const day = (time.getDay() < 10) ? ('0' + time.getDay()) : time.getDay();
-        const month = (time.getMonth() + 1 < 10) ? ('0' + (time.getMonth() + 1)) : time.getMonth() + 1;
-        const minute = (time.getMinutes() < 10) ? ('0' + time.getMinutes()) : time.getMinutes();
-        const hour = (time.getHours() < 10) ? ('0' + time.getHours()) : time.getHours();
-        const frenchTime = hour + 'h' + minute + ' le ' + day + '/' + month;
-        return 'Commander pour ' + frenchTime;
+      if (this.frenchTime) {
+        return 'Commander pour ' + this.frenchTime;
       }
       return 'Valider ma commande';
     },
@@ -155,6 +169,11 @@ export default {
         this.nextProduct();
       });
     },
+  },
+  mounted() {
+    if (this.demo) {
+      $('#content > div.root').css('top', '+=50px');
+    }
   },
   components: { Basket },
 };

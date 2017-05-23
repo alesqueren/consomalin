@@ -72,5 +72,6 @@ export default {
   font-weight: bold;
   text-align: center;
   border-bottom: 1px dotted #72c4ff;
+  overflow: hidden;
 }
 </style>

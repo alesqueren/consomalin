@@ -27,13 +27,26 @@ div#help
         span 4
       div.img
         img.logo(src="../../assets/images/withdraw.png")
-      div.txt Réglez vos achats aux bornes de retrait Auchan
+      div.txt {{ presText }}
 </template>
 
 <script>
+import config from '../../../config';
 
 export default {
+  data() {
+    return {
+      demo: config.MODE_DEMO,
+    };
+  },
   computed: {
+    presText() {
+      let text = 'Réglez vos achats aux bornes de retrait Auchan.';
+      if (this.demo) {
+        text = 'Réglez vos achats aux bornes de retrait.';
+      }
+      return text;
+    },
   },
   mounted() {
   },

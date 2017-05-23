@@ -95,6 +95,8 @@ export default {
   padding: 5px;
   background-color: white;
   border: 1px solid #dedede;
+  margin-right: -1px;
+  margin-bottom: -1px;
 }
 .large{
   width: 320px;

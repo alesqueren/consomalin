@@ -13,7 +13,8 @@
       @keyup.esc="finishEdition")
     button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click="validEdition")
       i.fa.fa-check.fa-xs
-    label.name(v-else for="selected") {{ name }}
+    label.name(v-else for="selected")
+      .nameIn {{ name }}
     div.fakeCheckbox(v-if='!editing && wishesNb' @click="toggleSelection")
 
     div.filling
@@ -26,6 +27,7 @@
         span.icon.fa.fa-eraser
         span &nbsp;
         span.content {{deleteWording}}
+    div.arrowActive(v-if="isActive")
 </template>
 
 <script>
@@ -141,6 +143,17 @@ export default {
 .line.active {
   background-color: var(--active);
 }
+.arrowActive {
+  content: " ";
+  width: 0;
+  height: 0;
+  border-top: 25px solid transparent;
+  border-bottom: 25px solid transparent;
+  border-left: 20px solid var(--active);
+  position: absolute;
+  right: -19px;
+  top: 0px;
+}
 .line.active label {
   text-decoration: underline;
 }
@@ -165,5 +178,9 @@ export default {
 }
 .deleting{
   visibility: visible;
+}
+.nameIn{
+  overflow: hidden;
+  height: 50px;
 }
 </style>

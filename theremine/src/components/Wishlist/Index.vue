@@ -1,7 +1,6 @@
 <template lang="pug">
   div(style="position:relative;width:100%;")
     div#wishlist
-      h2 Je crée et gère ma liste de courses
       div.content
           Groups.groups
           ActiveGroup.activegroup
@@ -25,7 +24,7 @@ export default {
 <style scoped>
 #wishlist {
   font-size: 14px;
-  padding: 65px;
+  padding: 30px 65px 65px 65px;
 }
 #wishlist h2 {
   text-align: left;
@@ -33,7 +32,6 @@ export default {
 #wishlist .content {
   width: 100%;
   display: table;
-  padding-top: 50px;
 }
 #wishlist .content .groups{
   display: table-cell;

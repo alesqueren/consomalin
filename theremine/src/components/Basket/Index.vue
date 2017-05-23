@@ -1,6 +1,7 @@
 <template lang="pug">
   div#basket
-    h2 Résumé du panier en cours
+    h2 Panier
+    .border
     div.groups
       Group(v-for="gid in selectedGroups" 
         v-bind:gid="gid"
@@ -8,7 +9,6 @@
 </template>
 
 <script>
-import $ from 'jquery';
 import Group from './Group';
 import List from '../List/Index';
 import router from '../../router';
@@ -31,16 +31,16 @@ export default {
       return this.$store.getters['transaction/basketAmount'];
     },
   },
-  mounted() {
-    const height = $(window).height();
-    const halfHeight = height / 2;
-    $('#groups .wish').on('click', (e) => {
-      const wid = $(e.currentTarget).data('wid');
-      const element = $('#basket [data-wid="' + wid + '"]');
-      $('html, body').animate({ scrollTop: element.offset().top - halfHeight }, 'slow');
-      // $('#basket [data-wid="' + wid + '"]');
-    });
-  },
+  // mounted() {
+  //   const height = $(window).height();
+  //   const halfHeight = height / 2;
+  //   const halfElement = 175;
+  //   $('#groups .wish').on('click', (e) => {
+  //     const wid = $(e.currentTarget).data('wid');
+  //     const element = $('#basket [data-wid="' + wid + '"]');
+  //     $('html, body').animate({ scrollTop: element.offset().top + 50 }, 500);
+  //   });
+  // },
   created() {
     if (!this.selectedWishNb) {
       router.push({ name: 'wishlist' });
@@ -64,7 +64,17 @@ export default {
   display:block;
 }
 #basket h2 {
-  text-align: left;
+  text-align: center;
+}
+.border{
+  content: '';
+  background: var(--color2);
+  height: 2px;
+  width: 130px;
+  position: absolute;
+  left: 50%;
+  margin-left: -65px;
+  margin-top: 5px;
 }
 button{
   cursor: pointer;
