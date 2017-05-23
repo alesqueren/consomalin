@@ -24,8 +24,6 @@ import router from '../../router';
 export default {
   computed: {
     selectedGroups() {
-      console.log(this.$store.state);
-      console.log(this.$store.state.wishGroup);
       return this.$store.state.wishGroup.map(group => group.id);
     },
     selectedWishes() {
