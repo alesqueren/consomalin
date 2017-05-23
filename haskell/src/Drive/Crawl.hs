@@ -176,7 +176,7 @@ runConduitCrawl pipe = do
 extractFromJson :: (FromJSON page) => (page -> [a]) -> Crawl BL.ByteString -> Crawl [a]
 extractFromJson extract page = do
   p <- page
-  return $ maybe [] extract $ (decode' p)
+  return $ maybe [] extract $ decode' p
 
 -- TODO:
 -- data EntityScraper elements entity = EntityScraper !!

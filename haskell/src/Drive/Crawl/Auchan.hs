@@ -20,6 +20,7 @@ import Drive.Crawl.Auchan.Page.Home as H
 import Drive.Crawl.Auchan.Page.Login as Lo
 import Drive.Crawl.Auchan.Page.Basket as B
 import Drive.Crawl.Auchan.Page.Landing as L
+import Drive.Crawl.Auchan.Page.Register as R
 import Drive.Crawl.Auchan.Page.Schedule as S
 import Drive.Crawl.Auchan.Page.Category as C
 import Drive.Crawl.Auchan.Page.Merchandising as M
@@ -77,13 +78,7 @@ crawl = crawlTree [ShopChoicePage]
 -- TODO: rm
 doTransaction2 :: (MonadFree CrawlF cr) => Account -> ConduitM () Void cr ()
 doTransaction2 acc = do
-  _ <- lift . fromF $ doChooseDrive "Toulouse-954"
-  _ <- lift . fromF $ Lo.login acc
-  -- a non empty basket is needed for getting schedule
-  -- _ <- lift . fromF $ addToBasket "141418" 1
-  _ <- lift . fromF $ B.load
-  _ <- lift . fromF $ S.load
-  slotInfo <- lift . fromF $ getSchedule
+  _ <- lift . fromF $ R.register
   return ()
 -- TODO: rm
 mymytest :: IO ()
