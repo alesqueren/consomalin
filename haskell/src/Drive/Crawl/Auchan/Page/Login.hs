@@ -18,6 +18,10 @@ load :: Crawl [Tag Text]
 load =
   requestTag $ Req "https://www.auchandrive.fr/drive/client/identification" "GET" [] ""
 
+-- Requirements: 
+--    a shop must be set
+--    session is not already logged
+-- TODO: check requirements
 login :: Account -> Crawl ()
 login acc = do
   $(logDebug) ("login" <> show acc)

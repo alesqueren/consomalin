@@ -76,16 +76,26 @@ crawl = crawlTree [ShopChoicePage]
 
 
 -- TODO: rm
-doTransaction2 :: (MonadFree CrawlF cr) => Account -> ConduitM () Void cr ()
-doTransaction2 acc = do
-  _ <- lift . fromF $ R.register
+doTransaction2 :: (MonadFree CrawlF cr) => Account -> UserData -> ConduitM () Void cr ()
+doTransaction2 acc u = do
+  _ <- lift . fromF $ doChooseDrive "Toulouse-954"
+  _ <- lift . fromF $ R.register u
+  -- _ <- lift . fromF $ Lo.login acc
+  return ()
+doTransaction3 :: (MonadFree CrawlF cr) => Account -> ConduitM () Void cr ()
+doTransaction3 acc = do
+  _ <- lift . fromF $ doChooseDrive "Toulouse-954"
+  _ <- lift . fromF $ Lo.login acc
   return ()
 -- TODO: rm
 mymytest :: IO ()
 mymytest = do
-  acc <- makeAccount
+  userData <- makeUserData
+  let acc = Account (email1 userData) (motDePasse1 userData)
+  -- acc <- makeAccount
   man <- newManager tlsManagerSettings
-  runNetCrawl man $ runConduit (doTransaction2 acc)
+  runNetCrawl man $ runConduit (doTransaction2 acc userData)
+  runNetCrawl man $ runConduit (doTransaction3 acc)
 
 
 doTransaction :: (MonadFree CrawlF cr) => Account -> Transaction -> ConduitM () Void cr ()

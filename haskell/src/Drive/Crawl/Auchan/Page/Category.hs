@@ -45,8 +45,10 @@ extractProducts page =
 
 loadPage :: Integer -> Crawl BL.ByteString
 loadPage pageNb =
-  requestJson $ Req url "POST" [("X-Requested-With", "XMLHttpRequest")] ""
-  where url = "http://www.auchandrive.fr/drive/rayon.productlist.pagination_0.topage/"
+  requestJson $ Req url "POST" hdrs ""
+  where 
+    hdrs = [("X-Requested-With", "XMLHttpRequest")]
+    url = "http://www.auchandrive.fr/drive/rayon.productlist.pagination_0.topage/"
               <> show pageNb
               <> "?t:ac=3686969/3686339"
 

@@ -69,6 +69,9 @@ library
                      , containers
                      , cgi
                      , generics-sop
+                     , random
+                     , random-fu
+                     , random-extras
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 

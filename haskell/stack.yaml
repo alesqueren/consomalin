@@ -3,5 +3,5 @@ extra-package-dbs: []
 packages:
 - '.'
 resolver: lts-8.14
-#extra-deps:
-#  - containers-0.5.10.2
+extra-deps:
+  - random-extras-0.19
