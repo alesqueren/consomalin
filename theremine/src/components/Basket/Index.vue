@@ -56,7 +56,7 @@ export default {
   height: auto;
   font: 14px;
   clear: both;
-  padding: 65px;
+  padding: 30px 65px 30px 65px;
 }
 #basket:after {
   content:"";

@@ -35,7 +35,7 @@ export default {
     slotFrenchTime() {
       const time = new Date(this.selectedSlot.dateTime);
       const t = date.toFrenchTime(time);
-      return t.hours + 'h' + t.minutes + ' le ' + t.dayName + ' ' + t.day + ' ' + t.monthName;
+      return t.hours + 'h' + t.minutes + ' le ' + t.dayName + ' ' + t.day + ' ' + t.monthName + ' ' + t.year;
     },
     today() {
       let today = new Date();
@@ -67,7 +67,7 @@ export default {
 
 <style scoped>
 #ticket{
-  padding: 65px;
+  padding: 30px 65px 30px 65px;
 }
 .box{
   font-family: receipt;

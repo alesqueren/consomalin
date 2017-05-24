@@ -38,17 +38,17 @@ export default {
 
 <style scoped>
 #presentation{
-    margin: 65px 65px 0 65px;
-    text-align: center;
-    font-size: 1.2em;
-    background-color: white;
-    border: 1px solid #dedede;
-    border-radius: 2px;
-    padding: 30px 30px 117px 30px;
+  margin: 65px 65px 0 65px;
+  text-align: center;
+  font-size: 1.2em;
+  background-color: white;
+  border: 1px solid #dedede;
+  border-radius: 2px;
+  padding: 30px 30px 117px 30px;
 }
 .subTitle{
-    font-size: 1.1em;
-    margin-bottom: 40px;
+  font-size: 1.1em;
+  margin-bottom: 40px;
 }
 .border {
   content: '';
@@ -60,18 +60,18 @@ export default {
   margin-bottom: 40px;
 }
 p {
-    font-size: 1.2em;
+  font-size: 1.2em;
 }
 img{
   width: 55%;
 }
 .begin{
-    position: absolute;
-    left: 50%;
-    margin-left: -145px;
-    padding-top: 35px;
-    width: 290px;
-    font-size: 1.3em;
-    clear: both;
+  position: absolute;
+  left: 50%;
+  margin-left: -145px;
+  padding-top: 35px;
+  width: 290px;
+  font-size: 1.3em;
+  clear: both;
 }
 </style>

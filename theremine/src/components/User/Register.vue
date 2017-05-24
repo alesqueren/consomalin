@@ -1,54 +1,23 @@
 <template lang="pug">
-  .container
-    .row
-      .col-md-6.offset-md-3
-        .panel.panel-login
-          .panel-heading
-            .row
-              .col-xs-6.col-md-6
-                a#login-form-link(
-                  v-bind:class="{'active': !registering}",
-                  @click="loginM",
-                  href='#') Se connecter
-              .col-xs-6.col-md-6
-                a#register-form-link(
-                  v-bind:class="{'active': registering}",
-                  @click="registerM",
-                  href='#') S'inscrire
-            hr
-          .panel-body
-            .row
-              .col-lg-12
-                form#login-form(v-if="!registering")
-                  .form-group
-                    input#username.form-control(v-model="username", type='text', name='username', tabindex='1', placeholder='Email', value='')
-                  .form-group
-                    input#password.form-control(v-model="password", type='password', name='password', tabindex='2', placeholder='Mot de passe')
-                  .form-group
-                    p.danger.danger-alert(v-if="error") Utilisateur ou mot de passe incorrect.
-                    .row
-                      .col-sm-6.col-sm-offset-3
-                        input#login-submit.submit.form-control.btn.btn-login(
-                          type.prevent='submit',
-                          name='login-submit',
-                          tabindex='4',
-                          value='Se connecter',
-                          @click="login")
-                form#register-form(v-if="registering")
-                  .form-group
-                    input#email.form-control(v-model="username", type='email', name='username', tabindex='1', placeholder='Email', value='')
-                  .form-group
-                    input#password.form-control(v-model="password", type='password', name='password', tabindex='2', placeholder='Mot de passe')
-                  .form-group
-                    p.danger.danger-alert(v-if="error") Cet utilisateur existe deja.
-                    .row
-                      .col-sm-6.col-sm-offset-3
-                        input#register-submit.submit.form-control.btn.btn-register(
-                          type='submit',
-                          name='register-submit',
-                          tabindex='4',
-                          value="S'inscrire",
-                          @click.prevent="register")
+div#register
+  form
+    h2 Inscription
+    .border
+    .prez Mes informations
+    .form-group
+      input.email.form-control(v-model="username", type='email', name='username', tabindex='1', placeholder='Email', value='')
+    .form-group
+      input.password.form-control(v-model="password", type='password', name='password', tabindex='2', placeholder='Mot de passe')
+      input.newsletter(v-model="newsletter", type='checkbox', name='newsletter', tabindex='3')
+      label(for="newsletter") &nbsp;&nbsp;J'accepte de recevoir la newsletter Consomalin
+    .form-group
+      p.danger.danger-alert(v-if="error") Cet utilisateur existe deja.
+      input.submit.form-control.btn.btn-register(
+        type='submit',
+        name='register-submit',
+        tabindex='4',
+        value="Créer un compte gratuitement",
+        @click.prevent="register")
 </template>
 
 <script>
@@ -57,16 +26,12 @@ export default {
     return {
       username: '',
       password: '',
+      newsletter: false,
       error: false,
     };
   },
   mounted() {
     this.$store.dispatch('singleton/set', { registering: true });
-  },
-  computed: {
-    registering() {
-      return this.$store.state.singleton && this.$store.state.singleton.registering;
-    },
   },
   methods: {
     loginM() {
@@ -85,19 +50,9 @@ export default {
       const data = {
         username: this.username,
         password: this.password,
+        newsletter: this.newsletter,
       };
       this.$store.dispatch('user/register', {
-        data,
-        fail: this.fail,
-        success: this.succeed,
-      });
-    },
-    login() {
-      const data = {
-        username: this.username,
-        password: this.password,
-      };
-      this.$store.dispatch('user/login', {
         data,
         fail: this.fail,
         success: this.succeed,
@@ -108,6 +63,38 @@ export default {
 </script>
 
 <style scoped>
+#register{
+  text-align: center;
+  font-size: 1.2em;
+  border-radius: 2px;
+  background: url('../../assets/images/brimstone-blue2.jpg') center top no-repeat;
+  height: 100vh;
+}
+form{
+  position: absolute;
+  width: 500px;
+  height: 400px;
+  top: 0;
+  left: 50%;
+  margin-left: -250px;
+  background-color: white;
+  border: 1px solid #dedede;
+  padding: 30px 30px 117px 30px;
+}
+#register h2 {
+  padding-top: 30px;
+  text-align: center;
+}
+.border{
+  content: '';
+  background: var(--color2);
+  height: 2px;
+  width: 130px;
+  position: absolute;
+  left: 50%;
+  margin-left: -65px;
+  margin-top: 5px;
+}
 h1, h2 {
   font-weight: normal;
 }
@@ -125,83 +112,16 @@ li {
 a {
   color: #42b983;
 }
+.prez {
+  margin-top: 35px
+}
+.newsletter {
+  margin-top: 35px;
+}
 .submit {
   cursor: pointer;
+  top: 195px;
 }
-.panel-login {
-  border-color: #ccc;
-  -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.2);
-  -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.2);
-  box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.2);
-}
-.panel-login>.panel-heading {
-  padding-top: 10px;
-  color: #00415d;
-  background-color: #fff;
-  border-color: #fff;
-  text-align:center;
-}
-.panel-login>.panel-heading a{
-  text-decoration: none;
-  color: #666;
-  font-weight: bold;
-  font-size: 15px;
-  -webkit-transition: all 0.1s linear;
-  -moz-transition: all 0.1s linear;
-  transition: all 0.1s linear;
-}
-.panel-login>.panel-heading a.active{
-  color: #029f5b;
-  font-size: 18px;
-}
-.panel-login>.panel-heading hr{
-  margin-top: 10px;
-  margin-bottom: 0px;
-  clear: both;
-  border: 0;
-  height: 1px;
-  background-image: -webkit-linear-gradient(left,rgba(0, 0, 0, 0),rgba(0, 0, 0, 0.15),rgba(0, 0, 0, 0));
-  background-image: -moz-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
-  background-image: -ms-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
-  background-image: -o-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
-}
-.panel-login>.panel-body {
-  padding: 10px;
-}
-.panel-login input[type="text"],.panel-login input[type="email"],.panel-login input[type="password"] {
-  height: 45px;
-  border: 1px solid #ddd;
-  font-size: 16px;
-  -webkit-transition: all 0.1s linear;
-  -moz-transition: all 0.1s linear;
-  transition: all 0.1s linear;
-}
-.panel-login input:hover,
-.panel-login input:focus {
-  outline:none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  border-color: #ccc;
-}
-.btn-login {
-  background-color: #59B2E0;
-  outline: none;
-  color: #fff;
-  font-size: 14px;
-  height: auto;
-  font-weight: normal;
-  padding: 14px 0;
-  text-transform: uppercase;
-  border-color: #59B2E6;
-}
-.btn-login:hover,
-.btn-login:focus {
-  color: #fff;
-  background-color: #53A3CD;
-  border-color: #53A3CD;
-}
-
 .btn-register {
   background-color: #1CB94E;
   outline: none;

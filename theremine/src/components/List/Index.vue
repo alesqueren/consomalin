@@ -29,7 +29,11 @@ export default {
   },
   computed: {
     selectedGroups() {
-      return this.$store.state.wishGroup.map(group => group.id);
+      const wishGroup = this.$store.state.wishGroup;
+      if (wishGroup) {
+        return wishGroup.map(group => group.id);
+      }
+      return [];
     },
     selectedWishNb() {
       return this.$store.getters['selection/getOrderedSelectedWishes'].length;

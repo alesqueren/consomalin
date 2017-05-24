@@ -112,7 +112,7 @@ router.beforeEach((to, from, next) => {
 
   if (store.state.user.username) {
     // user succeded to login
-    if (!store.state.wishGroup[0]) {
+    if (store.state.wishGroup && !store.state.wishGroup[0]) {
       store.dispatch('user/fetchUserData').then(next);
     } else {
       next();

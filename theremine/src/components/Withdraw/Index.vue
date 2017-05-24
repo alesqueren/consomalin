@@ -56,7 +56,7 @@ export default {
 
 <style scoped>
 #slots{
-  padding: 65px;
+  padding: 65px 65px 30px 65px;
 }
 h2{
   text-align: center;
