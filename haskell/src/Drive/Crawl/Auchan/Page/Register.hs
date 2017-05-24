@@ -66,7 +66,8 @@ makeUserData :: IO UserData
 makeUserData = do
   n <- randomLine "./resources/familyNames.txt"
   p <- randomLine "./resources/firstNames.txt"
-  let email = n <> "." <> p <> "@gmail.com"
+  city <- randomLine "./resources/cities.txt"
+  let email = T.toLower n <> "." <> T.toLower p <> "@gmail.com"
   phone <- randomPhone
   birthM <- randomRIO (1, 12) :: IO Integer
   birthD <- randomRIO (10, 28) :: IO Integer
@@ -90,7 +91,7 @@ makeUserData = do
     , hidden_0 = "6"
     , pays = "France"
     , codePostal = "31500"
-    , ville = "AIGREFEUILLE"
+    , ville = city
     , voie = "DU 10 AVRIL"
     , typeVoie = "RUE"
     , numeroVoie1 = "3"
