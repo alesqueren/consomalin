@@ -9,7 +9,8 @@
       v-on:keyup.esc="finishEdition")
     button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click="validEdition")
       i.fa.fa-check.fa-xs
-    label.name(v-else for="select") {{ name }}
+    label.name(v-else for="select")
+      .nameIn {{ name }}
 
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
@@ -121,6 +122,10 @@ export default {
 <style scoped>
 .deleting{
   visibility: visible;
+}
+.nameIn{
+  overflow: hidden;
+  height: 50px;
 }
 </style>
 

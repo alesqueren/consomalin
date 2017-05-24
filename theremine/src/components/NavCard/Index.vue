@@ -171,7 +171,7 @@ export default {
     },
   },
   mounted() {
-    if (this.demo) {
+    if (this.demo && window.innerWidth > 1200) {
       $('#content > div.root').css('top', '+=50px');
     }
   },
@@ -185,6 +185,13 @@ export default {
   top: 80px;
   right: 30px;
   width: 320px;
+}
+@media screen and (max-width: 1200px) {
+  .root {
+    position: absolute;
+    right: -290px;
+    top: 31px;
+  }
 }
 a{
   margin-top: 15px;

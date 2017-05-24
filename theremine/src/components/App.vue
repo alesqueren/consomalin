@@ -208,7 +208,7 @@ a:hover {
   height: 50px;
   width: 100%;
   background-color: var(--color1);
-  min-width: 1400px;
+  min-width: 1200px;
   top: 0;
 }
 

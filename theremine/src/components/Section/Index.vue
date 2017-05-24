@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import config from '../../../config';
 import CurrentWish from './CurrentWish';
 import ProductItem from './ProductItem';
 import RightBar from './RightBar';
@@ -56,6 +57,7 @@ export default {
   data() {
     return {
       maxProducts: 40,
+      demo: config.MODE_DEMO,
     };
   },
   destroyed() {
@@ -112,6 +114,11 @@ export default {
       router.push({ name: 'wishlist' });
     }
   },
+  mounted() {
+    if (this.demo && window.innerWidth > 1200) {
+      $('#wishes .rightSide').css('top', '+=50px');
+    }
+  },
   components: { CurrentWish, ProductItem, List, RightBar },
 };
 </script>
@@ -142,6 +149,13 @@ export default {
   top: 158px;
   right: 16px;
   width: 334px;
+}
+@media screen and (max-width: 1200px) {
+  #wishes .rightSide {
+    position: absolute;
+    right: -304px;
+    top: 115px;
+  }
 }
 .waiting{
   background-color: color(--white);
