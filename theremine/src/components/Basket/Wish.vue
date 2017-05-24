@@ -200,9 +200,12 @@ export default {
 }
 .badge {
   font-size: 0.9em;
-  float: right;
+  position: absolute;
   margin: 5px 20px 5px 5px;
-  padding-top: 8px;
+  top: 8px;
+  right: 8px;
+  height: 20px;
+  line-height: 20px;
 }
 .noproduct-text {
   font-size: 1.1em;

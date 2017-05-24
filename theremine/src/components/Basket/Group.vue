@@ -39,7 +39,7 @@ export default {
   position: relative;
   color: #555;
   clear: both;
-  margin-top: 30px;
+  padding-top: 40px;
 }
 .groupName {
   cursor: pointer;

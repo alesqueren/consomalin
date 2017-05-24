@@ -8,6 +8,11 @@ function getDateStr(date) {
   const m = ('0' + (date.getMonth() + 1)).slice(-2);
   return date.getFullYear() + '-' + m + '-' + d;
 }
+function getFrenchDateStr(date) {
+  const d = ('0' + date.getDate()).slice(-2);
+  const m = ('0' + (date.getMonth() + 1)).slice(-2);
+  return d + '/' + m + '/' + date.getFullYear();
+}
 
 const byDay = (slots) => {
   const res = [];
@@ -30,9 +35,9 @@ const byDay = (slots) => {
     } else {
       name = dayNames[new Date(slot.day).getDay()];
     }
-
+    const frenchDate = getFrenchDateStr(new Date(slot.day));
     if (name !== currentDay.name) {
-      currentDay = { name, hours: [] };
+      currentDay = { name, date: frenchDate, hours: [] };
       res.push(currentDay);
     }
     // change hour

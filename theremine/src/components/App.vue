@@ -16,7 +16,7 @@
           li.header-tab
             router-link.title(:to="{ name: 'wishlist' }")
               span.fa.fa-edit
-              span &nbsp;Ma liste
+              span &nbsp;Bloc-note
           li.header-tab(v-bind:class="{'inactive': selectedWishNb === 0}")
             router-link.title(:to="{ name: 'section' }")
               span.fa.fa-hand-pointer-o
@@ -24,16 +24,16 @@
           li.header-tab(v-bind:class="{'inactive': selectedWishNb === 0}")
             router-link.title(:to="{ name: 'basket' }")
               span.fa.fa-shopping-cart
-              span &nbsp;Mon panier
+              span &nbsp;Panier
           li.header-tab(v-bind:class="{'inactive': matchedWishesLength === 0}")
             router-link.title(:to="{ name: 'withdraw' }")
-              span.fa.fa.fa-car
+              span.fa.fa.fa-calendar
               span &nbsp;Retrait
       Usercard
       li.header-tab.right.help
         router-link.title.help(:to="{ name: 'help' }")
           span.fa.fa.fa-question-circle
-          span &nbsp;Help
+          span &nbsp;Aide
     div#content(v-bind:class="{'marginalize-left' : listRequired, 'marginalize-right' : navCarRequired}")
       div#replay
       router-view
@@ -110,7 +110,7 @@ export default {
     if (this.demo) {
       $('#content').css('margin-top', '+=50px');
       $('#contentNavcard').css('top', '+=50px');
-      $('##header').css('top', '+=50px');
+      $('#header').css('top', '+=50px');
       // $('#contentList').css('top', '+=50px');
     }
   },
@@ -165,7 +165,6 @@ body{
 }
 #content {
   position: relative;
-  height: 94vh;
   margin-top: 50px;
 }
 .marginalize-left {

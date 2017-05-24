@@ -10,7 +10,7 @@
     div.bottom
       div.price
         div(style="font-size: 1.3em;") <b> {{price}}&nbsp;€</b>
-        div.pu {{priceByQuantity}}&nbsp;€/u
+        div.pu {{priceByQuantity}}€/{{quantityUnit}}
       div.btns-atb(v-if="!inCurrentWish")
         div.btn-atb.tooltip(
             @click.stop="selectProduct",
@@ -75,6 +75,9 @@ export default {
     },
     priceByQuantity() {
       return this.product.priceByQuantity.toFixed(2);
+    },
+    quantityUnit() {
+      return this.product.quantityUnit;
     },
   },
   methods: {

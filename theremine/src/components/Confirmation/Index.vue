@@ -8,13 +8,15 @@ div#confirmation
         div Espace Gramont
         div 2 Chemin de Gabardi
         div 31000 Toulouse
+      div.left
+            div La carte
       div.right
-          div La carte
-  div.block
-    p Pour toute question concernant la commande : 05 61 26 73 00
-    p Pour toute question concernant le site Consomalin : contact@consomalin.ovh
+        p Pour toute question concernant la commande : <br/>
+         span S.A.V. Auchan Balma : 05 61 26 73 00
+        p Pour toute question concernant le site Consomalin : <br/>
+          span contact@consomalin.ovh
 
-  div.block
+  div.block.help
     p Consomalin est encore jeune, aidez-nous à le faire grandir !
       a(href="https://goo.gl/forms/fso29Uz3ItSfkNAl1" target="blank")
         span.input-group-addon.nav-btn.prefered
@@ -52,6 +54,7 @@ export default {
   border: 1px solid #dedede;
   padding: 30px;
   margin: 30px;
+  min-width: 100%!important;
   background-color: white;
 }
 h2{
@@ -59,6 +62,10 @@ h2{
 }
 a{
   width: 250px;
+  position: absolute;
+  left:50%;
+  margin-left: -125px;
+  margin-top: 25px;
 }
 .address{
   display: table;
@@ -66,11 +73,14 @@ a{
 }
 .left{
   display: table-cell;
-  width: 50%;
+  width: 25%;
 }
 .right{
   display: table-cell;
   width: 50%;
+}
+.help{
+  height: 165px;
   text-align: center;
 }
 </style>

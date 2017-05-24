@@ -38,7 +38,7 @@ export default {
 
 <style scoped>
 #presentation{
-    margin: 45px;
+    margin: 65px 65px 0 65px;
     text-align: center;
     font-size: 1.2em;
     background-color: white;
@@ -62,39 +62,9 @@ export default {
 p {
     font-size: 1.2em;
 }
-.one{
-    float: left;
-    width: 400px;
+img{
+  width: 55%;
 }
-.one .text{
-    width: 400px;
-}
-.one img{
-    width: 150px;
-}
-
-.two{
-    float: left;
-    width: 400px;
-}
-.two .text{
-    width: 400px;
-}
-.two img{
-    width: 400px;
-}
-
-.three{
-    float: left;
-    width: 400px;
-}
-.three .text{
-    width: 400px;
-}
-.three img{
-    width: 400px;
-}
-
 .begin{
     position: absolute;
     left: 50%;

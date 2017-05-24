@@ -47,7 +47,7 @@
 
       //- tous les wishs sont matchés
       div#basketFull(v-else-if="matchedWishNb && matchedWishNb == selectedWishNb")
-        router-link(:to='{ name: "ticket" }')
+        router-link(:to='{ name: "withdraw" }')
             span.input-group-addon.nav-btn.prefered
               span Je valide mon panier
 
@@ -65,7 +65,7 @@
 
     div(v-if="routeName === 'withdraw'")
       router-link(:to='{ name: "ticket" }', v-if="selectedSlot")
-        span.input-group-addon.nav-btn.prefered(style="white-space: inherit")
+        span.input-group-addon.nav-btn.prefered.specialContent
           span {{ confirmationMessage }}
 
       router-link(:to='{ name: "basket" }')
@@ -74,7 +74,7 @@
 
     div(v-if="routeName === 'ticket'")
       router-link(:to='{ name: "confirmation" }')
-        span.input-group-addon.nav-btn.prefered(style="white-space: inherit")
+        span.input-group-addon.nav-btn.prefered.specialContent
           span Je valide ma commande de {{ total }}€ à {{ frenchTime }}
           
       router-link(:to='{ name: "withdraw" }')
@@ -194,5 +194,11 @@ a{
   border: 1px solid #dedede;
   padding: 15px;
   border-radius: 4px;
+}
+.specialContent{
+  white-space: inherit;
+  padding: 13px;
+  min-height: 47px;
+  height: auto;
 }
 </style>
