@@ -64,7 +64,7 @@ export default {
       return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
     matchedWishesLength() {
-      return Object.keys(this.$store.getters['selection/getMatchedWishes']);
+      return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
     routeName() {
       return this.$store.state.route.name;
