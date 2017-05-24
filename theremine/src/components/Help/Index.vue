@@ -66,18 +66,6 @@ div#help
         |      - choisir de nouveaux produits<br/>
         |      - supprimer les anciens produits et en choisir de nouveau<br/>
         |      - ne pas choisir de nouveaux produits grâce au bouton "je n'en veux plus"<br/>
-    div.question
-      span.expand.fa.fa-plus-square-o &nbsp;
-      span.expand.fa.fa-minus-square-o.hidden &nbsp;
-      span.expand.title J'ai deux produits du même nom dans ma liste de courses, que va-t-il se passer ?
-      div.answer
-        .content
-        |  Au moment de choisir le second produit dans les rayons, un bloc "du même nom" apparaîtra avec les produits au panier.<br/>
-
-        |  Vous pouvez alors:<br/>
-        |      - choisir de nouveaux produits<br/>
-        |      - supprimer les anciens produits et en choisir de nouveau<br/>
-        |      - ne pas choisir de nouveaux produits grâce au bouton "je n'en veux plus"<br/>
   div.category
     .title Les rayons
     div.question
