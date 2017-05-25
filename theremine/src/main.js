@@ -17,6 +17,7 @@ Vue.use(VueAnalytics, {
 });
 
 sync(store, router);
+
 Vue.config.productionTip = true;
 // Vue.config.performance = true;
 

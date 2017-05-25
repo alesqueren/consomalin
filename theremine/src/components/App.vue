@@ -32,7 +32,7 @@
       Usercard
       li.header-tab.right.help
         router-link.title.help(:to="{ name: 'help' }")
-          span.fa.fa.fa-question-circle
+          // span.fa.fa.fa-question-circle
           span &nbsp;Aide
     div#content(v-bind:class="{'marginalize-left' : listRequired, 'marginalize-right' : navCarRequired}")
       div#replay

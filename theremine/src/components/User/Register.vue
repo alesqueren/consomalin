@@ -3,13 +3,15 @@ div#register
   form
     h2 Inscription
     .border
-    .prez Mes informations
+    .prez
     .form-group
+      span.fa.fa.fa-envelope.mail-icon
       input.email.form-control(v-model="username", type='email', name='username', tabindex='1', placeholder='Email', value='')
     .form-group
+      span.fa.fa.fa-lock.password-icon
       input.password.form-control(v-model="password", type='password', name='password', tabindex='2', placeholder='Mot de passe')
       input.newsletter(v-model="newsletter", type='checkbox', name='newsletter', tabindex='3')
-      label(for="newsletter") &nbsp;&nbsp;J'accepte de recevoir la newsletter Consomalin
+      label(for="newsletter") &nbsp;&nbsp;Je souhaite recevoir la newsletter Consomalin
     .form-group
       p.danger.danger-alert(v-if="error") Cet utilisateur existe deja.
       input.submit.form-control.btn.btn-register(
@@ -18,6 +20,9 @@ div#register
         tabindex='4',
         value="Créer un compte gratuitement",
         @click.prevent="register")
+    .login-link Déjà un compte ?&nbsp;
+      router-link(:to="{ name: 'login' }")
+        span Connectez-vous
 </template>
 
 <script>
@@ -73,17 +78,34 @@ export default {
 form{
   position: absolute;
   width: 500px;
-  height: 400px;
+  height: 415px;
   top: 0;
   left: 50%;
   margin-left: -250px;
   background-color: white;
   border: 1px solid #dedede;
   padding: 30px 30px 117px 30px;
+  margin-top: 60px;
 }
 #register h2 {
-  padding-top: 30px;
+  padding-top: 10px;
   text-align: center;
+}
+.mail-icon {
+  position: absolute;
+  right: 43px;
+  top: 140px;
+}
+.password-icon {
+  position: absolute;
+  right: 45px;
+  top: 195px;
+}
+.login-link {
+  margin-top: 35px
+}
+.login-link a {
+  display: inline;
 }
 .border{
   content: '';
@@ -113,10 +135,10 @@ a {
   color: #42b983;
 }
 .prez {
-  margin-top: 35px
+  margin-top: 55px
 }
 .newsletter {
-  margin-top: 35px;
+  margin-top: 20px;
 }
 .submit {
   cursor: pointer;

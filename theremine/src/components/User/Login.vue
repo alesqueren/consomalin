@@ -3,10 +3,12 @@ div#login
   form
     h2 Connexion
     .border
-    .prez Mes informations de connexion
+    .prez
     .form-group
+      span.fa.fa.fa-envelope.mail-icon
       input#username.form-control(v-model="username", type='text', name='username', tabindex='1', placeholder='Email', value='')
     .form-group
+      span.fa.fa.fa-lock.password-icon
       input#password.form-control(v-model="password", type='password', name='password', tabindex='2', placeholder='Mot de passe')
     .form-group
       p.danger.danger-alert(v-if="error") Utilisateur ou mot de passe incorrect.
@@ -16,6 +18,9 @@ div#login
             tabindex='4',
             value='Se connecter',
             @click="login")
+    .login-link Nouveau sur Consomalin ?&nbsp;
+      router-link(:to="{ name: 'register' }")
+        span Créez un compte
 </template>
 
 <script>
@@ -74,20 +79,37 @@ export default {
 form{
   position: absolute;
   width: 500px;
-  height: 335px;
+  height: 370px;
   top: 0;
   left: 50%;
   margin-left: -250px;
   background-color: white;
   border: 1px solid #dedede;
   padding: 30px 30px 117px 30px;
+  margin-top: 60px;
 }
 #login h2 {
-  padding-top: 30px;
+  padding-top: 10px;
   text-align: center;
 }
 .prez {
+  margin-top: 55px
+}
+.login-link {
   margin-top: 35px
+}
+.login-link a {
+  display: inline;
+}
+.mail-icon {
+  position: absolute;
+  right: 43px;
+  top: 140px;
+}
+.password-icon {
+  position: absolute;
+  right: 45px;
+  top: 195px;
 }
 .border{
   content: '';
