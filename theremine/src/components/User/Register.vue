@@ -10,8 +10,8 @@ div#register
     .form-group
       span.fa.fa.fa-lock.password-icon
       input.password.form-control(v-model="password", type='password', name='password', tabindex='2', placeholder='Mot de passe')
-      input.newsletter(v-model="newsletter", type='checkbox', name='newsletter', tabindex='3')
-      label(for="newsletter") &nbsp;&nbsp;Je souhaite recevoir la newsletter Consomalin
+      input#newsletter(v-model="newsletter", type='checkbox', name='newsletter', tabindex='3')
+      label.newsletter-label(for="newsletter") &nbsp;&nbsp;Je souhaite recevoir la newsletter Consomalin
     .form-group
       p.danger.danger-alert(v-if="error") Cet utilisateur existe deja.
       input.submit.form-control.btn.btn-register(
@@ -137,8 +137,11 @@ a {
 .prez {
   margin-top: 55px
 }
-.newsletter {
+#newsletter {
   margin-top: 20px;
+}
+.newsletter-label {
+  cursor: pointer;
 }
 .submit {
   cursor: pointer;
