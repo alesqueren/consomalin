@@ -9,6 +9,11 @@ function add(email, password, newsletter, callback) {
       _id: email,
       password,
       newsletter,
+      wishGroups: [],
+      currentBasket: {
+        currentWishId: null,
+        selectedWishes: {},
+      },
     },
     (err, cursor) => {
       if (!err) {
