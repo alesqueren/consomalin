@@ -42,18 +42,18 @@
 </template>
 
 <script>
-import config from '../../config';
-import replay from '../replay';
 import NavCard from './NavCard/Index';
 import Usercard from './User/Usercard';
 import List from './List/Index';
+import config from '../../config';
+import replay from '../replay';
 
 const $ = window.$;
 
 export default {
   data() {
     return {
-      demo: config.MODE_DEMO,
+      demo: config.demo,
     };
   },
   computed: {

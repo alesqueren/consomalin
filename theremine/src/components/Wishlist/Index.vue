@@ -14,7 +14,7 @@ import ActiveGroup from './ActiveGroup';
 export default {
   computed: {
     demo() {
-      return config.MODE_DEMO;
+      return config.demo;
     },
   },
   components: { Groups, ActiveGroup },

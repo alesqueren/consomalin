@@ -73,13 +73,13 @@ const router = new Router({
     },
     {
       name: 'presentation',
-      path: '/Presentation',
+      path: '/presentation',
       meta: { auth: true },
       component: Presentation,
     },
     {
       name: 'help',
-      path: '/Help',
+      path: '/help',
       component: Help,
     },
     {

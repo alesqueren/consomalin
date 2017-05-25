@@ -101,7 +101,7 @@ export default {
   props: [],
   data() {
     return {
-      demo: config.MODE_DEMO,
+      demo: config.demo,
     };
   },
   computed: {

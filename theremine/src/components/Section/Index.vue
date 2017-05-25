@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       maxProducts: 40,
-      demo: config.MODE_DEMO,
+      demo: config.demo,
     };
   },
   destroyed() {

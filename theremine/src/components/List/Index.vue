@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       newWishName: '',
-      demo: config.MODE_DEMO,
+      demo: config.demo,
     };
   },
   computed: {
