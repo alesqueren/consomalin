@@ -9,11 +9,12 @@
       v-on:keyup.esc="finishEdition")
     button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click="validEdition")
       i.fa.fa-check.fa-xs
-    label.name(v-else for="select") {{ name }}
+    label.name(v-else for="select")
+      .nameIn {{ name }}
 
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
-        span.content renommer&nbsp;
+        span.content Renommer&nbsp;
         span.icon.fa.fa-pencil
       div.action.delete(@click.stop="erase", v-bind:class="{'deleting': deleting}")
         span.icon.fa.fa-eraser
@@ -55,7 +56,7 @@ export default {
       return type === 'deleteWish' && wid === this.wid;
     },
     deleteWording() {
-      return this.deleting ? 'valider ?' : 'effacer';
+      return this.deleting ? 'Valider ?' : 'Effacer';
     },
   },
   methods: {
@@ -121,6 +122,10 @@ export default {
 <style scoped>
 .deleting{
   visibility: visible;
+}
+.nameIn{
+  overflow: hidden;
+  height: 50px;
 }
 </style>
 

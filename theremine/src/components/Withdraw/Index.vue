@@ -1,7 +1,8 @@
 <template lang="pug">
 div#slots
-  h2 Je choisis un horaire de retrait
-  div
+  h2 Horaires de retrait disponibles
+  .border
+  div.slots
     .container-fluid
       .row.no-gutters
         <i v-show="!isScheduleDataValid" class="text-center fa fa-spinner fa-spin fa-5x" style="width: 100%;"></i>
@@ -10,39 +11,30 @@ div#slots
           v-bind:day="day" 
           v-bind:key="day"
           style="min-width:150px;")
-  a(href='/basket')
-    button.btn.btn-primary.left(type="button") Revenir au panier
-  a(href='#' @click="confirmSlot")
-    button.btn.btn-success.right(type="button" v-bind:disabled="!selectedSlot") {{ confirmationMessage }}
+        .scale
+          .title Affluence :
+          .min Faible
+          .max Importante
+          .colors
+
 </template>
 
 <script>
 import DayItem from './DayItem';
+import router from '../../router';
 
 export default {
   computed: {
     days() {
       return this.$store.state.schedule.days;
     },
-    selectedSlot() {
-      return this.$store.state.singleton.selectedSlot;
-    },
     isScheduleDataValid() {
       // TODO: check expiration > now()
       //       fetch schedule if data is expired
       return this.$store.state.schedule.expiration;
     },
-    confirmationMessage() {
-      if (this.selectedSlot) {
-        const time = new Date(this.selectedSlot.dateTime);
-        const day = (time.getDay() < 10) ? ('0' + time.getDay()) : time.getDay();
-        const month = (time.getMonth() + 1 < 10) ? ('0' + (time.getMonth() + 1)) : time.getMonth() + 1;
-        const minute = (time.getMinutes() < 10) ? ('0' + time.getMinutes()) : time.getMinutes();
-        const hour = (time.getHours() < 10) ? ('0' + time.getHours()) : time.getHours();
-        const frenchTime = hour + 'h' + minute + ' le ' + day + '/' + month;
-        return 'Valider ma commande pour ' + frenchTime;
-      }
-      return 'Valider ma commande';
+    selectedWishes() {
+      return this.$store.getters['selection/getMatchedWishes'];
     },
   },
   mounted() {
@@ -53,14 +45,56 @@ export default {
       this.$store.dispatch('transaction/order');
     },
   },
+  created() {
+    if (!Object.keys(this.selectedWishes).length) {
+      router.push({ name: 'basket' });
+    }
+  },
   components: { DayItem },
 };
 </script>
 
 <style scoped>
+#slots{
+  padding: 65px 65px 30px 65px;
+}
+h2{
+  text-align: center;
+}
+.border {
+  position: absolute;
+  content: '';
+  background: var(--color2);
+  height: 2px;
+  width: 380px;
+  left: 50%;
+  margin-left: -180px;
+  margin-top: 5px;
+  margin-bottom: 40px;
+}
+.slots{
+  margin-top: 55px;
+}
 .row.no-gutters{
   border: 1px solid grey;
   padding: 15px;
   margin-bottom: 15px;
+}
+.scale{
+  position: relative;
+  margin-top: 25px;
+  width: 150px;
+}
+.scale .min{
+  float: left;
+}
+.scale .max{
+  float: right;
+}
+.scale .colors{
+  clear: both;
+  width: 150px;
+  height: 25px;
+  background: linear-gradient(45deg, rgb(50, 255, 0), rgb(255, 32, 0));
 }
 </style>

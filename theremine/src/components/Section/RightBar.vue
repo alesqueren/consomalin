@@ -2,8 +2,8 @@
   div.root
     Wish(
       v-bind:wid="currentWish.id",
-      v-bind:badgeLabel="\"En cours\"",
-      v-bind:fillerMessage="\"Pas encore de produit ajouté.\"",
+      v-bind:badgeLabel="currentWishBadge",
+      v-bind:fillerMessage="\"Faites votre selection.\"",
       )
     div(style="clear:both")
     Wish(
@@ -32,8 +32,31 @@ export default {
     };
   },
   computed: {
+    user() {
+      return this.$store.state.user;
+    },
     currentWish() {
       return this.$store.getters['sectionWishes/getCurrent'];
+    },
+    currentWishBadge() {
+      let text = '';
+      if (!this.currentWishHasProduct) {
+        text = 'Choix en cours';
+      } else if (this.currentWishHasProduct === 1) {
+        text = 'Produit choisi';
+      } else {
+        text = 'Produits choisis';
+      }
+      return text;
+    },
+    currentWishHasProduct() {
+      const gid = this.currentWish.gid;
+      const wid = this.currentWish.id;
+      let result = null;
+      if (this.currentWish) {
+        result = Object.keys(this.$store.state.selection.basket[gid][wid]).length;
+      }
+      return result;
     },
     lastAddedWishId() {
       return this.$store.getters['sectionWishes/getLastAdded'];

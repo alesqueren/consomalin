@@ -1,7 +1,7 @@
 body {
   font-size: 14px;
+  min-width: 1200px;
 }
-
 a {
   text-decoration:none;
   color:black;
@@ -24,6 +24,11 @@ a:hover {
 @font-face {
   font-family: learningCurve;
   src: url('/static/fonts/Cursive_standard.ttf');
+}
+
+@font-face {
+  font-family: receipt;
+  src: url('/static/fonts/receipt.regular.ttf');
 }
 
 .left{
@@ -55,4 +60,11 @@ a:hover {
 }
 .nav-btn.prefered:hover {
   background-color: var(--color3-3);
+}
+/*LIST*/
+#list .line{
+  font-family: learningCurve;
+  height: 30px;
+  line-height: 40px;
+  font-size: 1.5em;
 }

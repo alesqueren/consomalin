@@ -17,13 +17,6 @@
             autofocus)
         span.search-search
           span.fa.fa-search
-      span.input-group-addon.search-uncheck(@click="remove")
-        span.fa.fa-check-square-o.checked-box &nbsp;&nbsp;&nbsp;
-        span.fa.fa-square-o.not-checked-box &nbsp;&nbsp;&nbsp;&#8239;
-        span Décocher
-      //- span.input-group-addon.search-addGroup(@click="addGroup")
-      //-   span.fa.fa-list-ul &nbsp;&nbsp;&nbsp;
-      //-   span Créer une liste de {{ currentWish.name }}
 </template>
 
 <script>
@@ -78,13 +71,11 @@ export default {
 
 <style scoped>
 #root {
-  padding-bottom: 25px;
+  padding-bottom: 15px;
 }
-.groupName {
+.search-gname {
   font-size: 1.5em;
-}
-#root {
-  padding-bottom: 25px;
+  font-family: learningCurve;
 }
 #search-text {
   font-family: learningCurve;

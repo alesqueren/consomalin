@@ -1,15 +1,30 @@
 <template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
-    ul.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
-    Wish(v-for="wid in selectedWishes" 
-      v-bind:wid="wid" 
-      v-bind:gid="gid" 
-      v-bind:key="wid")
+    .group(@click.stop="setActivation")
+      .line.groupName {{ name }}
+      Wish(v-for="wid in selectedWishes" 
+        v-bind:wid="wid" 
+        v-bind:gid="gid" 
+        v-bind:key="wid")
 </template>
 
 <script>
-import router from '../../router';
 import Wish from './Wish';
+
+const $ = window.$;
+
+function manageScrollButton() {
+  const hasGroup = $('#groups .wish.line').length;
+  if (hasGroup) {
+    const ch = $('#groups .wish.line:last').position().top;
+    const th = $('#groups').height();
+    if (ch < th) {
+      $('#list .bottom').hide();
+    } else {
+      $('#list .bottom').show();
+    }
+  }
+}
 
 export default {
   props: ['gid'],
@@ -29,8 +44,22 @@ export default {
   methods: {
     setActivation() {
       this.$store.dispatch('singleton/set', { activeGroupId: this.gid });
-      router.push({ name: 'wishlist' });
+      // router.push({ name: 'wishlist' });
     },
+  },
+  watch: {
+    selectedWishes: () => {
+      // TODO : Trouver un autre moyen d'attendre la nouvelle valeur/hauteur, nextTick ?
+      setTimeout(() => {
+        manageScrollButton();
+      }, 200);
+    },
+  },
+  mounted() {
+    manageScrollButton();
+    $('#groups').scroll(() => {
+      manageScrollButton();
+    });
   },
   components: { Wish },
 };
@@ -39,8 +68,10 @@ export default {
 
 <style scoped>
 .groupName {
-  color: black;
-  font-size: 1.5em;
+  font-size: 1em;
+  font-weight: bold;
   text-align: center;
+  border-bottom: 1px dotted #72c4ff;
+  overflow: hidden;
 }
 </style>

@@ -1,10 +1,12 @@
 <template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
-    div.groupName(@click.stop="setActivation") <strong>{{ name }}</strong>
-    SuperWish(v-for="wid in selectedWishes" 
-      v-bind:wid="wid",
-      v-bind:displayName="true",
-      v-bind:key="wid")
+    div
+      strong.groupName(@click.stop="setActivation") {{ name }}
+      SuperWish(v-for="wid in selectedWishes" 
+        v-bind:wid="wid",
+        v-bind:displayName="true",
+        v-bind:key="wid",
+        :data-wid="wid")
 </template>
 
 <script>
@@ -37,13 +39,14 @@ export default {
   position: relative;
   color: #555;
   clear: both;
+  padding-top: 40px;
 }
 .groupName {
   cursor: pointer;
-  font-family: gunny;
+  font-family: learningCurve;
   color: black;
-  font-size: 2.5em;
-  text-align: center;
+  font-size: 2em;
+  text-align: left;
 }
 .groupName:hover {
   text-decoration: underline

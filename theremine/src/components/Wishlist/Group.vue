@@ -13,19 +13,21 @@
       @keyup.esc="finishEdition")
     button.btn.btn-success.btn-sm.btn-edition(v-if='editing' @click="validEdition")
       i.fa.fa-check.fa-xs
-    label.name(v-else for="selected") {{ name }}
+    label.name(v-else for="selected")
+      .nameIn {{ name }}
     div.fakeCheckbox(v-if='!editing && wishesNb' @click="toggleSelection")
 
     div.filling
       span {{ selectedWishNb }} / {{ wishesNb }}
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
-        span.content renommer&nbsp;
+        span.content Renommer&nbsp;
         span.icon.fa.fa-pencil
       div.action.delete(@click.stop="erase", v-bind:class="{'deleting': deleting}")
         span.icon.fa.fa-eraser
         span &nbsp;
         span.content {{deleteWording}}
+    div.arrowActive(v-if="isActive")
 </template>
 
 <script>
@@ -68,7 +70,7 @@ export default {
       return this.$store.state.wishGroup.filter(predicate)[0].wishes.length;
     },
     deleteWording() {
-      return this.deleting ? 'valider ?' : 'effacer';
+      return this.deleting ? 'Valider ?' : 'Effacer';
     },
   },
   methods: {
@@ -141,6 +143,17 @@ export default {
 .line.active {
   background-color: var(--active);
 }
+.arrowActive {
+  content: " ";
+  width: 0;
+  height: 0;
+  border-top: 25px solid transparent;
+  border-bottom: 25px solid transparent;
+  border-left: 20px solid var(--active);
+  position: absolute;
+  right: -19px;
+  top: 0px;
+}
 .line.active label {
   text-decoration: underline;
 }
@@ -165,5 +178,9 @@ export default {
 }
 .deleting{
   visibility: visible;
+}
+.nameIn{
+  overflow: hidden;
+  height: 50px;
 }
 </style>

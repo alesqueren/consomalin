@@ -1,6 +1,7 @@
 <template lang="pug">
   div#basket
-    h2 Mon panier
+    h2 Panier
+    .border
     div.groups
       Group(v-for="gid in selectedGroups" 
         v-bind:gid="gid"
@@ -10,6 +11,7 @@
 <script>
 import Group from './Group';
 import List from '../List/Index';
+import router from '../../router';
 
 export default {
   computed: {
@@ -29,6 +31,21 @@ export default {
       return this.$store.getters['transaction/basketAmount'];
     },
   },
+  // mounted() {
+  //   const height = $(window).height();
+  //   const halfHeight = height / 2;
+  //   const halfElement = 175;
+  //   $('#groups .wish').on('click', (e) => {
+  //     const wid = $(e.currentTarget).data('wid');
+  //     const element = $('#basket [data-wid="' + wid + '"]');
+  //     $('html, body').animate({ scrollTop: element.offset().top + 50 }, 500);
+  //   });
+  // },
+  created() {
+    if (!this.selectedWishNb) {
+      router.push({ name: 'wishlist' });
+    }
+  },
   components: { Group, List },
 };
 </script>
@@ -39,14 +56,25 @@ export default {
   height: auto;
   font: 14px;
   clear: both;
+  padding: 30px 65px 30px 65px;
 }
 #basket:after {
-    content:"";
-    clear:both;
-    display:block;
+  content:"";
+  clear:both;
+  display:block;
 }
 #basket h2 {
   text-align: center;
+}
+.border{
+  content: '';
+  background: var(--color2);
+  height: 2px;
+  width: 130px;
+  position: absolute;
+  left: 50%;
+  margin-left: -65px;
+  margin-top: 5px;
 }
 button{
   cursor: pointer;

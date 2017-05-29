@@ -34,5 +34,8 @@ module.exports = {
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
-  }
+  },
+  // TODO: capture runtime environment
+  demo: true,
+  analyticsId: 'UA-99830023-1',
 }

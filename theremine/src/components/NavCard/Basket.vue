@@ -4,8 +4,8 @@
         div.basket-logo
           i.fa.fa-shopping-cart.fa-lg
       div.middle-part(v-bind:class="{ large: !matchedWishNb}" transition="fadeOut")
-        span(v-if="selectedWishNb <= 1") {{selectedWishNb}} mémo <br/>
-        span(v-if="selectedWishNb > 1") {{selectedWishNb}} mémos <br/>
+        span(v-if="selectedWishNb <= 1") {{selectedWishNb}} produit <br/>
+        span(v-if="selectedWishNb > 1") {{selectedWishNb}} produits <br/>
         span(v-if="isBasketFull")
           b Panier rempli
           br
@@ -45,7 +45,7 @@ export default {
   display: table;
   color: white;
   height: 60px;
-  width: 100%;
+  width: 320px;
   background-color: var(--color2);
   padding: 15px;
   margin-bottom: 15px;

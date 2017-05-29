@@ -145,7 +145,7 @@ const mutations = {
 };
 export default {
   namespaced: true,
-  state: {},
+  state: [],
   getters: globalGetters,
   actions,
   mutations,

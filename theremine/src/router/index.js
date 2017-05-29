@@ -7,6 +7,10 @@ import Wishlist from '@/components/Wishlist/Index';
 import Section from '@/components/Section/Index';
 import Basket from '@/components/Basket/Index';
 import Withdraw from '@/components/Withdraw/Index';
+import Presentation from '@/components/Presentation/Index';
+import Confirmation from '@/components/Confirmation/Index';
+import Help from '@/components/Help/Index';
+import Ticket from '@/components/Ticket/Index';
 import NotFound from '@/components/NotFound';
 import store from '../store';
 import replay from '../replay';
@@ -56,6 +60,29 @@ const router = new Router({
       component: Withdraw,
     },
     {
+      name: 'confirmation',
+      path: '/confirmation',
+      meta: { auth: true },
+      component: Confirmation,
+    },
+    {
+      name: 'ticket',
+      path: '/ticket',
+      meta: { auth: true },
+      component: Ticket,
+    },
+    {
+      name: 'presentation',
+      path: '/presentation',
+      meta: { auth: true },
+      component: Presentation,
+    },
+    {
+      name: 'help',
+      path: '/help',
+      component: Help,
+    },
+    {
       name: 'replay',
       path: '/replay/:sid',
     },
@@ -85,7 +112,7 @@ router.beforeEach((to, from, next) => {
 
   if (store.state.user.username) {
     // user succeded to login
-    if (!store.state.wishGroup[0]) {
+    if (store.state.wishGroup && !store.state.wishGroup[0]) {
       store.dispatch('user/fetchUserData').then(next);
     } else {
       next();

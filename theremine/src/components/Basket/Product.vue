@@ -107,7 +107,7 @@ export default {
 }
 .product-left {
   display: table-cell;
-  width: 100px;
+  width: 75px;
 }
 .product-right {
   position: relative;
@@ -115,7 +115,7 @@ export default {
   vertical-align: middle;
   text-align: center;
   height: auto;
-  width: 100%;
+  width: 175px;
   padding: 5px;
   /*position: absolute;
   right: 20px;
@@ -123,7 +123,7 @@ export default {
 }
 .product-name {
   position: relative;
-  max-height: 45px;
+  height: 45px;
   overflow: hidden;
 }
 .product-number {
@@ -177,7 +177,7 @@ export default {
   text-align: center;
   line-height: 30px;
   top: 49%;
-  right: 15px;
+  right: 5px;
   margin-top: -15px;
   text-decoration:none;
 }
@@ -186,7 +186,7 @@ input[type=number]::-webkit-inner-spin-button {
 }
 .count-input .incr-btn:first-child {
   right: auto;
-  left: 15px;
+  left: 5px;
   z-index: 2;
 }
 
@@ -203,8 +203,8 @@ input[type=number]::-webkit-inner-spin-button {
   position: absolute;
   font-size: 13px;
   top: 0px;
-  right: 13px;
-  width: 76px;
+  right: 4px;
+  width: 75px;
   line-height: 27px;
   height: 27px;
   border-radius: 2px;

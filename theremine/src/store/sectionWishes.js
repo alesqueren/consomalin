@@ -58,15 +58,20 @@ const globalGetters = {
   getSameNameWishIds: ({ wid }, getters, rootState, rootGetters) => {
     const res = [];
     if (wid) {
-      const name = rootGetters['wishGroup/getWish']({ wid }).name;
-      const wishes = rootGetters['wishGroup/getAllWishes'];
+      const wish = rootGetters['wishGroup/getWish']({ wid });
+      if (wish) {
+        const name = wish.name;
+        const wishes = rootGetters['wishGroup/getAllWishes'];
 
-      for (let i = 0; i < wishes.length; i++) {
-        if (wishes[i].name === name && wishes[i].id !== wid) {
-          if (rootGetters['selection/isMatchedWish'](wishes[i].id)) {
-            res.push(wishes[i].id);
+        for (let i = 0; i < wishes.length; i++) {
+          if (wishes[i].name === name && wishes[i].id !== wid) {
+            if (rootGetters['selection/isMatchedWish'](wishes[i].id)) {
+              res.push(wishes[i].id);
+            }
           }
         }
+      } else {
+        return null;
       }
     }
     return res;

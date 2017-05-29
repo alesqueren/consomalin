@@ -1,34 +1,37 @@
 <template lang="pug">
   div(style="position:relative;width:100%;")
     div#wishlist
-      h2 Je crée et gère ma liste de courses
       div.content
           Groups.groups
           ActiveGroup.activegroup
-      //- List.rightSide
 </template>
 
 <script>
+import config from '../../../config';
 import Groups from './Groups';
 import ActiveGroup from './ActiveGroup';
-import List from '../List/Index';
 
 export default {
-  components: { Groups, ActiveGroup, List },
+  computed: {
+    demo() {
+      return config.demo;
+    },
+  },
+  components: { Groups, ActiveGroup },
 };
 </script>
 
 <style scoped>
 #wishlist {
   font-size: 14px;
+  padding: 30px 65px 30px 65px;
 }
 #wishlist h2 {
-  text-align: center;
+  text-align: left;
 }
 #wishlist .content {
   width: 100%;
   display: table;
-  padding-top: 50px;
 }
 #wishlist .content .groups{
   display: table-cell;
@@ -45,7 +48,7 @@ export default {
 }
 .rightSide{
   position: fixed;
-  top: 214px;
-  right: 16px;
+  top: 250px;
+  right: 45px;
 }
 </style>

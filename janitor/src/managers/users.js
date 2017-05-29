@@ -2,12 +2,18 @@ const mongo = require('../bs/mongo');
 
 const userCollectionName = 'user';
 
-function add(email, password, callback) {
+function add(email, password, newsletter, callback) {
   const users = mongo.db.collection(userCollectionName);
   return users.insertOne(
     {
       _id: email,
       password,
+      newsletter,
+      wishGroups: [],
+      currentBasket: {
+        currentWishId: null,
+        selectedWishes: {},
+      },
     },
     (err, cursor) => {
       if (!err) {

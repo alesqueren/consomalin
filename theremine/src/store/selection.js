@@ -122,6 +122,25 @@ const globalGetters = {
     return res;
   },
 
+  getMatchedWishesByGroup: ({ basket }, getters, { wishGroup }) => ({ gid }) => {
+    let ordWishes = [];
+    for (let i = 0; i < wishGroup.length; i++) {
+      if (wishGroup[i].id === gid) {
+        ordWishes = wishGroup[i].wishes;
+        break;
+      }
+    }
+
+    const res = [];
+    for (let i = 0; i < ordWishes.length; i++) {
+      const wid = ordWishes[i].id;
+      if (basket[gid] && basket[gid][wid] && basket[gid][wid].length) {
+        res.push(wid);
+      }
+    }
+    return res;
+  },
+
   isSelectedWish: ({ basket }) => ({ wid }) => {
     for (const g in basket) {
       for (const w in basket[g]) {

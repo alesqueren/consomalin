@@ -8,18 +8,31 @@ function get(sid, resolve) {
   records.findOne({ _id: sid }, resolve);
 }
 
-function add(sid, newState) {
+function add(sid, newStates) {
   const records = mongo.db.collection(collectionName);
   records.updateOne(
     { _id: sid },
     {
       $push: {
         states: {
-          $each: [newState],
+          $each: newStates,
         },
       },
     },
     { upsert: true },
+    () => {
+      records.updateOne(
+        {
+          _id: sid,
+          startTime: { $exists: false },
+        },
+        {
+          $set: {
+            startTime: new Date(),
+          },
+        },
+      );
+    },
   );
 }
 

@@ -44,10 +44,12 @@
 </template>
 
 <script>
+import config from '../../../config';
 import CurrentWish from './CurrentWish';
 import ProductItem from './ProductItem';
 import RightBar from './RightBar';
 import List from '../List/Index';
+import router from '../../router';
 
 const $ = window.$;
 
@@ -55,11 +57,8 @@ export default {
   data() {
     return {
       maxProducts: 40,
+      demo: config.demo,
     };
-  },
-  created() {
-    // on ecoute le scroll pour augmenter le nombre de produits visibles
-    window.addEventListener('scroll', this.handleScroll);
   },
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll);
@@ -82,6 +81,9 @@ export default {
     },
     isBasketEmpty() {
       return this.$store.getters['selection/getOrderedSelectedWishes'].length === 0;
+    },
+    selectedWishNb() {
+      return this.$store.getters['selection/getOrderedSelectedWishes'].length;
     },
     matchedWishesLength() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
@@ -106,6 +108,17 @@ export default {
       }
     },
   },
+  created() {
+    window.addEventListener('scroll', this.handleScroll);
+    if (!this.selectedWishNb) {
+      router.push({ name: 'wishlist' });
+    }
+  },
+  mounted() {
+    if (this.demo && window.innerWidth > 1200) {
+      $('#wishes .rightSide').css('top', '+=50px');
+    }
+  },
   components: { CurrentWish, ProductItem, List, RightBar },
 };
 </script>
@@ -123,6 +136,7 @@ export default {
 }
 #wishes{
   width: 100%;
+  padding: 30px 65px 30px 65px;
 }
 #wishes .main{
 }
@@ -132,9 +146,16 @@ export default {
 }
 #wishes .rightSide{
   position: fixed;
-  top: 143px;
-  right: 31px;
+  top: 158px;
+  right: 16px;
   width: 334px;
+}
+@media screen and (max-width: 1200px) {
+  #wishes .rightSide {
+    position: absolute;
+    right: -304px;
+    top: 115px;
+  }
 }
 .waiting{
   background-color: color(--white);
@@ -148,7 +169,6 @@ export default {
   height: 275px;
   padding: 5px 5px 0 5px;
   float: left;
-  margin: 5px;
   opacity: 0.3;
 }
 .product-img{

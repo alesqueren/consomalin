@@ -9,8 +9,8 @@
     .product-name.center {{product.name}}
     div.bottom
       div.price
-        div(style="font-size: 1.3em;") <b> {{product.price}}&nbsp;€</b>
-        div.pu {{product.priceByQuantity}}&nbsp;€/u
+        div(style="font-size: 1.3em;") <b> {{price}}&nbsp;€</b>
+        div.pu {{priceByQuantity}}€/{{quantityUnit}}
       div.btns-atb(v-if="!inCurrentWish")
         div.btn-atb.tooltip(
             @click.stop="selectProduct",
@@ -70,6 +70,15 @@ export default {
       }
       return 1;
     },
+    price() {
+      return this.product.price.toFixed(2);
+    },
+    priceByQuantity() {
+      return this.product.priceByQuantity.toFixed(2);
+    },
+    quantityUnit() {
+      return this.product.quantityUnit;
+    },
   },
   methods: {
     selectProduct() {
@@ -119,14 +128,15 @@ export default {
 <style scoped>
 .product-item {
   background-color: var(--white);
-  border: 1px solid rgba(0,0,0,.125);
-  width:162px;
-  height:285px;
+  width:145px;
+  height:267px;
   padding: 5px 5px 0 5px;
   float: left;
-  margin: 5px;
+  /*margin: 5px;*/
   position: relative;
-  border-radius: 2px;
+  border: 1px solid #dedede;
+  margin-right: -1px;
+  margin-bottom: -1px;
   transition: background-color 0.2s;
 }
 
@@ -149,14 +159,14 @@ export default {
   width: 100%;
   height: 25px;
   background-color: #5bc0de;
-  /*color: white;*/
+  color: white;
   /*opacity: 0.5;*/
-  line-height: 25px;
+  line-height: 28px;
   text-align: center;
 }
 .product-img {
-  width:150px;
-  height:150px;
+  width:133px;
+  height:133px;
 }
 .product-name {
   line-height: 20px;
@@ -171,7 +181,7 @@ export default {
 .btns-atb {
   position: absolute;
   right: 0px;
-  width: 78px;
+  width: 65px;
 }
 .price {
   font-size: 1.2em;
