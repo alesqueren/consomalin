@@ -100,7 +100,7 @@ export default {
     presText() {
       let text = 'Consomalin est un site de courses en ligne independant qui permet de commander chez Auchan drive Balma.';
       if (this.demo) {
-        text = 'Consomalin est un site de courses en ligne independant dans votre drive préféré.';
+        text = 'Consomalin est un site de courses en ligne independant qui permet de commander dans votre drive préféré.';
       }
       return text;
     },
