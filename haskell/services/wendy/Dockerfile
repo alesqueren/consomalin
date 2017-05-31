@@ -14,12 +14,11 @@ RUN echo 'echo "$@" | xargs -n 1 | \
 WORKDIR app
 ADD ./bin/wendy wendy
 
-ENV MONGO_HOST=mongo \
+ENV SERVER_PORT=80 \
+    MONGO_HOST=mongo \
     AMQP_HOST=rabbitmq \
     AMQP_USER=guest \
-    AMQP_PASS=guest \
-    DRIVE_USER=user \
-    DRIVE_PASS=pass
+    AMQP_PASS=guest
 
 HEALTHCHECK \
   CMD check $AMQP_HOST:5672 $MONGO_HOST:27017

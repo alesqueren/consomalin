@@ -1,24 +1,49 @@
 module Main where
 
-import           Protolude
-import           Drive.Bs.Rabbitmq
-import           Drive.Transaction
-import           Drive.Crawl
+import           Protolude hiding (get)
+import           Web.Scotty
+import           Network.Wai.Handler.Warp
+import           Network.HTTP.Types.Status
+import           Data.Attoparsec.Text hiding (Done)
+
+import           Utils.Env
 import           Drive.Crawl.Auchan
-import           Drive.Crawl.Account
+import           Drive.Bs.Rabbitmq
 
 main :: IO ()
 main = do
-  mymytest
-  -- listen TransactionResource processTransactionMessage
-  -- forever $ threadDelay 100000000
+  listen RegistrationResource processRegistrationMessage
 
-processTransactionMessage :: TransactionMessage -> IO ()
-processTransactionMessage (TransactionMessage uid tid) = do
-  mt <- mongoFind uid tid
-  case mt of
-    Just t -> do
-      acc <- makeAccount
-      runConduitCrawl $ doTransaction acc t
-      mongoSet uid tid Done
-    Nothing -> putStrLn ("Error: no transaction found" :: Text)
+  port <- fromEnvOr "SERVER_PORT" decimal 80
+  startSrv port
+
+
+processRegistrationMessage :: RegistrationMessage -> IO ()
+processRegistrationMessage (RegistrationMessage uid) = do
+  _ <- doRegisterIfNeeded uid
+  return ()
+
+
+startSrv :: Port -> IO()
+startSrv port = do
+  putStrLn $ "Listening on port " ++ show port
+  scotty port $ do
+    post "/user/:uid/prepareOrder" prepareController
+    post "/user/:uid/order" orderController
+
+prepareController :: ActionM ()
+prepareController = do
+  uid <- param "uid" :: ActionM Text
+  eBasket <- liftIO $ prepareOrder uid
+  case eBasket of
+    Left err -> do
+      status status409 
+      json err
+    Right basket ->
+      json (show basket :: Text)
+
+orderController :: ActionM ()
+orderController = do
+  uid <- param "uid" :: ActionM Text
+  _ <- liftIO $ order uid
+  json ("coucou" :: Text)

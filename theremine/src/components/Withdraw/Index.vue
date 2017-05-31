@@ -40,11 +40,6 @@ export default {
   mounted() {
     this.$store.dispatch('schedule/fetch');
   },
-  methods: {
-    confirmSlot() {
-      this.$store.dispatch('transaction/order');
-    },
-  },
   created() {
     if (!Object.keys(this.selectedWishes).length) {
       router.push({ name: 'basket' });

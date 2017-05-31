@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleContexts    #-}
 
-module Drive.Attendance (Attendance(..), mongoFind, mongoGet) where
+module Drive.Attendance (Attendance(..), mongoFind, getLevel) where
 
 import           Protolude
 import           Database.MongoDB
@@ -32,11 +32,11 @@ instance Val Attendance where
           return (l, v)
   cast' _ = Nothing
 
-mongoFind :: Text -> IO Attendance
+mongoFind :: Text -> IO (Maybe Attendance)
 mongoFind s = doSelectOne AttendanceResource ["_id" =: s]
 
-mongoGet :: Day -> TimeOfDay -> Attendance -> Maybe Float
-mongoGet d t (Attendance m) = do
+getLevel :: Day -> TimeOfDay -> Attendance -> Maybe Float
+getLevel d t (Attendance m) = do
   day <- M.lookup dayOfWeek m
   let a = M.mapWithKey (\k v -> (abs (timeOfDayToTime k - timeOfDayToTime t), v)) day
   let (_,res) = minimumBy (\(k1,_) (k2,_) -> compare k1 k2) a

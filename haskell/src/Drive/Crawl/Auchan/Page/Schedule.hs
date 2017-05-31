@@ -34,12 +34,13 @@ type ParsedSlotInfo = (Maybe Text, TimeOfDay, SlotStatus)
 makeSlotInfo :: Integer -> ParsedSlotInfo -> SlotInfo
 makeSlotInfo d (i,t,s) = SlotInfo i d t s
 
-makeSlot :: Attendance -> Day -> SlotInfo -> Slot
+makeSlot :: Maybe Attendance -> Day -> SlotInfo -> Slot
 makeSlot att currDay si =
-  Slot (sId si) d t (sStatus si) (mongoGet d t att)
+  Slot (sId si) d t (sStatus si) level
     where 
       t = sTime si
       d = skipSunday currDay (sDayFromNow si)
+      level = join $ fmap (getLevel d t) att
 
 skipSunday :: Day -> Integer -> Day
 skipSunday currDay n =

@@ -38,6 +38,7 @@ instance Pretty Price where
 instance Val Price where
   val   (Price c) = val c
   cast' (Int64 c) = Just $ Price c
+  cast' (Float c) = Just $ toPrice c
   cast' _         = Nothing
 
 instance FromJSON Price

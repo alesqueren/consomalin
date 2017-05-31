@@ -1,4 +1,4 @@
-module Drive.Bs.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doModify, doAggregate) where
+module Drive.Bs.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doModify, doAggregate, chunkAtDepth) where
 
 import           Protolude                    hiding (Product, (<>), find, sort, Selector)
 import           Database.MongoDB
@@ -8,7 +8,7 @@ import qualified Data.Attoparsec.Text as A
 import qualified Data.Text as T
 
 
-data MongoException = DocNotFoundException
+data MongoException = DocNotFoundException | ParseException
   deriving (Show, Typeable)
 instance Exception MongoException
 
@@ -25,13 +25,21 @@ instance Queryable MongoResource where
 withMongoPipe :: Host -> (Pipe -> IO a) -> IO a
 withMongoPipe h = bracket (connect h) close
 
+-- | get subDocuments at a fixed depth of a document
+chunkAtDepth :: Document -> Int -> [Document]
+chunkAtDepth doc depth =
+  chunk $ foldr (\f d -> f d) doc (replicate (depth-1) chunk)
+  where 
+    chunk d = join $ mapMaybe (cast' . value) d
+
 -- TODO: get host only once
-doSelectOne :: (Queryable r, Val v) => r -> [Field] -> IO v
+doSelectOne :: (Queryable r, Val v) => r -> [Field] -> IO (Maybe v)
 doSelectOne r s = do
   h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
   doc <- withMongoPipe (host $ T.unpack h) doWithPipe
-  maybeOrThrow DocNotFoundException $ (cast' . val) doc
-
+  -- maybeOrThrow DocNotFoundException doc
+  -- maybeOrThrow ParseException $ (cast' . val) doc
+  return $ (cast' . val) doc
   where
     (dbName, colName) = getPath r
     action = findOne (select s colName)

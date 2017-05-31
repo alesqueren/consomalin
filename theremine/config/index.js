@@ -36,6 +36,7 @@ module.exports = {
     cssSourceMap: false
   },
   // TODO: capture runtime environment
-  demo: true,
+  // demo: true,
+  demo: false,
   analyticsId: 'UA-99830023-1',
 }

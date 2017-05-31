@@ -18,10 +18,10 @@ library
                        Drive.Types
                        Drive.Price
                        Drive.Product
+                       Drive.ConsoBasket
+                       Drive.DriveBasket
                        Drive.Attendance
                        Drive.ViewProduct
-                       Drive.Transaction
-                       Drive.Transaction.Status
                        Drive.Bs.Mongo
                        Drive.Bs.Rabbitmq
                        Drive.Crawl
@@ -112,6 +112,12 @@ executable wendy
   build-depends:       base
                      , protolude
                      , drive
+                     , attoparsec
+                     , warp
+                     , aeson
+                     , text
+                     , scotty
+                     , http-types
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 

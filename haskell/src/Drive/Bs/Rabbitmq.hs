@@ -1,6 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Drive.Bs.Rabbitmq (RabbitmqResource(..), TransactionMessage(..), listen) where
+module Drive.Bs.Rabbitmq (RabbitmqResource(..), 
+                          OrderMessage(..), 
+                          RegistrationMessage(..), 
+                          listen) where
 
 import           Protolude hiding (msg)
 import           Network.AMQP
@@ -10,18 +13,24 @@ import qualified Data.Text as T
 import           Data.Aeson
 import           GHC.Generics (Generic)
 
-data TransactionMessage = TransactionMessage 
+data OrderMessage = OrderMessage 
   { user :: !Text 
   , transaction :: !Text 
   }
   deriving (Typeable, Show, Eq, Generic)
-instance FromJSON TransactionMessage
-instance ToJSON TransactionMessage
+instance FromJSON OrderMessage
+instance ToJSON OrderMessage
 
-data RabbitmqResource = TransactionResource
+newtype RegistrationMessage = RegistrationMessage { uid :: Text }
+  deriving (Typeable, Show, Eq, Generic)
+instance FromJSON RegistrationMessage
+instance ToJSON RegistrationMessage
+
+data RabbitmqResource = OrderResource | RegistrationResource
 
 getQueueName :: RabbitmqResource -> Text
-getQueueName TransactionResource = "transactions"
+getQueueName OrderResource = "orders"
+getQueueName RegistrationResource = "registrations"
 
 
 listen ::(FromJSON m) => RabbitmqResource -> (m -> IO ()) -> IO ()
