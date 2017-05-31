@@ -116,13 +116,13 @@ export default {
     $('#title .go-to-next').on('click', () => {
       const page = $('#rassurance');
       const speed = 750;
-      $('html, body').animate({ scrollTop: $(page).offset().top }, speed); // Go
+      $('html, body').animate({ scrollTop: $(page).offset().top }, speed);
       return false;
     });
     $('#rassurance .go-to-next').on('click', () => {
       const page = $('#presentation');
       const speed = 750;
-      $('html, body').animate({ scrollTop: $(page).offset().top }, speed); // Go
+      $('html, body').animate({ scrollTop: $(page).offset().top }, speed);
       return false;
     });
   },
