@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.slotHour.classSlot(v-bind:class="{'disabled': pickupSlot.status == 'Past'}" @click="selectSlot()" v-bind:style="styleObject") {{frenchTime}}
+  div.slotHour.classSlot(v-bind:class="{'disabled': pickupSlot.status == 'Past', 'selected': selected}" @click="selectSlot()" v-bind:style="styleObject") {{frenchTime}}
 </template>
 
 <script>
@@ -42,11 +42,8 @@ function numberToColorHsl(i) {
 export default {
   props: ['pickupSlot'],
   computed: {
-    classSlot() {
-      return {
-        'btn-secondary': !this.pickupSlot.selected,
-        'btn-success': this.pickupSlot.selected,
-      };
+    selected() {
+      return this.pickupSlot.id === this.$store.state.singleton.selectedSlot.id;
     },
     frenchTime() {
       const time = this.pickupSlot.time;
@@ -95,5 +92,9 @@ export default {
 .slotHour.disabled{
   opacity: 0.2;
   cursor: default;
+}
+.selected{
+  font-weight: bold;
+  border: 3px solid rgba(0,0,0,0.25);
 }
 </style>

@@ -27,7 +27,7 @@ div#help
       div.answer
         .content
         | Le bloc-note vous permet de noter les produits que vous voulez acheter.<br/>
-        | C'est un peu comme la feuille de papier que vous griffonnez à côté jdu pc ou le fichier texte ouvert à côté du navigateur.<br/>
+        | C'est un peu comme la feuille de papier que vous griffonnez à côté du pc ou le fichier texte ouvert à côté du navigateur.<br/>
 
         | Il vous permet de créer une liste de courses en quelques clics et de conserver vos précédents achats.<br/>
         | Vous pouvez l'organiser grâce aux rubriques.<br/>
@@ -60,12 +60,12 @@ div#help
       span.expand.title J'ai deux produits du même nom dans ma liste de courses, que va-t-il se passer ?
       div.answer
         .content
-        |  Au moment de choisir le second produit dans les rayons, un bloc "du même nom" apparaîtra avec les produits au panier.<br/>
+        |  Au moment de choisir le second produit dans les rayons, un encart "du même nom" apparaîtra avec les produits au panier.<br/>
 
         |  Vous pouvez alors:<br/>
-        |      - choisir de nouveaux produits<br/>
-        |      - supprimer les anciens produits et en choisir de nouveau<br/>
-        |      - ne pas choisir de nouveaux produits grâce au bouton "je n'en veux plus"<br/>
+        |  &nbsp;&nbsp;- choisir de nouveaux produits<br/>
+        |  &nbsp;&nbsp;- supprimer les anciens produits et en choisir de nouveau<br/>
+        |  &nbsp;&nbsp;- ne pas choisir de nouveaux produits grâce au bouton "je n'en veux plus"<br/>
   div.category
     .title Les rayons
     div.question
@@ -75,7 +75,7 @@ div#help
       div.answer
           .content
           |  Les recherches proviennent du nom des produits de la liste de courses.<br/>
-          |  Vous pouvez voir le produit actuellement recherché sur le bandeau liste de courses à gauche avec le signe "->"<br/>
+          |  Vous pouvez voir le produit actuellement recherché sur le bandeau liste de courses à gauche surligné en bleu clair<br/>
           |  Lorsque vous modifiez la recherche, le nom du produit dans votre liste de course change également.<br/>
     div.question
       span.expand.fa.fa-plus-square-o &nbsp;
@@ -85,9 +85,9 @@ div#help
           .content
           |  Si vous achetez des produits qui ne sont pas dans le bloc-note, vous ne pourrez pas les ajouter dans vos futures listes de courses. C'est dommage !<br/>
           |  La solution est donc d'ajouter ces nouveaux produits au bloc-note :<br/>
-          |  Retournez au bloc-note en cliquant sur l'onglet associé.<br/>
-          |  Ajoutez le produit.<br/>
-          |  Cliquez sur le bouton "Continuer mes courses".<br/>
+          |  &nbsp;&nbsp;- Retournez au bloc-note en cliquant sur l'onglet associé.<br/>
+          |  &nbsp;&nbsp;- Ajoutez le produit.<br/>
+          |  &nbsp;&nbsp;- Cliquez sur le bouton "Continuer mes courses".<br/>
   div.category
     .title Gérer mes produits
     div.question
@@ -96,7 +96,7 @@ div#help
       span.expand.title Retirer un produit du panier
       div.answer
           .content
-          |  Il suffit de mettre sa quantité à zéro grâce au bouton "-".<br/>
+          |  Il suffit de mettre sa quantité à zéro grâce au bouton moins ("-").<br/>
     div.question
       span.expand.fa.fa-plus-square-o &nbsp;
       span.expand.fa.fa-minus-square-o.hidden &nbsp;
@@ -140,7 +140,7 @@ div#help
       span.expand.title Dois-je créer un compte Auchan pour utiliser Consomalin ?
       div.answer
           .content
-          |  Non.<br/><br/>
+          |  Non.<br/>
 
           |  Nous nous occupons de créer un compte à votre place pour @(effectuer vos commandes).<br/>
           |  Votre adresse mail n'est pas fournie à Auchan.<br/>
@@ -227,6 +227,8 @@ export default {
 }
 .answer{
   display: none;
+  padding: 10px;
+  font-size: 15px;
 }
 .hidden{
   display: none;

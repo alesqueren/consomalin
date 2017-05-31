@@ -1,6 +1,8 @@
 <template lang="pug">
   div.line(v-bind:class="{'active': isActive, 'strong': selectedWishNb}"
       @click="setActivation")
+    div.confirmUncheck(v-if="unchecking")
+      span.fa.fa-warning &nbsp;
     input(type="checkbox"
       name="selected"
       v-model="selected",
@@ -15,10 +17,11 @@
       i.fa.fa-check.fa-xs
     label.name(v-else for="selected")
       .nameIn {{ name }}
-    div.fakeCheckbox(v-if='!editing && wishesNb' @click="toggleSelection")
-
+    div.fakeCheckbox(v-if='!editing && wishesNb' @click.stop.prevent="toggleSelection")
     div.filling
       span {{ selectedWishNb }} / {{ wishesNb }}
+    .added.fa.fa-cart-arrow-down.tooltip(v-if="matchedWishesNb")
+      span.tooltiptext.tooltip-bottom Vous avez ajouté des produits de cette rubrique au panier
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
         span.content Renommer&nbsp;
@@ -59,11 +62,20 @@ export default {
       const type = action.type;
       return type === 'deleteGroup' && gid === this.gid;
     },
+    unchecking() {
+      const action = this.$store.state.singleton.action;
+      const gid = action.value && action.value.gid;
+      const type = action.type;
+      return type === 'uncheckGroup' && gid === this.gid;
+    },
     selected() {
       return this.$store.getters['selection/getSelectedGroupsIds'].indexOf(this.gid) !== -1;
     },
     selectedWishNb() {
       return this.$store.getters['selection/getSelectedWishesByGroup']({ gid: this.gid }).length;
+    },
+    matchedWishesNb() {
+      return this.$store.getters['selection/getMatchedWishesByGroup']({ gid: this.gid }).length;
     },
     wishesNb() {
       const predicate = e => (e.id === this.gid);
@@ -76,7 +88,15 @@ export default {
   methods: {
     toggleSelection() {
       const actionName = !this.selected ? 'selectGroup' : 'unselectGroup';
-      this.$store.dispatch('selection/' + actionName, { gid: this.gid });
+      if (actionName === 'unselectGroup' && this.matchedWishesNb && !this.unchecking) {
+        this.startUncheck();
+      } else {
+        this.$store.dispatch('singleton/unset', 'action');
+        this.$store.dispatch('selection/' + actionName, { gid: this.gid });
+      }
+    },
+    unselectGroup() {
+      this.$store.dispatch('selection/unselectGroup', { gid: this.gid });
     },
     setActivation() {
       this.$store.dispatch('singleton/set', { activeGroupId: this.gid });
@@ -102,7 +122,6 @@ export default {
         },
       });
       Vue.nextTick(this.focus);
-      this.setActivation();
     },
     finishEdition() {
       this.editingName = null;
@@ -126,8 +145,16 @@ export default {
       });
       this.setActivation();
     },
-    finishDeletion() {
-      this.$store.dispatch('singleton/unset', 'action');
+    startUncheck() {
+      this.$store.dispatch('singleton/set', {
+        action: {
+          type: 'uncheckGroup',
+          value: {
+            gid: this.gid,
+          },
+        },
+      });
+      this.setActivation();
     },
     remove() {
       const gids = this.$store.state.wishGroup.map(group => group.id);
@@ -182,5 +209,34 @@ export default {
 .nameIn{
   overflow: hidden;
   height: 50px;
+}
+.confirmUncheck{
+  position: absolute;
+  background-color: #f0ad4e;
+  height: 49px;
+  width: 65px;
+  bottom: 0px;
+  left: 0px;
+  /*z-index: 1;*/
+  font-family: helvetica;
+  font-size: 13px;
+  color: white;
+  padding: 2px;
+}
+.confirmUncheck .fa-warning{
+  position: absolute;
+  bottom: 5px;
+  right: 4px;
+  font-size: 13px;
+  width: 12px;
+  height: 12px;
+  color: black;
+}
+.added {
+  position: absolute;
+  bottom: 6px;
+  right: 15px;
+  height: 10px;
+  font-size: 12px;
 }
 </style>

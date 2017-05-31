@@ -1,8 +1,11 @@
 <template lang="pug">
   div#root(v-if="currentWish")
     div.input-group.stylish-input-group.search-wrapper
-      span.input-group-addon.search-gname
-        div {{ currentWish.gname }}
+      div.input-group-addon.search-gname
+        div {{ currentWish.gname }} 
+      div.input-group-addon.search-addProduct(@click.stop="setActivation")
+        span.fa.fa-plus &nbsp;
+        span.wording Ajouter un produit
       .input-wrapper.search-input(
         v-bind:class="{'disabled': hasProducts, 'tooltip': hasProducts}", 
         @click="focus")
@@ -21,6 +24,7 @@
 
 <script>
 import Wish from '../Basket/Wish';
+import router from '../../router';
 
 export default {
   props: [],
@@ -64,6 +68,10 @@ export default {
     focus() {
       document.getElementById('search-text').focus();
     },
+    setActivation() {
+      this.$store.dispatch('singleton/set', { activeGroupId: this.currentWish.gid });
+      router.push({ name: 'wishlist' });
+    },
   },
   components: { Wish },
 };
@@ -72,10 +80,6 @@ export default {
 <style scoped>
 #root {
   padding-bottom: 15px;
-}
-.search-gname {
-  font-size: 1.5em;
-  font-family: learningCurve;
 }
 #search-text {
   font-family: learningCurve;
@@ -123,7 +127,6 @@ export default {
   float: left;
   height: auto;
   min-width: 320px;
-  /*width: 320px;*/
   padding: 5px;
   background-color: var(--white);
   border: 1px solid rgba(0,0,0,.15);;
@@ -138,8 +141,29 @@ export default {
 }
 .search-gname {
   display: table-cell;
-  font-size: 1.5em;
   width: 150px;
+  font-size: 1.5em;
+  font-family: learningCurve;
+}
+.search-addProduct {
+  display: table-cell;
+  width: 47px;
+  font-size: 1em;
+  transition: width 0.3s;
+  cursor: pointer;
+}
+.search-addProduct .fa-plus{
+  font-size: 1em;
+}
+.search-addProduct:hover {
+  width: 150px;
+}
+.search-addProduct .wording{
+  transition: display 0.3s;
+  display: none;
+}
+.search-addProduct:hover .wording{
+  display: inline-block;
 }
 .search-search {
   position: absolute;

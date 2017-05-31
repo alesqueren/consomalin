@@ -1,7 +1,8 @@
 <template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
     div
-      strong.groupName(@click.stop="setActivation") {{ name }}
+      strong.groupName(@click.stop="setActivation") {{ name }} 
+      span.addProduct.badge.badge-pill.badge-success(@click.stop="setActivation") + Ajouter un produit
       SuperWish(v-for="wid in selectedWishes" 
         v-bind:wid="wid",
         v-bind:displayName="true",
@@ -47,8 +48,12 @@ export default {
   color: black;
   font-size: 2em;
   text-align: left;
+  line-height: 50px;
 }
 .groupName:hover {
   text-decoration: underline
+}
+.addProduct:hover {
+  cursor: pointer;
 }
 </style>
