@@ -101,8 +101,6 @@ export default {
     handleScroll() {
       const scrollTop = $(window).scrollTop();
       const height = $(document).height();
-      console.log(scrollTop);
-      console.log(height);
       const searchsRes = this.$store.state.product.searchs[this.currentWish.name];
       const nbResult = searchsRes ? Object.keys(searchsRes).length : 0;
       if (height - scrollTop < 1110 && this.maxProducts < nbResult) {

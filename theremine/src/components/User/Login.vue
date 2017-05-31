@@ -11,7 +11,7 @@ div#login
       span.fa.fa.fa-lock.password-icon
       input#password.form-control(v-model="password", type='password', name='password', tabindex='2', placeholder='Mot de passe')
     .form-group
-      p.danger.danger-alert(v-if="error") Utilisateur ou mot de passe incorrect.
+      div.alert.alert-danger(v-if="error") Utilisateur ou mot de passe incorrect.
       input.submit.form-control.btn.btn-login(
             type.prevent='submit',
             name='login-submit',
@@ -79,13 +79,13 @@ export default {
 form{
   position: absolute;
   width: 500px;
-  height: 370px;
+  height: auto;
   top: 0;
   left: 50%;
   margin-left: -250px;
   background-color: white;
   border: 1px solid #dedede;
-  padding: 30px 30px 117px 30px;
+  padding: 30px 30px 25px 30px;
   margin-top: 60px;
 }
 #login h2 {
