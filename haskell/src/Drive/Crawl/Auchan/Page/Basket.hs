@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell     #-}
 
-module Drive.Crawl.Auchan.Page.Basket (load, addToBasket, getBasket) where
+module Drive.Crawl.Auchan.Page.Basket (load, addToBasket, getBasket, emptyBasket) where
 
 import           Prelude         (read)
 import           Protolude       hiding (Selector, Product)
@@ -18,10 +18,14 @@ import           Drive.ConsoBasket
 import           Drive.Crawl.Auchan.Product
 
 data AddToBasketException = AddToBasketException deriving (Show, Typeable)
-instance Exception AddToBasketException
+instance Exception AddToBasketException 
+
+data EmptyBasketException = EmptyBasketException deriving (Show, Typeable)
+instance Exception EmptyBasketException
 
 data ParseBasketException = ParseBasketException deriving (Show, Typeable)
 instance Exception ParseBasketException
+
 
 lineScraper :: EntityScraper DriveProduct
 lineScraper = EntityScraper 
@@ -54,7 +58,7 @@ load = requestTag $ Req "https://www.auchandrive.fr/drive/coffre" "GET" [] ""
 
 addToBasket :: ConsoProduct -> Crawl ()
 addToBasket (ConsoProduct id qty) = do
-  $(logDebug) "A2B"
+  $(logDebug) ("A2B" <> id)
 
   res <- request $ Req url "POST" hdr httpData
 
@@ -69,6 +73,23 @@ addToBasket (ConsoProduct id qty) = do
   where
     url = "http://www.auchandrive.fr/drive/productdetail.product.product_addproducttobasket2/" 
           <> id <> "/1/product_addToBasketZone?t:ac=" <> id
+    hdr = [("X-Requested-With", "XMLHttpRequest")]
+    httpData = "t%3Azoneid=forceAjax"
+
+emptyBasket :: Crawl ()
+emptyBasket = do
+  $(logDebug) "emptyBasket"
+
+  _ <- load
+  res <- request $ Req url "POST" hdr httpData
+
+  -- TODO: try to catch "unkown product exception"
+  when ((statusCode . responseStatus $ res) /= 200) $
+    throwM EmptyBasketException
+
+  return ()
+  where
+    url = "https://www.auchandrive.fr/drive/coffre.pagetemplate.popuphandler.popinremovebasket.supprimer"
     hdr = [("X-Requested-With", "XMLHttpRequest")]
     httpData = "t%3Azoneid=forceAjax"
 

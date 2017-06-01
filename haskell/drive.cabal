@@ -32,6 +32,7 @@ library
                        Drive.Crawl.Auchan.Page.Login
                        Drive.Crawl.Auchan.Page.Basket
                        Drive.Crawl.Auchan.Page.Landing
+                       Drive.Crawl.Auchan.Page.Payment
                        Drive.Crawl.Auchan.Page.Category
                        Drive.Crawl.Auchan.Page.Register
                        Drive.Crawl.Auchan.Page.Schedule

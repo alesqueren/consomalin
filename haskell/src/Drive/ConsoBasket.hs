@@ -12,7 +12,7 @@ data ConsoProduct = ConsoProduct
   }
   deriving (Typeable, Show, Eq, Generic)
 
-data ConsoBasket = ConsoBasket [ConsoProduct]
+newtype ConsoBasket = ConsoBasket [ConsoProduct]
   deriving (Typeable, Show, Eq, Generic)
 
 extractPd :: Document -> Maybe ConsoProduct

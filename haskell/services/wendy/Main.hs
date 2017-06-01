@@ -5,6 +5,7 @@ import           Web.Scotty
 import           Network.Wai.Handler.Warp
 import           Network.HTTP.Types.Status
 import           Data.Attoparsec.Text hiding (Done)
+import           Data.Aeson hiding (json)
 
 import           Utils.Env
 import           Drive.Crawl.Auchan
@@ -40,10 +41,15 @@ prepareController = do
       status status409 
       json err
     Right basket ->
-      json (show basket :: Text)
+      json $ toJSON basket
 
 orderController :: ActionM ()
 orderController = do
   uid <- param "uid" :: ActionM Text
-  _ <- liftIO $ order uid
-  json ("coucou" :: Text)
+  eBasket <- liftIO $ order uid
+  case eBasket of
+    Left err -> do
+      status status409 
+      json err
+    Right basket ->
+      json $ toJSON basket

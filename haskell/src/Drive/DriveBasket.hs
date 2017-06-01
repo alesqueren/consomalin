@@ -3,7 +3,7 @@
 module Drive.DriveBasket (DriveBasket(..), DriveProduct(..)) where
 
 import           Protolude hiding (Product, product)
-
+import           Data.Aeson 
 import           Drive.Price
 
 data DriveProduct = DriveProduct
@@ -20,4 +20,5 @@ data DriveBasket = DriveBasket
   }
   deriving (Typeable, Show, Eq, Generic)
 
--- TODO: makeDriveBasket
+instance ToJSON DriveBasket
+instance ToJSON DriveProduct

@@ -37,8 +37,6 @@ instance Pretty Product where
                              , pretty $ priceByQuantity p
                              ]
 
--- Mongo
-
 instance Val Product where
   val p = val [ "_id" =: pid p
               , "price" =: val (price p)

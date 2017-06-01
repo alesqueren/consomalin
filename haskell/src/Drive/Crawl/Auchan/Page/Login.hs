@@ -30,8 +30,8 @@ login (Account user pass) = do
   res <- request $ Req url "POST" header httpData
 
   -- a successful identification must set new cookies
-  when ((statusCode $ responseStatus res) /= 200 ||
-    all (\h -> fst h /= "Set-Cookie") (responseHeaders res)) $
+  when (statusCode (responseStatus res) /= 200 ||
+        all (\h -> fst h /= "Set-Cookie") (responseHeaders res)) $
     throwM LoginException
 
   return ()

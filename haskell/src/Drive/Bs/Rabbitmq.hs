@@ -1,7 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module Drive.Bs.Rabbitmq (RabbitmqResource(..), 
-                          OrderMessage(..), 
                           RegistrationMessage(..), 
                           listen) where
 
@@ -13,23 +12,14 @@ import qualified Data.Text as T
 import           Data.Aeson
 import           GHC.Generics (Generic)
 
-data OrderMessage = OrderMessage 
-  { user :: !Text 
-  , transaction :: !Text 
-  }
-  deriving (Typeable, Show, Eq, Generic)
-instance FromJSON OrderMessage
-instance ToJSON OrderMessage
-
-newtype RegistrationMessage = RegistrationMessage { uid :: Text }
+newtype RegistrationMessage = RegistrationMessage { user :: Text }
   deriving (Typeable, Show, Eq, Generic)
 instance FromJSON RegistrationMessage
 instance ToJSON RegistrationMessage
 
-data RabbitmqResource = OrderResource | RegistrationResource
+data RabbitmqResource = RegistrationResource
 
 getQueueName :: RabbitmqResource -> Text
-getQueueName OrderResource = "orders"
 getQueueName RegistrationResource = "registrations"
 
 

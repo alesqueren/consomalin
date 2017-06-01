@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
 
-module Drive.Crawl.Auchan.Page.Schedule (load, makeSlot, getSchedule, selectSchedule) where
+module Drive.Crawl.Auchan.Page.Schedule (makeSlot, getSchedule, selectSchedule) where
 
 import           Protolude       hiding (Selector, inits)
 import           Prelude                    (String)
@@ -92,13 +92,16 @@ load = requestTag $ Req url "GET" [] ""
   where url = "https://www.auchandrive.fr/drive/coffre.basketsummary.finalisercoffre"
 
 loadDay :: Integer -> Crawl BL.ByteString
-loadDay dayNb = do
-  $(logDebug) ("getDay " <> show dayNb)
+loadDay dayNb = 
   requestJson $ Req dayUrl "POST" headers httpData
   where
     dayUrl = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.changejour/" <> show dayNb
     headers = [("X-Requested-With", "XMLHttpRequest")]
     httpData = "t%3Azoneid=forceAjax"
+
+confirmSlot :: Crawl [Tag Text] 
+confirmSlot = requestTag $ Req url "GET" [] ""
+  where url = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.chooseslot"
 
 
 parseIds :: BL.ByteString -> Maybe [Text]
@@ -113,7 +116,8 @@ parseIds resp = do
 
 getDay :: Integer -> Crawl [Text] 
 getDay dayNb = do
-  $(logDebug) ("getDay " <> show dayNb)
+  $(logDebug) $ "getDay " <> show dayNb
+
   resp <- loadDay dayNb
 
   case parseIds resp of
@@ -123,21 +127,16 @@ getDay dayNb = do
 
 selectDay :: Text -> Crawl ()
 selectDay slotId = do
-  $(logDebug) ""
-  $(logDebug) ("selectDay " <> slotId)
-
   _ <- takeWhileM (not . elem slotId) (map getDay [0..6])
-
   return ()
 
 selectSchedule :: Text -> Crawl ()
 selectSchedule slotId = do
-  $(logDebug) ""
   $(logDebug) $ "selectSchedule" <> slotId
+  _ <- load
   _ <- selectDay slotId
-  -- _ <- postText scheduleUrl headers httpData
-  resp <- requestTag $ Req url "POST" headers httpData
-
+  _ <- requestTag $ Req url "POST" headers httpData
+  _ <- confirmSlot
   return ()
     where
       url = "https://www.auchandrive.fr/drive/choixslot.retraitslotgrid.selectslot/" <> slotId
@@ -179,5 +178,6 @@ extractSlotInfo dayNb ds =
 getSchedule :: Crawl [SlotInfo]
 getSchedule = do
   $(logDebug) $ "getSchedule"
+  _ <- load
   slotsByDay <- mapM (\d -> extractFromJson (extractSlotInfo d) $ loadDay d) [0..6]
   return $ concat slotsByDay

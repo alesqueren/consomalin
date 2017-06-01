@@ -23,7 +23,7 @@ data SlotStatus = Past | Available | Busy
 instance ToJSON SlotStatus
 
 
-data ChoosenSlot = ChoosenSlot Text
+newtype ChoosenSlot = ChoosenSlot Text
   deriving (Typeable, Show, Eq, Generic)
 
 instance Val ChoosenSlot where
@@ -38,5 +38,5 @@ instance Val ChoosenSlot where
     return $ ChoosenSlot c
 
 mongoFindChoosenSlot :: Text -> IO (Maybe ChoosenSlot)
-mongoFindChoosenSlot uid = do
+mongoFindChoosenSlot uid =
   doSelectOne UserResource ["_id" =: uid]

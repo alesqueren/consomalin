@@ -67,7 +67,7 @@ randomWord = do
 
 randomPhone :: IO Text
 randomPhone = do
-  phone <- mapM (\x -> getStdRandom (randomR (1, 9))) ([0..8] :: [Integer]) :: IO [Integer]
+  phone <- mapM (\x -> getStdRandom (randomR (1, 9))) ([0..7] :: [Integer]) :: IO [Integer]
   return $ "08" <> foldl (\x y -> x <> show y) "" phone
 
 -- TODO: generate random fields
@@ -153,13 +153,13 @@ load = requestTag $ Req url "GET" [] ""
 
 register :: UserData -> Crawl ()
 register u = do
-  $(logDebug) formData
+  $(logDebug) $ "register " <> show u
   _ <- load
   res <- request $ Req url "POST" hdrs formData
 
   -- the response body must be small (no html errors inside)
-  when ((statusCode $ responseStatus res) /= 200 || 
-    (LB.length $ responseBody res) > 100) $ 
+  when (statusCode (responseStatus res) /= 200 || 
+        LB.length (responseBody res) > 100) $ 
     throwM RegistrationException
 
   return ()

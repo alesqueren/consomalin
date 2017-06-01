@@ -39,5 +39,5 @@ mongoSet uid (Account u p) =
     doc = [ "$set" =: [ "driveUser" =: u, "drivePassword" =: p ] ]
 
 mongoSearch :: Text -> IO (Maybe Account)
-mongoSearch uid = do
+mongoSearch uid =
   doSelectOne UserResource ["_id" =: uid]

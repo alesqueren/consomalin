@@ -92,7 +92,7 @@ data Req = Req
   }
 
 request :: Req -> Crawl (Response LByteString)
-request req = do
+request req =
   liftF $ HttpRequest (uri req) (met req) (headers req) (T.encodeUtf8 $ body req) identity
 
 requestTag :: Req -> Crawl [Tag Text]

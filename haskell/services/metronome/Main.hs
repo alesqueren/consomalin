@@ -3,26 +3,22 @@
 module Main where
 
 import Protolude hiding (get, exp)
-
 import Data.Aeson hiding (json)
 import Web.Scotty
 import Network.Wai.Handler.Warp
-
 import Data.Attoparsec.Text
 import Data.Time
 
 import Utils.Env
 import Drive.Slot
-import Drive.Crawl
 import Drive.Crawl.Auchan
-import Drive.Crawl.Account
 
-data ResponseTmp = ResponseTmp 
+data Response = Response
   { slots :: [Slot]
   , expiration :: UTCTime
   }
   deriving (Show, Generic)
-instance ToJSON ResponseTmp
+instance ToJSON Response
 
 main :: IO ()
 main = do
@@ -41,5 +37,5 @@ slotController = do
   (slots, exp) <- liftIO fetchSchedule 
   if null slots
     then raise "no slot found"
-    else do
-      json $ ResponseTmp slots exp
+    else
+      json $ Response slots exp

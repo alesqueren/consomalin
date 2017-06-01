@@ -21,6 +21,7 @@ import Drive.Crawl.Auchan.Page.Home as H
 import Drive.Crawl.Auchan.Page.Login as Lo
 import Drive.Crawl.Auchan.Page.Basket as B
 import Drive.Crawl.Auchan.Page.Landing as L
+import Drive.Crawl.Auchan.Page.Payment as P
 import Drive.Crawl.Auchan.Page.Register as R
 import Drive.Crawl.Auchan.Page.Schedule as S
 import Drive.Crawl.Auchan.Page.Category as C
@@ -90,22 +91,20 @@ doPrepareOrder :: (MonadFree CrawlF cr) => Account -> ConsoBasket -> ChoosenSlot
 doPrepareOrder acc (ConsoBasket pds) (ChoosenSlot slotId) = do
   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
   _ <- lift . fromF $ Lo.login acc
+  _ <- lift . fromF $ B.emptyBasket
   _ <- mapM (lift . fromF . B.addToBasket) pds
   b <- lift . fromF $ B.getBasket
-  _ <- lift . fromF $ S.load
-  _ <- lift . fromF $ selectSchedule slotId
+  _ <- lift . fromF $ S.selectSchedule slotId
   return b
 
--- doTransaction :: (MonadFree CrawlF cr) => Account -> GT.Transaction -> ConduitM () Void cr ()
--- doTransaction acc t = do
---   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
---   _ <- lift . fromF $ Lo.login acc
---   -- _ <- mapM (lift . fromF . B.addToBasket) $ GB.products $ GT.basket t
---   _ <- lift . fromF $ B.load
---   _ <- lift . fromF $ S.load
---   _ <- lift . fromF $ selectSchedule $ GT.slot t
---   -- _ <- lift . fromF $ P.doValidatePayment
---   return ()
+doOrder :: (MonadFree CrawlF cr) => Account -> ChoosenSlot -> ConduitM () Void cr DriveBasket
+doOrder acc (ChoosenSlot slotId) = do
+  _ <- lift . fromF $ doChooseDrive "Toulouse-954"
+  _ <- lift . fromF $ Lo.login acc
+  b <- lift . fromF $ B.getBasket
+  _ <- lift . fromF $ S.selectSchedule slotId
+  _ <- lift . fromF $ P.validatePayment
+  return b
 
 doRegisterIfNeeded :: Text -> IO Account
 doRegisterIfNeeded uid = do
@@ -126,7 +125,6 @@ doSchedule acc attendance today = do
   -- a non empty basket is needed for getting schedule
   -- _ <- lift . fromF $ addToBasket "141418" 1
   _ <- lift . fromF $ B.load
-  _ <- lift . fromF $ S.load
   slotInfo <- lift . fromF $ S.getSchedule
   return $ map (makeSlot attendance today) slotInfo 
 
@@ -155,19 +153,12 @@ prepareOrder uid = do
           b <- runConduitCrawl (doPrepareOrder acc basket slotId)
           return $ Right b
 
--- prepareOrder :: Text -> IO DriveBasket
-order :: Text -> IO ()
+order :: Text -> IO (Either Text DriveBasket)
 order uid = do
   acc <- doRegisterIfNeeded uid
-  return ()
-  -- mt <- GT.mongoFind uid tid
-  -- case mt of
-  --   Nothing -> putStrLn ("Error: no transaction found" :: Text)
-  --   Just t -> do
-  --     macc <- A.mongoSearch uid
-  --     case macc of
-  --       Nothing -> putStrLn ("Error: user not found" :: Text)
-  --       Just acc -> do
-  --         -- runConduitCrawl $ doTransaction4 acc t
-  --         GT.mongoSet uid tid GT.Done
-  -- return ()
+  mSlotId <- mongoFindChoosenSlot uid
+  case mSlotId of
+    Nothing -> return $ Left "Slot not found"
+    Just slotId -> do
+      b <- runConduitCrawl (doOrder acc slotId)
+      return $ Right b
