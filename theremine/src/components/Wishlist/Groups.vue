@@ -36,13 +36,18 @@ export default {
     if (!this.$store.state.singleton.activeGroupId) {
       this.$store.dispatch('singleton/set', { activeGroupId: this.gids[0] });
     }
+    if (this.gids.length === 0) {
+      setTimeout(() => {
+        $('#newGroup').focus();
+      }, 10);
+    }
   },
   methods: {
     focus() {
       $('#newGroup').focus();
     },
     add() {
-      if (this.newName !== '') {
+      if (this.newName) {
         this.$store.dispatch('wishGroup/addGroup', {
           name: this.newName,
         }).then((gid) => {

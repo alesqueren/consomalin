@@ -61,7 +61,8 @@
     "@websanova/vue-auth": "",
     "jsondiffpatch": "",
     "jquery": "",
-    "jquery.scrollbar": ""
+    "jquery.scrollbar": "",
+    "vue2-google-maps": ""
   },
   "engines": {
     "node": ">= 4.0.0",

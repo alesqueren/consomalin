@@ -5,15 +5,16 @@ div#confirmation
     p Réglez et retirez vos produits à <strong>{{ frenchTime }}</strong>
     div.address
       div.left
-        div Espace Gramont
-        div 2 Chemin de Gabardi
-        div 31000 Toulouse
+        div Auchan Drive Balma
+        div 70 Chemin de Gabardie
+        div 31075 Toulouse
       div.left
-            div La carte
+        gmap-map(:center='center', :zoom='16', style='width: 500px; height: 300px')
+          gmap-marker(v-for='m in markers', :position='m.position', :clickable='true', :draggable='true', @click='center=m.position' v-bind:key='m')
       div.right
-        p Pour toute question concernant la commande : <br/>
+        p Pour toute question concernant la commande&nbsp;: <br/>
          span S.A.V. Auchan Balma : 05 61 26 73 00
-        p Pour toute question concernant le site Consomalin : <br/>
+        p Pour toute question concernant le site Consomalin&nbsp;: <br/>
           span contact@consomalin.ovh
 
   div.block.help
@@ -25,9 +26,25 @@ div#confirmation
 </template>
 
 <script>
+import * as VueGoogleMaps from 'vue2-google-maps';
+import Vue from 'vue';
 import date from '../Utils/date';
 
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyDJN1J8461pgYPXIsGGS3xANUWMC1XEUNs',
+  },
+});
+
 export default {
+  data() {
+    return {
+      center: { lat: 43.6340088, lng: 1.482934900000032 },
+      markers: [{
+        position: { lat: 43.6340088, lng: 1.482934900000032 },
+      }],
+    };
+  },
   computed: {
     selectedSlot() {
       return this.$store.state.singleton.selectedSlot;
@@ -75,10 +92,11 @@ a{
 .left{
   display: table-cell;
   width: 25%;
+  max-width: 165px;
 }
 .right{
   display: table-cell;
-  width: 50%;
+  width: 33%;
 }
 .help{
   height: 165px;

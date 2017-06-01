@@ -3,17 +3,17 @@ div#register
   form
     h2 Inscription
     .border
-    .prez
+    .prez Pour vous inscrire, entrez juste un email, un mot de passe,<br/>et vous voila connecté.
     .form-group
-      span.fa.fa.fa-envelope.mail-icon
       input.email.form-control(v-model="username", type='email', name='username', tabindex='1', placeholder='Email', value='')
+      span.icon.fa.fa.fa-envelope.mail-icon
     .form-group
-      span.fa.fa.fa-lock.password-icon
       input.password.form-control(v-model="password", type='password', name='password', tabindex='2', placeholder='Mot de passe')
+      span.icon.fa.fa.fa-lock.password-icon
       input#newsletter(v-model="newsletter", type='checkbox', name='newsletter', tabindex='3')
       label.newsletter-label(for="newsletter") &nbsp;&nbsp;Je souhaite recevoir la newsletter Consomalin
     .form-group
-      p.danger.danger-alert(v-if="error") Cet utilisateur existe deja.
+      div.alert.alert-danger(v-if="error") Cet utilisateur existe deja.
       input.submit.form-control.btn.btn-register(
         type='submit',
         name='register-submit',
@@ -78,28 +78,31 @@ export default {
 form{
   position: absolute;
   width: 500px;
-  height: 415px;
+  height: auto;
   top: 0;
   left: 50%;
   margin-left: -250px;
   background-color: white;
   border: 1px solid #dedede;
-  padding: 30px 30px 117px 30px;
+  padding: 30px 30px 25px 30px;
   margin-top: 60px;
 }
 #register h2 {
   padding-top: 10px;
   text-align: center;
 }
+.form-group{
+  position: relative;
+}
 .mail-icon {
   position: absolute;
-  right: 43px;
-  top: 140px;
+  right: 16px;
+  top: 11px;
 }
 .password-icon {
   position: absolute;
-  right: 45px;
-  top: 195px;
+  right: 21px;
+  top: 11px;
 }
 .login-link {
   margin-top: 35px
@@ -135,7 +138,8 @@ a {
   color: #42b983;
 }
 .prez {
-  margin-top: 55px
+  margin-top: 55px;
+  margin-bottom: 15px;
 }
 #newsletter {
   margin-top: 20px;

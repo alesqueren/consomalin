@@ -1,7 +1,8 @@
 <template lang="pug">
-  .wish.line(@click="select", :data-wid="wid")
-    i.fa.fa-arrow-right.active(v-if="isCurrentWish") &nbsp;
-    span.product-name(v-bind:class="{'filled' : productIds.length > 0, 'active' : isCurrentWish}") {{ wish.name }}
+  .wish.line(@click="select",
+  :data-wid="wid",
+  v-bind:class="{'active' : isCurrentWish}")
+    span.product-name(v-bind:class="{'filled' : productIds.length > 0}") {{ wish.name }}
 </template>
 
 <script>
@@ -41,12 +42,18 @@ export default {
   border-bottom: 1px dotted #72c4ff;
   overflow: hidden;
 }
+.wish:not(.active):hover{
+  text-decoration: underline;
+  background-color: #f0f0f0;
+}
 .filled{
   text-decoration: line-through;
 /*  text-decoration: underline;
   text-decoration: overline;*/
 }
 .active{
-  color: green;
+  /*color: green;*/
+  background-color: var(--active);
+  text-decoration: underline;
 }
 </style>

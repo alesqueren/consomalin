@@ -1,6 +1,6 @@
 <template lang="pug">
   div.wishgroup(v-if="selectedWishes.length")
-    .group(@click.stop="setActivation")
+    .group
       .line.groupName {{ name }}
       Wish(v-for="wid in selectedWishes" 
         v-bind:wid="wid" 
@@ -42,10 +42,10 @@ export default {
     },
   },
   methods: {
-    setActivation() {
-      this.$store.dispatch('singleton/set', { activeGroupId: this.gid });
+    // setActivation() {
+      // this.$store.dispatch('singleton/set', { activeGroupId: this.gid });
       // router.push({ name: 'wishlist' });
-    },
+    // },
   },
   watch: {
     selectedWishes: () => {

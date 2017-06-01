@@ -16,6 +16,9 @@
   opacity: 0;
   transition: opacity 1s;
 }
+.tooltiptext {
+  z-index: 2;
+}
 
 .tooltip-bottom{
   top: 135%;

@@ -100,7 +100,7 @@ export default {
     presText() {
       let text = 'Consomalin est un site de courses en ligne independant qui permet de commander chez Auchan drive Balma.';
       if (this.demo) {
-        text = 'Consomalin est un site de courses en ligne independant dans votre drive préféré.';
+        text = 'Consomalin est un site de courses en ligne independant qui permet de commander dans votre drive préféré.';
       }
       return text;
     },
@@ -116,13 +116,13 @@ export default {
     $('#title .go-to-next').on('click', () => {
       const page = $('#rassurance');
       const speed = 750;
-      $('html, body').animate({ scrollTop: $(page).offset().top }, speed); // Go
+      $('html, body').animate({ scrollTop: $(page).offset().top }, speed);
       return false;
     });
     $('#rassurance .go-to-next').on('click', () => {
       const page = $('#presentation');
       const speed = 750;
-      $('html, body').animate({ scrollTop: $(page).offset().top }, speed); // Go
+      $('html, body').animate({ scrollTop: $(page).offset().top }, speed);
       return false;
     });
   },

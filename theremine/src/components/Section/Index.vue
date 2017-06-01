@@ -17,7 +17,7 @@
             v-if="i < maxProducts"
             v-bind:maxProducts="maxProducts" 
             v-bind:pid="pid" 
-            v-bind:key="i")
+            v-bind:key="pid")
         div.waiting-box(
           v-if="!currentWishResults"
           v-for="i in 40"
@@ -100,10 +100,10 @@ export default {
     // lorsqu'on atteint le bas de la page a 100px pret on augmente le nombre de produits affichable
     handleScroll() {
       const scrollTop = $(window).scrollTop();
-      const height = $(window).height();
+      const height = $(document).height();
       const searchsRes = this.$store.state.product.searchs[this.currentWish.name];
       const nbResult = searchsRes ? Object.keys(searchsRes).length : 0;
-      if (scrollTop + height > height - 100 && this.maxProducts < nbResult) {
+      if (height - scrollTop < 1110 && this.maxProducts < nbResult) {
         this.maxProducts += 20;
       }
     },

@@ -24,7 +24,7 @@
   text-align: center;
   margin-left: 65px;
   padding-top: 10px;
-  max-height: 50px;
+  height: 60px;
   overflow: hidden;
 }
 
@@ -32,7 +32,14 @@
   text-decoration: underline;
 }
 
+#newWish {
+  border-top: 1px dotted #72c4ff;
+}
+#newGroup {
+  border-top: 1px dotted #72c4ff;
+}
 .notepad input {
+  /*border-top: 1px dotted #72c4ff;*/
   width: 100%;
   border: none;
   font-size: 1em;
@@ -48,6 +55,7 @@
   bottom: 9px;
   left: 22px;
   font-size: 1.5em;
+  z-index: 2;
 }
 
 .notepad .edition {
@@ -88,7 +96,7 @@
   cursor: pointer;
   position: relative;
   list-style: none;
-  border-bottom: 1px dotted #72c4ff;
+  border-top: 1px dotted #72c4ff;
   height: 50px;
   line-height: 50px;
   padding: 0 10px 0 50px;

@@ -1,6 +1,7 @@
 body {
   font-size: 14px;
   min-width: 1200px;
+  overflow-y:scroll;
 }
 a {
   text-decoration:none;
