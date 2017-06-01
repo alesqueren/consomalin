@@ -12,6 +12,7 @@ import qualified Data.Map.Strict as M
 import           Data.Aeson
 import           Text.Regex.TDFA hiding (extract)
 import           Text.HTML.TagSoup
+import           Control.Monad.Catch
 
 import           Drive.Crawl
 import           Drive.Slot
@@ -19,6 +20,12 @@ import           Drive.Attendance
 
 import Data.Time
 import Data.Time.Calendar.WeekDate
+
+data SlotNotFoundException = SlotNotFoundException deriving (Show, Typeable)
+instance Exception SlotNotFoundException
+
+daysInSchedule :: Integer
+daysInSchedule = 5
 
 data SlotInfo = SlotInfo 
   { sId :: Maybe Text
@@ -127,12 +134,17 @@ getDay dayNb = do
 
 selectDay :: Text -> Crawl ()
 selectDay slotId = do
-  _ <- takeWhileM (not . elem slotId) (map getDay [0..6])
+  browsedDays <- takeWhileM (not . elem slotId) (map getDay [0..daysInSchedule])
+
+  -- TODO: catch this exception
+  when (length browsedDays == fromInteger (daysInSchedule + 1)) $
+    throwM SlotNotFoundException
+
   return ()
 
 selectSchedule :: Text -> Crawl ()
 selectSchedule slotId = do
-  $(logDebug) $ "selectSchedule" <> slotId
+  $(logDebug) $ "selectSchedule " <> slotId
   _ <- load
   _ <- selectDay slotId
   _ <- requestTag $ Req url "POST" headers httpData
@@ -179,5 +191,5 @@ getSchedule :: Crawl [SlotInfo]
 getSchedule = do
   $(logDebug) $ "getSchedule"
   _ <- load
-  slotsByDay <- mapM (\d -> extractFromJson (extractSlotInfo d) $ loadDay d) [0..6]
+  slotsByDay <- mapM (\d -> extractFromJson (extractSlotInfo d) $ loadDay d) [0..(daysInSchedule-1)]
   return $ concat slotsByDay

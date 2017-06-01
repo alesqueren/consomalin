@@ -35,7 +35,7 @@ listen r cb = do
   _ <- declareQueue chan newQueue {queueName = qname}
 
   _ <- consumeMsgs chan qname Ack $ processMsg cb
-  putStrLn ("listening to " <> qname <> "...":: Text)
+  putStrLn ("listening to " <> qname <> "..." :: Text)
 
   -- closeConnection conn
   -- putStrLn ("connection closed" :: Text)
