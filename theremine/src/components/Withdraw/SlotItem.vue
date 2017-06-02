@@ -68,7 +68,7 @@ export default {
       if (this.pickupSlot.status !== 'Past') {
         this.$store.dispatch('schedule/selectSlot', {
           slotId: this.pickupSlot.id,
-          dateTime: this.pickupSlot.day + ' ' + this.pickupSlot.time,
+          dateTime: new Date(this.pickupSlot.day + ' ' + this.pickupSlot.time),
         });
       }
     },
