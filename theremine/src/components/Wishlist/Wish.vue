@@ -19,15 +19,17 @@
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
         span.content Renommer&nbsp;
-        span.icon.fa.fa-pencil
+        span.icon.fa.fa-pencil(data-action="edit")
       div.action.delete(@click.stop="erase", v-bind:class="{'deleting': deleting}")
-        span.icon.fa.fa-eraser
+        span.icon.fa.fa-eraser(data-action="delete")
         span &nbsp;
         span.content {{deleteWording}}
 </template>
 
 <script>
 import Vue from 'vue';
+
+const $ = window.$;
 
 export default {
   props: ['gid', 'wid'],
@@ -149,6 +151,53 @@ export default {
       });
     },
   },
+  mounted() {
+    $('.action .icon')
+      .on('mouseenter', ({ target }) => {
+        const $action = $(target).parent();
+        const $btns = $action.parent();
+        const action = $(target).data('action');
+        const $btn = $btns.find('.' + action + '');
+        const $content = $btn.find('.content');
+
+        $(target).css({
+          color: 'var(--white)',
+        });
+        $btn.css({
+          visibility: 'visible',
+          'background-color': 'var(--danger)',
+          color: 'var(--white)',
+          'z-index': '3',
+        });
+        $content.css({
+          visibility: 'visible',
+          'background-color': 'var(--danger)',
+          color: 'var(--white)',
+        });
+      })
+      .on('mouseleave', ({ target }) => {
+        const $action = $(target).parent();
+        const $btns = $action.parent();
+        const action = $(target).data('action');
+        const $btn = $btns.find('.' + action + '');
+        const $content = $btn.find('.content');
+
+        $(target).css({
+          color: 'black',
+        });
+        $btn.css({
+          visibility: 'hidden',
+          'background-color': 'none',
+          color: 'var(--white)',
+          'z-index': '1',
+        });
+        $content.css({
+          visibility: 'hidden',
+          'background-color': 'none',
+          color: 'black',
+        });
+      });
+  },
 };
 </script>
 
@@ -187,6 +236,7 @@ export default {
   bottom: 14px;
   right: 15px;
   font-size: 20px;
+  z-index: 1;
 }
 </style>
 
