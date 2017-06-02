@@ -99,6 +99,7 @@ export default {
           name: this.newName,
         });
         this.newName = '';
+        $('html, body').animate({ scrollTop: $(document).height() }, 'slow');
       }
     },
   },

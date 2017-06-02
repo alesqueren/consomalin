@@ -17,6 +17,32 @@ import config from '../../../config';
 import Groups from './Groups';
 import ActiveGroup from './ActiveGroup';
 
+const $ = window.$;
+
+function leaveAction(target) {
+  const $action = $(target);
+  const $btns = $action.parent();
+  const action = $(target).find('.listenHover').data('action');
+  const $btn = $btns.find('.' + action + '');
+  const $content = $btn.find('.content');
+
+  $(target).css({
+    color: 'var(--main-font)',
+  });
+  $btn.css({
+    border: '1px solid rgba(0,0,0,.01)',
+    visibility: 'hidden',
+    'background-color': 'none',
+    color: 'var(--white)',
+    'z-index': '1',
+  });
+  $content.css({
+    visibility: 'hidden',
+    'background-color': 'none',
+    color: 'var(--main-font)',
+  });
+}
+
 export default {
   computed: {
     demo() {
@@ -32,6 +58,45 @@ export default {
       const type = action.type;
       return type === 'uncheckWish';
     },
+  },
+  mounted() {
+    // $(document)
+    //   .on('mouseleave', '.action .listenHover', ({ target }) => {
+    //     $('.action').each((index, element) => {
+    //       leaveAction($(element));
+    //     });
+    //   });
+    $(document)
+      .on('mouseenter', '.action .listenHover', ({ target }) => {
+        const $action = $(target).parent();
+        const $btns = $action.parent();
+        const action = $(target).data('action');
+        const $btn = $btns.find('.' + action + '');
+        const $content = $btn.find('.content');
+        const backgroundColor = action === 'edit' ? 'white' : 'var(--danger)';
+        const color = action === 'edit' ? 'black' : 'white';
+
+        $(target).css({
+          color,
+        });
+        $btn.css({
+          border: '1px solid rgba(0,0,0,.25)',
+          visibility: 'visible',
+          backgroundColor,
+          color,
+          'z-index': '3',
+        });
+        $content.css({
+          visibility: 'visible',
+          backgroundColor,
+          color,
+        });
+      })
+      .on('mouseleave', '.action', () => {
+        $('.action').each((index, element) => {
+          leaveAction($(element));
+        });
+      });
   },
   components: { Groups, ActiveGroup },
 };

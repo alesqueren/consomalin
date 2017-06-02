@@ -38,8 +38,6 @@
 <script>
 import Vue from 'vue';
 
-const $ = window.$;
-
 export default {
   props: ['gid'],
   data() {
@@ -167,57 +165,6 @@ export default {
       this.$store.dispatch('singleton/set', { activeGroupId: gids[currentPosition - 1] });
     },
   },
-  mounted() {
-    $(document)
-      .on('mouseenter', '.action .listenHover', ({ target }) => {
-        const $action = $(target).parent();
-        const $btns = $action.parent();
-        const action = $(target).data('action');
-        const $btn = $btns.find('.' + action + '');
-        const $content = $btn.find('.content');
-        const backgroundColor = action === 'edit' ? 'white' : 'var(--danger)';
-        const color = action === 'edit' ? 'black' : 'white';
-
-        $(target).css({
-          color,
-        });
-        $btn.css({
-          border: '1px solid rgba(0,0,0,.25)',
-          visibility: 'visible',
-          backgroundColor,
-          color,
-          'z-index': '3',
-        });
-        $content.css({
-          visibility: 'visible',
-          backgroundColor,
-          color,
-        });
-      })
-      .on('mouseleave', '.action .listenHover', ({ target }) => {
-        const $action = $(target).parent();
-        const $btns = $action.parent();
-        const action = $(target).data('action');
-        const $btn = $btns.find('.' + action + '');
-        const $content = $btn.find('.content');
-
-        $(target).css({
-          color: 'var(--main-font)',
-        });
-        $btn.css({
-          border: '1px solid rgba(0,0,0,.01)',
-          visibility: 'hidden',
-          'background-color': 'none',
-          color: 'var(--white)',
-          'z-index': '1',
-        });
-        $content.css({
-          visibility: 'hidden',
-          'background-color': 'none',
-          color: 'var(--main-font)',
-        });
-      });
-  },
 };
 </script>
 
@@ -312,5 +259,6 @@ export default {
   right: 15px;
   height: 10px;
   font-size: 12px;
+  z-index: 1;
 }
 </style>
