@@ -18,18 +18,18 @@
       span.tooltiptext.tooltip-bottom Vous avez déjà ajouté ce produit au panier
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
+        span.listenHover(data-action="edit")
         span.content Renommer&nbsp;
-        span.icon.fa.fa-pencil(data-action="edit")
+        span.icon.fa.fa-pencil
       div.action.delete(@click.stop="erase", v-bind:class="{'deleting': deleting}")
-        span.icon.fa.fa-eraser(data-action="delete")
+        span.listenHover(data-action="delete")
+        span.icon.fa.fa-eraser
         span &nbsp;
         span.content {{deleteWording}}
 </template>
 
 <script>
 import Vue from 'vue';
-
-const $ = window.$;
 
 export default {
   props: ['gid', 'wid'],
@@ -151,53 +151,6 @@ export default {
       });
     },
   },
-  mounted() {
-    $('.action .icon')
-      .on('mouseenter', ({ target }) => {
-        const $action = $(target).parent();
-        const $btns = $action.parent();
-        const action = $(target).data('action');
-        const $btn = $btns.find('.' + action + '');
-        const $content = $btn.find('.content');
-
-        $(target).css({
-          color: 'var(--white)',
-        });
-        $btn.css({
-          visibility: 'visible',
-          'background-color': 'var(--danger)',
-          color: 'var(--white)',
-          'z-index': '3',
-        });
-        $content.css({
-          visibility: 'visible',
-          'background-color': 'var(--danger)',
-          color: 'var(--white)',
-        });
-      })
-      .on('mouseleave', ({ target }) => {
-        const $action = $(target).parent();
-        const $btns = $action.parent();
-        const action = $(target).data('action');
-        const $btn = $btns.find('.' + action + '');
-        const $content = $btn.find('.content');
-
-        $(target).css({
-          color: 'black',
-        });
-        $btn.css({
-          visibility: 'hidden',
-          'background-color': 'none',
-          color: 'var(--white)',
-          'z-index': '1',
-        });
-        $content.css({
-          visibility: 'hidden',
-          'background-color': 'none',
-          color: 'black',
-        });
-      });
-  },
 };
 </script>
 
@@ -208,6 +161,24 @@ export default {
 .nameIn{
   overflow: hidden;
   height: 50px;
+}
+.listenHover{
+  /*background-color: blue;*/
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 10;
+  visibility: visible;
+}
+.delete .listenHover{
+  left: 0px;
+  top: 0px;
+}
+.edit .listenHover{
+  left: 64px;
+  top: 0px;
 }
 .confirmUncheck{
   position: absolute;

@@ -24,10 +24,12 @@
       span.tooltiptext.tooltip-bottom Vous avez ajouté des produits de cette rubrique au panier
     div.buttns(v-if='!editing')
       div.action.edit(@click.stop="startEdition")
+        span.listenHover(data-action="edit")
         span.content Renommer&nbsp;
         span.icon.fa.fa-pencil(data-action="edit")
       div.action.delete(@click.stop="erase", v-bind:class="{'deleting': deleting}")
-        span.icon.fa.fa-eraser(data-action="delete")
+        span.listenHover(data-action="delete")
+        span.icon.fa.fa-eraser
         span &nbsp;
         span.content {{deleteWording}}
     div.arrowActive(v-if="isActive")
@@ -166,8 +168,8 @@ export default {
     },
   },
   mounted() {
-    $('.action .icon')
-      .on('mouseenter', ({ target }) => {
+    $(document)
+      .on('mouseenter', '.action .listenHover', ({ target }) => {
         const $action = $(target).parent();
         const $btns = $action.parent();
         const action = $(target).data('action');
@@ -189,7 +191,7 @@ export default {
           color: 'var(--white)',
         });
       })
-      .on('mouseenter', ({ target }) => {
+      .on('mouseleave', '.action .listenHover', ({ target }) => {
         const $action = $(target).parent();
         const $btns = $action.parent();
         const action = $(target).data('action');
@@ -251,6 +253,25 @@ export default {
   vertical-align: middle;
   line-height: 20px;
   padding: 5px;
+}
+.listenHover{
+/*  opacity: 0.5;
+  background-color: blue;*/
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 100;
+  visibility: visible;
+}
+.delete .listenHover{
+  left: 0px;
+  top: 0px;
+}
+.edit .listenHover{
+  left: 64px;
+  top: 0px;
 }
 .deleting{
   visibility: visible;

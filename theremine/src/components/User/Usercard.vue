@@ -65,7 +65,7 @@ div.right > a {
   color: black;
 }
 .dropdown-menu{
-  /*left: -116px;*/
+  left: -50px;
 }
 .user-name{
   color: white;

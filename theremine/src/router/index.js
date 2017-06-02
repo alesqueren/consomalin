@@ -27,35 +27,35 @@ const router = new Router({
     },
     {
       name: 'login',
-      path: '/login',
+      path: '/connexion',
       component: Login,
     },
     {
       name: 'register',
-      path: '/register',
+      path: '/inscription',
       component: Register,
     },
     {
       name: 'wishlist',
-      path: '/wishlist',
+      path: '/bloc-note',
       meta: { auth: true },
       component: Wishlist,
     },
     {
       name: 'section',
-      path: '/section',
+      path: '/rayons',
       meta: { auth: true },
       component: Section,
     },
     {
       name: 'basket',
-      path: '/basket',
+      path: '/panier',
       meta: { auth: true },
       component: Basket,
     },
     {
       name: 'withdraw',
-      path: '/withdraw',
+      path: '/retrait',
       meta: { auth: true },
       component: Withdraw,
     },
@@ -79,7 +79,7 @@ const router = new Router({
     },
     {
       name: 'help',
-      path: '/help',
+      path: '/aide',
       component: Help,
     },
     {

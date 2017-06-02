@@ -5,7 +5,7 @@
         div {{ currentWish.gname }} 
       div.input-group-addon.search-addProduct(@click.stop="setActivation")
         span.fa.fa-plus &nbsp;
-        span.wording Ajouter un produit
+        div.wording &nbsp;&nbsp;&nbsp;Ajouter un produit
       .input-wrapper.search-input(
         v-bind:class="{'disabled': hasProducts, 'tooltip': hasProducts}", 
         @click="focus")
@@ -146,24 +146,30 @@ export default {
   font-family: learningCurve;
 }
 .search-addProduct {
+  position: relative;
+  transition: max-width 0.3s;
+  transition-timing-function: linear;
   display: table-cell;
-  width: 47px;
+  width: 25px;
+  overflow: hidden;
   font-size: 1em;
-  transition: width 0.3s;
   cursor: pointer;
 }
 .search-addProduct .fa-plus{
-  font-size: 1em;
-}
-.search-addProduct:hover {
-  width: 150px;
+  position: absolute;
+  top: 13px;
+  left: 9px;
+  font-size: 1.5em;
 }
 .search-addProduct .wording{
-  transition: display 0.3s;
-  display: none;
+  transition: display 0.3s, max-width 0.3s;
+  max-width: 0px;
+  padding-top: 11px;
+  margin-left: 10px;
 }
 .search-addProduct:hover .wording{
-  display: inline-block;
+  transition: display 0.3s, max-width 0.3s;
+  max-width: 175px;
 }
 .search-search {
   position: absolute;
