@@ -142,7 +142,7 @@ div#help
           .content
           |  Non.<br/>
 
-          |  Nous nous occupons de créer un compte à votre place pour @(effectuer vos commandes).<br/>
+          |  Nous nous occupons de créer un compte à votre place pour effectuer vos commandes.<br/>
           |  Votre adresse mail n'est pas fournie à Auchan.<br/>
     div.question
       span.expand.fa.fa-plus-square-o &nbsp;
@@ -179,7 +179,7 @@ div#help
       span.expand.title Comment gagnez-vous votre vie ?
       div.answer
           .content
-          |  Comme les produits sont @(au même prix) et qu'il n'y a pas de publicité sur Consomalin, vous vous demandez peut-être comment nous vivons.<br/>
+          |  Comme les produits sont au même prix et qu'il n'y a pas de publicité sur Consomalin, vous vous demandez peut-être comment nous vivons.<br/>
 
           |  Nous pourrions sponsoriser des produits et vous les proposer dans les premiers résultats de votre recherche.<br/>
           |  Nous pourrions le faire sans vous prévenir et prendre une commission sur chaque produit acheté ainsi.<br/>
