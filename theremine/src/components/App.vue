@@ -316,8 +316,6 @@ input[type=number] {
   font-size: 18px;
   line-height: 50px;
   color: white;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
   z-index: 10001;
 }
 #demo a{
