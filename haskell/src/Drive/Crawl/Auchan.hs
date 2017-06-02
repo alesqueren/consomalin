@@ -123,6 +123,7 @@ doSchedule acc attendance today = do
   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
   _ <- lift . fromF $ Lo.login acc
   -- a non empty basket is needed for getting schedule
+  -- TODO: fetch first pid in mongo
   -- _ <- lift . fromF $ addToBasket "141418" 1
   _ <- lift . fromF $ B.load
   slotInfo <- lift . fromF $ S.getSchedule
