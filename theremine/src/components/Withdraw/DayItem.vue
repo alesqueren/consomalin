@@ -5,7 +5,7 @@
   div.slotHours(v-for='hour in day.hours', :key='hour')
     slot-item(v-for='pickupSlot in hour.slots', 
       v-bind:pickupSlot="pickupSlot", 
-      :key='pickupSlot')
+      :key='pickupSlot.id')
 </template>
 
 <script>

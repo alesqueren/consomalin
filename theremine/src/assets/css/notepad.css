@@ -90,7 +90,7 @@
   font-size: 1.5em;
   top: 0;
   right: 5px;
-  z-index: 2;
+  z-index: 3;
 }
 .notepad .line {
   cursor: pointer;
@@ -149,32 +149,13 @@
   width: 50%;
   padding: 6px;
 }
-/*.line .buttns .action {*/
-.notepad .line .buttns .action:hover {
-  border: 1px solid rgba(0,0,0,.15);
+.notepad .line .buttns .action .icon {
+/*  height: 20px;
+  width: 20px;*/
 }
-.notepad .line .buttns .action.deleting {
-  border: 1px solid rgba(0,0,0,.15);
-}
-/*.line .buttns .action.delete {*/
-.notepad .line .buttns .action.edit:hover {
-  background-color: #f0f0f0;
-  color: var(--main-font);
-}
-.notepad .line .buttns .action.delete:hover {
-  background-color: var(--danger);
-  color: var(--white);
-}
-.notepad .line .buttns .action.delete.deleting {
-  background-color: var(--danger);
-  color: var(--white);
-}
-.notepad .line .buttns .action:hover .content {
-/*.line .buttns .wrapper .content {*/
+.notepad .line:hover .icon {
   visibility: visible;
-}
-.notepad .line .buttns .action.deleting .content {
-  visibility: visible;
+  color: black;
 }
 .notepad .line .content {
   font-size: 1em;

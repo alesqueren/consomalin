@@ -43,7 +43,11 @@ export default {
   props: ['pickupSlot'],
   computed: {
     selected() {
-      return this.pickupSlot.id === this.$store.state.singleton.selectedSlot.id;
+      try {
+        return this.pickupSlot.id === this.$store.state.singleton.selectedSlot.id;
+      } catch (e) {
+        return false;
+      }
     },
     frenchTime() {
       const time = this.pickupSlot.time;

@@ -17,7 +17,11 @@ export default {
   },
   computed: {
     isCurrentWish() {
-      return this.wid === this.$store.getters['sectionWishes/getCurrent'].id;
+      try {
+        return this.wid === this.$store.getters['sectionWishes/getCurrent'].id;
+      } catch (e) {
+        return false;
+      }
     },
     wish() {
       return this.$store.getters['wishGroup/getWish']({ wid: this.wid });

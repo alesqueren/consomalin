@@ -2,7 +2,7 @@
   div.product(
     @click='select()'
     v-if="productInfos")
-    div.productName {{productInfos.name}}
+    div.productName {{quantity}}x {{productInfos.name}}
     span.total &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
 
 </template>
