@@ -175,20 +175,23 @@ export default {
         const action = $(target).data('action');
         const $btn = $btns.find('.' + action + '');
         const $content = $btn.find('.content');
+        const backgroundColor = action === 'edit' ? 'white' : 'var(--danger)';
+        const color = action === 'edit' ? 'black' : 'white';
 
         $(target).css({
-          color: 'var(--white)',
+          color,
         });
         $btn.css({
+          border: '1px solid rgba(0,0,0,.25)',
           visibility: 'visible',
-          'background-color': 'var(--danger)',
-          color: 'var(--white)',
+          backgroundColor,
+          color,
           'z-index': '3',
         });
         $content.css({
           visibility: 'visible',
-          'background-color': 'var(--danger)',
-          color: 'var(--white)',
+          backgroundColor,
+          color,
         });
       })
       .on('mouseleave', '.action .listenHover', ({ target }) => {
@@ -199,9 +202,10 @@ export default {
         const $content = $btn.find('.content');
 
         $(target).css({
-          color: 'black',
+          color: 'var(--main-font)',
         });
         $btn.css({
+          border: '1px solid rgba(0,0,0,.01)',
           visibility: 'hidden',
           'background-color': 'none',
           color: 'var(--white)',
@@ -210,7 +214,7 @@ export default {
         $content.css({
           visibility: 'hidden',
           'background-color': 'none',
-          color: 'black',
+          color: 'var(--main-font)',
         });
       });
   },

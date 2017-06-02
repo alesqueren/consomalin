@@ -164,7 +164,7 @@ export default {
 .search-addProduct .wording{
   transition: display 0.3s, max-width 0.3s;
   max-width: 0px;
-  padding-top: 11px;
+  padding-top: 6px;
   margin-left: 10px;
 }
 .search-addProduct:hover .wording{
