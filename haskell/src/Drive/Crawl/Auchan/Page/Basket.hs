@@ -13,8 +13,7 @@ import qualified Data.Map.Strict as M
 import           Drive.Price
 import           Utils.Misc
 import           Drive.Crawl
-import           Drive.DriveBasket
-import           Drive.ConsoBasket
+import           Drive.Basket as BA
 import           Drive.Crawl.Auchan.Product
 
 data AddToBasketException = AddToBasketException deriving (Show, Typeable)
@@ -27,7 +26,7 @@ data ParseBasketException = ParseBasketException deriving (Show, Typeable)
 instance Exception ParseBasketException
 
 
-lineScraper :: EntityScraper DriveProduct
+lineScraper :: EntityScraper (Text,BasketProduct)
 lineScraper = EntityScraper 
   { rootSelector = "li" @: [hasClass "productInfo"]
   , elementSelectors = M.fromList
@@ -56,9 +55,9 @@ totalPriceScraper = EntityScraper
 load :: Crawl [Tag Text]
 load = requestTag $ Req "https://www.auchandrive.fr/drive/coffre" "GET" [] ""
 
-addToBasket :: ConsoProduct -> Crawl ()
-addToBasket (ConsoProduct id qty) = do
-  $(logDebug) ("A2B" <> id)
+addToBasket :: Text -> Int -> Crawl ()
+addToBasket pid qty = do
+  $(logDebug) ("A2B" <> pid)
 
   res <- request $ Req url "POST" hdr httpData
 
@@ -67,12 +66,12 @@ addToBasket (ConsoProduct id qty) = do
     throwM AddToBasketException
 
   when (qty /= 1) $ 
-    addToBasket $ ConsoProduct id (qty-1)
+    addToBasket pid (qty-1)
 
   return ()
   where
     url = "http://www.auchandrive.fr/drive/productdetail.product.product_addproducttobasket2/" 
-          <> id <> "/1/product_addToBasketZone?t:ac=" <> id
+          <> pid <> "/1/product_addToBasketZone?t:ac=" <> pid
     hdr = [("X-Requested-With", "XMLHttpRequest")]
     httpData = "t%3Azoneid=forceAjax"
 
@@ -93,20 +92,20 @@ emptyBasket = do
     hdr = [("X-Requested-With", "XMLHttpRequest")]
     httpData = "t%3Azoneid=forceAjax"
 
-makeLine :: Map Text Text -> Maybe DriveProduct
+makeLine :: Map Text Text -> Maybe (Text, BasketProduct)
 makeLine elementsMap = do
   [pidTxt, qty, unitPriceTxt, tot] 
     <- mapM (`M.lookup` elementsMap)
       ["pid", "quantity", "unitPrice", "totalPrice"]
   pid <- readSiteId pidTxt
-  up <- readPrice unitPriceTxt
+  pbq <- readPrice unitPriceTxt
   pr <- readPrice tot
-  return $ DriveProduct pid up (read $ T.unpack qty) pr
+  return (pid, BasketProduct pbq (read $ T.unpack qty) pr)
 
-getBasket :: Crawl DriveBasket
+getBasket :: Crawl Basket
 getBasket = do
   $(logDebug) "get basket"
   page <- load
   pr <- maybeOrThrow ParseBasketException $ join $ head $ entityScrap totalPriceScraper page
   let pds = catMaybes $ entityScrap lineScraper page
-  return $ DriveBasket pr pds 
+  return $ Basket pr (M.fromList pds)

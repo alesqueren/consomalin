@@ -46,7 +46,7 @@ listen r cb = do
 processMsg :: (FromJSON a) => (a -> IO ()) -> (Message,Envelope) -> IO ()
 processMsg cb (msg, env) = do
   putStrLn $ "received message: " <> msgBody msg
-  case decode (msgBody msg) of
-    Just tm -> cb tm
-    Nothing -> putStrLn ("parsing error" :: Text)
+  case eitherDecode (msgBody msg) of
+    Left e -> putStrLn e
+    Right tm -> cb tm
   ackEnv env

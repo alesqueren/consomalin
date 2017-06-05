@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module Main where
 
 import           Protolude hiding (get)
@@ -8,8 +10,17 @@ import           Data.Attoparsec.Text hiding (Done)
 import           Data.Aeson hiding (json)
 
 import           Utils.Env
+import           Drive.Basket
 import           Drive.Crawl.Auchan
 import           Drive.Bs.Rabbitmq
+
+
+data BasketResponse = BasketResponse
+  { message :: Text
+  , basket :: MBasket
+  }
+  deriving (Show, Generic)
+instance ToJSON BasketResponse
 
 main :: IO ()
 main = do
@@ -35,21 +46,33 @@ startSrv port = do
 prepareController :: ActionM ()
 prepareController = do
   uid <- param "uid" :: ActionM Text
-  eBasket <- liftIO $ prepareOrder uid
-  case eBasket of
-    Left err -> do
-      status status409 
-      json err
-    Right basket ->
-      json $ toJSON basket
+  b <- body
+
+  case eitherDecode b of
+    Left e -> do
+      status status400
+      text "Bad Request"
+    Right t -> do
+      mDiff <- liftIO $ prepareOrder uid t
+      case mDiff of
+        Nothing -> text "OK"
+        Just diff -> do
+          status status409
+          json $ toJSON $ BasketResponse "basket errors" diff
 
 orderController :: ActionM ()
 orderController = do
   uid <- param "uid" :: ActionM Text
-  eBasket <- liftIO $ order uid
-  case eBasket of
-    Left err -> do
-      status status409 
-      json err
-    Right basket ->
-      json $ toJSON basket
+  b <- body
+
+  case eitherDecode b of
+    Left e -> do
+      status status400
+      text "Bad Request"
+    Right t -> do
+      mDiff <- liftIO $ order uid t
+      case mDiff of
+        Nothing -> text "OK"
+        Just diff -> do
+          status status409
+          json $ toJSON $ BasketResponse "basket errors" diff

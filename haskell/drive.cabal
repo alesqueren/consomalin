@@ -17,9 +17,8 @@ library
                        Drive.Slot
                        Drive.Types
                        Drive.Price
+                       Drive.Basket
                        Drive.Product
-                       Drive.ConsoBasket
-                       Drive.DriveBasket
                        Drive.Attendance
                        Drive.ViewProduct
                        Drive.Bs.Mongo
@@ -119,6 +118,7 @@ executable wendy
                      , text
                      , scotty
                      , http-types
+                     , containers
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 

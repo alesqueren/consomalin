@@ -8,7 +8,7 @@ module Drive.Price (Price
                    ) where
 
 import           Protolude hiding (from, to)
-import           Prelude                    (String)
+import           Prelude                    (String, fail)
 import           Data.Aeson 
 import           Numeric
 import           Text.PrettyPrint.Leijen.Text
@@ -41,7 +41,9 @@ instance Val Price where
   cast' (Float c) = Just $ toPrice c
   cast' _         = Nothing
 
-instance FromJSON Price
+instance FromJSON Price where
+  parseJSON (Number n) = return $ toPrice n
+  parseJSON _  = fail "expected a number"
 instance ToJSON Price where
   toJSON = Number . fromPrice
 

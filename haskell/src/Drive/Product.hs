@@ -1,3 +1,5 @@
+{-# LANGUAGE RecordWildCards #-}
+
 module Drive.Product (Product(..)
                      , summarize 
                      , mongoInsert 
@@ -30,27 +32,30 @@ data Product = Product
   deriving (Typeable, Show, Eq)
 
 instance Pretty Product where
-  pretty p = text "Product" <> encloseSep lbrace rbrace (comma <> space)
-                             [ text $ fromStrict (nameShort p)
-                             , text (show $ imageUrl p :: LText)
-                             , pretty $ price p
-                             , pretty $ priceByQuantity p
-                             ]
+  pretty Product{..} = 
+    text "Product" <> 
+         encloseSep lbrace rbrace (comma <> space)
+         [ text $ fromStrict nameShort
+         , text (show imageUrl :: LText)
+         , pretty price
+         , pretty priceByQuantity
+         ]
 
 instance Val Product where
-  val p = val [ "_id" =: pid p
-              , "price" =: val (price p)
-              , "priceByQuantity" =: val (priceByQuantity p)
-              , "nameShort" =: nameShort p
-              , "name" =: name p
-              , "nameLong" =: nameLong p
-              , "imageUrl" =: val (imageUrl p)
-              , "quantity" =: quantity p
-              , "quantityUnit" =: quantityUnit p
-              , "description" =: description p
-              , "benefits" =: benefits p
-              , "composition" =: composition p
-              ]
+  val Product{..} = 
+    val [ "_id" =: pid
+        , "price" =: val price
+        , "priceByQuantity" =: val priceByQuantity
+        , "nameShort" =: nameShort
+        , "name" =: name
+        , "nameLong" =: nameLong
+        , "imageUrl" =: val imageUrl
+        , "quantity" =: quantity
+        , "quantityUnit" =: quantityUnit
+        , "description" =: description
+        , "benefits" =: benefits
+        , "composition" =: composition
+        ]
   -- TODO: improve
   cast' (Doc doc) = do
     id <- lookup "_id" doc
@@ -81,12 +86,12 @@ mongoSearch s =
 
 
 summarize :: Product -> V.ViewProduct
-summarize p =
+summarize Product{..} =
   V.ViewProduct {
-    V.id              = pid p
-  , V.name            = name p
-  , V.price           = price p
-  , V.imageUrl        = imageUrl p
-  , V.quantityUnit    = quantityUnit p
-  , V.priceByQuantity = priceByQuantity p
+    V.id              = pid
+  , V.name            = name
+  , V.price           = price
+  , V.imageUrl        = imageUrl
+  , V.quantityUnit    = quantityUnit
+  , V.priceByQuantity = priceByQuantity
   }

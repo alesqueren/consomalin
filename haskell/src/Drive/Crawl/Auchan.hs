@@ -1,6 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleContexts    #-}
 {-# LANGUAGE TemplateHaskell     #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Drive.Crawl.Auchan (crawl, doRegisterIfNeeded, fetchSchedule, prepareOrder, order) where
 
@@ -8,12 +9,12 @@ import Protolude           hiding (Product)
 import Conduit
 import Control.Monad.Trans.Free.Church
 import Data.Time
+import qualified Data.Map.Lazy as M
 
 import Drive.Slot
+import Drive.Basket as BA
 import Drive.Product
 import Drive.Attendance as Att
-import Drive.ConsoBasket as CB
-import Drive.DriveBasket as DB
 import Drive.Crawl hiding (html)
 import Drive.Crawl.Account as A
 import Drive.Crawl.Auchan.Product
@@ -87,24 +88,36 @@ doRegistration u = do
   _ <- lift . fromF $ R.register u
   return ()
 
-doPrepareOrder :: (MonadFree CrawlF cr) => Account -> ConsoBasket -> ChoosenSlot -> ConduitM () Void cr DriveBasket
-doPrepareOrder acc (ConsoBasket pds) (ChoosenSlot slotId) = do
+doPrepareOrder :: (MonadFree CrawlF cr) => Account -> Transaction -> ConduitM () Void cr (Maybe MBasket)
+doPrepareOrder acc Transaction{..} = do
   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
   _ <- lift . fromF $ Lo.login acc
   _ <- lift . fromF $ B.emptyBasket
-  _ <- mapM (lift . fromF . B.addToBasket) pds
-  b <- lift . fromF $ B.getBasket
+  _ <- mapM (\(pid,qty) -> lift $ fromF $ B.addToBasket pid qty) pds
+  driveBasket <- lift . fromF $ B.getBasket
   _ <- lift . fromF $ S.selectSchedule slotId
-  return b
 
-doOrder :: (MonadFree CrawlF cr) => Account -> ChoosenSlot -> ConduitM () Void cr DriveBasket
-doOrder acc (ChoosenSlot slotId) = do
+  case diffBasket driveBasket basket of
+    Just diff -> 
+      return $ Just diff
+    Nothing -> do
+      return Nothing
+
+    where pds = M.elems $ M.mapWithKey (\pid pd -> (pid, BA.quantity pd)) $ BA.products basket
+
+doOrder :: (MonadFree CrawlF cr) => Account -> Transaction -> ConduitM () Void cr (Maybe MBasket)
+doOrder acc Transaction{..} = do
   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
   _ <- lift . fromF $ Lo.login acc
-  b <- lift . fromF $ B.getBasket
-  _ <- lift . fromF $ S.selectSchedule slotId
-  _ <- lift . fromF $ P.validatePayment
-  return b
+  driveBasket <- lift . fromF $ B.getBasket 
+
+  case diffBasket driveBasket basket of
+    Just diff -> 
+      return $ Just diff
+    Nothing -> do
+      _ <- lift . fromF $ S.selectSchedule slotId
+      _ <- lift . fromF $ P.validatePayment
+      return Nothing
 
 doRegisterIfNeeded :: Text -> IO Account
 doRegisterIfNeeded uid = do
@@ -130,8 +143,6 @@ doSchedule acc attendance today = do
   return $ map (makeSlot attendance today) slotInfo 
 
 
-
-
 fetchSchedule :: IO ([Slot], UTCTime)
 fetchSchedule = do
   now <- getCurrentTime
@@ -140,26 +151,12 @@ fetchSchedule = do
   slots <- runConduitCrawl $ doSchedule acc attendance $ utctDay now
   return (slots, addUTCTime (60*5) now)
 
-prepareOrder :: Text -> IO (Either Text DriveBasket)
-prepareOrder uid = do
+prepareOrder :: Text -> Transaction -> IO (Maybe MBasket)
+prepareOrder uid transaction = do
   acc <- doRegisterIfNeeded uid
-  mBasket <- CB.mongoFind uid
-  mSlotId <- mongoFindChoosenSlot uid
-  case mBasket of
-    Nothing -> return $ Left "Basket not found"
-    Just basket ->
-      case mSlotId of
-        Nothing -> return $ Left "Slot not found"
-        Just slotId -> do
-          b <- runConduitCrawl (doPrepareOrder acc basket slotId)
-          return $ Right b
+  runConduitCrawl (doPrepareOrder acc transaction)
 
-order :: Text -> IO (Either Text DriveBasket)
-order uid = do
+order :: Text -> Transaction -> IO (Maybe MBasket)
+order uid transaction = do
   acc <- doRegisterIfNeeded uid
-  mSlotId <- mongoFindChoosenSlot uid
-  case mSlotId of
-    Nothing -> return $ Left "Slot not found"
-    Just slotId -> do
-      b <- runConduitCrawl (doOrder acc slotId)
-      return $ Right b
+  runConduitCrawl (doOrder acc transaction)
