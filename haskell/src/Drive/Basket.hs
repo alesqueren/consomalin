@@ -72,7 +72,9 @@ diffProducts m1 m2 =
 
 diffBasket :: Basket -> Basket -> Maybe MBasket
 diffBasket b1 b2 =
-  return $ MBasket tp mbp
+  if isNothing tp && null mbp 
+    then Nothing
+    else return $ MBasket tp mbp
     where 
       tp = if totalPrice b1 == totalPrice b2
               then Nothing
@@ -95,10 +97,16 @@ instance ToJSON MBasket where
   toJSON MBasket{..} = 
     object $ catMaybes
       [ toAesonIfJust mTotalPrice "totalPrice" 
-      , Just $ "products" .= mProducts ]
+      , if null mProducts
+          then Nothing
+          else Just $ "products" .= mProducts ]
     where 
       toAesonIfJust Nothing _ = Nothing
       toAesonIfJust value name = Just $ name .= value
+
+-- toAesonIfJust :: Maybe t -> Text -> Maybe Pair
+-- toAesonIfJust Nothing _ = Nothing
+-- toAesonIfJust value name = Just $ name .= value
 
 instance FromJSON MBasketProduct
 instance ToJSON MBasketProduct where
