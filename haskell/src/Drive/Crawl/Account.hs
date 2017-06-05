@@ -17,13 +17,13 @@ data Account = Account
   deriving (Typeable, Eq, Show)
 
 instance Val Account where
-  -- TODO: complete function
-  val a = val [ "driveUser" =: user a
-              , "drivePassword" =: pass a ]
+  val acc = val [ "driveUser" =: user acc
+              , "drivePassword" =: pass acc ]
   cast' (Doc doc) = do
     u <- lookup "driveUser" doc
     p <- lookup "drivePassword" doc
     return $ Account u p
+  cast' _ = Nothing
 
 getAccountFromEnv :: IO Account
 getAccountFromEnv = do
@@ -33,11 +33,11 @@ getAccountFromEnv = do
 
 mongoSet :: Text -> Account -> IO ()
 mongoSet uid (Account u p) = 
-  doModify UserResource [(sel, doc, [])]
+  doModify AccountResource [(sel, doc, [Upsert])]
   where 
     sel = [ "_id" =: uid ]
     doc = [ "$set" =: [ "driveUser" =: u, "drivePassword" =: p ] ]
 
 mongoSearch :: Text -> IO (Maybe Account)
 mongoSearch uid =
-  doSelectOne UserResource ["_id" =: uid]
+  doSelectOne AccountResource ["_id" =: uid]

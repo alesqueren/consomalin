@@ -3,7 +3,6 @@ module Drive.Bs.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doMod
 import           Protolude                    hiding (Product, (<>), find, sort, Selector)
 import           Database.MongoDB
 import           Utils.Env
-import           Utils.Misc
 import qualified Data.Attoparsec.Text as A
 import qualified Data.Text as T
 
@@ -12,13 +11,14 @@ data MongoException = DocNotFoundException | ParseException
   deriving (Show, Typeable)
 instance Exception MongoException
 
-data MongoResource = UserResource | ProductResource | AttendanceResource
+data MongoResource = UserResource | AccountResource | ProductResource | AttendanceResource
 
 class Queryable a where
   getPath :: a -> (Text, Text)
 
 instance Queryable MongoResource where
   getPath UserResource = ("users", "user")
+  getPath AccountResource = ("users", "account")
   getPath ProductResource = ("auchan", "product")
   getPath AttendanceResource = ("auchan", "attendance")
 
