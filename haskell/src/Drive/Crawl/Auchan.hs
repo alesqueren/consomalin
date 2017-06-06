@@ -100,7 +100,7 @@ doPrepareOrder acc Transaction{..} = do
   case diffBasket driveBasket basket of
     Just diff -> 
       return $ Just diff
-    Nothing -> do
+    Nothing ->
       return Nothing
 
     where pds = M.elems $ M.mapWithKey (\pid pd -> (pid, BA.quantity pd)) $ BA.products basket
