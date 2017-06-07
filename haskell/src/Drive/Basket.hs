@@ -12,8 +12,8 @@ import qualified Data.Map.Lazy as M
 import           Drive.Price
 
 data BasketProduct = BasketProduct
-  { priceByQuantity :: Price
-  , quantity :: Int
+  { priceByProduct :: Price
+  , productNb :: Int
   , price :: Price
   }
   deriving (Typeable, Show, Eq, Generic)
@@ -32,8 +32,8 @@ data Transaction = Transaction
 
 
 data MBasketProduct = MBasketProduct
-  { mPriceByQuantity :: Maybe Price
-  , mQuantity :: Maybe Int
+  { mPriceByProduct :: Maybe Price
+  , mProductNb :: Maybe Int
   , mPrice :: Maybe Price
   }
   deriving (Typeable, Show, Eq, Generic)
@@ -48,7 +48,7 @@ data MBasket = MBasket
 diffProduct :: Maybe BasketProduct -> Maybe BasketProduct -> Maybe MBasketProduct
 diffProduct Nothing Nothing = Nothing
 diffProduct (Just BasketProduct{..}) Nothing = 
-  return $ MBasketProduct (Just priceByQuantity) (Just quantity) (Just price)
+  return $ MBasketProduct (Just priceByProduct) (Just productNb) (Just price)
 diffProduct Nothing (Just BasketProduct{..}) = 
   return $ MBasketProduct Nothing (Just 0) Nothing
 diffProduct (Just b1) (Just b2) =
@@ -56,8 +56,8 @@ diffProduct (Just b1) (Just b2) =
      then Nothing 
      else return $ MBasketProduct mUP mQ mP
   where 
-    mUP = f (priceByQuantity b1) (priceByQuantity b2)
-    mQ = f (quantity b1) (quantity b2)
+    mUP = f (priceByProduct b1) (priceByProduct b2)
+    mQ = f (productNb b1) (productNb b2)
     mP = f (price b1) (price b2)
     f v1 v2 = if v1 /= v2 then Just v1 else Nothing
 
@@ -112,8 +112,8 @@ instance FromJSON MBasketProduct
 instance ToJSON MBasketProduct where
   toJSON MBasketProduct{..} = 
     object $ catMaybes 
-      [ toAesonIfJust mPriceByQuantity "priceByQuantity"
-      , toAesonIfJust mQuantity "quantity"
+      [ toAesonIfJust mPriceByProduct "priceByProduct"
+      , toAesonIfJust mProductNb "productNb"
       , toAesonIfJust mPrice "price"
       ]
     where 

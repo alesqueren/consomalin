@@ -103,7 +103,7 @@ doPrepareOrder acc Transaction{..} = do
     Nothing ->
       return Nothing
 
-    where pds = M.elems $ M.mapWithKey (\pid pd -> (pid, BA.quantity pd)) $ BA.products basket
+    where pds = M.elems $ M.mapWithKey (\pid pd -> (pid, BA.productNb pd)) $ BA.products basket
 
 doOrder :: (MonadFree CrawlF cr) => Account -> Transaction -> ConduitM () Void cr (Maybe MBasket)
 doOrder acc Transaction{..} = do
