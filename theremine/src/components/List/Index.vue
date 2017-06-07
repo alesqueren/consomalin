@@ -3,7 +3,8 @@
     .hole
     .hole
     .hole
-    h2 Ma Liste
+    h2
+      router-link.title(:to="{ name: 'wishlist' }") Ma Liste
     #groups.groups
       Group(v-for="gid in selectedGroups" 
         v-bind:gid="gid" 

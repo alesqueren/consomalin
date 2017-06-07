@@ -4,6 +4,7 @@ const basketsManager = require('../managers/baskets');
 const transactionsManager = require('../managers/transactions');
 const rabbitMQ = require('../bs/rabbitMQ');
 const kiva = require('../bs/kiva');
+const wendy = require('../bs/wendy');
 
 router.get('/basket/currentWish',
   mid.isAuthenticated,
@@ -41,6 +42,26 @@ router.post('/basket/slot',
     const dateTime = new Date(data.dateTime);
     basketsManager.setCurrentSlot(user._id, { id: data.id, dateTime });
     res.json('OK');
+  },
+);
+
+router.post('/basket/prepareOrder',
+  mid.isAuthenticated,
+  mid.parseData({
+    transaction: { required: true },
+  }),
+  ({ data, user }, res) => {
+    const wendyUrl = '/user/' + user._id + '/prepareOrder';
+    const wendyData = { transaction: data.transaction };
+    const call = wendy.send(wendyUrl, wendyData);
+    call.then((basket) => {
+      console.log('basket : ');
+      console.log(basket);
+      basket = JSON.parse(basket);
+      res.json(basket);
+    }).catch(() => {
+      res.json('NOK');
+    });
   },
 );
 

@@ -37,7 +37,11 @@ const actions = {
 
         dispatch('setUserData', { wishGroups, currentBasket }, { root: true }).then(() => {
           const idsWithoutDetail = rootGetters['selection/getProductsInBasket'];
-          dispatch('product/fetchDetails', { ids: idsWithoutDetail }, { root: true });
+          if (idsWithoutDetail) {
+            dispatch('product/fetchDetails', { ids: idsWithoutDetail }, { root: true }).then(() => {
+              resolve();
+            });
+          }
         });
         if (currentBasket.currentWishId) {
           dispatch('sectionWishes/set', currentBasket.currentWishId, { root: true });

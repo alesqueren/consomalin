@@ -6,7 +6,7 @@ div#presentation
   //- .border
   p La liste de courses est un outil formidable pour gagner du temps et faire des économies.
   p
-    img(src="../../assets/images/wishlist.png")
+    img.big(src="../../assets/images/wishlist.png")
   //- .plus.one
   //-   h3.text Utilisez votre liste de courses comme à la maison
   //-   img(src="../../assets/images/myList.png")
@@ -62,7 +62,13 @@ export default {
 p {
   font-size: 1.2em;
 }
-img{
+img.rubrique{
+  width: 20%;
+}
+img.wish{
+  width: 20%;
+}
+img.big{
   width: 55%;
 }
 .begin{

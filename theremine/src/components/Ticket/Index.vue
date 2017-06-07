@@ -23,6 +23,12 @@ import router from '../../router';
 
 export default {
   computed: {
+    mergedBasketContent() {
+      return this.$store.getters['basket/mergedBasketContent'];
+    },
+    details() {
+      return this.$store.state.product.details;
+    },
     selectedGroups() {
       return this.$store.state.wishGroup.map(group => group.id);
     },
@@ -60,6 +66,7 @@ export default {
     if (!Object.keys(this.selectedWishes).length) {
       router.push({ name: 'basket' });
     }
+    this.$store.dispatch('basket/prepareOrder');
   },
   components: { Group },
 };

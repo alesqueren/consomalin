@@ -1,18 +1,17 @@
 <template lang="pug">
-  div
-    div.activeGroup(v-if="wishgroup")
-      div.notepad
-        .redLine
-        h2.title {{ wishgroup.name }}
-        Wish(v-for="wish in wishgroup.wishes" 
-          v-bind:wid="wish.id" 
-          v-bind:gid="wishgroup.id" 
-          v-bind:key="wish.id")
-        div.newIcon.fa.fa-plus.fa(@click="focus")
-        div.hideOthers.hidden
-        input#newWish(v-model="newName" v-on:keyup.enter="add" placeholder="De quoi avez vous besoin ?" @click.stop="")
-        button.btn.btn-success.btn-sm.btn-create(v-if='creating' v-on:click="add")
-          i.fa.fa-check.fa-xs
+  div.activeGroup(v-if="wishgroup")
+    div.notepad
+      .redLine
+      h2.title {{ wishgroup.name }}
+      Wish(v-for="wish in wishgroup.wishes" 
+        v-bind:wid="wish.id" 
+        v-bind:gid="wishgroup.id" 
+        v-bind:key="wish.id")
+      div.newIcon.fa.fa-plus.fa(@click="focus")
+      div.hideOthers.hidden
+      input#newWish(v-model="newName" v-on:keyup.enter="add" placeholder="De quoi avez vous besoin ?" @click.stop="")
+      button.btn.btn-success.btn-sm.btn-create(v-if='creating' v-on:click="add")
+        i.fa.fa-check.fa-xs
 </template>
 
 <script>

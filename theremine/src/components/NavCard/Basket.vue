@@ -46,7 +46,7 @@ export default {
   color: white;
   height: 60px;
   width: 320px;
-  background-color: var(--color2);
+  background-color: var(--color1);
   padding: 15px;
   margin-bottom: 15px;
 }
