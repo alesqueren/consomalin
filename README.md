@@ -23,5 +23,8 @@ docker-compose up -d
 ## Update
 ```bash
 docker-compose -f compiler.yml up
-docker-compose up -d --build
+docker-compose build --pull
+docker-compose kill
+docker-compose rm -f
+docker-compose up -d
 ```
