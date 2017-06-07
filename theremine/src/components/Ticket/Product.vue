@@ -1,8 +1,8 @@
 <template lang="pug">
   div.product(
-    @click='select()'
     v-if="productInfos")
     div.productName {{quantity}}x {{productInfos.name}}
+    div.productPrepared {{preparedProduct}}
     span.total &nbsp;&nbsp;&nbsp;&nbsp;{{total}}€
 
 </template>
@@ -12,6 +12,12 @@
 export default {
   props: ['wid', 'pid'],
   computed: {
+    preparedBasket() {
+      return this.$store.state.basket.preparedBasket;
+    },
+    preparedProduct() {
+      return this.preparedBasket[this.pid];
+    },
     quantity() {
       const wish = this.$store.getters['wishGroup/getWish']({ wid: this.wid });
       const product = this.$store.getters['selection/getProduct']({
@@ -34,6 +40,11 @@ export default {
 
 <style scoped>
 .product {
+  position: relative;
+}
+.productPrepared {
+  position: absolute;
+  right: 120px;
 }
 .productName {
   float: left;

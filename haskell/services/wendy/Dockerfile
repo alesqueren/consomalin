@@ -13,7 +13,7 @@ RUN echo 'echo "$@" | xargs -n 1 | \
 
 WORKDIR app
 ADD ./bin/wendy wendy
-ADD ./resources .
+ADD ./resources ./resources
 
 ENV SERVER_PORT=80 \
     MONGO_HOST=mongo \

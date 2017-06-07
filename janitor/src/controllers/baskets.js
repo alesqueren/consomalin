@@ -48,19 +48,19 @@ router.post('/basket/slot',
 router.post('/basket/prepareOrder',
   mid.isAuthenticated,
   mid.parseData({
-    transaction: { required: true },
+    basket: { required: true },
+    slotId: { required: true },
   }),
   ({ data, user }, res) => {
     const wendyUrl = '/user/' + user._id + '/prepareOrder';
-    const wendyData = { transaction: data.transaction };
+    const wendyData = { basket: data.basket, slotId: data.slotId };
     const call = wendy.send(wendyUrl, wendyData);
     call.then((basket) => {
-      console.log('basket : ');
-      console.log(basket);
       basket = JSON.parse(basket);
       res.json(basket);
-    }).catch(() => {
-      res.json('NOK');
+    }).catch((basket) => {
+      basket = JSON.parse(basket);
+      res.json(basket);
     });
   },
 );

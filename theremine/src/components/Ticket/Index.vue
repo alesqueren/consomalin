@@ -1,6 +1,6 @@
 <template lang="pug">
 div#ticket
-  h2 Validation de la commande
+  h2 Validation de la commande {{preparing}}
   .border
   .box
     img.logo(src="../../assets/images/logo.jpg")
@@ -22,9 +22,17 @@ import date from '../Utils/date';
 import router from '../../router';
 
 export default {
+  data() {
+    return {
+      preparing: true,
+    };
+  },
   computed: {
     mergedBasketContent() {
       return this.$store.getters['basket/mergedBasketContent'];
+    },
+    preparedBasket() {
+      return this.$store.state.basket.preparedBasket;
     },
     details() {
       return this.$store.state.product.details;
@@ -66,7 +74,9 @@ export default {
     if (!Object.keys(this.selectedWishes).length) {
       router.push({ name: 'basket' });
     }
-    this.$store.dispatch('basket/prepareOrder');
+    this.$store.dispatch('basket/prepareOrder').then(() => {
+      this.preparing = false;
+    });
   },
   components: { Group },
 };
