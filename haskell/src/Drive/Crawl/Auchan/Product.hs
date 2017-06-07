@@ -57,7 +57,7 @@ makeSiteProduct elementsMap =
     return SiteProduct {
       siteId = id,
       siteName = nameTxt,
-      siteImageUrl = T.append "http://www.auchandrive.fr" imageTxt,
+      siteImageUrl = T.append "https://www.auchandrive.fr" imageTxt,
       sitePrice = pr,
       sitePriceByQuantity = prByQ,
       siteQuantityUnit = quantityUnitTxt

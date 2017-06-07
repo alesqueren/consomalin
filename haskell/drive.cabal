@@ -23,11 +23,13 @@ library
                        Drive.ViewProduct
                        Drive.Bs.Mongo
                        Drive.Bs.Rabbitmq
+                       Drive.Mail.Smtp
                        Drive.Crawl
                        Drive.Crawl.Account
                        Drive.Crawl.Auchan
                        Drive.Crawl.Auchan.Product
                        Drive.Crawl.Auchan.Page.Home
+                       Drive.Crawl.Auchan.Page.Mail
                        Drive.Crawl.Auchan.Page.Login
                        Drive.Crawl.Auchan.Page.Basket
                        Drive.Crawl.Auchan.Page.Landing
@@ -73,7 +75,11 @@ library
                      , random-fu
                      , random-extras
                      , HaskellNet
+                     , HaskellNet-SSL
+                     , imap
                      , connection
+                     , mime
+                     , text
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
@@ -151,6 +157,8 @@ executable lyrist
                      , HaskellNet-SSL
                      , imap
                      , connection
+                     , mime
+                     , text
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 

@@ -2,50 +2,45 @@ module Main where
 
 import Protolude hiding (list)
 
--- import Network.HaskellNet.SSL
--- import Network.HaskellNet.IMAP
--- import Network.HaskellNet.IMAP.SSL
+import Network.HaskellNet.IMAP
+import Network.HaskellNet.IMAP.SSL
+import Codec.MIME.Parse
+import Codec.MIME.Type
 
-import Network.HaskellNet.SMTP
-import Network.HaskellNet.SMTP.SSL
+import Drive.Mail.Smtp
+import Drive.Crawl.Auchan.Page.Mail
 
 smtpServer = "mail.consomalin.ovh"
 imapServer = "mail.consomalin.ovh"
 username = "antoine@mail.consomalin.ovh"
 password = "toto"
 
-mailto = "antoine.lesqueren.perso@gmail.com"
-mailfrom = "antoine@mail.consomalin.ovh"
-
--- imapCfg :: Settings
--- imapCfg = defaultSettingsIMAPSSL { sslMaxLineLength = 100000 }
-
 processMail :: ByteString -> IO ()
-processMail bs =
-  print bs
+processMail bs = do
+
+  when (subject == "Auchan Drive : confirmation de commande") $
+    case parse body of
+      Just mailInfos -> sendConfirmation "antoine.lesqueren.perso@gmail.com" mailInfos
+      Nothing -> putStrLn ("parsing error" :: Text)
+
+  where 
+    mail = parseMIMEMessage $ decodeUtf8 bs
+    Single body = mime_val_content $ mail
+    headers = mime_val_headers mail
+    subject = fromMaybe "" $ head $ map paramValue $ filter (\x -> paramName x == "subject") headers
 
 main :: IO ()
 main = do
   putStrLn ("start" :: Text)
 
-  -- con <- connectIMAPSSLWithSettings imapServer imapCfg
-  -- login con username password
-  -- select con "INBOX"
+  con <- connectIMAPSSLWithSettings imapServer defaultSettingsIMAPSSL
+  login con username password
+  select con "INBOX"
 
   -- mids <- search con [UNFLAG Seen]
-  -- putStrLn (show mids :: Text)
+  mids <- search con [ALLs]
 
-  -- -- set Seen flag
-  -- forM_ mids (fetch con >=> processMail)
-
-  -- doSMTPPort smtpServer 587 $ \conn -> do
-  --   putStrLn ("1" :: Text)
-  --   sendPlainTextMail mailto mailfrom "subj" "COUOU!" conn
-
-  doSMTPSTARTTLS smtpServer $ \conn -> do
-    authSucceed <- authenticate LOGIN username password conn
-    if authSucceed
-      then sendPlainTextMail mailto mailfrom "subj" "COUOU!" conn
-      else print "auth failed"
+  -- set Seen flag
+  forM_ mids (fetch con >=> processMail)
 
   putStrLn ("end" :: Text)
