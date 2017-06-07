@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import replay from '../replay';
 import user from './user';
+import basket from './basket';
 import product from './product';
 import schedule from './schedule';
 import wishGroup from './wishGroup';
@@ -46,6 +47,7 @@ export default new Vuex.Store({
   plugins: [replay.storePlugin],
   modules: {
     user,
+    basket,
     product,
     schedule,
     wishGroup,

@@ -184,7 +184,7 @@ export default {
   top: 0px;
 }
 .line.active label {
-  text-decoration: underline;
+  /*text-decoration: underline;*/
 }
 .line:hover label {
   text-decoration: underline;

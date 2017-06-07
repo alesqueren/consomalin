@@ -19,6 +19,7 @@ RUN npm install
 ENV SERVER_PORT=80 \
     MONGO_URI=mongodb://mongo:27017/ \
     KIVA_HOST=http://kiva/ \
+    WENDY_HOST=http://wendy/ \
     RECORDER_HOST=http://recorder/ \
     METRONOME_HOST=http://metronome-cache \
     RABBIT_URI=amqp://rabbitmq:5672/

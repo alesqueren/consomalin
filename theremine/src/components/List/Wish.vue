@@ -58,6 +58,6 @@ export default {
 .active{
   /*color: green;*/
   background-color: var(--active);
-  text-decoration: underline;
+  /*text-decoration: underline;*/
 }
 </style>

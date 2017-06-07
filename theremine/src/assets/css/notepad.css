@@ -29,7 +29,8 @@
 }
 
 .activeGroup .notepad .title {
-  text-decoration: underline;
+  /*text-decoration: underline;*/
+  /*display: none;*/
 }
 
 #newWish {

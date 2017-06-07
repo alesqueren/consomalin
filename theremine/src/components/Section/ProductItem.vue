@@ -170,6 +170,7 @@ export default {
 }
 .product-name {
   line-height: 20px;
+  padding: 5px;
   height: 60px;
   overflow: hidden;
 }

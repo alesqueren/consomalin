@@ -96,7 +96,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const routeOrRedirect = () => {
     if (to.meta.auth) {
-      next('/login');
+      next('/connexion');
     } else {
       next();
     }

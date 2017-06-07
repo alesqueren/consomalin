@@ -1,7 +1,7 @@
 const amqp = require('amqplib/callback_api');
 
 const amqpURL = process.env.RABBIT_URI || 'amqp://localhost:5672';
-const qname = 'transactions';
+const qname = 'registrations';
 
 // create qname
 amqp.connect(amqpURL, (err, conn) => {

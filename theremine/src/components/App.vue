@@ -131,7 +131,8 @@ export default {
   */
 
   /* TODO: rm -- */
-  --color1: #146C78;
+  /*--color1: #146C78;*/
+  --color1: #00707F;
   --color2: #0E91A1;
   --color2-tr: rgba(14, 145, 161, 0.5);
   --color2-br: #14CDE5;
@@ -142,7 +143,8 @@ export default {
   --main-font: rgb(85, 85, 85);
 
   --success: #48CE6E;
-  --active: #7DDBD1;
+  /*--active: #00A8BF;*/
+  --active: #00A8BF;
   --inactive: #999;
   --warning: orange;
   --white: white;
