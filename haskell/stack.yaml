@@ -5,3 +5,5 @@ packages:
 resolver: lts-8.14
 extra-deps:
   - random-extras-0.19
+  - imap-0.3.0.2
+  - rolling-queue-0.1

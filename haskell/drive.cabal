@@ -72,6 +72,8 @@ library
                      , random
                      , random-fu
                      , random-extras
+                     , HaskellNet
+                     , connection
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
@@ -135,6 +137,20 @@ executable metronome
                      , wai
                      , warp
                      , time
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable lyrist
+  hs-source-dirs:      services/lyrist
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , drive
+                     , HaskellNet
+                     , HaskellNet-SSL
+                     , imap
+                     , connection
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
