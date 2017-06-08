@@ -2,6 +2,7 @@
 /commands.yml
 /compiler.yml
 /docker_dev
+data/
 npm-debug.log
 *.log
 *.swp

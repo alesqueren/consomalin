@@ -8,7 +8,6 @@ module.exports = {
       const url = WENDY_HOST + encodeURI(partUrl);
       request.debug = true;
       const jsonData = JSON.stringify(data);
-      console.log(jsonData);
       request.post(url, { form: jsonData }, (error, response, body) => {
         resolve(body);
       });

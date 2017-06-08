@@ -19,10 +19,11 @@ const globalGetters = {
             if (res[pid]) {
               productNb += res[pid].productNb;
             }
+            const price = parseFloat(parseInt(productNb, 10) * parseFloat(priceByProduct));
             res[pid] = {
               productNb,
               priceByProduct,
-              price: (productNb * priceByProduct).toFixed(2),
+              price,
             };
           }
         }
@@ -36,7 +37,7 @@ const actions = {
   prepareOrder({ commit, rootGetters, rootState }) {
     return new Promise((resolve) => {
       const mergedBasketContent = rootGetters['basket/mergedBasketContent'];
-      console.log(mergedBasketContent);
+      commit('setBasketBeforePreparation', mergedBasketContent);
       resources.prepareOrder.save(
         {
           basket: {
@@ -46,10 +47,13 @@ const actions = {
           slotId: rootState.singleton.selectedSlot.id,
         },
       ).then(({ body }) => {
-        const parsedBody = JSON.parse(body);
-        commit('set', {
-          setPreparedBasket: parsedBody,
-        });
+        if (body !== 'OK') {
+          const result = JSON.parse(body);
+          const message = result.message;
+          const basket = result.basket;
+          commit('setPreparedBasket', basket);
+        }
+        resolve();
         resolve();
       });
     });
@@ -57,8 +61,15 @@ const actions = {
 };
 
 const mutations = {
+  setBasketBeforePreparation: (state, basketBeforePreparation) => {
+    Vue.set(state, 'basketBeforePreparation', basketBeforePreparation);
+    Vue.set(state.basketBeforePreparation, 'tmp');
+    delete state.basketBeforePreparation.tmp;
+  },
   setPreparedBasket: (state, preparedBasket) => {
     Vue.set(state, 'preparedBasket', preparedBasket);
+    Vue.set(state.preparedBasket, 'tmp');
+    delete state.preparedBasket.tmp;
   },
 };
 

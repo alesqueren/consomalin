@@ -54,13 +54,8 @@ router.post('/basket/prepareOrder',
   ({ data, user }, res) => {
     const wendyUrl = '/user/' + user._id + '/prepareOrder';
     const wendyData = { basket: data.basket, slotId: data.slotId };
-    const call = wendy.send(wendyUrl, wendyData);
-    call.then((basket) => {
-      basket = JSON.parse(basket);
-      res.json(basket);
-    }).catch((basket) => {
-      basket = JSON.parse(basket);
-      res.json(basket);
+    wendy.send(wendyUrl, wendyData).then((result) => {
+      res.json(result);
     });
   },
 );
