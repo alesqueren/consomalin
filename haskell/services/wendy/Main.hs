@@ -8,6 +8,7 @@ import           Network.Wai.Handler.Warp
 import           Network.HTTP.Types.Status
 import           Data.Attoparsec.Text hiding (Done)
 import           Data.Aeson hiding (json)
+import qualified System.IO as SIO
 
 import           Utils.Env
 import           Drive.Basket
@@ -24,6 +25,7 @@ instance ToJSON BasketResponse
 
 main :: IO ()
 main = do
+  SIO.hSetBuffering stdout SIO.NoBuffering
   listen RegistrationResource processRegistrationMessage
 
   port <- fromEnvOr "SERVER_PORT" decimal 80
