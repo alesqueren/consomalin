@@ -1,12 +1,11 @@
 module Main where
 
 import           Protolude                 hiding (Product, put, get, modify)
-
-import           Conduit
+import qualified System.IO as SIO
 import           Data.Conduit.List         (chunksOf)
-
-import           Control.Monad.Trans.State
 import qualified Data.Set                  as Set
+import           Conduit
+import           Control.Monad.Trans.State
 
 import           Drive.Crawl
 import           Drive.Crawl.Auchan
@@ -24,7 +23,8 @@ productsInsert = evalStateLC Set.empty (awaitForever ins) where
         wasSeen s p = Set.member (pid p) s
 
 main :: IO ()
-main =
+main = do
+  SIO.hSetBuffering stdout SIO.NoBuffering
   runConduitCrawl $
     crawl
     .| chunksOf 50

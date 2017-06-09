@@ -1,8 +1,13 @@
 FROM haskell:8
 
 WORKDIR app
-ADD ./bin/kiva kiva
+ADD ./bin/lyrist lyrist
 
-ENV TOFILL=
+ENV SMTP_HOST=mail.consomalin.ovh \
+    SMTP_USER= \
+    SMTP_PASS= \
+    IMAP_HOST=mail.consomalin.ovh \
+    IMAP_USER= \
+    IMAP_PASS=
 
-CMD ./kiva
+CMD ./lyrist

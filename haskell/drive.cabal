@@ -23,7 +23,9 @@ library
                        Drive.ViewProduct
                        Drive.Bs.Mongo
                        Drive.Bs.Rabbitmq
-                       Drive.Mail.Smtp
+                       Drive.Mail.SMTP
+                       Drive.Mail.IMAP
+                       Drive.Mail.Confirmation
                        Drive.Crawl
                        Drive.Crawl.Account
                        Drive.Crawl.Auchan
@@ -80,6 +82,8 @@ library
                      , connection
                      , mime
                      , text
+                     , blaze-html
+                     , shakespeare
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 

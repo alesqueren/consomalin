@@ -2,6 +2,7 @@ module Main where
 
 import           Protolude hiding (get)
 import           Prelude (read)
+import qualified System.IO as SIO
 import           GHC.Exts 
 import           Web.Scotty
 import           Network.Wai.Handler.Warp
@@ -17,6 +18,7 @@ import           Drive.ViewProduct as V
 
 main :: IO ()
 main = do
+  SIO.hSetBuffering stdout SIO.NoBuffering
   port <- fromEnvOr "SERVER_PORT" decimal 80
   startSrv port
 

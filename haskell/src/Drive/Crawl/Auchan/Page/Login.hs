@@ -23,7 +23,7 @@ load =
 --    a shop must be set
 --    session is not already logged
 login :: Account -> Crawl ()
-login (Account user pass) = do
+login (Account _ user pass) = do
   $(logDebug) ("login " <> user <> " " <> pass)
 
   _ <- load

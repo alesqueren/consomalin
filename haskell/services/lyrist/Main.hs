@@ -1,46 +1,34 @@
 module Main where
 
 import Protolude hiding (list)
+import qualified System.IO as SIO
 
-import Network.HaskellNet.IMAP
-import Network.HaskellNet.IMAP.SSL
-import Codec.MIME.Parse
-import Codec.MIME.Type
-
-import Drive.Mail.Smtp
+import Drive.Mail.IMAP as IMAP
+import Drive.Mail.SMTP as SMTP
+import Drive.Mail.Confirmation
 import Drive.Crawl.Auchan.Page.Mail
 
-smtpServer = "mail.consomalin.ovh"
-imapServer = "mail.consomalin.ovh"
-username = "antoine@mail.consomalin.ovh"
-password = "toto"
+processMail :: IMAP.Mail -> IO ()
+processMail inputMail =
 
-processMail :: ByteString -> IO ()
-processMail bs = do
-
-  when (subject == "Auchan Drive : confirmation de commande") $
-    case parse body of
-      Just mailInfos -> sendConfirmation "antoine.lesqueren.perso@gmail.com" mailInfos
+  when (IMAP.subject inputMail == "Auchan Drive : confirmation de commande") $
+    case parse inputMail of
+      Just mailInfos -> do
+        outputMail <- makeConsoMail mailInfos
+        case outputMail of
+          Just outputMail2 -> do
+            putText $ "Send confirmation mail to " <> SMTP.to outputMail2
+            sendConfirmation outputMail2
+          Nothing -> do
+            putText $ "No account found for " <> IMAP.to inputMail
+            return ()
       Nothing -> putStrLn ("parsing error" :: Text)
-
-  where 
-    mail = parseMIMEMessage $ decodeUtf8 bs
-    Single body = mime_val_content $ mail
-    headers = mime_val_headers mail
-    subject = fromMaybe "" $ head $ map paramValue $ filter (\x -> paramName x == "subject") headers
 
 main :: IO ()
 main = do
-  putStrLn ("start" :: Text)
+  SIO.hSetBuffering stdout SIO.NoBuffering
+  putText "Fetch unread mails..."
+  mails <- fetchUnreadMails
+  putText $ "Found " <> show (length mails) <> " unread messages."
 
-  con <- connectIMAPSSLWithSettings imapServer defaultSettingsIMAPSSL
-  login con username password
-  select con "INBOX"
-
-  -- mids <- search con [UNFLAG Seen]
-  mids <- search con [ALLs]
-
-  -- set Seen flag
-  forM_ mids (fetch con >=> processMail)
-
-  putStrLn ("end" :: Text)
+  mapM_ processMail mails

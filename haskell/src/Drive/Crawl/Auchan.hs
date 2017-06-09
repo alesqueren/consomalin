@@ -121,23 +121,22 @@ doOrder acc Transaction{..} = do
 
 doRegisterIfNeeded :: Text -> IO Account
 doRegisterIfNeeded uid = do
-  macc <- A.mongoSearch uid
+  macc <- A.mongoSearchById uid
   case macc of
     Just acc -> return acc
     Nothing -> do
       userData <- makeUserData
       let acc = getAccount userData
       runConduitCrawl (doRegistration userData)
-      mongoSet uid acc
+      mongoSet acc
       return acc
 
-doSchedule :: (MonadFree CrawlF cr) => Account -> Maybe Attendance -> Day -> ConduitM () Void cr [Slot]
-doSchedule acc attendance today = do
+doSchedule :: (MonadFree CrawlF cr) => Account -> Maybe Attendance -> Day -> Text -> ConduitM () Void cr [Slot]
+doSchedule acc attendance today pid = do
   _ <- lift . fromF $ doChooseDrive "Toulouse-954"
   _ <- lift . fromF $ Lo.login acc
   -- a non empty basket is needed for getting schedule
-  -- TODO: fetch first pid in mongo
-  -- _ <- lift . fromF $ addToBasket "141418" 1
+  _ <- lift . fromF $ addToBasket pid 1
   _ <- lift . fromF $ B.load
   slotInfo <- lift . fromF $ S.getSchedule
   return $ map (makeSlot attendance today) slotInfo 
@@ -148,7 +147,8 @@ fetchSchedule = do
   now <- getCurrentTime
   attendance <- Att.mongoFind "balma"
   acc <- getAccountFromEnv
-  slots <- runConduitCrawl $ doSchedule acc attendance $ utctDay now
+  pid <- maybe "" pid <$> mongoFindOne
+  slots <- runConduitCrawl $ doSchedule acc attendance (utctDay now) pid
   return (slots, addUTCTime (60*5) now)
 
 prepareOrder :: Text -> Transaction -> IO (Maybe MBasket)

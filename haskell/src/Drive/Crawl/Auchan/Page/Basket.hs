@@ -57,7 +57,7 @@ load = requestTag $ Req "https://www.auchandrive.fr/drive/coffre" "GET" [] ""
 
 addToBasket :: Text -> Int -> Crawl ()
 addToBasket pid qty = do
-  $(logDebug) ("A2B" <> pid)
+  $(logDebug) ("A2B " <> pid)
 
   res <- request $ Req url "POST" hdr httpData
 
