@@ -3,13 +3,13 @@
     v-if="productInfos")
     div.productName(v-bind:class="{'deleted': productDeleted}")
       span.newQuantity(v-if="productPartiallyDeleted") {{pp.productNb}}
-      span.quantity(v-bind:class="{'partiallyDeleted': productPartiallyDeleted}") {{pBp.productNb}}
+      span.quantity(v-bind:class="{'quantityReduced': productPartiallyDeleted}") {{pBp.productNb}}
       span x{{productInfos.name}}
     span.total.newTotal(
-    v-if="totalChange"
+    v-if="totalChange && productDemoted || productPromoted"
       v-bind:class="{'demoted': productDemoted, 'promoted': productPromoted}"
       ) &nbsp;&nbsp;&nbsp;&nbsp;{{pp.price}}€
-    span.total(v-bind:class="{'partiallyDeleted': productDemoted || productPromoted || totalChange}") &nbsp;&nbsp;&nbsp;&nbsp;{{pBp.price}}€
+    span.total(v-bind:class="{'oldPrice': productDemoted || productPromoted, 'partiallyDeleted': totalChange}") {{pBp.price}}€
 
 </template>
 
@@ -51,6 +51,11 @@ export default {
       let result = false;
       if (this.pp.productNb === 0) {
         result = true;
+        this.$store.dispatch('selection/updateProduct', {
+          wid: this.wid,
+          pid: this.pid,
+          quantity: 0,
+        });
       }
       return result;
     },
@@ -58,19 +63,24 @@ export default {
       let result = false;
       if (this.pp.productNb < this.pBp.productNb) {
         result = this.preparedProduct.productNb;
+        this.$store.dispatch('selection/updateProduct', {
+          wid: this.wid,
+          pid: this.pid,
+          quantity: result,
+        });
       }
       return result;
     },
     productPromoted() {
       let result = false;
-      if (this.basketPrepared && this.pp.priceByProduct < this.pBp.priceByProduct) {
+      if (this.basketPrepared && this.pBp.priceByProduct > this.pp.priceByProduct) {
         result = true;
       }
       return result;
     },
     productDemoted() {
       let result = false;
-      if (this.basketPrepared && this.pp.priceByProduct > this.pBp.priceByProduct) {
+      if (this.basketPrepared && this.pBp.priceByProduct < this.pBp.priceByProduct) {
         result = true;
       }
       return result;
@@ -101,6 +111,7 @@ export default {
 <style scoped>
 .product {
   position: relative;
+  clear: both;
 }
 .productPrepared {
   position: absolute;
@@ -124,10 +135,22 @@ export default {
   color: var(--danger);
   text-decoration: line-through;
 }
-.promoted {
+.quantityReduced {
   color: var(--danger);
+  text-decoration: line-through;
+  position: absolute;
+  left: -50px;
+}
+.oldPrice {
+  position: absolute;
+  right: -100px;
+  color: var(--danger);
+  text-decoration: line-through;
+}
+.promoted {
+  color: var(--success);
 }
 .demoted {
-  color: var(--success);
+  color: var(--danger);
 }
 </style>

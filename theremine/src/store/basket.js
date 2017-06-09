@@ -14,12 +14,12 @@ const globalGetters = {
           const product = wish[index];
           const pid = product.pid;
           if (details[pid]) {
-            let productNb = product.quantity;
-            const priceByProduct = details[pid].price;
+            let productNb = parseInt(product.quantity, 10);
+            const priceByProduct = parseFloat(details[pid].price);
             if (res[pid]) {
-              productNb += res[pid].productNb;
+              productNb += parseInt(res[pid].productNb, 10);
             }
-            const price = parseFloat(parseInt(productNb, 10) * parseFloat(priceByProduct));
+            const price = parseFloat((productNb * priceByProduct).toFixed(2));
             res[pid] = {
               productNb,
               priceByProduct,
@@ -49,7 +49,6 @@ const actions = {
       ).then(({ body }) => {
         if (body !== 'OK') {
           const result = JSON.parse(body);
-          const message = result.message;
           const basket = result.basket;
           commit('setPreparedBasket', basket);
         }

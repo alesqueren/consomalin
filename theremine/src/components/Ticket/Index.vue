@@ -1,7 +1,17 @@
 <template lang="pug">
 div#ticket
-  h2 Validation de la commande {{preparing}}
+  h2 Validation de la commande
   .border
+  div.explanations(v-if="!preparing")
+    div.tip.tip1
+      span.deleted 23
+      span &nbsp;Il n'y a pas assez de stock
+    div.tip.tip2
+      span.deleted Produit
+      span &nbsp;Le produit n'est plus en stock
+    div.tip.tip5
+      span.deleted 3.00€
+      span &nbsp;Ancien prix
   .box
     img.logo(src="../../assets/images/logo.jpg")
     .date {{ today }}
@@ -10,7 +20,7 @@ div#ticket
       v-bind:key="gid")
     .total
       .text TOTAL :
-      .amount {{ total }}€
+      .amount {{ preparedBasket.totalPrice }}€
     .payment Retrait à {{ slotFrenchTime }}
     .payment Réglement au retrait
     .thanks Merci de votre visite, à bientôt !
@@ -28,11 +38,19 @@ export default {
     };
   },
   computed: {
-    mergedBasketContent() {
-      return this.$store.getters['basket/mergedBasketContent'];
+    basketBeforePreparation() {
+      return this.$store.state.basket.basketBeforePreparation;
     },
     preparedBasket() {
       return this.$store.state.basket.preparedBasket;
+    },
+    basketPrepared() {
+      return Object.keys(this.preparedBasket).length;
+    },
+    priceChanged() {
+      const ppTotalPrice = this.preparedBasket.totalPrice;
+      const pBpTotalPrice = this.basketBeforePreparation.totalPrice;
+      return this.basketPrepared && ppTotalPrice !== pBpTotalPrice;
     },
     details() {
       return this.$store.state.product.details;
@@ -132,11 +150,45 @@ h2 {
 .total .amount{
   float: right;
 }
+.payment{
+  clear: both;
+}
 .group{
   clear: both;
 }
 .thanks{
   margin-top: 30px;
   text-align: center;
+}
+.explanations {
+  margin-top: 45px;
+  text-align: center;
+}
+.tip {
+  float: left;
+  padding: 5px;
+}
+.tip1 {
+  width: 130px;
+}
+.tip2 {
+  width: 500px;
+}
+.tip5 {
+  width: 130px;
+}
+.deleted {
+  color: var(--danger);
+  text-decoration: line-through;
+}
+.sided {
+  position: absolute;
+  right: -100px;
+}
+.promoted {
+  color: var(--success);
+}
+.demoted {
+  color: var(--danger);
 }
 </style>
