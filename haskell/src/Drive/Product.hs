@@ -4,6 +4,7 @@ module Drive.Product (Product(..)
                      , summarize 
                      , mongoInsert 
                      , mongoFind
+                     , mongoFindOne 
                      , mongoSearch 
                      ) where
 
@@ -75,6 +76,10 @@ instance Val Product where
 
 mongoInsert :: [Product] -> IO ()
 mongoInsert = doInsert ProductResource
+
+mongoFindOne :: IO (Maybe Product)
+mongoFindOne =
+  doSelectOne ProductResource []
 
 mongoFind :: [Text] -> IO [Product]
 mongoFind pids =

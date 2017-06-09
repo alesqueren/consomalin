@@ -1,0 +1,36 @@
+<html>
+   <head>
+   <body>
+      <table border="0" cellpadding="0" cellspacing="0" height="100%" wid= th="100%" style="color:black;">
+         <tbody>
+            <tr>
+               <td align="center" valign="top">
+                  <table border="0" cellpadding="20" cellspacing="0" width="600" id="emailContainer">
+                     <tbody>
+                        <tr>
+                           <td colspan="2" align="center" color="grey">Confirmation de votre commande
+                        <tr>
+                           <td colspan="2" align="center" bgcolor="#00707f" style="color:white;font-size:32px;font-weight:bold;">CONSOMALIN
+                        <tr>
+                           <td colspan="2">
+                              <p>Bonjour.
+                              <p>Votre commande <b>N&#186;#{transactionNb}</b> a été transférée avec succés à Auchan.
+                        <tr style="background:#00a8bf">
+                           <td width="50%">
+                              <p style="text-align:center">Retrait le
+                              <p style="text-align:center;font-weight:bold">#{slot}
+                           <td width="50%">
+                              <p style="text-align:center">Retrait à
+                              <p style="text-align:center;font-weight:bold">Auchan Balma Drive<br> 70 Chemin de Gabardie <br> 31075 Toulouse
+                        <tr>
+                           <td>Pour retirer votre commande vous pouvez entrer votre numéro client :
+                           <td style="font-size:16px;font-weight:bold;">#{clientNb}
+                        <tr>
+                           <td>Ou scanner ce code barre :
+                           <td>
+                             <img src=#{barcode}> 
+                        <tr>
+                           <td colspan="2">
+                              <p>Nous vous remercions de la confiance que vous nous accordez.
+                              <p>A Bientôt.
+                              L'équipe Consomalin
