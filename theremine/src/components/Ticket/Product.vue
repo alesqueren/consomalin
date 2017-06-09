@@ -16,7 +16,7 @@
 <script>
 
 export default {
-  props: ['wid', 'pid'],
+  props: ['pid'],
   computed: {
     basketBeforePreparation() {
       return this.$store.state.basket.basketBeforePreparation;
@@ -47,60 +47,60 @@ export default {
     pp() {
       return this.preparedProduct;
     },
+    ppPrice() {
+      return this.preparedProduct;
+    },
     productDeleted() {
       let result = false;
-      if (this.pp.productNb === 0) {
+      if (this.basketPrepared && this.pp && this.pp.productNb === 0) {
         result = true;
-        this.$store.dispatch('selection/updateProduct', {
-          wid: this.wid,
-          pid: this.pid,
-          quantity: 0,
-        });
       }
       return result;
     },
     productPartiallyDeleted() {
       let result = false;
-      if (this.pp.productNb < this.pBp.productNb) {
+      if (this.basketPrepared && this.pp && this.pp.productNb < this.pBp.productNb) {
         result = this.preparedProduct.productNb;
-        this.$store.dispatch('selection/updateProduct', {
-          wid: this.wid,
-          pid: this.pid,
-          quantity: result,
-        });
       }
       return result;
     },
     productPromoted() {
       let result = false;
-      if (this.basketPrepared && this.pBp.priceByProduct > this.pp.priceByProduct) {
-        result = true;
+      try {
+        if (this.basketPrepared && this.pBp.priceByProduct > this.pp.priceByProduct) {
+          result = true;
+        }
+      } catch (e) {
+        return false;
       }
       return result;
     },
     productDemoted() {
       let result = false;
-      if (this.basketPrepared && this.pBp.priceByProduct < this.pBp.priceByProduct) {
-        result = true;
+      try {
+        if (this.basketPrepared && this.pBp.priceByProduct < this.pBp.priceByProduct) {
+          result = true;
+        }
+      } catch (e) {
+        return false;
       }
       return result;
     },
     quantity() {
-      const wish = this.$store.getters['wishGroup/getWish']({ wid: this.wid });
-      const product = this.$store.getters['selection/getProduct']({
-        gid: wish.gid,
-        wid: this.wid,
-        pid: this.pid,
-      });
-      return product.quantity;
+      const quantity = this.$store.getters['product/getTotalQuantity']({ pid: this.pid });
+      return quantity;
     },
     productInfos() {
       return this.$store.state.product.details[this.pid];
     },
     totalChange() {
       let result = false;
-      if (this.basketPrepared && this.pp.price !== this.pBp.price) {
-        result = true;
+      try {
+        if (this.basketPrepared && this.pp.price !== this.pBp.price) {
+          result = true;
+        }
+      } catch (e) {
+        return false;
       }
       return result;
     },

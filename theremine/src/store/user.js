@@ -41,6 +41,8 @@ const actions = {
             dispatch('product/fetchDetails', { ids: idsWithoutDetail }, { root: true }).then(() => {
               resolve();
             });
+          } else {
+            resolve();
           }
         });
         if (currentBasket.currentWishId) {
@@ -48,7 +50,7 @@ const actions = {
         } else {
           dispatch('sectionWishes/next', () => null, { root: true });
         }
-        resolve();
+        // resolve();
       });
     });
   },

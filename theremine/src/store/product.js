@@ -1,6 +1,41 @@
 import Vue from 'vue';
 import resources from '../resources';
 
+const globalGetters = {
+  getWishesAssociate: (state, getters, rootState, rootGetters) => ({ pid }) => {
+    const res = [];
+    const matchedWishes = rootGetters['selection/getMatchedWishes'];
+    if (matchedWishes) {
+      Object.keys(matchedWishes).map((wid, index) => {
+        const wish = matchedWishes[wid];
+        for (let i = 0; i < wish.length; i++) {
+          if (wish[i].pid === pid) {
+            res.push(wid);
+          }
+        }
+        return true;
+      });
+    }
+    return res;
+  },
+  getTotalQuantity: (state, getters, rootState, rootGetters) => ({ pid }) => {
+    let res = 0;
+    const matchedWishes = rootGetters['selection/getMatchedWishes'];
+    if (matchedWishes) {
+      Object.keys(matchedWishes).map((wid, index) => {
+        const wish = matchedWishes[wid];
+        for (let i = 0; i < wish.length; i++) {
+          if (wish[i].pid === pid) {
+            res += wish[i].quantity;
+          }
+        }
+        return true;
+      });
+    }
+    return res;
+  },
+};
+
 const actions = {
   fetchDetails: ({ commit }, { ids }) =>
     new Promise((resolve) => {
@@ -30,6 +65,12 @@ const actions = {
       });
     }
   },
+
+  addProductInMultipleWish: ({ commit, state }, { pid }) => {
+    if (!state.productInMultipleWish[pid]) {
+      commit('addProductInMultipleWish', { pid });
+    }
+  },
 };
 
 const mutations = {
@@ -45,6 +86,12 @@ const mutations = {
   addSearch: (state, { name, products }) => {
     Vue.set(state.searchs, name, products);
   },
+
+  addProductInMultipleWish: (state, { pid }) => {
+    Vue.set(state.productInMultipleWish, pid, true);
+    Vue.set(state.productInMultipleWish, 'tmp');
+    delete state.productInMultipleWish.tmp;
+  },
 };
 
 export default {
@@ -52,7 +99,9 @@ export default {
   state: {
     searchs: {},
     details: {},
+    productInMultipleWish: {},
   },
+  getters: globalGetters,
   actions,
   mutations,
 };

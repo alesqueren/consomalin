@@ -2,7 +2,7 @@ import Vue from 'vue';
 import resources from '../resources';
 
 const globalGetters = {
-  mergedBasketContent: (state, rootGetters, rootState) => {
+  mergedBasketProducts: (state, rootGetters, rootState) => {
     const basket = rootState.selection.basket;
     const details = rootState.product.details;
     const res = {};
@@ -16,14 +16,17 @@ const globalGetters = {
           if (details[pid]) {
             let productNb = parseInt(product.quantity, 10);
             const priceByProduct = parseFloat(details[pid].price);
+            let isMultiple = false;
             if (res[pid]) {
               productNb += parseInt(res[pid].productNb, 10);
+              isMultiple = true;
             }
             const price = parseFloat((productNb * priceByProduct).toFixed(2));
             res[pid] = {
               productNb,
               priceByProduct,
               price,
+              isMultiple,
             };
           }
         }
@@ -36,13 +39,13 @@ const globalGetters = {
 const actions = {
   prepareOrder({ commit, rootGetters, rootState }) {
     return new Promise((resolve) => {
-      const mergedBasketContent = rootGetters['basket/mergedBasketContent'];
-      commit('setBasketBeforePreparation', mergedBasketContent);
+      const mergedBasketProducts = rootGetters['basket/mergedBasketProducts'];
+      commit('setBasketBeforePreparation', mergedBasketProducts);
       resources.prepareOrder.save(
         {
           basket: {
             totalPrice: parseFloat(rootGetters['transaction/basketAmount']),
-            products: mergedBasketContent,
+            products: mergedBasketProducts,
           },
           slotId: rootState.singleton.selectedSlot.id,
         },
@@ -51,9 +54,24 @@ const actions = {
           const result = JSON.parse(body);
           const basket = result.basket;
           commit('setPreparedBasket', basket);
+          const products = basket.products;
+          const matchedWishes = rootGetters['selection/getMatchedWishes'];
+          Object.keys(matchedWishes).map((wid, index) => {
+            const wish = matchedWishes[wid];
+            for (let i = 0; i < wish.length; i++) {
+              const pid = wish[i].pid;
+              if (products[pid]) {
+                console.log('pid in da basket');
+              }
+            }
+            return true;
+          });
+          // dispatch('sectionWishes/update',
+          //  () => commit('unselectGroup', { gid }),
+          //  { root: true });
         }
         resolve();
-        resolve();
+        // return true;
       });
     });
   },

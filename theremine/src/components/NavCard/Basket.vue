@@ -12,7 +12,8 @@
         span(v-else-if="matchedWishNb === 1" transition="fadeOut") {{matchedWishNb}} choisi<br/>
         span(v-else-if="matchedWishNb > 1" transition="fadeOut") {{matchedWishNb}} choisis<br/>
       div.right-part.total(v-if="matchedWishNb")
-        span {{total}}&nbsp;€
+        span(v-if="!basketIsPrepared") {{total}}&nbsp;€
+        span(v-if="basketIsPrepared") {{basketPreparedPrice}}&nbsp;€
 </template>
 
 <script>
@@ -30,6 +31,15 @@ export default {
     },
     isBasketFull() {
       return this.matchedWishNb && this.matchedWishNb === this.selectedWishNb;
+    },
+    preparedBasket() {
+      return this.$store.state.basket.preparedBasket;
+    },
+    basketIsPrepared() {
+      return Object.keys(this.preparedBasket).length;
+    },
+    basketPreparedPrice() {
+      return this.preparedBasket.totalPrice;
     },
   },
   methods: {

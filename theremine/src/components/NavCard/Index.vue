@@ -74,8 +74,10 @@
 
     div(v-if="routeName === 'ticket'")
       router-link(:to='{ name: "confirmation" }')
-        span.input-group-addon.nav-btn.prefered.specialContent
-          span Je valide ma commande de {{ total }}€ à {{ frenchTime }}
+        span.input-group-addon.nav-btn.prefered.specialContent(v-if="basketIsPrepared")
+          span Je valide ma commande de {{ basketPreparedPrice }}€ à {{ frenchTime }}
+      span.input-group-addon.nav-btn.prefered.inactive(v-if="!basketIsPrepared")
+        span Veuillez patienter..
           
       router-link(:to='{ name: "withdraw" }')
         span.input-group-addon.nav-btn
@@ -133,6 +135,15 @@ export default {
       } catch (e) {
         return false;
       }
+    },
+    preparedBasket() {
+      return this.$store.state.basket.preparedBasket;
+    },
+    basketIsPrepared() {
+      return Object.keys(this.preparedBasket).length;
+    },
+    basketPreparedPrice() {
+      return this.preparedBasket.totalPrice;
     },
     total() {
       return this.$store.getters['transaction/basketAmount'];
@@ -207,5 +218,13 @@ a{
   padding: 13px;
   min-height: 47px;
   height: auto;
+}
+.inactive{
+  cursor: default !important;
+  color: black !important;
+}
+.inactive{
+  cursor: default !important;
+  color: grey !important;
 }
 </style>

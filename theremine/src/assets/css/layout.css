@@ -59,7 +59,7 @@ a:hover {
   font-weight: bolder;
   background-color: var(--success);
 }
-.nav-btn.prefered:hover {
+.nav-btn.prefered:not(.inactive):hover {
   background-color: var(--color3-3);
 }
 /*LIST*/

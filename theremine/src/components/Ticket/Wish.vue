@@ -1,7 +1,7 @@
 <template lang="pug">
   .products
-    Product(v-for="pid in productIds" 
-      v-bind:wid="wid" 
+    Product(v-for="pid in productIds"
+      v-if="!productHasMultipleWish(pid)"
       v-bind:pid="pid" 
       v-bind:key="pid")
 </template>
@@ -24,6 +24,15 @@ export default {
     productIds() {
       const products = this.$store.state.selection.basket[this.wish.gid][this.wish.id];
       return products.map(p => p.pid).reverse();
+    },
+  },
+  methods: {
+    productHasMultipleWish(pid) {
+      if (this.$store.getters['product/getWishesAssociate']({ pid }).length > 1) {
+        this.$store.dispatch('product/addProductInMultipleWish', { pid });
+        return true;
+      }
+      return false;
     },
   },
   components: { Product },

@@ -2,6 +2,9 @@
 div#ticket
   h2 Validation de la commande
   .border
+  div.explanations(v-if="preparing") 
+    i(class="text-center fa fa-spinner fa-spin fa-5x" style="width: 100%;")
+    i(class="text-center" style="width: 100%;display: inline-block;") Nous synchronisons votre commande avec Auchan
   div.explanations(v-if="!preparing")
     div.tip.tip1
       span.deleted 23
@@ -18,9 +21,14 @@ div#ticket
     Group.group(v-for="gid in selectedGroups" 
       v-bind:gid="gid" 
       v-bind:key="gid")
+    div(style="clear:both;") Produits double
+    Product.coucou(v-for="(pid, key, i) in productInMultipleWish"
+      v-bind:pid="key" 
+      v-bind:key="key")
     .total
       .text TOTAL :
-      .amount {{ preparedBasket.totalPrice }}€
+      .amount(v-if="preparing") {{ total }}€
+      .amount(v-if="!preparing") {{ preparedBasket.totalPrice }}€
     .payment Retrait à {{ slotFrenchTime }}
     .payment Réglement au retrait
     .thanks Merci de votre visite, à bientôt !
@@ -28,6 +36,7 @@ div#ticket
 
 <script>
 import Group from './Group';
+import Product from './Product';
 import date from '../Utils/date';
 import router from '../../router';
 
@@ -38,6 +47,10 @@ export default {
     };
   },
   computed: {
+    productInMultipleWish() {
+      console.log(this.$store.state.product.productInMultipleWish);
+      return this.$store.state.product.productInMultipleWish;
+    },
     basketBeforePreparation() {
       return this.$store.state.basket.basketBeforePreparation;
     },
@@ -96,7 +109,7 @@ export default {
       this.preparing = false;
     });
   },
-  components: { Group },
+  components: { Group, Product },
 };
 </script>
 
@@ -175,7 +188,7 @@ h2 {
   width: 500px;
 }
 .tip5 {
-  width: 130px;
+  width: 120px;
 }
 .deleted {
   color: var(--danger);
