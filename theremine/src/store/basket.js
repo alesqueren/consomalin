@@ -56,12 +56,12 @@ const actions = {
           commit('setPreparedBasket', basket);
           const products = basket.products;
           const matchedWishes = rootGetters['selection/getMatchedWishes'];
-          Object.keys(matchedWishes).map((wid, index) => {
+          Object.keys(matchedWishes).map((wid) => {
             const wish = matchedWishes[wid];
             for (let i = 0; i < wish.length; i++) {
               const pid = wish[i].pid;
               if (products[pid]) {
-                console.log('pid in da basket');
+                // console.log('pid in da basket');
               }
             }
             return true;

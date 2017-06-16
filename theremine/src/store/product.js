@@ -6,7 +6,7 @@ const globalGetters = {
     const res = [];
     const matchedWishes = rootGetters['selection/getMatchedWishes'];
     if (matchedWishes) {
-      Object.keys(matchedWishes).map((wid, index) => {
+      Object.keys(matchedWishes).map((wid) => {
         const wish = matchedWishes[wid];
         for (let i = 0; i < wish.length; i++) {
           if (wish[i].pid === pid) {
@@ -18,11 +18,30 @@ const globalGetters = {
     }
     return res;
   },
+  getProductWithMultipleWishes: (state, getters, rootState, rootGetters) => {
+    const pidsReaded = [];
+    const res = {};
+    const matchedWishes = rootGetters['selection/getMatchedWishes'];
+    if (matchedWishes) {
+      Object.keys(matchedWishes).map((wid) => {
+        const wish = matchedWishes[wid];
+        for (let i = 0; i < wish.length; i++) {
+          const pid = wish[i].pid;
+          if (pidsReaded[pid]) {
+            res[pid] = true;
+          }
+          pidsReaded[pid] = true;
+        }
+        return true;
+      });
+    }
+    return res;
+  },
   getTotalQuantity: (state, getters, rootState, rootGetters) => ({ pid }) => {
     let res = 0;
     const matchedWishes = rootGetters['selection/getMatchedWishes'];
     if (matchedWishes) {
-      Object.keys(matchedWishes).map((wid, index) => {
+      Object.keys(matchedWishes).map((wid) => {
         const wish = matchedWishes[wid];
         for (let i = 0; i < wish.length; i++) {
           if (wish[i].pid === pid) {
@@ -65,12 +84,6 @@ const actions = {
       });
     }
   },
-
-  addProductInMultipleWish: ({ commit, state }, { pid }) => {
-    if (!state.productInMultipleWish[pid]) {
-      commit('addProductInMultipleWish', { pid });
-    }
-  },
 };
 
 const mutations = {
@@ -87,11 +100,6 @@ const mutations = {
     Vue.set(state.searchs, name, products);
   },
 
-  addProductInMultipleWish: (state, { pid }) => {
-    Vue.set(state.productInMultipleWish, pid, true);
-    Vue.set(state.productInMultipleWish, 'tmp');
-    delete state.productInMultipleWish.tmp;
-  },
 };
 
 export default {
@@ -99,7 +107,6 @@ export default {
   state: {
     searchs: {},
     details: {},
-    productInMultipleWish: {},
   },
   getters: globalGetters,
   actions,

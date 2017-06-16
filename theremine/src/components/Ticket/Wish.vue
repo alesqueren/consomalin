@@ -29,7 +29,6 @@ export default {
   methods: {
     productHasMultipleWish(pid) {
       if (this.$store.getters['product/getWishesAssociate']({ pid }).length > 1) {
-        this.$store.dispatch('product/addProductInMultipleWish', { pid });
         return true;
       }
       return false;
