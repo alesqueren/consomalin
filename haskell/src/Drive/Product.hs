@@ -75,7 +75,7 @@ instance Val Product where
   cast' _ = Nothing
 
 mongoInsert :: [Product] -> IO ()
-mongoInsert = doInsert ProductResource
+mongoInsert = doInsert ProductTmpResource
 
 mongoFindOne :: IO (Maybe Product)
 mongoFindOne =

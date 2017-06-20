@@ -1,17 +1,20 @@
-module Drive.Bs.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doModify, doAggregate, chunkAtDepth) where
+{-# LANGUAGE ScopedTypeVariables #-}
+
+module Drive.Bs.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doModify, doAggregate, chunkAtDepth, doMoveCollection, doDropCollection) where
 
 import           Protolude                    hiding (Product, (<>), find, sort, Selector)
 import           Database.MongoDB
 import           Utils.Env
 import qualified Data.Attoparsec.Text as A
 import qualified Data.Text as T
-
+import           Control.Exception as E
+import           Data.List (nub)
 
 data MongoException = DocNotFoundException | ParseException
   deriving (Show, Typeable)
 instance Exception MongoException
 
-data MongoResource = UserResource | AccountResource | ProductResource | AttendanceResource
+data MongoResource = UserResource | AccountResource | ProductTmpResource | ProductResource | AttendanceResource
 
 class Queryable a where
   getPath :: a -> (Text, Text)
@@ -19,6 +22,7 @@ class Queryable a where
 instance Queryable MongoResource where
   getPath UserResource = ("users", "user")
   getPath AccountResource = ("users", "account")
+  getPath ProductTmpResource = ("auchan", "product_tmp")
   getPath ProductResource = ("auchan", "product")
   getPath AttendanceResource = ("auchan", "attendance")
 
@@ -45,6 +49,12 @@ doSelectOne r s = do
     action = findOne (select s colName)
     doWithPipe pipe = access pipe master dbName action
 
+doActionTmp :: (Pipe -> IO a) -> IO ()
+doActionTmp a = do
+  h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
+  _ <- withMongoPipe (host $ T.unpack h) a
+  return ()
+
 doAction :: Val v => (Pipe -> IO [Document]) -> IO [v]
 doAction a = do
   h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
@@ -61,14 +71,21 @@ doSelect r mkQuery = doAction doWithPipe
 doInsert :: (Queryable r, Val v) => r -> [v] -> IO ()
 doInsert r values = do
   h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
-  e <- withMongoPipe (host $ T.unpack h) doWithPipe
-  print e
-
-    where
-      (dbName, colName) = getPath r
-      docs = map (typed . val) values
-      action = insertMany_ colName docs
-      doWithPipe pipe = access pipe master dbName action
+  -- putText (show $ length docs)
+  -- putText (show $ head docs)
+  -- putText (show $ head $ (map (lookup "_id") docs :: [Maybe Text]))
+  putText (show $ length $ nub $ catMaybes $ (map (lookup "_id") docs :: [Maybe Text]))
+  -- putText (show $ (map (lookup "_id") docs :: [Maybe Text]))
+  catch 
+    (withMongoPipe (host $ T.unpack h) doWithPipe) 
+    (\(_ :: E.SomeException) -> do
+      putText "Mongo insertion error"
+      return ())
+  where
+    (dbName, colName) = getPath r
+    docs = map (typed . val) values
+    action = insertAll_ colName docs
+    doWithPipe pipe = access pipe master dbName action
 
 doModify :: (Queryable r) => r -> [(Selector, Document, [UpdateOption])] -> IO ()
 doModify r query = do
@@ -87,3 +104,21 @@ doAggregate r query = doAction doWithPipe
     (dbName, colName) = getPath r 
     action = aggregate colName query
     doWithPipe pipe = access pipe master dbName action
+
+doDropCollection :: (Queryable r) => r -> IO ()
+doDropCollection r = do
+  _ <- doActionTmp drop
+  return ()
+  where
+    (dbName, colName) = getPath r
+    drop pipe = access pipe master dbName $ dropCollection colName
+
+doMoveCollection :: (Queryable r) => r -> r -> IO ()
+doMoveCollection fromR toR = do
+  _ <- doDropCollection toR
+  _ <- doActionTmp rename
+  return ()
+  where
+    (fromDbName, fromColName) = getPath fromR
+    (toDbName, toColName) = getPath toR
+    rename pipe = access pipe master fromDbName $ renameCollection fromColName toColName

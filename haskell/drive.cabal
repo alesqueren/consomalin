@@ -102,102 +102,102 @@ executable byte-diver
   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
 
-executable kiva
-  hs-source-dirs:      services/kiva
-  main-is:             Main.hs
-  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
-  build-depends:       base
-                     , protolude
-                     , drive
-                     , attoparsec
-                     , warp
-                     , aeson
-                     , text
-                     , scotty
-  default-language:    Haskell2010
-  default-extensions:  OverloadedStrings, NoImplicitPrelude
-
-executable wendy
-  hs-source-dirs:      services/wendy
-  main-is:             Main.hs
-  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
-  build-depends:       base
-                     , protolude
-                     , drive
-                     , attoparsec
-                     , warp
-                     , aeson
-                     , text
-                     , scotty
-                     , http-types
-                     , containers
-  default-language:    Haskell2010
-  default-extensions:  OverloadedStrings, NoImplicitPrelude
-
-executable metronome
-  hs-source-dirs:      services/metronome
-  main-is:             Main.hs
-  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
-  build-depends:       base
-                     , protolude
-                     , drive
-                     , scotty
-                     , aeson
-                     , attoparsec
-                     , wai
-                     , warp
-                     , time
-  default-language:    Haskell2010
-  default-extensions:  OverloadedStrings, NoImplicitPrelude
-
-executable lyrist
-  hs-source-dirs:      services/lyrist
-  main-is:             Main.hs
-  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
-  build-depends:       base
-                     , protolude
-                     , drive
-                     , HaskellNet
-                     , HaskellNet-SSL
-                     , imap
-                     , connection
-                     , mime
-                     , text
-  default-language:    Haskell2010
-  default-extensions:  OverloadedStrings, NoImplicitPrelude
-
-test-suite byte-diver-test
-  type:                exitcode-stdio-1.0
-  hs-source-dirs:      test
-  main-is:             test.hs
-  other-modules:       Drive.ProductTest
-  build-depends:       base
-                     , protolude
-                     , mongoDB
-                     , quickcheck-text
-                     , tasty
-                     , tasty-hunit
-                     , tasty-quickcheck
-                     , text
-                     , wl-pprint-text
-  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
-  default-language:    Haskell2010
-  default-extensions:  OverloadedStrings, NoImplicitPrelude
-
-test-suite kiva-test
-  type:                exitcode-stdio-1.0
-  hs-source-dirs:      test
-  main-is:             test.hs
-  other-modules:       Drive.ProductTest
-  build-depends:       base
-                     , protolude
-                     , mongoDB
-                     , quickcheck-text
-                     , tasty
-                     , tasty-hunit
-                     , tasty-quickcheck
-                     , text
-                     , wl-pprint-text
-  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
-  default-language:    Haskell2010
+-- executable kiva
+--   hs-source-dirs:      services/kiva
+--   main-is:             Main.hs
+--   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+--   build-depends:       base
+--                      , protolude
+--                      , drive
+--                      , attoparsec
+--                      , warp
+--                      , aeson
+--                      , text
+--                      , scotty
+--   default-language:    Haskell2010
+--   default-extensions:  OverloadedStrings, NoImplicitPrelude
+-- 
+-- executable wendy
+--   hs-source-dirs:      services/wendy
+--   main-is:             Main.hs
+--   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+--   build-depends:       base
+--                      , protolude
+--                      , drive
+--                      , attoparsec
+--                      , warp
+--                      , aeson
+--                      , text
+--                      , scotty
+--                      , http-types
+--                      , containers
+--   default-language:    Haskell2010
+--   default-extensions:  OverloadedStrings, NoImplicitPrelude
+-- 
+-- executable metronome
+--   hs-source-dirs:      services/metronome
+--   main-is:             Main.hs
+--   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+--   build-depends:       base
+--                      , protolude
+--                      , drive
+--                      , scotty
+--                      , aeson
+--                      , attoparsec
+--                      , wai
+--                      , warp
+--                      , time
+--   default-language:    Haskell2010
+--   default-extensions:  OverloadedStrings, NoImplicitPrelude
+-- 
+-- executable lyrist
+--   hs-source-dirs:      services/lyrist
+--   main-is:             Main.hs
+--   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+--   build-depends:       base
+--                      , protolude
+--                      , drive
+--                      , HaskellNet
+--                      , HaskellNet-SSL
+--                      , imap
+--                      , connection
+--                      , mime
+--                      , text
+--   default-language:    Haskell2010
+--   default-extensions:  OverloadedStrings, NoImplicitPrelude
+-- 
+-- test-suite byte-diver-test
+--   type:                exitcode-stdio-1.0
+--   hs-source-dirs:      test
+--   main-is:             test.hs
+--   other-modules:       Drive.ProductTest
+--   build-depends:       base
+--                      , protolude
+--                      , mongoDB
+--                      , quickcheck-text
+--                      , tasty
+--                      , tasty-hunit
+--                      , tasty-quickcheck
+--                      , text
+--                      , wl-pprint-text
+--   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+--   default-language:    Haskell2010
+--   default-extensions:  OverloadedStrings, NoImplicitPrelude
+-- 
+-- test-suite kiva-test
+--   type:                exitcode-stdio-1.0
+--   hs-source-dirs:      test
+--   main-is:             test.hs
+--   other-modules:       Drive.ProductTest
+--   build-depends:       base
+--                      , protolude
+--                      , mongoDB
+--                      , quickcheck-text
+--                      , tasty
+--                      , tasty-hunit
+--                      , tasty-quickcheck
+--                      , text
+--                      , wl-pprint-text
+--   ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+--   default-language:    Haskell2010
   default-extensions:  OverloadedStrings, NoImplicitPrelude
