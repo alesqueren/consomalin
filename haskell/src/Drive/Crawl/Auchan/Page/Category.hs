@@ -63,4 +63,5 @@ loadAndExtract url extractor =
 
     -- Load and extract every pages of the current category
     itemByPage <- takeWhileM (not . null) (map (extractFromJson extractor . loadPage) [1,2..])
+
     return $ concat itemByPage

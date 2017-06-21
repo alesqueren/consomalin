@@ -15,11 +15,8 @@ import           Drive.Bs.Mongo
 productsInsert :: (MonadIO m) => ConduitM [Product] Void m ()
 productsInsert = evalStateLC Set.empty (awaitForever ins) where
   ins pds = do
-    liftIO $ putText "toto"
-    liftIO $ putText $ show $ length pds
     seenIds <- lift get
     let dedup = filter (not . wasSeen seenIds) pds
-    liftIO $ putText $ show $ length dedup
     lift $ forM_ dedup (modify . Set.insert . pid)
     liftIO $ mongoInsert dedup
       where

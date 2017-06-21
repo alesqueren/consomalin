@@ -8,7 +8,6 @@ import           Utils.Env
 import qualified Data.Attoparsec.Text as A
 import qualified Data.Text as T
 import           Control.Exception as E
-import           Data.List (nub)
 
 data MongoException = DocNotFoundException | ParseException
   deriving (Show, Typeable)
@@ -71,11 +70,6 @@ doSelect r mkQuery = doAction doWithPipe
 doInsert :: (Queryable r, Val v) => r -> [v] -> IO ()
 doInsert r values = do
   h <- fromEnvOr "MONGO_HOST" A.takeText "127.0.0.1"
-  -- putText (show $ length docs)
-  -- putText (show $ head docs)
-  -- putText (show $ head $ (map (lookup "_id") docs :: [Maybe Text]))
-  putText (show $ length $ nub $ catMaybes $ (map (lookup "_id") docs :: [Maybe Text]))
-  -- putText (show $ (map (lookup "_id") docs :: [Maybe Text]))
   catch 
     (withMongoPipe (host $ T.unpack h) doWithPipe) 
     (\(_ :: E.SomeException) -> do

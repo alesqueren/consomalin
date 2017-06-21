@@ -47,14 +47,14 @@ crawlNode ShopChoicePage =
 
 crawlNode (HomePage shopName) =
   do
-    -- $(logDebug) $ "[HomePage] " <> shopName
+    $(logDebug) $ "[HomePage] " <> shopName
     shopUrl <- L.doChooseDrive shopName
     catUrls <- H.extractCategoryUrls shopUrl
     return $ map CategoryPage catUrls
 
 crawlNode (CategoryPage url) =
   do
-    -- $(logDebug) $ "[CategoryPage] " <> url
+    $(logDebug) $ "[CategoryPage] " <> url
     products <- C.loadAndExtract url extractProducts
     return $ map AuchanDataPage products
 
@@ -63,6 +63,7 @@ crawlNode (AuchanDataPage sitePd) =
     -- $(logDebug) $ "[AuchanDataPage] " <> show sitePd
     page <- M.load $ siteId sitePd
     let pd = makeProduct sitePd $ extractApiProduct page
+    -- $(logDebug) $ show pd
     return [ProductPage pd]
 
 crawlNode _ = return []
