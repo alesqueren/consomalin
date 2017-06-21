@@ -228,6 +228,7 @@ a:hover {
   height: 43px;
   width: 83px;
   margin-left: 50px;
+  cursor: pointer;
 }
 #header .inlive {
   margin-left: 35px;
