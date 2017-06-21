@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Drive.Bs.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doModify, doAggregate, chunkAtDepth, doMoveCollection, doDropCollection) where
+module Drive.Bs.Mongo (MongoResource(..), doSelectOne, doSelect, doInsert, doModify, doAggregate, chunkAtDepth, doMoveCollection, doDropCollection, doCreateSearchIndex) where
 
 import           Protolude                    hiding (Product, (<>), find, sort, Selector)
 import           Database.MongoDB
@@ -116,3 +116,13 @@ doMoveCollection fromR toR = do
     (fromDbName, fromColName) = getPath fromR
     (toDbName, toColName) = getPath toR
     rename pipe = access pipe master fromDbName $ renameCollection fromColName toColName
+
+doCreateSearchIndex :: (Queryable r) => r -> [Text] -> IO ()
+doCreateSearchIndex r names = do
+  _ <- doActionTmp createIdx
+  return ()
+  where
+    (dbName, colName) = getPath r
+    idx = index colName $
+      concatMap (\n -> [ n =: ("text" :: Text) ]) names
+    createIdx pipe = access pipe master dbName $ createIndex idx
