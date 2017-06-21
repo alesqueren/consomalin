@@ -42,7 +42,7 @@ data Node = ShopChoicePage
 crawlNode :: Node -> Crawl [Node]
 crawlNode ShopChoicePage =
   do
-    -- $(logDebug) "[ShopChoicePage]"
+    $(logDebug) "[ShopChoicePage]"
     return [HomePage "Toulouse-954"]
 
 crawlNode (HomePage shopName) =
