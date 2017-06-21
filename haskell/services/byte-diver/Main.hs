@@ -30,4 +30,5 @@ main = do
     crawl
     .| chunksOf 50
     .| productsInsert
+  doCreateSearchIndex ProductTmpResource ["name"]
   doMoveCollection ProductTmpResource ProductResource
