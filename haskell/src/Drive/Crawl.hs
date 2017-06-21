@@ -179,7 +179,7 @@ extractFromJson extract page = do
   return $ maybe [] extract $ decode' p
 
 -- TODO:
--- data EntityScraper elements entity = EntityScraper !!
+-- data EntityScraper elements entity = EntityScraper
 -- scrapingData:
 --   time:
 --     selector: Selector

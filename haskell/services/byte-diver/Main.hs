@@ -10,7 +10,7 @@ import           Control.Monad.Trans.State
 import           Drive.Crawl
 import           Drive.Crawl.Auchan
 import           Drive.Product
-
+import           Drive.Bs.Mongo
 
 productsInsert :: (MonadIO m) => ConduitM [Product] Void m ()
 productsInsert = evalStateLC Set.empty (awaitForever ins) where
@@ -25,12 +25,9 @@ productsInsert = evalStateLC Set.empty (awaitForever ins) where
 main :: IO ()
 main = do
   SIO.hSetBuffering stdout SIO.NoBuffering
+  doDropCollection ProductTmpResource 
   runConduitCrawl $
     crawl
     .| chunksOf 50
     .| productsInsert
-  -- man <- newManager tlsManagerSettings
-  -- runNetCrawl man $ runConduit $
-  --   crawl
-  --   .| chunksOf 50
-  --   .| productsInsert
+  doMoveCollection ProductTmpResource ProductResource

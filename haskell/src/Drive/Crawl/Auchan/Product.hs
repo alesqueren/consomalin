@@ -48,19 +48,19 @@ readSiteId txt =
 makeSiteProduct :: Map Text Text -> Maybe SiteProduct
 makeSiteProduct elementsMap =
   do
-    [idTxt, priceTxt, nameTxt, imageTxt, priceByQuantityTxt, quantityUnitTxt] 
+    [idTxt, nameTxt, imageTxt, priceTxt, priceByQuantityTxt, quantityUnitTxt]
       <- mapM (`lookup` elementsMap)
         ["id", "name", "image", "price", "priceByQ", "qtyUnit"]
     id <- readSiteId idTxt
     pr <- readPrice priceTxt
     prByQ <- readPrice priceByQuantityTxt
-    return SiteProduct {
-      siteId = id,
-      siteName = nameTxt,
-      siteImageUrl = T.append "https://www.auchandrive.fr" imageTxt,
-      sitePrice = pr,
-      sitePriceByQuantity = prByQ,
-      siteQuantityUnit = quantityUnitTxt
+    return SiteProduct
+      { siteId = id
+      , siteName = nameTxt
+      , siteImageUrl = T.append "https://www.auchandrive.fr" imageTxt
+      , sitePrice = pr
+      , sitePriceByQuantity = prByQ
+      , siteQuantityUnit = quantityUnitTxt
     }
 
 makeProduct :: SiteProduct -> Maybe ApiProduct -> Product

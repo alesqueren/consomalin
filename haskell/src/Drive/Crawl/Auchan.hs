@@ -42,7 +42,7 @@ data Node = ShopChoicePage
 crawlNode :: Node -> Crawl [Node]
 crawlNode ShopChoicePage =
   do
-    $(logDebug) "[ShopChoicePage]"
+    -- $(logDebug) "[ShopChoicePage]"
     return [HomePage "Toulouse-954"]
 
 crawlNode (HomePage shopName) =
@@ -60,9 +60,10 @@ crawlNode (CategoryPage url) =
 
 crawlNode (AuchanDataPage sitePd) =
   do
-    $(logDebug) $ "[AuchanDataPage] " <> show sitePd
+    -- $(logDebug) $ "[AuchanDataPage] " <> show sitePd
     page <- M.load $ siteId sitePd
     let pd = makeProduct sitePd $ extractApiProduct page
+    -- $(logDebug) $ show pd
     return [ProductPage pd]
 
 crawlNode _ = return []
