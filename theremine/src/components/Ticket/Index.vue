@@ -2,10 +2,10 @@
 div#ticket
   h2 Validation de la commande
   .border
-  div.explanations(v-if="preparing") 
+  div.explanations(v-if="!isBasketPrepared") 
     i(class="text-center fa fa-spinner fa-spin fa-5x" style="width: 100%;")
     i(class="text-center" style="width: 100%;display: inline-block;") Nous synchronisons votre commande avec Auchan
-  div.explanations.alert.alert-warning(v-if="!preparing")
+  div.explanations.alert.alert-warning(v-if="isBasketPrepared")
     div Suite à la syncronisation, des événements on pu survenir.
     div.tip.tip1
       div Stocks insuffisants
@@ -19,7 +19,7 @@ div#ticket
       div Promotion/augmentation
       span.deleted X.XX€
       span &nbsp;Ancien prix
-  .box(v-bind:class="{'margintop': preparing}")
+  .box(v-bind:class="{'margintop': !isBasketPrepared}")
     img.logo(src="../../assets/images/logo.jpg")
     .date {{ today }}
     Group.group(v-for="gid in selectedGroups" 
@@ -31,8 +31,7 @@ div#ticket
       v-bind:key="key")
     .total
       .text TOTAL :
-      .amount(v-if="preparing") {{ total }}€
-      .amount(v-if="!preparing") {{ preparedBasket.totalPrice }}€
+      .amount {{ total }}€
     .payment Retrait à {{ slotFrenchTime }}
     .payment Réglement au retrait
     .thanks Merci de votre visite, à bientôt !
@@ -45,11 +44,6 @@ import date from '../Utils/date';
 import router from '../../router';
 
 export default {
-  data() {
-    return {
-      preparing: true,
-    };
-  },
   computed: {
     productInMultipleWish() {
       return this.$store.getters['product/getProductWithMultipleWishes'];
@@ -57,14 +51,17 @@ export default {
     basketBeforePreparation() {
       return this.$store.state.basket.basketBeforePreparation;
     },
-    preparedBasket() {
-      return this.$store.state.basket.preparedBasket;
+    basketAfterPreparation() {
+      return this.$store.state.basket.basketAfterPreparation;
     },
-    basketPrepared() {
-      return Object.keys(this.preparedBasket).length;
+    preparedBasket() {
+      return this.$store.state.basket.preparationDiff;
+    },
+    isBasketPrepared() {
+      return this.$store.state.basket.isBasketPrepared;
     },
     priceChanged() {
-      const ppTotalPrice = this.preparedBasket.totalPrice;
+      const ppTotalPrice = this.preparationDiff.totalPrice;
       const pBpTotalPrice = this.basketBeforePreparation.totalPrice;
       return this.basketPrepared && ppTotalPrice !== pBpTotalPrice;
     },
@@ -101,15 +98,21 @@ export default {
       return today;
     },
     total() {
-      return this.$store.getters['transaction/basketAmount'];
+      let res = this.$store.getters['transaction/basketAmount'];
+      if (this.basketPrepared && this.preparationDiff.totalPrice) {
+        res = this.preparationDiff.totalPrice;
+      }
+      return res;
     },
   },
   created() {
     if (!Object.keys(this.selectedWishes).length) {
       router.push({ name: 'basket' });
     }
+
+    this.$store.dispatch('basket/setIsPasketPrepared', false);
+
     this.$store.dispatch('basket/prepareOrder').then(() => {
-      this.preparing = false;
     }, () => {
       router.push({ name: 'withdraw' });
     });

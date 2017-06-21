@@ -13,7 +13,7 @@
         span(v-else-if="matchedWishNb > 1" transition="fadeOut") {{matchedWishNb}} choisis<br/>
       div.right-part.total(v-if="matchedWishNb")
         span(v-if="!basketIsPrepared") {{total}}&nbsp;€
-        span(v-if="basketIsPrepared") {{basketPreparedPrice}}&nbsp;€
+        span(v-if="basketIsPrepared") {{total}}&nbsp;€
 </template>
 
 <script>
@@ -26,20 +26,21 @@ export default {
     matchedWishNb() {
       return Object.keys(this.$store.getters['selection/getMatchedWishes']).length;
     },
-    total() {
-      return this.$store.getters['transaction/basketAmount'];
-    },
     isBasketFull() {
       return this.matchedWishNb && this.matchedWishNb === this.selectedWishNb;
     },
-    preparedBasket() {
-      return this.$store.state.basket.preparedBasket;
+    preparationDiff() {
+      return this.$store.state.basket.preparationDiff;
     },
     basketIsPrepared() {
-      return Object.keys(this.preparedBasket).length;
+      return this.$store.state.basket.isBasketPrepared;
     },
-    basketPreparedPrice() {
-      return this.preparedBasket.totalPrice;
+    total() {
+      let res = this.$store.getters['transaction/basketAmount'];
+      if (this.basketIsPrepared && this.preparationDiff.totalPrice) {
+        res = this.preparationDiff.totalPrice;
+      }
+      return res;
     },
   },
   methods: {

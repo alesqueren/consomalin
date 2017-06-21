@@ -2,7 +2,7 @@ import Vue from 'vue';
 import resources from '../resources';
 
 const globalGetters = {
-  mergedBasketProducts: (state, rootGetters, rootState) => {
+  mergedBasketProductsBeforePreparation: (state, rootGetters, rootState) => {
     const basket = rootState.selection.basket;
     const details = rootState.product.details;
     const res = {};
@@ -16,22 +16,47 @@ const globalGetters = {
           if (details[pid]) {
             let productNb = parseInt(product.quantity, 10);
             const priceByProduct = parseFloat(details[pid].price);
-            let isMultiple = false;
             if (res[pid]) {
               productNb += parseInt(res[pid].productNb, 10);
-              isMultiple = true;
             }
             const price = parseFloat((productNb * priceByProduct).toFixed(2));
             res[pid] = {
               productNb,
               priceByProduct,
               price,
-              isMultiple,
             };
           }
         }
       }
     }
+    res.total = rootGetters['transaction/basketAmount'];
+    return res;
+  },
+  mergedBasketProductsAfterPreparation: (state, rootGetters) => {
+    const mergeBasketB = state.basketBeforePreparation;
+    const diff = state.preparationDiff;
+    const diffProducts = diff.products;
+    const res = {};
+    const fieldsToMerge = ['productNb', 'priceByProduct', 'price'];
+    if (diffProducts) {
+      for (const pid in mergeBasketB) {
+        console.log('pid : ' + pid);
+        const product = mergeBasketB[pid];
+        res[pid] = {};
+        for (const fieldToMergeId in fieldsToMerge) {
+          const fieldToMerge = fieldsToMerge[fieldToMergeId];
+          console.log('fieldToMerge : ' + fieldToMerge);
+          const diffProduct = diffProducts[pid];
+          if (diffProduct && diffProduct[fieldToMerge]) {
+            console.log('fieldToMerge founded !');
+            res[pid][fieldToMerge] = diffProduct[fieldToMerge];
+          } else {
+            res[pid][fieldToMerge] = product[fieldToMerge];
+          }
+        }
+      }
+    }
+    res.total = diff.totalPrice ? diff.totalPrice : rootGetters['transaction/basketAmount'];
     return res;
   },
 };
@@ -39,7 +64,7 @@ const globalGetters = {
 const actions = {
   prepareOrder({ dispatch, commit, rootGetters, rootState }) {
     return new Promise((resolve, reject) => {
-      const mergedBasketProducts = rootGetters['basket/mergedBasketProducts'];
+      const mergedBasketProducts = rootGetters['basket/mergedBasketProductsBeforePreparation'];
       commit('setBasketBeforePreparation', mergedBasketProducts);
       resources.prepareOrder.save(
         {
@@ -52,11 +77,13 @@ const actions = {
       ).then(({ body }) => {
         if (body === 'Something went wrong') {
           reject();
+        } else if (body === 'OK') {
+          commit('setIsPasketPrepared', true);
         } else if (body !== 'OK') {
           const result = JSON.parse(body);
-          const basket = result.basket;
-          commit('setPreparedBasket', basket);
-          const products = basket.products;
+          const basketDiff = result.basket;
+          commit('setPreparationDiff', basketDiff);
+          const products = basketDiff.products;
           const matchedWishes = rootGetters['selection/getMatchedWishes'];
           const newQties = {};
           Object.keys(matchedWishes).map((wid) => {
@@ -98,14 +125,16 @@ const actions = {
             }
             return true;
           });
-          // dispatch('sectionWishes/update',
-          //  () => commit('unselectGroup', { gid }),
-          //  { root: true });
         }
+        commit('setIsPasketPrepared', true);
+        const mergedBasket2 = rootGetters['basket/mergedBasketProductsAfterPreparation'];
+        commit('setBasketAfterPreparation', mergedBasket2);
         resolve();
-        // return true;
       });
     });
+  },
+  setIsPasketPrepared({ commit }) {
+    commit('setIsPasketPrepared', false);
   },
 };
 
@@ -115,10 +144,18 @@ const mutations = {
     Vue.set(state.basketBeforePreparation, 'tmp');
     delete state.basketBeforePreparation.tmp;
   },
-  setPreparedBasket: (state, preparedBasket) => {
-    Vue.set(state, 'preparedBasket', preparedBasket);
-    Vue.set(state.preparedBasket, 'tmp');
-    delete state.preparedBasket.tmp;
+  setBasketAfterPreparation: (state, basketAfterPreparation) => {
+    Vue.set(state, 'basketAfterPreparation', basketAfterPreparation);
+    Vue.set(state.basketAfterPreparation, 'tmp');
+    delete state.basketAfterPreparation.tmp;
+  },
+  setPreparationDiff: (state, preparationDiff) => {
+    Vue.set(state, 'preparationDiff', preparationDiff);
+    Vue.set(state.preparationDiff, 'tmp');
+    delete state.preparationDiff.tmp;
+  },
+  setIsPasketPrepared: (state, isBasketPrepared) => {
+    Vue.set(state, 'isBasketPrepared', isBasketPrepared);
   },
 };
 
@@ -126,7 +163,10 @@ const mutations = {
 export default {
   namespaced: true,
   state: {
-    preparedBasket: {},
+    basketBeforePreparation: {},
+    preparationDiff: {},
+    basketAfterPreparation: {},
+    isBasketPrepared: false,
   },
   getters: globalGetters,
   actions,

@@ -18,48 +18,40 @@
 export default {
   props: ['pid'],
   computed: {
-    basketBeforePreparation() {
-      return this.$store.state.basket.basketBeforePreparation;
-    },
     productBeforePreparation() {
-      let result = {};
-      if (this.basketBeforePreparation && this.basketBeforePreparation) {
-        result = this.basketBeforePreparation[this.pid];
-      }
-      return result;
+      return this.$store.state.basket.basketBeforePreparation[this.pid];
     },
     pBp() {
       return this.productBeforePreparation;
     },
     preparedBasket() {
-      return this.$store.state.basket.preparedBasket;
+      return this.$store.state.basket.preparationDiff;
     },
-    basketPrepared() {
-      return Object.keys(this.preparedBasket).length;
+    basketIsPrepared() {
+      return this.$store.state.basket.isBasketPrepared;
     },
     preparedProduct() {
       let result = {};
-      if (this.preparedBasket && this.preparedBasket.products) {
+      if (this.basketIsPrepared && this.preparedBasket.products) {
         result = this.preparedBasket.products[this.pid];
       }
+      console.log('pid : ' + this.pid);
+      console.log(result);
       return result;
     },
     pp() {
       return this.preparedProduct;
     },
-    ppPrice() {
-      return this.preparedProduct;
-    },
     productDeleted() {
       let result = false;
-      if (this.basketPrepared && this.pp && this.pp.productNb === 0) {
+      if (this.basketIsPrepared && this.pp && this.pp.productNb === 0) {
         result = true;
       }
       return result;
     },
     productPartiallyDeleted() {
       let result = false;
-      if (this.basketPrepared && this.pp && this.pp.productNb < this.pBp.productNb) {
+      if (this.basketIsPrepared && this.pp && this.pp.productNb < this.pBp.productNb) {
         result = this.preparedProduct.productNb;
       }
       return result;
@@ -67,7 +59,7 @@ export default {
     productPromoted() {
       let result = false;
       try {
-        if (this.basketPrepared && this.pBp.priceByProduct > this.pp.priceByProduct) {
+        if (this.basketIsPrepared && this.pBp.priceByProduct > this.pp.priceByProduct) {
           result = true;
         }
       } catch (e) {
@@ -78,7 +70,7 @@ export default {
     productDemoted() {
       let result = false;
       try {
-        if (this.basketPrepared && this.pBp.priceByProduct < this.pBp.priceByProduct) {
+        if (this.basketIsPrepared && this.pBp.priceByProduct < this.pBp.priceByProduct) {
           result = true;
         }
       } catch (e) {
@@ -96,7 +88,7 @@ export default {
     totalChange() {
       let result = false;
       try {
-        if (this.basketPrepared && this.pp.price !== this.pBp.price) {
+        if (this.basketIsPrepared && this.pp.price !== this.pBp.price) {
           result = true;
         }
       } catch (e) {

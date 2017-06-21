@@ -75,7 +75,7 @@
     div(v-if="routeName === 'ticket'")
       router-link(:to='{ name: "confirmation" }')
         span.input-group-addon.nav-btn.prefered.specialContent(v-if="basketIsPrepared")
-          span Je valide ma commande de {{ basketPreparedPrice }}€ à {{ frenchTime }}
+          span Je valide ma commande de {{ total }}€ à {{ frenchTime }}
       span.input-group-addon.nav-btn.prefered.inactive(v-if="!basketIsPrepared")
         span Veuillez patienter..
           
@@ -136,17 +136,18 @@ export default {
         return false;
       }
     },
-    preparedBasket() {
-      return this.$store.state.basket.preparedBasket;
+    preparationDiff() {
+      return this.$store.state.basket.preparationDiff;
     },
     basketIsPrepared() {
-      return Object.keys(this.preparedBasket).length;
-    },
-    basketPreparedPrice() {
-      return this.preparedBasket.totalPrice;
+      return this.$store.state.basket.isBasketPrepared;
     },
     total() {
-      return this.$store.getters['transaction/basketAmount'];
+      let res = this.$store.getters['transaction/basketAmount'];
+      if (this.basketIsPrepared && this.preparationDiff.totalPrice) {
+        res = this.preparationDiff.totalPrice;
+      }
+      return res;
     },
     frenchTime() {
       const t = date.toFrenchTime(new Date(this.selectedSlot.dateTime));
