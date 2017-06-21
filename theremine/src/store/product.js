@@ -65,6 +65,8 @@ const actions = {
           commit('addDetails', { products });
           resolve();
         });
+      } else {
+        resolve();
       }
     }),
 

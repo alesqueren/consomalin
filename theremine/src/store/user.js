@@ -36,21 +36,20 @@ const actions = {
         }
 
         dispatch('setUserData', { wishGroups, currentBasket }, { root: true }).then(() => {
+          const cb = currentBasket;
           const idsWithoutDetail = rootGetters['selection/getProductsInBasket'];
           if (idsWithoutDetail) {
             dispatch('product/fetchDetails', { ids: idsWithoutDetail }, { root: true }).then(() => {
-              resolve();
+              dispatch('sectionWishes/processCurrentWish', { cb }, { root: true }).then(() => {
+                resolve();
+              });
             });
           } else {
-            resolve();
+            dispatch('sectionWishes/processCurrentWish', { cb }, { root: true }).then(() => {
+              resolve();
+            });
           }
         });
-        if (currentBasket.currentWishId) {
-          dispatch('sectionWishes/set', currentBasket.currentWishId, { root: true });
-        } else {
-          dispatch('sectionWishes/next', () => null, { root: true });
-        }
-        // resolve();
       });
     });
   },

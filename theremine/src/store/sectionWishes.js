@@ -79,24 +79,41 @@ const globalGetters = {
 };
 
 const actions = {
-  set: ({ state, dispatch, commit, rootGetters }, wid) => {
-    if (wid && rootGetters['wishGroup/getWish']({ wid })) {
-      if (wid !== state.wid) {
-        commit('set', { wid });
-        dispatch('searchProducts');
-        resources.currentWish.save({ wid });
+  processCurrentWish: ({ dispatch }) => ({ currentBasket }) =>
+    new Promise((resolve) => {
+      if (currentBasket.currentWishId) {
+        dispatch('set', currentBasket.currentWishId, { root: true }).then(() => {
+          resolve();
+        });
+      } else {
+        dispatch('next', () => null, { root: true }).then(() => {
+          resolve();
+        });
       }
-    } else {
-      commit('set', { wid: null });
-      resources.currentWish.delete();
-    }
-  },
+    }),
 
-  next: ({ dispatch, getters }, cb) => {
-    const nextWid = getters.getOrder[0] ? getters.getOrder[0] : null;
-    dispatch('set', nextWid);
-    if (cb) { cb(); }
-  },
+  set: ({ state, dispatch, commit, rootGetters }, wid) =>
+    new Promise((resolve) => {
+      if (wid && rootGetters['wishGroup/getWish']({ wid })) {
+        if (wid !== state.wid) {
+          commit('set', { wid });
+          dispatch('searchProducts');
+          resources.currentWish.save({ wid });
+        }
+      } else {
+        commit('set', { wid: null });
+        resources.currentWish.delete();
+      }
+      resolve();
+    }),
+
+  next: ({ dispatch, getters }, cb) =>
+    new Promise((resolve) => {
+      const nextWid = getters.getOrder[0] ? getters.getOrder[0] : null;
+      dispatch('set', nextWid);
+      if (cb) { cb(); }
+      resolve();
+    }),
 
   update: ({ state, dispatch, getters, rootGetters }, mutation) => {
     const currentWid = state.wid;

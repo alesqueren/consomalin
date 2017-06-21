@@ -223,10 +223,14 @@ const actions = {
     });
   },
 
-  updateProduct: ({ commit, rootGetters }, { wid, pid, quantity }) => {
-    const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
-    commit('updateProduct', { gid, wid, pid, quantity });
-    resources.wishProduct.update({ gid, wid }, { pid, quantity });
+  updateProduct: ({ dispatch, commit, rootGetters }, { wid, pid, quantity }) => {
+    if (quantity === 0) {
+      dispatch('selection/removeProduct', { wid, pid });
+    } else {
+      const gid = rootGetters['wishGroup/getWish']({ wid }).gid;
+      commit('updateProduct', { gid, wid, pid, quantity });
+      resources.wishProduct.update({ gid, wid }, { pid, quantity });
+    }
   },
 
   removeProduct: ({ commit, rootGetters, dispatch }, { wid, pid }) => {

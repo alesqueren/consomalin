@@ -73,8 +73,8 @@ randomPhone = do
 -- TODO: generate random fields
 makeUserData :: IO UserData
 makeUserData = do
-  n <- randomLine "./resources/familyNames.txt"
-  p <- randomLine "./resources/firstNames.txt"
+  n <- randomLine "./resources/userInfo/familyNames.txt"
+  p <- randomLine "./resources/userInfo/firstNames.txt"
   -- city <- randomLine "./resources/cities.txt"
   password <- randomWord
   let email = T.replace " " "" $ T.toLower n <> "." <> T.toLower p <> "@gmail.com"

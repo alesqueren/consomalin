@@ -5,17 +5,21 @@ div#ticket
   div.explanations(v-if="preparing") 
     i(class="text-center fa fa-spinner fa-spin fa-5x" style="width: 100%;")
     i(class="text-center" style="width: 100%;display: inline-block;") Nous synchronisons votre commande avec Auchan
-  div.explanations(v-if="!preparing")
+  div.explanations.alert.alert-warning(v-if="!preparing")
+    div Suite à la syncronisation, des événements on pu survenir.
     div.tip.tip1
-      span.deleted 23
+      div Stocks insuffisants
+      span.deleted XX
       span &nbsp;Il n'y a pas assez de stock
     div.tip.tip2
+      div Plus de stock
       span.deleted Produit
       span &nbsp;Le produit n'est plus en stock
     div.tip.tip5
-      span.deleted 3.00€
+      div Promotion/augmentation
+      span.deleted X.XX€
       span &nbsp;Ancien prix
-  .box
+  .box(v-bind:class="{'margintop': preparing}")
     img.logo(src="../../assets/images/logo.jpg")
     .date {{ today }}
     Group.group(v-for="gid in selectedGroups" 
@@ -106,6 +110,8 @@ export default {
     }
     this.$store.dispatch('basket/prepareOrder').then(() => {
       this.preparing = false;
+    }, () => {
+      router.push({ name: 'withdraw' });
     });
   },
   components: { Group, Product },
@@ -125,6 +131,8 @@ export default {
   background-color: white;
   border: 1px dotted black;
   padding: 30px;
+}
+.margintop{
   margin-top: 45px;
 }
 .date{
@@ -173,8 +181,9 @@ h2 {
   text-align: center;
 }
 .explanations {
-  margin-top: 45px;
   text-align: center;
+  height: 125px;
+  margin-top: 45px;
 }
 .tip {
   float: left;
@@ -187,7 +196,7 @@ h2 {
   width: 500px;
 }
 .tip5 {
-  width: 120px;
+  width: 122px;
 }
 .deleted {
   color: var(--danger);

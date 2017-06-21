@@ -37,8 +37,8 @@ const globalGetters = {
 };
 
 const actions = {
-  prepareOrder({ commit, rootGetters, rootState }) {
-    return new Promise((resolve) => {
+  prepareOrder({ dispatch, commit, rootGetters, rootState }) {
+    return new Promise((resolve, reject) => {
       const mergedBasketProducts = rootGetters['basket/mergedBasketProducts'];
       commit('setBasketBeforePreparation', mergedBasketProducts);
       resources.prepareOrder.save(
@@ -50,18 +50,50 @@ const actions = {
           slotId: rootState.singleton.selectedSlot.id,
         },
       ).then(({ body }) => {
-        if (body !== 'OK') {
+        if (body === 'Something went wrong') {
+          reject();
+        } else if (body !== 'OK') {
           const result = JSON.parse(body);
           const basket = result.basket;
           commit('setPreparedBasket', basket);
           const products = basket.products;
           const matchedWishes = rootGetters['selection/getMatchedWishes'];
+          const newQties = {};
           Object.keys(matchedWishes).map((wid) => {
             const wish = matchedWishes[wid];
             for (let i = 0; i < wish.length; i++) {
               const pid = wish[i].pid;
-              if (products[pid]) {
-                // console.log('pid in da basket');
+              const product = products[pid];
+              if (product && product.productNb) {
+                newQties[pid] = {
+                  maxQty: product.productNb,
+                  remindedQty: product.productNb,
+                };
+              }
+            }
+            return true;
+          });
+          Object.keys(matchedWishes).map((wid) => {
+            const wish = matchedWishes[wid];
+            // process new quantity
+            for (let i = 0; i < wish.length; i++) {
+              const pid = wish[i].pid;
+              const oldNb = wish[i].quantity;
+              const product = newQties[pid];
+              if (product) {
+                const remindedQty = product.remindedQty;
+                const diff = remindedQty - oldNb;
+                if (diff < 0) {
+                  const newNb = oldNb + diff;
+                  if (newNb <= 0) {
+                    dispatch('selection/removeProduct', { wid, pid }, { root: true });
+                  } else {
+                    dispatch('selection/updateProduct', { wid, pid, quantity: newNb }, { root: true });
+                    newQties[pid].remindedQty -= newNb;
+                  }
+                } else {
+                  newQties[pid].remindedQty = diff;
+                }
               }
             }
             return true;
