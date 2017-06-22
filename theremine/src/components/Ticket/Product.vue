@@ -24,30 +24,29 @@ export default {
     pBp() {
       return this.productBeforePreparation;
     },
+    pBpProductNb() {
+      return this.pBp ? this.pBp.productNb : 0;
+    },
     preparedBasket() {
       return this.$store.state.basket.preparationDiff;
     },
     basketIsPrepared() {
       return this.$store.state.basket.isBasketPrepared;
     },
-    preparedProduct() {
-      let result = {};
-      if (this.basketIsPrepared && this.preparedBasket.products) {
-        result = this.preparedBasket.products[this.pid];
-      }
-      // console.log('pid : ' + this.pid);
-      // console.log(result);
-      return result;
+    productAfterPreparation() {
+      const basketAfterPreparation = this.$store.state.basket.basketAfterPreparation;
+      const products = basketAfterPreparation ? basketAfterPreparation.products : null;
+      const product = products ? products[this.pid] : null;
+      return product;
     },
     pp() {
-      return this.preparedProduct;
+      return this.productAfterPreparation;
+    },
+    ppProductNb() {
+      return this.pp ? this.pp.productNb : 0;
     },
     productDeleted() {
-      let result = false;
-      if (this.basketIsPrepared && this.pp && this.pp.productNb === 0) {
-        result = true;
-      }
-      return result;
+      return this.basketIsPrepared ? !this.pp : false;
     },
     productPartiallyDeleted() {
       let result = false;
@@ -58,19 +57,15 @@ export default {
     },
     productPromoted() {
       let result = false;
-      try {
-        if (this.basketIsPrepared && this.pBp.priceByProduct > this.pp.priceByProduct) {
-          result = true;
-        }
-      } catch (e) {
-        return false;
+      if (this.basketIsPrepared && this.pp && this.pBp.priceByProduct > this.pp.priceByProduct) {
+        result = true;
       }
       return result;
     },
     productDemoted() {
       let result = false;
       try {
-        if (this.basketIsPrepared && this.pBp.priceByProduct < this.pBp.priceByProduct) {
+        if (this.basketIsPrepared && this.pp && this.pBp.priceByProduct < this.pBp.priceByProduct) {
           result = true;
         }
       } catch (e) {
@@ -88,7 +83,7 @@ export default {
     totalChange() {
       let result = false;
       try {
-        if (this.basketIsPrepared && this.pp.price !== this.pBp.price) {
+        if (this.basketIsPrepared && this.pp.price && this.pp.price !== this.pBp.price) {
           result = true;
         }
       } catch (e) {

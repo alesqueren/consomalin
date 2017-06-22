@@ -33,7 +33,7 @@ function removeCurrentselectedWishes(email) {
     { _id: email },
     {
       $set: {
-        [path]: null,
+        [path]: {},
       },
     },
   );

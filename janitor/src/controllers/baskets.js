@@ -1,6 +1,10 @@
 const router = require('express').Router();
 const mid = require('../middlewares');
 const basketsManager = require('../managers/baskets');
+<<<<<<< Updated upstream
+=======
+const transactionsManager = require('../managers/transactions');
+>>>>>>> Stashed changes
 const kiva = require('../bs/kiva');
 const wendy = require('../bs/wendy');
 
@@ -64,57 +68,74 @@ router.post('/basket/order',
   mid.parseData({
     basket: { required: true },
     slotId: { required: true },
+    isDemo,
   }),
   ({ data, user }, res) => {
+<<<<<<< Updated upstream
+=======
+    const idUser = user._id;
+    const slotId = user.currentBasket.slot.id;
+    const slotDateTime = user.currentBasket.slot.dateTime;
+    const isDemo = data.isDemo;
+
+>>>>>>> Stashed changes
     const wendyUrl = 'user/' + user._id + '/order';
     const wendyData = { basket: data.basket, slotId: data.slotId };
-    wendy.send(wendyUrl, wendyData).then((result) => {
-      console.log(result);
-      const wishGroups = user.wishGroups;
-      const pSelectedWishes = user.currentBasket.selectedWishes;
+    if (!isDemo) {
+      wendy.send(wendyUrl, wendyData).then((result) => {
+        console.log(result);
+        const wishGroups = user.wishGroups;
+        const pSelectedWishes = user.currentBasket.selectedWishes;
 
-      const productsToDetail = [];
-      const wishGroupsToSave = [];
-      for (let i = 0; i < wishGroups.length; i++) {
-        const wishGroup = wishGroups[i];
-        const wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
-        const wishesToInsert = [];
-        for (let j = 0; j < wishGroupLength; j++) {
-          const wish = wishGroup.wishes[j];
-          if (pSelectedWishes[wishGroup.id] && pSelectedWishes[wishGroup.id][wish.id]) {
-            const products = pSelectedWishes[wishGroup.id][wish.id];
-            for (let k = 0; k < products.length; k++) {
-              const product = products[k];
-              const wishToInsert = {
-                name: wish.name,
-                product: { id: product.pid },
-                quantity: parseInt(product.quantity, 10),
-              };
-              wishesToInsert.push(wishToInsert);
-              productsToDetail.push(product.pid);
-            }
-          }
-        }
-        if (wishesToInsert.length) {
-          wishGroupsToSave.push({ name: wishGroup.name, wishes: wishesToInsert });
-        }
-      }
-
-      const detailsUrl = 'details?pids=' + JSON.stringify(productsToDetail);
-      kiva.send(detailsUrl).then((products) => {
-        products = JSON.parse(products);
-        for (let i = 0; i < wishGroupsToSave.length; i++) {
-          const wishGroup = wishGroupsToSave[i];
+        const productsToDetail = [];
+        const wishGroupsToSave = [];
+        for (let i = 0; i < wishGroups.length; i++) {
+          const wishGroup = wishGroups[i];
           const wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
+          const wishesToInsert = [];
           for (let j = 0; j < wishGroupLength; j++) {
             const wish = wishGroup.wishes[j];
-            const product = products[wish.product.id];
-            wish.product.image = product.imageUrl;
+            if (pSelectedWishes[wishGroup.id] && pSelectedWishes[wishGroup.id][wish.id]) {
+              const products = pSelectedWishes[wishGroup.id][wish.id];
+              for (let k = 0; k < products.length; k++) {
+                const product = products[k];
+                const wishToInsert = {
+                  name: wish.name,
+                  product: { id: product.pid },
+                  quantity: parseInt(product.quantity, 10),
+                };
+                wishesToInsert.push(wishToInsert);
+                productsToDetail.push(product.pid);
+              }
+            }
+          }
+          if (wishesToInsert.length) {
+            wishGroupsToSave.push({ name: wishGroup.name, wishes: wishesToInsert });
           }
         }
+
+        const detailsUrl = 'details?pids=' + JSON.stringify(productsToDetail);
+        kiva.send(detailsUrl).then((products) => {
+          products = JSON.parse(products);
+          for (let i = 0; i < wishGroupsToSave.length; i++) {
+            const wishGroup = wishGroupsToSave[i];
+            const wishGroupLength = wishGroup.wishes ? wishGroup.wishes.length : 0;
+            for (let j = 0; j < wishGroupLength; j++) {
+              const wish = wishGroup.wishes[j];
+              const product = products[wish.product.id];
+              wish.product.image = product.imageUrl;
+            }
+          }
+        });
+        const transactionId = transactionsManager.add(idUser, slotId, slotDateTime, result);
+        res.json(transactionId);
       });
+<<<<<<< Updated upstream
       res.json(result);
     });
+=======
+    }
+>>>>>>> Stashed changes
   },
 );
 

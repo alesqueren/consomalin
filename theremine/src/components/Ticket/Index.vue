@@ -110,7 +110,7 @@ export default {
       router.push({ name: 'basket' });
     }
 
-    this.$store.dispatch('basket/setIsPasketPrepared', false);
+    this.$store.dispatch('basket/setIsBasketPrepared', false);
 
     this.$store.dispatch('basket/prepareOrder').then(() => {
     }, () => {

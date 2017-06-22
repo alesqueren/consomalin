@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import resources from '../resources';
+import config from '../../config';
 
 const globalGetters = {
   mergedBasketProductsBeforePreparation: (state, getters, rootState, rootGetters) => {
@@ -30,28 +31,32 @@ const globalGetters = {
         }
       }
     }
-    res.total = parseInt(rootGetters['transaction/basketAmount'], 10);
+    res.total = parseFloat(rootGetters['transaction/basketAmount']);
     return res;
   },
   mergedBasketProductsAfterPreparation: (state) => {
     const mergeBasketB = state.basketBeforePreparation;
+    const mergedProducts = mergeBasketB.products;
     const diff = state.preparationDiff;
     const diffProducts = diff.products;
     const res = {};
     res.products = {};
     const fieldsToMerge = ['productNb', 'priceByProduct', 'price'];
     if (diffProducts) {
-      for (const pid in mergeBasketB.products) {
-        const product = mergeBasketB.products[pid];
+      for (const pid in mergedProducts) {
+        const product = mergedProducts[pid];
         res.products[pid] = {};
+        const diffProduct = diffProducts[pid];
         for (const fieldToMergeId in fieldsToMerge) {
           const fieldToMerge = fieldsToMerge[fieldToMergeId];
-          const diffProduct = diffProducts[pid];
           if (diffProduct && diffProduct[fieldToMerge]) {
             res.products[pid][fieldToMerge] = diffProduct[fieldToMerge];
           } else {
             res.products[pid][fieldToMerge] = product[fieldToMerge];
           }
+        }
+        if (diffProduct && diffProduct.productNb === 0) {
+          delete res.products[pid];
         }
       }
     }
@@ -77,7 +82,7 @@ const actions = {
         if (body === 'Something went wrong') {
           reject();
         } else if (body === 'OK') {
-          commit('setIsPasketPrepared', true);
+          commit('setIsBasketPrepared', true);
         } else if (body !== 'OK') {
           const result = JSON.parse(body);
           const basketDiff = result.basket;
@@ -125,7 +130,7 @@ const actions = {
             return true;
           });
         }
-        commit('setIsPasketPrepared', true);
+        commit('setIsBasketPrepared', true);
         const mergedBasket2 = rootGetters['basket/mergedBasketProductsAfterPreparation'];
         commit('setBasketAfterPreparation', mergedBasket2);
         resolve();
@@ -143,19 +148,32 @@ const actions = {
             totalPrice: mergedBasketProducts.total,
           },
           slotId: rootState.singleton.selectedSlot.id,
+          isDemo: config.demo,
         },
       ).then(({ body }) => {
         if (body === 'Something went wrong') {
           reject();
         } else if (body === 'OK') {
+<<<<<<< Updated upstream
           commit('setIsPasketPrepared', true);
+=======
+          commit('setIsbasketOrdered', true);
+        } else if (body !== 'OK') {
+          // const result = JSON.parse(body);
+>>>>>>> Stashed changes
         }
         resolve();
       });
     });
   },
-  setIsPasketPrepared({ commit }) {
-    commit('setIsPasketPrepared', false);
+  setIsBasketPrepared({ commit }, isBasketPrepared) {
+    commit('setIsBasketPrepared', isBasketPrepared);
+  },
+  setIsBasketOrdering({ commit }, isBasketOrdering) {
+    commit('setIsBasketOrdering', isBasketOrdering);
+  },
+  setIsBasketOrdered({ commit }, isBasketOrdered) {
+    commit('setIsBasketOrdered', isBasketOrdered);
   },
 };
 
@@ -175,8 +193,14 @@ const mutations = {
     Vue.set(state.preparationDiff, 'tmp');
     delete state.preparationDiff.tmp;
   },
-  setIsPasketPrepared: (state, isBasketPrepared) => {
+  setIsBasketPrepared: (state, isBasketPrepared) => {
     Vue.set(state, 'isBasketPrepared', isBasketPrepared);
+  },
+  setIsBasketOrdering: (state, isBasketOrdering) => {
+    Vue.set(state, 'isBasketOrdering', isBasketOrdering);
+  },
+  setIsBasketOrdered: (state, isBasketOrdered) => {
+    Vue.set(state, 'isBasketOrdered', isBasketOrdered);
   },
 };
 
@@ -188,6 +212,8 @@ export default {
     preparationDiff: {},
     basketAfterPreparation: {},
     isBasketPrepared: false,
+    isBasketOrdering: false,
+    isBasketOrdered: false,
   },
   getters: globalGetters,
   actions,

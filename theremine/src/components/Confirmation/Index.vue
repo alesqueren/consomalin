@@ -13,7 +13,8 @@ div#confirmation
           gmap-marker(v-for='m in markers', :position='m.position', :clickable='true', :draggable='true', @click='center=m.position' v-bind:key='m')
       div.right
         p Pour toute question concernant la commande&nbsp;: <br/>
-         span S.A.V. Auchan Balma : 05 61 26 73 00
+         span Auchan Drive Balma : 05 61 26 73 05.61.26.73.90
+         span S.A.V. Auchan Balma : 05 61 26 73 05.61.26.73.00
         p Pour toute question concernant le site Consomalin&nbsp;: <br/>
           span contact@consomalin.ovh
 
@@ -29,6 +30,7 @@ div#confirmation
 import * as VueGoogleMaps from 'vue2-google-maps';
 import Vue from 'vue';
 import date from '../Utils/date';
+import router from '../../router';
 
 Vue.use(VueGoogleMaps, {
   load: {
@@ -53,11 +55,21 @@ export default {
       const t = date.toFrenchTime(new Date(this.selectedSlot.dateTime));
       return t.hours + 'h' + t.minutes + ' le ' + t.dayName + ' ' + t.day + ' ' + t.monthName + ' (' + t.year + ')';
     },
+    basketIsOrdered() {
+      return this.$store.state.basket.isBasketOrdered;
+    },
   },
   mounted() {
     this.$store.dispatch('transaction/order');
   },
   methods: {
+  },
+  created() {
+    if (!this.basketIsOrdered) {
+      // TODO on redirige vers la page de transactions des qu'on l'a
+      router.push({ name: 'wishlist' });
+    }
+    this.$store.dispatch('basket/setIsBasketOrdered', false);
   },
   components: {},
 };

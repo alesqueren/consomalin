@@ -73,7 +73,9 @@
           span Revenir au panier
 
     div(v-if="routeName === 'ticket'")
-      span.input-group-addon.nav-btn.prefered.specialContent(v-if="basketIsPrepared", @click.stop="order")
+      span.input-group-addon.nav-btn.prefered.specialContent.inactive(v-if="basketIsOrdering", @click.stop="order")
+        span La commande est en cours de transfert chez Auchan Drive Balma ..
+      span.input-group-addon.nav-btn.prefered.specialContent(v-if="basketIsPrepared && !basketIsOrdering", @click.stop="order")
         span Je valide ma commande de {{ total }}€ à {{ frenchTime }}
       span.input-group-addon.nav-btn.prefered.inactive(v-if="!basketIsPrepared")
         span Veuillez patienter..
@@ -142,6 +144,9 @@ export default {
     basketIsPrepared() {
       return this.$store.state.basket.isBasketPrepared;
     },
+    basketIsOrdering() {
+      return this.$store.state.basket.isBasketOrdering;
+    },
     total() {
       let res = this.$store.getters['transaction/basketAmount'];
       if (this.basketIsPrepared && this.preparationDiff.totalPrice) {
@@ -182,7 +187,10 @@ export default {
       });
     },
     order() {
+      this.$store.dispatch('basket/setIsBasketOrdering', true);
       this.$store.dispatch('basket/order').then(() => {
+        this.$store.dispatch('basket/setIsBasketOrdering', false);
+        this.$store.dispatch('basket/setIsBasketOrdered', true);
         router.push({ name: 'confirmation' });
       }, () => {
         router.push({ name: 'withdraw' });
