@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const mid = require('../middlewares');
 const basketsManager = require('../managers/baskets');
-const transactionsManager = require('../managers/transactions');
 const kiva = require('../bs/kiva');
 const wendy = require('../bs/wendy');
 
@@ -67,10 +66,6 @@ router.post('/basket/order',
     slotId: { required: true },
   }),
   ({ data, user }, res) => {
-    const idUser = user._id;
-    const slotId = user.currentBasket.slot.id;
-    const slotDateTime = user.currentBasket.slot.dateTime;
-
     const wendyUrl = 'user/' + user._id + '/order';
     const wendyData = { basket: data.basket, slotId: data.slotId };
     wendy.send(wendyUrl, wendyData).then((result) => {
