@@ -1,6 +1,6 @@
 const request = require('request');
 
-const WENDY_HOST = process.env.WENDY_HOST || 'http://localhost:8087';
+const WENDY_HOST = process.env.WENDY_HOST || 'http://localhost:8087/';
 
 module.exports = {
   send(partUrl, data) {

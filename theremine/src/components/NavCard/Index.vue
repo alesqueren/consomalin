@@ -73,9 +73,8 @@
           span Revenir au panier
 
     div(v-if="routeName === 'ticket'")
-      router-link(:to='{ name: "confirmation" }')
-        span.input-group-addon.nav-btn.prefered.specialContent(v-if="basketIsPrepared")
-          span Je valide ma commande de {{ total }}€ à {{ frenchTime }}
+      span.input-group-addon.nav-btn.prefered.specialContent(v-if="basketIsPrepared", @click.stop="order")
+        span Je valide ma commande de {{ total }}€ à {{ frenchTime }}
       span.input-group-addon.nav-btn.prefered.inactive(v-if="!basketIsPrepared")
         span Veuillez patienter..
           
@@ -96,6 +95,7 @@
 import config from '../../../config';
 import date from '../Utils/date';
 import Basket from './Basket';
+import router from '../../router';
 
 const $ = window.$;
 
@@ -179,6 +179,13 @@ export default {
       const selected = false;
       this.$store.dispatch('selection/selectWish', { wid, selected }).then(() => {
         this.nextProduct();
+      });
+    },
+    order() {
+      this.$store.dispatch('basket/order').then(() => {
+        router.push({ name: 'confirmation' });
+      }, () => {
+        router.push({ name: 'withdraw' });
       });
     },
   },

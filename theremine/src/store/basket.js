@@ -2,10 +2,11 @@ import Vue from 'vue';
 import resources from '../resources';
 
 const globalGetters = {
-  mergedBasketProductsBeforePreparation: (state, rootGetters, rootState) => {
+  mergedBasketProductsBeforePreparation: (state, getters, rootState, rootGetters) => {
     const basket = rootState.selection.basket;
     const details = rootState.product.details;
     const res = {};
+    res.products = {};
     for (const gid in basket) {
       const group = basket[gid];
       for (const wid in group) {
@@ -20,7 +21,7 @@ const globalGetters = {
               productNb += parseInt(res[pid].productNb, 10);
             }
             const price = parseFloat((productNb * priceByProduct).toFixed(2));
-            res[pid] = {
+            res.products[pid] = {
               productNb,
               priceByProduct,
               price,
@@ -29,34 +30,32 @@ const globalGetters = {
         }
       }
     }
-    res.total = rootGetters['transaction/basketAmount'];
+    res.total = parseInt(rootGetters['transaction/basketAmount'], 10);
     return res;
   },
-  mergedBasketProductsAfterPreparation: (state, rootGetters) => {
+  mergedBasketProductsAfterPreparation: (state) => {
     const mergeBasketB = state.basketBeforePreparation;
     const diff = state.preparationDiff;
     const diffProducts = diff.products;
     const res = {};
+    res.products = {};
     const fieldsToMerge = ['productNb', 'priceByProduct', 'price'];
     if (diffProducts) {
-      for (const pid in mergeBasketB) {
-        console.log('pid : ' + pid);
-        const product = mergeBasketB[pid];
-        res[pid] = {};
+      for (const pid in mergeBasketB.products) {
+        const product = mergeBasketB.products[pid];
+        res.products[pid] = {};
         for (const fieldToMergeId in fieldsToMerge) {
           const fieldToMerge = fieldsToMerge[fieldToMergeId];
-          console.log('fieldToMerge : ' + fieldToMerge);
           const diffProduct = diffProducts[pid];
           if (diffProduct && diffProduct[fieldToMerge]) {
-            console.log('fieldToMerge founded !');
-            res[pid][fieldToMerge] = diffProduct[fieldToMerge];
+            res.products[pid][fieldToMerge] = diffProduct[fieldToMerge];
           } else {
-            res[pid][fieldToMerge] = product[fieldToMerge];
+            res.products[pid][fieldToMerge] = product[fieldToMerge];
           }
         }
       }
     }
-    res.total = diff.totalPrice ? diff.totalPrice : rootGetters['transaction/basketAmount'];
+    res.total = diff.totalPrice ? diff.totalPrice : mergeBasketB.total;
     return res;
   },
 };
@@ -69,8 +68,8 @@ const actions = {
       resources.prepareOrder.save(
         {
           basket: {
-            totalPrice: parseFloat(rootGetters['transaction/basketAmount']),
-            products: mergedBasketProducts,
+            products: mergedBasketProducts.products,
+            totalPrice: mergedBasketProducts.total,
           },
           slotId: rootState.singleton.selectedSlot.id,
         },
@@ -129,6 +128,30 @@ const actions = {
         commit('setIsPasketPrepared', true);
         const mergedBasket2 = rootGetters['basket/mergedBasketProductsAfterPreparation'];
         commit('setBasketAfterPreparation', mergedBasket2);
+        resolve();
+      });
+    });
+  },
+  order({ commit, rootGetters, rootState }) {
+    return new Promise((resolve, reject) => {
+      const mergedBasketProducts = rootGetters['basket/mergedBasketProductsAfterPreparation'];
+      commit('setBasketBeforePreparation', mergedBasketProducts);
+      resources.order.save(
+        {
+          basket: {
+            products: mergedBasketProducts.products,
+            totalPrice: mergedBasketProducts.total,
+          },
+          slotId: rootState.singleton.selectedSlot.id,
+        },
+      ).then(({ body }) => {
+        if (body === 'Something went wrong') {
+          reject();
+        } else if (body === 'OK') {
+          commit('setIsPasketPrepared', true);
+        } else if (body !== 'OK') {
+          const result = JSON.parse(body);
+        }
         resolve();
       });
     });

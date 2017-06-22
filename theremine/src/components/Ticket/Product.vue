@@ -19,7 +19,7 @@ export default {
   props: ['pid'],
   computed: {
     productBeforePreparation() {
-      return this.$store.state.basket.basketBeforePreparation[this.pid];
+      return this.$store.state.basket.basketBeforePreparation.products[this.pid];
     },
     pBp() {
       return this.productBeforePreparation;
@@ -35,8 +35,8 @@ export default {
       if (this.basketIsPrepared && this.preparedBasket.products) {
         result = this.preparedBasket.products[this.pid];
       }
-      console.log('pid : ' + this.pid);
-      console.log(result);
+      // console.log('pid : ' + this.pid);
+      // console.log(result);
       return result;
     },
     pp() {
