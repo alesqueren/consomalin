@@ -97,14 +97,11 @@ doPrepareOrder acc Transaction{..} = do
   _ <- mapM (\(pid,qty) -> lift $ fromF $ B.addToBasket pid qty) pds
   driveBasket <- lift . fromF $ B.getBasket
   _ <- lift . fromF $ S.selectSchedule slotId
-
-  case diffBasket driveBasket basket of
-    Just diff -> 
-      return $ Just diff
-    Nothing ->
-      return Nothing
-
-    where pds = M.elems $ M.mapWithKey (\pid pd -> (pid, BA.productNb pd)) $ BA.products basket
+  return $ diffBasket driveBasket basket
+  where
+    pds = M.elems $
+          M.mapWithKey (\pid pd -> (pid, BA.productNb pd)) $
+          BA.products basket
 
 doOrder :: (MonadFree CrawlF cr) => Account -> Transaction -> ConduitM () Void cr (Maybe MBasket)
 doOrder acc Transaction{..} = do

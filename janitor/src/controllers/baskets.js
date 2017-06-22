@@ -2,7 +2,6 @@ const router = require('express').Router();
 const mid = require('../middlewares');
 const basketsManager = require('../managers/baskets');
 const transactionsManager = require('../managers/transactions');
-const rabbitMQ = require('../bs/rabbitMQ');
 const kiva = require('../bs/kiva');
 const wendy = require('../bs/wendy');
 
@@ -119,7 +118,6 @@ router.post('/basket/order',
           }
         }
       });
-      const transactionId = transactionsManager.add(idUser, slotId, slotDateTime, result);
       res.json(result);
     });
   },

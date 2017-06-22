@@ -35,8 +35,6 @@ module.exports = {
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
   },
-  // TODO: capture runtime environment
-  // demo: false,
-  demo: true,
-  analyticsId: 'UA-99830023-1',
+  demo: "${DEMO}",
+  analyticsId: "${ANALYTICS_ID}",
 }

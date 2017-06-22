@@ -149,8 +149,6 @@ const actions = {
           reject();
         } else if (body === 'OK') {
           commit('setIsPasketPrepared', true);
-        } else if (body !== 'OK') {
-          const result = JSON.parse(body);
         }
         resolve();
       });

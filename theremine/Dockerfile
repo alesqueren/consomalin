@@ -1,7 +1,7 @@
 FROM node:7.4
 
 RUN apt-get update && \
-    apt-get install -y nginx netcat
+    apt-get install -y nginx netcat gettext
 
 RUN echo 'echo "$@" | xargs -n 1 | \
   sed -r -e "s/^([^\/]*)$/http:\/\/\\1\//" \
@@ -23,4 +23,4 @@ ADD . .
 RUN npm run lint && \
     npm run build
 
-CMD nginx -c /app/docker/nginx.conf -g "daemon off;"
+CMD docker/run.sh
