@@ -1,10 +1,7 @@
 const router = require('express').Router();
 const mid = require('../middlewares');
 const basketsManager = require('../managers/baskets');
-<<<<<<< Updated upstream
-=======
 const transactionsManager = require('../managers/transactions');
->>>>>>> Stashed changes
 const kiva = require('../bs/kiva');
 const wendy = require('../bs/wendy');
 
@@ -68,17 +65,14 @@ router.post('/basket/order',
   mid.parseData({
     basket: { required: true },
     slotId: { required: true },
-    isDemo,
+    isDemo: { required: true },
   }),
   ({ data, user }, res) => {
-<<<<<<< Updated upstream
-=======
     const idUser = user._id;
     const slotId = user.currentBasket.slot.id;
     const slotDateTime = user.currentBasket.slot.dateTime;
     const isDemo = data.isDemo;
 
->>>>>>> Stashed changes
     const wendyUrl = 'user/' + user._id + '/order';
     const wendyData = { basket: data.basket, slotId: data.slotId };
     if (!isDemo) {
@@ -130,12 +124,7 @@ router.post('/basket/order',
         const transactionId = transactionsManager.add(idUser, slotId, slotDateTime, result);
         res.json(transactionId);
       });
-<<<<<<< Updated upstream
-      res.json(result);
-    });
-=======
     }
->>>>>>> Stashed changes
   },
 );
 

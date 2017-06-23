@@ -154,13 +154,9 @@ const actions = {
         if (body === 'Something went wrong') {
           reject();
         } else if (body === 'OK') {
-<<<<<<< Updated upstream
-          commit('setIsPasketPrepared', true);
-=======
           commit('setIsbasketOrdered', true);
-        } else if (body !== 'OK') {
-          // const result = JSON.parse(body);
->>>>>>> Stashed changes
+        // } else if (body !== 'OK') {
+        // const result = JSON.parse(body);
         }
         resolve();
       });
