@@ -86,7 +86,7 @@ const actions = {
           resolve();
         });
       } else {
-        dispatch('next', () => null, { root: true }).then(() => {
+        dispatch('next', () => null).then(() => {
           resolve();
         });
       }
