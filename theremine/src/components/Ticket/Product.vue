@@ -2,14 +2,14 @@
   div.product(
     v-if="productInfos")
     div.productName(v-bind:class="{'deleted': productDeleted}")
-      span.newQuantity(v-if="productPartiallyDeleted") {{pp.productNb}}
-      span.quantity(v-bind:class="{'quantityReduced': productPartiallyDeleted}") {{pBp.productNb}}
+      span.newQuantity(v-if="productPartiallyDeleted") {{productNb}}
+      span.quantity(v-bind:class="{'quantityReduced': productPartiallyDeleted}") {{productNb}}
       span x{{productInfos.name}}
     span.total.newTotal(
     v-if="totalChange && productDemoted || productPromoted"
       v-bind:class="{'demoted': productDemoted, 'promoted': productPromoted}"
       ) &nbsp;&nbsp;&nbsp;&nbsp;{{pp.price}}€
-    span.total(v-bind:class="{'oldPrice': productDemoted || productPromoted, 'partiallyDeleted': totalChange}") {{pBp.price}}€
+    span.total(v-bind:class="{'oldPrice': productDemoted || productPromoted, 'partiallyDeleted': totalChange, 'deleted': productDeleted}") {{pBp.price}}€
 
 </template>
 
@@ -50,8 +50,22 @@ export default {
     },
     productPartiallyDeleted() {
       let result = false;
-      if (this.basketIsPrepared && this.pp && this.pp.productNb < this.pBp.productNb) {
-        result = this.preparedProduct.productNb;
+      if (this.basketIsPrepared && this.pp && this.pBp && this.pp.productNb < this.pBp.productNb) {
+        result = this.pp.productNb;
+      }
+      return result;
+    },
+    productNb() {
+      let result = this.pBpProductNb;
+      if (this.basketIsPrepared && this.pp && this.pp.productNb) {
+        result = this.pp.productNb;
+      }
+      return result;
+    },
+    productPrice() {
+      let result = this.price;
+      if (this.basketIsPrepared && this.pp && this.pp.price) {
+        result = this.pp.price;
       }
       return result;
     },
@@ -65,7 +79,7 @@ export default {
     productDemoted() {
       let result = false;
       try {
-        if (this.basketIsPrepared && this.pp && this.pBp.priceByProduct < this.pBp.priceByProduct) {
+        if (this.basketIsPrepared && this.pp && this.pBp.priceByProduct < this.pp.priceByProduct) {
           result = true;
         }
       } catch (e) {
@@ -82,8 +96,9 @@ export default {
     },
     totalChange() {
       let result = false;
+      const bp = this.basketIsPrepared;
       try {
-        if (this.basketIsPrepared && this.pp.price && this.pp.price !== this.pBp.price) {
+        if (bp && this.pp.price && this.pBp && this.pp.price !== this.pBp.price) {
           result = true;
         }
       } catch (e) {

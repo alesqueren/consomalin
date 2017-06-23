@@ -79,10 +79,10 @@ const globalGetters = {
 };
 
 const actions = {
-  processCurrentWish: ({ dispatch }) => ({ currentBasket }) =>
+  processCurrentWish: ({ dispatch }, { currentBasket }) =>
     new Promise((resolve) => {
       if (currentBasket.currentWishId) {
-        dispatch('set', currentBasket.currentWishId, { root: true }).then(() => {
+        dispatch('set', currentBasket.currentWishId).then(() => {
           resolve();
         });
       } else {

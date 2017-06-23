@@ -32,6 +32,7 @@ const server = (app) => {
   app.listen(port, () => {
     console.log(`Listening on port ${port}...`);
   });
+  app.timeout = 1000 * 120;
 };
 
 module.exports = server;

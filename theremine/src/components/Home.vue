@@ -95,7 +95,7 @@ export default {
       return this.$store.state.user.username;
     },
     demo() {
-      return config.demo;
+      return Boolean(config.demo === 'true');
     },
     presText() {
       let text = 'Consomalin est un site de courses en ligne independant qui permet de commander chez Auchan drive Balma.';

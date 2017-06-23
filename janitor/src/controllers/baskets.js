@@ -75,9 +75,10 @@ router.post('/basket/order',
 
     const wendyUrl = 'user/' + user._id + '/order';
     const wendyData = { basket: data.basket, slotId: data.slotId };
-    if (!isDemo) {
-      wendy.send(wendyUrl, wendyData).then((result) => {
-        console.log(result);
+    if (isDemo === false) {
+      wendy.send(wendyUrl, wendyData).then(() => {
+        // console.log(result);
+        // const basketPrepared = result;
         const wishGroups = user.wishGroups;
         const pSelectedWishes = user.currentBasket.selectedWishes;
 
@@ -94,7 +95,6 @@ router.post('/basket/order',
               for (let k = 0; k < products.length; k++) {
                 const product = products[k];
                 const wishToInsert = {
-                  name: wish.name,
                   product: { id: product.pid },
                   quantity: parseInt(product.quantity, 10),
                 };
@@ -118,12 +118,17 @@ router.post('/basket/order',
               const wish = wishGroup.wishes[j];
               const product = products[wish.product.id];
               wish.product.image = product.imageUrl;
+              wish.product.quantityUnit = product.quantityUnit;
+              wish.product.name = product.name;
             }
           }
         });
-        const transactionId = transactionsManager.add(idUser, slotId, slotDateTime, result);
+        const wgts = wishGroupsToSave;
+        const transactionId = transactionsManager.add(idUser, slotId, slotDateTime, wgts);
         res.json(transactionId);
       });
+    } else {
+      res.json('OK');
     }
   },
 );

@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       maxProducts: 40,
-      demo: config.demo,
+      demo: Boolean(config.demo === 'true'),
     };
   },
   destroyed() {

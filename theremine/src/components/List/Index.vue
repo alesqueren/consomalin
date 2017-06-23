@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       newWishName: '',
-      demo: config.demo,
+      demo: Boolean(config.demo === 'true'),
     };
   },
   computed: {
