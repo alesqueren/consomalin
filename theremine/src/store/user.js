@@ -36,16 +36,15 @@ const actions = {
         }
 
         dispatch('setUserData', { wishGroups, currentBasket }, { root: true }).then(() => {
-          const cb = currentBasket;
           const idsWithoutDetail = rootGetters['selection/getProductsInBasket'];
           if (idsWithoutDetail) {
             dispatch('product/fetchDetails', { ids: idsWithoutDetail }, { root: true }).then(() => {
-              dispatch('sectionWishes/processCurrentWish', { cb }, { root: true }).then(() => {
+              dispatch('sectionWishes/processCurrentWish', { currentBasket }, { root: true }).then(() => {
                 resolve();
               });
             });
           } else {
-            dispatch('sectionWishes/processCurrentWish', { cb }, { root: true }).then(() => {
+            dispatch('sectionWishes/processCurrentWish', { currentBasket }, { root: true }).then(() => {
               resolve();
             });
           }

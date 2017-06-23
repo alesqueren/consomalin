@@ -31,7 +31,7 @@ const parseData = fields => (req, res, next) => {
   for (const field in fields) {
     const fieldInfo = fields[field];
     const value = req.body[field];
-    if (fieldInfo.required && !value) {
+    if (fieldInfo.required && value === undefined) {
       return res.send(400);
     }
     if (fieldInfo.type === 'int' && !isInt(value)) {

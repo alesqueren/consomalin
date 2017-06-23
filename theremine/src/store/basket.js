@@ -140,7 +140,6 @@ const actions = {
   order({ commit, rootGetters, rootState }) {
     return new Promise((resolve, reject) => {
       const mergedBasketProducts = rootGetters['basket/mergedBasketProductsAfterPreparation'];
-      commit('setBasketBeforePreparation', mergedBasketProducts);
       resources.order.save(
         {
           basket: {
@@ -148,15 +147,13 @@ const actions = {
             totalPrice: mergedBasketProducts.total,
           },
           slotId: rootState.singleton.selectedSlot.id,
-          isDemo: config.demo,
+          isDemo: Boolean(config.demo === 'true'),
         },
       ).then(({ body }) => {
         if (body === 'Something went wrong') {
           reject();
         } else if (body === 'OK') {
-          commit('setIsbasketOrdered', true);
-        // } else if (body !== 'OK') {
-        // const result = JSON.parse(body);
+          commit('setIsBasketOrdered', true);
         }
         resolve();
       });

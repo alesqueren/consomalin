@@ -51,6 +51,9 @@ export default {
     basketBeforePreparation() {
       return this.$store.state.basket.basketBeforePreparation;
     },
+    preparationDiff() {
+      return this.$store.state.basket.preparationDiff;
+    },
     basketAfterPreparation() {
       return this.$store.state.basket.basketAfterPreparation;
     },
@@ -99,7 +102,7 @@ export default {
     },
     total() {
       let res = this.$store.getters['transaction/basketAmount'];
-      if (this.basketPrepared && this.preparationDiff.totalPrice) {
+      if (this.isBasketPrepared && this.preparationDiff.totalPrice) {
         res = this.preparationDiff.totalPrice;
       }
       return res;

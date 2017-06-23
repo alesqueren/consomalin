@@ -46,7 +46,7 @@ function leaveAction(target) {
 export default {
   computed: {
     demo() {
-      return config.demo;
+      return Boolean(config.demo === 'true');
     },
     uncheckingGroup() {
       const action = this.$store.state.singleton.action;

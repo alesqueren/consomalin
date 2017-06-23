@@ -105,7 +105,7 @@ export default {
   props: [],
   data() {
     return {
-      demo: config.demo,
+      demo: Boolean(config.demo === 'true'),
     };
   },
   computed: {
