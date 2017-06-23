@@ -56,6 +56,12 @@ services:
       - DRIVE_PASS=hDDqSUGmY3!
     networks: [big]
 
+  lyrist:
+    build:
+      context: ./haskell
+      dockerfile: ./services/lyrist/Dockerfile
+    networks: [big]
+
   mongo-express:
     image: mongo-express
     networks: [big]

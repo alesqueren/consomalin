@@ -32,7 +32,7 @@ fi
 # check env variables
 if [[ -z "$GO_PIPELINE_LABEL" || -z "$HASKELL_PATH" || -z "$STACK_PATH" ]]; 
 then
-  echo "Env variables not correctly set"
+  echo "Env variables are not correctly set"
   exit 1
 fi
 
