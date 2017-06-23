@@ -1,7 +1,7 @@
 const passport = require('passport');
 const router = require('express').Router();
 const mid = require('../middlewares');
-const rabbitMQ = require('../bs/rabbitMQ');
+// const rabbitMQ = require('../bs/rabbitMQ');
 
 // TODO: allow not logged users
 router.get('/me',
