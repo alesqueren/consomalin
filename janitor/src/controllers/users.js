@@ -21,10 +21,10 @@ router.post('/login',
 router.post('/register',
   passport.authenticate('register'),
   (req, res) => {
-    const data = {
-      user: req.body.username,
-    };
-    rabbitMQ.send(JSON.stringify(data), null);
+    // const data = {
+    //   user: req.body.username,
+    // };
+    // rabbitMQ.send(JSON.stringify(data), null);
     res.json('OK');
   },
 );
