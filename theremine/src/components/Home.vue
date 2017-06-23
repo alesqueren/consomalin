@@ -1,8 +1,8 @@
 <template lang="pug">
   div#homepage
     div#title
-      div#banner-title Retrouvez le gout des courses
-      div.desciption {{ presText }}
+      h2#banner-title Retrouvez le goût des courses
+      h3.desciption {{ presText }}
       button.go-to-next
         i.fa.fa-angle-double-down.faa-bounce.animated
       div#registration(v-if="!user")
@@ -18,7 +18,7 @@
     div#rassurance
       div.about
         div Pourquoi Consomalin
-        div.why Grâce à votre liste de courses, le site vous propose seulement les produits dont vous avez besoin. Fini les sites lents et remplis de pub.
+        h4.why Grâce à votre liste de courses, le site vous propose seulement les produits dont vous avez besoin. Fini les sites lents et remplis de pub.
         div.about-border
       div.section-item
         div.item
