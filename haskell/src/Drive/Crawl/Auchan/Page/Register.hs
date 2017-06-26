@@ -77,7 +77,7 @@ makeUserData = do
   p <- randomLine "./resources/userInfo/firstNames.txt"
   -- city <- randomLine "./resources/cities.txt"
   password <- randomWord
-  let email = T.replace " " "" $ T.toLower n <> "." <> T.toLower p <> "@gmail.com"
+  let email = T.replace " " "" $ T.toLower n <> "." <> T.toLower p <> "@mail.consomalin.ovh"
   phone <- randomPhone
   birthM <- randomRIO (1, 12) :: IO Integer
   birthD <- randomRIO (10, 28) :: IO Integer
