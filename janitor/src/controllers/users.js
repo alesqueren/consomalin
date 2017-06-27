@@ -1,7 +1,7 @@
 const passport = require('passport');
 const router = require('express').Router();
 const mid = require('../middlewares');
-const rabbitMQ = require('../bs/rabbitMQ');
+// const rabbitMQ = require('../bs/rabbitMQ');
 
 // TODO: allow not logged users
 router.get('/me',
@@ -21,10 +21,10 @@ router.post('/login',
 router.post('/register',
   passport.authenticate('register'),
   (req, res) => {
-    const data = {
-      user: req.body.username,
-    };
-    rabbitMQ.send(JSON.stringify(data), null);
+    // const data = {
+    //   user: req.body.username,
+    // };
+    // rabbitMQ.send(JSON.stringify(data), null);
     res.json('OK');
   },
 );

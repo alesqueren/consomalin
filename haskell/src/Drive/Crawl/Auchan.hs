@@ -124,7 +124,7 @@ doRegisterIfNeeded uid = do
     Just acc -> return acc
     Nothing -> do
       userData <- makeUserData
-      let acc = getAccount userData
+      let acc = getAccount uid userData
       runConduitCrawl (doRegistration userData)
       mongoSet acc
       return acc

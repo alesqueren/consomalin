@@ -77,7 +77,7 @@ makeUserData = do
   p <- randomLine "./resources/userInfo/firstNames.txt"
   -- city <- randomLine "./resources/cities.txt"
   password <- randomWord
-  let email = T.replace " " "" $ T.toLower n <> "." <> T.toLower p <> "@gmail.com"
+  let email = T.replace " " "" $ T.toLower n <> "." <> T.toLower p <> "@mail.consomalin.ovh"
   phone <- randomPhone
   birthM <- randomRIO (1, 12) :: IO Integer
   birthD <- randomRIO (10, 28) :: IO Integer
@@ -144,8 +144,8 @@ mkFormData u =
   "t%3Azoneid=formRefresh&" <>
   "t%3Aformdata=bYTU8hopA0BAtWR43AIc8mC0gL8%3D%3AH4sIAAAAAAAAAKVXO28TMRx3Q1sF%2BkBqxYBYGGCivSTXpC2FgaqoUKlUEREMLJVzcVNXd7axnSZdmJCYGVn4BIiBh8TUgQ5IHfgOfAAWkJhAwj737lKloLOz2b%2B73%2BP8%2FN%2Bb72Cs64NyEGJEZGmDiIBjJjElKzhrBzRilKgXvADv4xBLJDhYprztQQaDXeRJyJCQ%2FKDmBZSjEDe9lCK8h7CF6T1OO%2BxaA8kOe1k%2BnHs%2F%2FfNzAYxsgomAEslpuAUjJMHM5h7ch6UQknapITkm7Vs9JkExsXWMWnWIWjnuHR%2B%2Fa%2Fw5LADQY90FUMlrrMwgwSJC4il4BoAE51PESUarjHWXQC0vk0MsKBE0wDDUn1%2F77%2Bc3oUDealOBMJDrGIUtM03XHx1NfLv05ffANOk8I3papoxRwxgNk3DVNmGd0wAJ0eg0IyyE0j5626ru%2FHr91czWPLiRNwqhUTxPRQnOqbYlVTMnu2Xg5eUwjvocx03XXsD4Woz4Hu1wokZdQBKgxH5Ko1sJ6ixnHSaiWAyG0ahTmFNyJswyWMzLhoQgNJBmOoazOM6CJs9NsJSXLlGI2K5qR7SJwzTQxRR%2FEONDSFrPV8rfwb1svlJ0XaHOcibMIqhasxmnSZbJFFQHg6uYSWJxw%2BziVguR7bI6wO7kvWHux5zB8%2BvJi6uzvSufxv992hYTu64H5nKfFvBAJIM0qju2ZDMoVeDnvnZpCzEqJAwT3wsaqseQm5DJUALzeanq4s82zljcs6YbU4vR2qc49RzVHVuy9fqTBwz1uxY18Fg7O4gY9xpYyH37dSLEqaZWkgATBtMRKo5SQ8Twz4jhO0pZLzkkYTtbcnHPmm69AJAIoHqVpwsgAVxErN2bUOJIH2qJewK4iFgXUiiCOExX3rjp2gu4%2BfqnfX17Aet1HlGpzkMoRN92U9hdVI8xR6khYvhnxLDabn1S1kUAkhzpS1L9EKS7blKDayegq5hJchus5L%2BmYiKDXOqij6P0vp05eVTPHg0nbL1WhS4vpE15EhckcrA8edX4cfnjh%2BdrBVDYVL%2Fjsf9GK65NVLmiiii9h0%2BXK8Z8u5I1y38B8Hnggm4QAAA%3D"
 
-getAccount :: UserData -> Account
-getAccount u = Account "" (email1 u) (motDePasse1 u)
+getAccount :: Text -> UserData -> Account
+getAccount uid u = Account uid (email1 u) (motDePasse1 u)
 
 load :: Crawl [Tag Text]
 load = requestTag $ Req url "GET" [] ""

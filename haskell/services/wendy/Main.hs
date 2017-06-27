@@ -73,6 +73,8 @@ orderController = do
       text "Bad Request"
     Right t -> do
       mDiff <- liftIO $ order uid t
+      -- putText (show t)
+      -- putText (show mDiff)
       case mDiff of
         Nothing -> text "OK"
         Just diff -> do
