@@ -140,6 +140,7 @@ const actions = {
   order({ commit, rootGetters, rootState }) {
     return new Promise((resolve, reject) => {
       const mergedBasketProducts = rootGetters['basket/mergedBasketProductsAfterPreparation'];
+      commit('setBasketBeforePreparation', mergedBasketProducts);
       resources.order.save(
         {
           basket: {
@@ -154,7 +155,56 @@ const actions = {
           reject();
         } else if (body === 'OK') {
           commit('setIsBasketOrdered', true);
+        } else if (body !== 'OK') {
+          const result = JSON.parse(body);
+          const basketDiff = result.basket;
+          commit('setPreparationDiff', basketDiff);
+          const products = basketDiff.products;
+          const matchedWishes = rootGetters['selection/getMatchedWishes'];
+          const newQties = {};
+          Object.keys(matchedWishes).map((wid) => {
+            const wish = matchedWishes[wid];
+            for (let i = 0; i < wish.length; i++) {
+              const pid = wish[i].pid;
+              const product = products[pid];
+              if (product && product.productNb) {
+                newQties[pid] = {
+                  maxQty: product.productNb,
+                  remindedQty: product.productNb,
+                };
+              }
+            }
+            return true;
+          });
+          Object.keys(matchedWishes).map((wid) => {
+            const wish = matchedWishes[wid];
+            // process new quantity
+            for (let i = 0; i < wish.length; i++) {
+              const pid = wish[i].pid;
+              const oldNb = wish[i].quantity;
+              const product = newQties[pid];
+              if (product) {
+                const remindedQty = product.remindedQty;
+                const diff = remindedQty - oldNb;
+                if (diff < 0) {
+                  const newNb = oldNb + diff;
+                  if (newNb <= 0) {
+                    dispatch('selection/removeProduct', { wid, pid }, { root: true });
+                  } else {
+                    dispatch('selection/updateProduct', { wid, pid, quantity: newNb }, { root: true });
+                    newQties[pid].remindedQty -= newNb;
+                  }
+                } else {
+                  newQties[pid].remindedQty = diff;
+                }
+              }
+            }
+            return true;
+          });
         }
+        commit('setIsBasketPrepared', true);
+        const mergedBasket2 = rootGetters['basket/mergedBasketProductsAfterPreparation'];
+        commit('setBasketAfterPreparation', mergedBasket2);
         resolve();
       });
     });
