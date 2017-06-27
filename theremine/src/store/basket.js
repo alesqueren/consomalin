@@ -38,6 +38,9 @@ const globalGetters = {
     const mergeBasketB = state.basketBeforePreparation;
     const mergedProducts = mergeBasketB.products;
     const diff = state.preparationDiff;
+    if (Object.keys(diff).length === 0) {
+      return mergeBasketB;
+    }
     const diffProducts = diff.products;
     const res = {};
     res.products = {};
@@ -82,6 +85,7 @@ const actions = {
         if (body === 'Something went wrong') {
           reject();
         } else if (body === 'OK') {
+          commit('setBasketAfterPreparation', mergedBasketProducts);
           commit('setIsBasketPrepared', true);
         } else if (body !== 'OK') {
           const result = JSON.parse(body);

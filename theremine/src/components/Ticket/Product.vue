@@ -8,7 +8,7 @@
     span.total.newTotal(
     v-if="totalChange && productDemoted || productPromoted"
       v-bind:class="{'demoted': productDemoted, 'promoted': productPromoted}"
-      ) &nbsp;&nbsp;&nbsp;&nbsp;{{pp.price}}€
+      ) &nbsp;&nbsp;&nbsp;&nbsp;{{ppPrice}}€
     span.total(v-bind:class="{'oldPrice': productDemoted || productPromoted, 'partiallyDeleted': totalChange, 'deleted': productDeleted}") {{pBp.price}}€
 
 </template>
@@ -41,6 +41,9 @@ export default {
     },
     pp() {
       return this.productAfterPreparation;
+    },
+    ppPrice() {
+      return this.pp ? (this.pp.price).toFixed(2) : 0;
     },
     ppProductNb() {
       return this.pp ? this.pp.productNb : 0;

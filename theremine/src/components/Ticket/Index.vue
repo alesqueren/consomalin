@@ -25,7 +25,7 @@ div#ticket
     Group.group(v-for="gid in selectedGroups" 
       v-bind:gid="gid" 
       v-bind:key="gid")
-    div.doublon(v-if="productInMultipleWish" style="clear:both;") Produits en double
+    div.doublon(v-if="productInMultipleWishExist" style="clear:both;") Produits en double
     Product.coucou(v-for="(pid, key, i) in productInMultipleWish"
       v-bind:pid="key" 
       v-bind:key="key")
@@ -47,6 +47,9 @@ export default {
   computed: {
     productInMultipleWish() {
       return this.$store.getters['product/getProductWithMultipleWishes'];
+    },
+    productInMultipleWishExist() {
+      return Object.keys(this.$store.getters['product/getProductWithMultipleWishes']).length;
     },
     basketBeforePreparation() {
       return this.$store.state.basket.basketBeforePreparation;
