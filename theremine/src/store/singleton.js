@@ -7,8 +7,7 @@ const defaultState = {
   action: { name: '', value: {} },
   activeGroupId: null,
   registering: null,
-  multiSelection: null,
-  createEntity: {},
+  flash: { content: '', type: '' },
 };
 
 const actions = {

@@ -46,6 +46,7 @@
           span &nbsp;Aide
     div#content(v-bind:class="{'marginalize-left' : listRequired, 'marginalize-right' : navCarRequired}")
       div#replay
+      div#flash(v-if="flashMessage") {{ flashMessage }}
       router-view
       NavCard(v-if='navCarRequired')
       List(v-if='listRequired')
@@ -67,6 +68,12 @@ export default {
     };
   },
   computed: {
+    flashMessage() {
+      // 'Une erreur est survenu, veuillez nous en excuser, renouvelez l\'operation
+      // et contactez-nous si le probleme persiste'
+      // 'L\'horaire choisi n\'est plus disponible, veuillez en selectionner un autre'
+      return this.$store.state.singleton.flash;
+    },
     user() {
       return this.$store.state.user;
     },
@@ -107,7 +114,6 @@ export default {
   },
   created() {
     // this.$store.dispatch('sectionWishes/debug');
-
     $(document).keydown((e) => {
       if (e.which === 37) {
         replay.previous(this.$store, this.$router);
@@ -115,6 +121,9 @@ export default {
         replay.next(this.$store, this.$router);
       }
     });
+    setTimeout(() => {
+      this.$store.dispatch('singleton/unset', 'flash');
+    }, 2000);
   },
   mounted() {
     if (this.demo) {

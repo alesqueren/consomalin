@@ -59,9 +59,9 @@ export default {
       return this.$store.state.basket.isBasketOrdered;
     },
   },
-  mounted() {
-    this.$store.dispatch('transaction/order');
-  },
+  // mounted() {
+  //   this.$store.dispatch('transaction/order');
+  // },
   methods: {
   },
   created() {

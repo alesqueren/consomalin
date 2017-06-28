@@ -5,7 +5,7 @@ div#ticket
   div.explanations(v-if="!isBasketPrepared") 
     i(class="text-center fa fa-spinner fa-spin fa-5x" style="width: 100%;")
     i(class="text-center" style="width: 100%;display: inline-block;") Nous synchronisons votre commande avec Auchan
-  div.explanations.alert.alert-warning(v-if="isBasketPrepared")
+  div.explanations.alert.alert-warning(v-if="isBasketPrepared && error")
     div Suite à la syncronisation, des événements on pu survenir.
     div.tip.tip1
       div Stocks insuffisants
@@ -44,6 +44,11 @@ import date from '../Utils/date';
 import router from '../../router';
 
 export default {
+  data() {
+    return {
+      error: false,
+    };
+  },
   computed: {
     productInMultipleWish() {
       return this.$store.getters['product/getProductWithMultipleWishes'];
@@ -119,8 +124,26 @@ export default {
     this.$store.dispatch('basket/setIsBasketPrepared', false);
 
     this.$store.dispatch('basket/prepareOrder').then(() => {
-    }, () => {
-      router.push({ name: 'withdraw' });
+    }, (status) => {
+      if (status === 'unknown error') {
+        this.$store.dispatch('singleton/set', {
+          flash: {
+            type: 'error',
+            message: 'unknown',
+          },
+        });
+        router.push({ name: 'basket' });
+      } else if (status === 'basket error') {
+        this.error = true;
+      } else {
+        this.$store.dispatch('singleton/set', {
+          flash: {
+            type: 'error',
+            message: 'slotUnavailable',
+          },
+        });
+        router.push({ name: 'withdraw' });
+      }
     });
   },
   components: { Group, Product },

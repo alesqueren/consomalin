@@ -2,6 +2,15 @@ import Vue from 'vue';
 import resources from '../resources';
 import config from '../../config';
 
+function IsJsonString(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 const globalGetters = {
   mergedBasketProductsBeforePreparation: (state, getters, rootState, rootGetters) => {
     const basket = rootState.selection.basket;
@@ -82,69 +91,29 @@ const actions = {
           slotId: rootState.singleton.selectedSlot.id,
         },
       ).then(({ body }) => {
+        let statusError = 'error';
         if (body === 'Something went wrong') {
-          reject();
+          statusError = 'unknown error';
         } else if (body === 'OK') {
           commit('setBasketAfterPreparation', mergedBasketProducts);
           commit('setIsBasketPrepared', true);
+          resolve();
         } else if (body !== 'OK') {
           const result = JSON.parse(body);
           const basketDiff = result.basket;
-          commit('setPreparationDiff', basketDiff);
-          const products = basketDiff.products;
-          const matchedWishes = rootGetters['selection/getMatchedWishes'];
-          const newQties = {};
-          Object.keys(matchedWishes).map((wid) => {
-            const wish = matchedWishes[wid];
-            for (let i = 0; i < wish.length; i++) {
-              const pid = wish[i].pid;
-              const product = products[pid];
-              if (product && product.productNb) {
-                newQties[pid] = {
-                  maxQty: product.productNb,
-                  remindedQty: product.productNb,
-                };
-              }
-            }
-            return true;
-          });
-          Object.keys(matchedWishes).map((wid) => {
-            const wish = matchedWishes[wid];
-            // process new quantity
-            for (let i = 0; i < wish.length; i++) {
-              const pid = wish[i].pid;
-              const oldNb = wish[i].quantity;
-              const product = newQties[pid];
-              if (product) {
-                const remindedQty = product.remindedQty;
-                const diff = remindedQty - oldNb;
-                if (diff < 0) {
-                  const newNb = oldNb + diff;
-                  if (newNb <= 0) {
-                    dispatch('selection/removeProduct', { wid, pid }, { root: true });
-                  } else {
-                    dispatch('selection/updateProduct', { wid, pid, quantity: newNb }, { root: true });
-                    newQties[pid].remindedQty -= newNb;
-                  }
-                } else {
-                  newQties[pid].remindedQty = diff;
-                }
-              }
-            }
-            return true;
-          });
+          dispatch('processNewBasket', basketDiff);
+          statusError = 'basket error';
         }
         commit('setIsBasketPrepared', true);
         const mergedBasket2 = rootGetters['basket/mergedBasketProductsAfterPreparation'];
         commit('setBasketAfterPreparation', mergedBasket2);
-        resolve();
+        reject(statusError);
       });
     });
   },
-  order({ commit, rootGetters, rootState }) {
+  order({ dispatch, commit, rootGetters, rootState }) {
     return new Promise((resolve, reject) => {
       const mergedBasketProducts = rootGetters['basket/mergedBasketProductsAfterPreparation'];
-      commit('setBasketBeforePreparation', mergedBasketProducts);
       resources.order.save(
         {
           basket: {
@@ -155,62 +124,70 @@ const actions = {
           isDemo: Boolean(config.demo === 'true'),
         },
       ).then(({ body }) => {
+        let statusError = 'error';
         if (body === 'Something went wrong') {
-          reject();
-        } else if (body === 'OK') {
-          commit('setIsBasketOrdered', true);
-        } else if (body !== 'OK') {
+          statusError = 'unknown error';
+        } else if (IsJsonString(body)) {
+          commit('setBasketBeforePreparation', mergedBasketProducts);
           const result = JSON.parse(body);
           const basketDiff = result.basket;
-          commit('setPreparationDiff', basketDiff);
-          const products = basketDiff.products;
-          const matchedWishes = rootGetters['selection/getMatchedWishes'];
-          const newQties = {};
-          Object.keys(matchedWishes).map((wid) => {
-            const wish = matchedWishes[wid];
-            for (let i = 0; i < wish.length; i++) {
-              const pid = wish[i].pid;
-              const product = products[pid];
-              if (product && product.productNb) {
-                newQties[pid] = {
-                  maxQty: product.productNb,
-                  remindedQty: product.productNb,
-                };
-              }
-            }
-            return true;
-          });
-          Object.keys(matchedWishes).map((wid) => {
-            const wish = matchedWishes[wid];
-            // process new quantity
-            for (let i = 0; i < wish.length; i++) {
-              const pid = wish[i].pid;
-              const oldNb = wish[i].quantity;
-              const product = newQties[pid];
-              if (product) {
-                const remindedQty = product.remindedQty;
-                const diff = remindedQty - oldNb;
-                if (diff < 0) {
-                  const newNb = oldNb + diff;
-                  if (newNb <= 0) {
-                    dispatch('selection/removeProduct', { wid, pid }, { root: true });
-                  } else {
-                    dispatch('selection/updateProduct', { wid, pid, quantity: newNb }, { root: true });
-                    newQties[pid].remindedQty -= newNb;
-                  }
-                } else {
-                  newQties[pid].remindedQty = diff;
-                }
-              }
-            }
-            return true;
-          });
+          dispatch('processNewBasket', basketDiff);
+          statusError = 'basket error';
+        } else {
+          commit('setBasketAfterPreparation', mergedBasketProducts);
+          commit('setIsBasketOrdered', true);
+          resolve();
         }
         commit('setIsBasketPrepared', true);
         const mergedBasket2 = rootGetters['basket/mergedBasketProductsAfterPreparation'];
         commit('setBasketAfterPreparation', mergedBasket2);
-        resolve();
+        reject(statusError);
       });
+    });
+  },
+  processNewBasket({ dispatch, commit, rootGetters, rootState }, basketDiff) {
+    commit('setPreparationDiff', basketDiff);
+    const products = basketDiff.products;
+    const matchedWishes = rootGetters['selection/getMatchedWishes'];
+    const newQties = {};
+    Object.keys(matchedWishes).map((wid) => {
+      const wish = matchedWishes[wid];
+      for (let i = 0; i < wish.length; i++) {
+        const pid = wish[i].pid;
+        const product = products[pid];
+        if (product && product.productNb) {
+          newQties[pid] = {
+            maxQty: product.productNb,
+            remindedQty: product.productNb,
+          };
+        }
+      }
+      return true;
+    });
+    Object.keys(matchedWishes).map((wid) => {
+      const wish = matchedWishes[wid];
+      // process new quantity
+      for (let i = 0; i < wish.length; i++) {
+        const pid = wish[i].pid;
+        const oldNb = wish[i].quantity;
+        const product = newQties[pid];
+        if (product) {
+          const remindedQty = product.remindedQty;
+          const diff = remindedQty - oldNb;
+          if (diff < 0) {
+            const newNb = oldNb + diff;
+            if (newNb <= 0) {
+              dispatch('selection/removeProduct', { wid, pid }, { root: true });
+            } else {
+              dispatch('selection/updateProduct', { wid, pid, quantity: newNb }, { root: true });
+              newQties[pid].remindedQty -= newNb;
+            }
+          } else {
+            newQties[pid].remindedQty = diff;
+          }
+        }
+      }
+      return true;
     });
   },
   setIsBasketPrepared({ commit }, isBasketPrepared) {
