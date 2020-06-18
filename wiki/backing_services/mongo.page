@@ -1,0 +1,144 @@
+users
+=====
+
+### session
+
+### user
+
+~~~{ .json }
+{
+    _id: string,
+    password: string,
+
+    wishGroups: [{  
+        id: "ef58"
+        name: "ratatouille"
+        wishes: [{  
+            id: "5472", 
+            name: "oignons",
+        }]  
+    }], 
+
+    currentBasket: {
+        currentWish: {
+            groupId: "ef58",
+            wishId: "5472"
+        }   
+
+        slot: { 
+            id: "305789",
+            dateTime: ISODate("2017-03-15T11:31:40.000Z")
+        }   
+                
+        selectedWishes : { 
+            "ef58": {
+                "5472": [{
+                    pid: pid1, 
+                    quantity: 2 
+                }],
+                "afe8": {}
+            }   
+        }   
+    }
+
+    alreadyBoughtProducts : [pid1, pid2],
+    lastBoughtProducts : { 
+        group_name : { 
+            wish_name : pid1 
+        } 
+    },
+
+    transactions: [{
+        id : "55454577",
+        value: 145,
+        orderTime: ISODate("2017-03-17T12:01:04.000Z"),
+        slot: { 
+            id: "305789",
+            dateTime: ISODate("2017-03-17T12:30:00.000Z")
+        },
+        wishGroups: [{  
+            name: "ratatouille",
+            wishes: [{  
+                name: "oignons", 
+                products: [{ 
+                    id: "12658",
+                    name : "oignons 2kg",
+                    image: "http://...",
+                    price: 3.2,
+                    priceByQuantity : 1.6,
+                    quantity: {
+                        value: 2,
+                        unit: "kg"
+                    }
+                }],
+                quantity: 2 
+            }]  
+        }]
+    }]   
+}
+~~~
+
+### account
+
+~~~{ .json }
+{
+    _id: string,
+    driveUser: string,
+    drivePassword: string
+}
+~~~
+
+auchan
+======
+
+### product
+
+~~~{ .json }
+{
+    _id: string,
+    features: {
+        name: "oignons 2kg",
+        description: "...",
+        category: "légumes",
+        image: "http://...",
+        price: 3.2,
+        priceByQuantity : 1.6,
+        quantity: {
+	    value: 2,
+	    unit: "kg"
+	}
+    } 
+}
+~~~
+
+**indexes :**
+
+~~~
+> db.product.getIndexes();
+> db.product.dropIndex("nameShort_nameLong");
+> db.product.createIndex({name: "text"})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+
+> db.product.find( {$text : { $search: "poire", $language: "fr" } }, {nameShort: 1, score: {$meta: "textScore"} } ).sort( {score: {$meta: "textScore"}});
+{ "_id" : "794559", "nameShort" : "ACTIVIA 4 POIRE", "score" : 3.1516666666666664 }
+{ "_id" : "363302", "nameShort" : "Pot Poire", "score" : 2.826550387596899 }
+{ "_id" : "535369", "nameShort" : "Blédina blédilacté framboise pêche poire 12x60g dès 6 mois", "score" : 2.368750514784614 }
+~~~
+
+### attendance
+
+~~~{ .json }
+{
+    "_id": "balma",
+    "1": {
+        "09:00:00": 0.1,
+        ...
+    }
+}
+~~~
+Index is day of week, 0 is sunday

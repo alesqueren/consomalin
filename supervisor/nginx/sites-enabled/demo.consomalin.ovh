@@ -1,0 +1,9 @@
+server {
+	listen              443 ssl;
+	server_name         demo.consomalin.ovh;
+
+	ssl_certificate     /app/ssl/nginx/demo.consomalin.ovh/cert.pem;
+	ssl_certificate_key /app/ssl/nginx/demo.consomalin.ovh/privkey.pem;
+
+	return 301 http://demo.consomalin.shop$request_uri;
+}

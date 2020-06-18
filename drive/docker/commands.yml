@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+
+  byte-diver:
+    build:
+      context: ./haskell
+      dockerfile: ./services/byte-diver/Dockerfile
+    networks: [big]
+
+networks:
+  big:

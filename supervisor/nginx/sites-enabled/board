@@ -1,0 +1,18 @@
+server {
+	listen              443 ssl;
+	server_name         board.consomalin.ovh;
+
+	ssl_certificate     /app/ssl/nginx/board.consomalin.ovh/cert.pem;
+	ssl_certificate_key /app/ssl/nginx/board.consomalin.ovh/privkey.pem;
+
+	auth_ldap "Forbidden";
+	auth_ldap_servers ldap;
+	location / {
+		set $address http://wekan;
+		proxy_pass $address;
+		proxy_http_version 1.1;
+		proxy_set_header Connection "";
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header Host $http_host;
+	}
+}

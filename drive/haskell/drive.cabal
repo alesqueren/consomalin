@@ -1,0 +1,205 @@
+name:                drive
+version:             0.1.0.0
+synopsis:            Scraper for drive sites
+license:             AllRightsReserved
+author:              Drive
+copyright:           2017 Drive
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Utils.Re
+                       Utils.Env
+                       Utils.Misc
+                       Utils.Generic
+                       Drive.Slot
+                       Drive.Types
+                       Drive.Price
+                       Drive.Basket
+                       Drive.Product
+                       Drive.Attendance
+                       Drive.ViewProduct
+                       Drive.Bs.Mongo
+                       Drive.Bs.Rabbitmq
+                       Drive.Mail.SMTP
+                       Drive.Mail.IMAP
+                       Drive.Mail.Confirmation
+                       Drive.Crawl
+                       Drive.Crawl.Account
+                       Drive.Crawl.Auchan
+                       Drive.Crawl.Auchan.Product
+                       Drive.Crawl.Auchan.Page.Home
+                       Drive.Crawl.Auchan.Page.Mail
+                       Drive.Crawl.Auchan.Page.Login
+                       Drive.Crawl.Auchan.Page.Orders
+                       Drive.Crawl.Auchan.Page.Basket
+                       Drive.Crawl.Auchan.Page.Landing
+                       Drive.Crawl.Auchan.Page.Payment
+                       Drive.Crawl.Auchan.Page.Category
+                       Drive.Crawl.Auchan.Page.Register
+                       Drive.Crawl.Auchan.Page.Schedule
+                       Drive.Crawl.Auchan.Page.Cancellation
+                       Drive.Crawl.Auchan.Page.Merchandising
+  ghc-options:         -W -Wall
+  build-depends:       base >= 4.7 && < 5
+                     , protolude
+                     , aeson
+                     , attoparsec
+                     , blaze-builder
+                     , bson
+                     , bytestring
+                     , conduit-combinators
+                     , errors
+                     , fast-logger
+                     , free
+                     , exceptions
+                     , http-conduit
+                     , http-types
+                     , http-client
+                     , lens
+                     , monad-logger
+                     , mongoDB
+                     , mtl
+                     , network-uri
+                     , regex-tdfa
+                     , scalpel-core
+                     , tagsoup
+                     , text
+                     , time
+                     , transformers
+                     , unordered-containers
+                     , wl-pprint-text
+                     , amqp
+                     , containers
+                     , cgi
+                     , generics-sop
+                     , random
+                     , random-fu
+                     , random-extras
+                     , HaskellNet
+                     , HaskellNet-SSL
+                     , imap
+                     , connection
+                     , mime
+                     , text
+                     , blaze-html
+                     , shakespeare
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable byte-diver
+  hs-source-dirs:      services/byte-diver
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , containers
+                     , drive
+                     , conduit
+                     , conduit-combinators
+                     , free
+                     , transformers
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable kiva
+  hs-source-dirs:      services/kiva
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , drive
+                     , attoparsec
+                     , warp
+                     , aeson
+                     , text
+                     , scotty
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable wendy
+  hs-source-dirs:      services/wendy
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , drive
+                     , attoparsec
+                     , warp
+                     , aeson
+                     , text
+                     , scotty
+                     , http-types
+                     , containers
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable metronome
+  hs-source-dirs:      services/metronome
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , drive
+                     , scotty
+                     , aeson
+                     , attoparsec
+                     , wai
+                     , warp
+                     , time
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable lyrist
+  hs-source-dirs:      services/lyrist
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , drive
+                     , HaskellNet
+                     , HaskellNet-SSL
+                     , imap
+                     , connection
+                     , mime
+                     , text
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+test-suite byte-diver-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             test.hs
+  other-modules:       Drive.ProductTest
+  build-depends:       base
+                     , protolude
+                     , mongoDB
+                     , quickcheck-text
+                     , tasty
+                     , tasty-hunit
+                     , tasty-quickcheck
+                     , text
+                     , wl-pprint-text
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+test-suite kiva-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             test.hs
+  other-modules:       Drive.ProductTest
+  build-depends:       base
+                     , protolude
+                     , mongoDB
+                     , quickcheck-text
+                     , tasty
+                     , tasty-hunit
+                     , tasty-quickcheck
+                     , text
+                     , wl-pprint-text
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude

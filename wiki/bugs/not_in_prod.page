@@ -1,0 +1,21 @@
+### Gocd deploy sometime fails
+
+~~~
+08:17:00.858 [build@supervisor]$ fetching commits from gocd...
+08:17:01.265 Traceback (most recent call last):
+08:17:01.266   File "/home/admin/drive/scripts/lib/get_labels.py", line 4, in <module>
+08:17:01.266     data = json.loads(line)
+08:17:01.266   File "/usr/lib/python2.7/json/__init__.py", line 339, in loads
+08:17:01.266     return _default_decoder.decode(s)
+08:17:01.267   File "/usr/lib/python2.7/json/decoder.py", line 364, in decode
+08:17:01.267     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+08:17:01.267   File "/usr/lib/python2.7/json/decoder.py", line 382, in raw_decode
+08:17:01.267     raise ValueError("No JSON object could be decoded")
+08:17:01.267 ValueError: No JSON object could be decoded
+08:17:01.566 not a valid commit
+08:17:01.591 [go] Current job status: failed.
+~~~
+
+**Workaroud**
+
+Rebuild

@@ -1,0 +1,22 @@
+version: "3"
+
+networks:
+  big:
+    driver: overlay
+
+services:
+
+  theremine_dev:
+    image: registry.consomalin.ovh:5000/theremine:${commit}
+    env_file: env/theremine_dev.env
+    networks: [big]
+
+  janitor:
+    image: registry.consomalin.ovh:5000/janitor:${commit}
+    env_file: env/janitor.env
+    networks: [big]
+
+  recorder:
+    image: registry.consomalin.ovh:5000/recorder:${commit}
+    env_file: env/recorder.env
+    networks: [big]

@@ -1,0 +1,213 @@
+# Style
+
+Ça a l'air pas mal :
+
+[https://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md]()
+
+# Stack
+
+`stack` est conseillé.
+
+Il utilise le même format de paquets cabal et fournit des distributions de paquets qui marchent bien ensemble.
+
+La distrib courante est la LTS 7.x ([7.15](https://www.stackage.org/lts-7.15) aujourd'hui).
+Je n'ai pas vraiment lu leur politique de release mais j'imagine qu'ils encouragent à updater souvent en restant sur la même release majeure.
+
+L'outil est packagé dans les distros recentes (`pacman -S stack`, `aptitude install stack`).
+
+Ensuite, il faut lancer `stack setup` et c'est prêt à l'emploi.
+J'ai essayé d'activer l'option "use system ghc" mais je le déconseille, j'ai eu des problèmes de conflits entre les libs stack et archlinux ensuite.
+
+## Utilisation
+
+À retenir en gros : remplacer toutes les commandes `cabal xxx` par `stack xxx`.
+
+* nouveau projet: `stack new`
+* repl avec le contexte du projet (imports et fonctions des libs définies): `stack repl` ou `stack ghci`
+* build: `stack build`
+* executer un programme: `stack exec prog -- prog_args`
+
+Bon c'est les trucs les plus courants, vous comprenez l'idée.
+
+## Forcer l'upgrade d'une dépendance
+
+Voir le fichier [stack.yaml](https://git.consomalin.ovh/drive/byte-diver/src/master/stack.yaml)
+
+# Libs de base et extensions de language
+
+Je propose d'utiliser `OverloadedStrings` et `NoImplicitPrelude` pour l'instant en remplaçant le Prelude de base par [Protolude](https://github.com/sdiehl/protolude).
+
+`OverloadedStrings` et `Protolude` devraient simplifier et rendre plus efficace la manipulation de texte, ce qui risque d'être assez courant dans nos projets.
+
+En gros, les strings de base Haskell sont des `[Char]` où `Char` est un code point unicode sur 32 bits.
+Le standard c'est maintenant d'utiliser le package text qui définit un type opaque `Text` avec plus d'opérations de base et une représentation interne plus efficace.
+
+Protolude ne fournit pas le type `String` de base par défaut mais la plupart des fonctions qu'il fournit marchent avec tous les types compatibles string.
+Ce sont ceux qui implémentent la typeclasss `IsString`.
+
+Avec `OverloadedStrings`, le type des litéraux strings dans le code est automatiquement inféré, un peu comme c'est fait avec les entiers de base :
+
+~~~ { .haskell }
+import qualified Data.Text as T
+
+-- sans OverloadedStrings
+s1 :: T.Text
+s1 = T.pack "hello"
+
+-- avec OverloadedStrings
+s2 :: T.Text
+s2 = "hello"
+~~~
+
+C'est une blague courante dans Haskell que des fois les déclarations d'extensions de langage prennent plus de lignes que le programme en lui même :).
+Je propose qu'on parte simple là dessus et qu'on voit ensuite si on a besoin d'autres choses (probablement pour utiliser des libs).
+
+# Gestion des erreurs / exceptions
+
+Il faut qu'on se mette au clair là dessus.
+
+Voilà un article intéressant : [https://www.fpcomplete.com/blog/2016/11/exceptions-best-practices-haskell]()
+
+# Outils
+
+Voilà quelques outils utiles à installer. Ils sont pour la plupart dans les repos archlinux, je conseille de les installer comme
+ça si possible sinon ça prend pas mal d'espace disque et de temps à compiler.
+
+* hlint: linter qui propose des simplifications sympatoches. Souvent, les suggestions permettent d'avoir une meilleur intuitions sur les types
+  alors qu'on a passé un quart d'heure à essayer plein de combinaisons :)
+* stylish-haskell: formatteur de code
+* hoogle: pour chercher des fonctions dans les libs courantes à partir de leurs signatures de types. Il y a aussi un
+  site mais c'est vraiment pratique à ajouter dans la repl (voir plus bas)
+* ghc-mod, hdevtools: outils pour plugger dans son éditeur favoris. Avec les bons plugins, ça marche tout seul
+
+## Repl
+
+Peut se configurer dans `~/.ghc/ghci.conf`.
+
+Voilà le mien pour l'instant :
+
+~~~ { .haskell }
+:set -XOverloadedStrings -XNoImplicitPrelude
+:m + Protolude
+:set prompt "λ: "
+:def hoogle \s -> return $ ":! hoogle --count=15 \"" ++ s ++ "\""
+~~~
+
+Ça active les extensions dont on parle plus haut, ça met un prompt petit (sinon, il devient vite géant avec la liste des modules importés).
+Et surtout, ça définit la fonction `hoogle` pour chercher la fonction qu'il nous faut. Exemple :
+
+~~~ { .haskell }
+λ: :hoogle (a -> a) -> [a] -> [a]
+Prelude map :: (a -> b) -> [a] -> [b]
+Data.List map :: (a -> b) -> [a] -> [b]
+GHC.OldList map :: (a -> b) -> [a] -> [b]
+Data.GI.Base.ShortPrelude map :: (a -> b) -> [a] -> [b]
+Data.Edison.Seq.ListSeq map :: (a -> b) -> [a] -> [b]
+Data.List foldl1' :: (a -> a -> a) -> [a] -> a
+GHC.OldList foldl1 :: (a -> a -> a) -> [a] -> a
+GHC.OldList foldl1' :: (a -> a -> a) -> [a] -> a
+GHC.OldList foldr1 :: (a -> a -> a) -> [a] -> a
+Prelude foldr1 :: (a -> a -> a) -> [a] -> a
+Prelude foldl1 :: (a -> a -> a) -> [a] -> a
+Data.Edison.Seq.ListSeq fold1 :: (a -> a -> a) -> [a] -> a
+Data.Edison.Seq.ListSeq fold1' :: (a -> a -> a) -> [a] -> a
+Data.Edison.Seq.ListSeq foldr1 :: (a -> a -> a) -> [a] -> a
+Data.Edison.Seq.ListSeq foldl1 :: (a -> a -> a) -> [a] -> a
+-- plus more results not shown, pass --count=25 to see more
+~~~
+
+Il faut installer hoogle pour que ça marche, en fait ça passe par la commande shell.
+
+Pour développer, ce que je trouve assez efficace c'est d'ouvrir une repl scopée dans le project sur le coté (`stack repl`).
+Si il y a des erreurs de compilations, elles s'afficheront. Sinon, on peut bricoler avec ce qu'on a défini.
+
+Ensuite, `:reload` permet de recharger pour avoir le nouveau code ou les nouvelles erreurs chargés. Par contre, ce qui
+a été défini dans la repl entre temps est perdu. Pour bosser sur de vrais gros exemples, mieux vaut écrire des tests
+unitaires je pense.
+
+Sinon, ce qui est utile pour explorer :
+
+* type d'une expression : `:t <expr>`
+
+~~~ { .haskell }
+λ: :t map (+)
+map (+) :: (Num a, Functor f) => f a -> f (a -> a)
+~~~
+
+
+* définition d'un type `:info <type>`:
+
+~~~ { .haskell }
+λ: :info Text
+data Text
+  = Data.Text.Internal.Text {-# UNPACK #-}Data.Text.Array.Array
+                            {-# UNPACK #-}Int
+                            {-# UNPACK #-}Int
+        -- Defined in ‘Data.Text.Internal’
+instance Eq Text -- Defined in ‘Data.Text’
+instance Ord Text -- Defined in ‘Data.Text’
+instance Read Text -- Defined in ‘Data.Text’
+instance Show Text -- Defined in ‘text-1.2.2.1:Data.Text.Show’
+instance IsString Text -- Defined in ‘Data.Text’
+instance Semigroup Text -- Defined in ‘Data.Text’
+instance Monoid Text -- Defined in ‘Data.Text’
+instance Print Text -- Defined in ‘Show’
+instance StringConv GHC.Base.String Text -- Defined in ‘Conv’
+instance StringConv Text GHC.Base.String -- Defined in ‘Conv’
+instance StringConv Text Text -- Defined in ‘Conv’
+instance StringConv Text ByteString -- Defined in ‘Conv’
+instance StringConv ByteString Text -- Defined in ‘Conv’
+instance NFData Text -- Defined in ‘Data.Text’
+~~~
+
+* membres d'un module : `:browse <mod>`
+
+~~~{ .haskell }
+λ: :browse Data.Maybe
+catMaybes :: [Maybe a] -> [a]
+fromJust :: Maybe a -> a
+fromMaybe :: a -> Maybe a -> a
+isJust :: Maybe a -> Bool
+isNothing :: Maybe a -> Bool
+listToMaybe :: [a] -> Maybe a
+mapMaybe :: (a -> Maybe b) -> [a] -> [b]
+maybe :: b -> (a -> b) -> Maybe a -> b
+maybeToList :: Maybe a -> [a]
+data Maybe a = Nothing | Just a
+~~~
+
+## Vim
+
+Testé :
+
+* haskell-vim : coloration et indentation. L'indentation est parfois reloue mais on s'y fait
+* [vim-haskell-indent](https://github.com/itchyny/vim-haskell-indent) : a l'air mieux pour l'indentation
+* syntastic : permet de checker la compilation à la sauvegarde du fichier avec annotation des erreurs.
+  Utilise hdevtools pour haskell. Un peu chiant par défaut, à configurer.
+* neco-ghc : censé faire de la completion. Je l'utilise avec `deoplete` pour neovim mais ça a l'air d'être cassé pour l'instant
+* interaction repl : je teste un peu slimux mais il y a des bugs... C'est peut être pas tellement nécessaire
+
+#### Syntastic
+**Problem**
+
+~~~
+Cabal error: 
+Encountered missing dependencies: 
+  quickcheck-text -any, 
+  tasty -any, 
+  tasty-hunit -any, 
+  tasty-quickcheck -any
+~~~
+
+**Solution**
+
+~~~
+cd <project_dir>
+stack install hdevtools quickcheck-text tasty tasty-hunit tasty-quickcheck
+~~~
+## Sources
+
+* [https://docs.haskellstack.org/en/stable/README/]()
+* [http://www.stephendiehl.com/posts/protolude.html]()
+* [http://dev.stephendiehl.com/editor_talk.html]()
+* [http://dev.stephendiehl.com/hask/#stack]() (énorme page, mais infos condensées sur chaque point)

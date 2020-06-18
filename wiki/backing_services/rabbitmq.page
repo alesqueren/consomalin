@@ -1,0 +1,15 @@
+# Queues
+
+#### registrations
+~~~{ .json }
+{
+   "user": "az@hotmail.fr"
+}
+~~~
+
+#### cancelTransactions
+~~~{ .json }
+{
+   "transactionId": "55496300"
+}
+~~~

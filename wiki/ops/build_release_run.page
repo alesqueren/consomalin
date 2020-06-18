@@ -1,0 +1,20 @@
+# Définition 
+
+[12factor](https://12factor.net/fr/build-release-run)
+
+**build**: images docker des services créées à partir d'un commit 
+[drive](git.consomalin.ovh/drive/drive), construites par le [ci](https://ci.consomalin.ovh) 
+et stockées dans le [registry](https://registry.consomalin.ovh/v2/_catalog)
+
+**release**: commit git contenant un docker-compose.yml et des fichiers d'environnement
+
+**run**: docker stack
+
+# Forcer la création d'une release avant un run
+[incron](https://doc.ubuntu-fr.org/incron)
+
+~~~ { .bash }
+# /etc/incron.d/release
+/home/admin/drive/release/env IN_MODIFY,IN_DELETE,IN_CLOSE_WRITE rm /home/admin/drive/release/docker-compose.yml
+/home/admin/drive/release/docker-compose IN_MODIFY,IN_DELETE,IN_CLOSE_WRITE rm /home/admin/drive/release/docker-compose.yml
+~~~ 

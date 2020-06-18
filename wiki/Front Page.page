@@ -1,0 +1,54 @@
+---
+format: Markdown
+...
+
+# Business
+
+  - [noms](names)
+  - [concurrents](competitors)
+  - [feedback]()
+  - [chiffres sur les drives](drive_metrics)
+
+# Tests
+
+  - [Elements d'interface](/tests/interface)
+
+# Technique
+
+Services
+
+  - [theremine](/services/theremine)
+  - [janitor](/services/janitor)
+  - [kiva](/services/kiva)
+  - [metronome](/services/metronome)
+  - [wendy](/services/wendy)
+  - [byte-diver](/services/byte-diver)
+  - [replay](/services/replay)
+
+Backing Services
+
+  - [rabbitmq](/backing_services/rabbitmq)
+  - [mongo](/backing_services/mongo)
+
+Techno
+
+  - [Haskell]()
+  - [Navigateurs headless](https://github.com/dhamaniasad/HeadlessBrowsers)
+
+Ops
+
+  - [Build Release Run](/ops/build_release_run)
+  - [Docker](/ops/docker)
+
+Bugs
+
+  - [N'affectant pas la prod](/bugs/not_in_prod)
+
+# Panel
+
+  - [git.consomalin.ovh](http://git.consomalin.ovh)
+  - [wiki.consomalin.ovh](http://wiki.consomalin.ovh)
+  - [board.consomalin.ovh](http://board.consomalin.ovh)
+  - [share.consomalin.ovh](http://share.consomalin.ovh)
+  - [framapad.consomalin.ovh](http://framapad.consomalin.ovh)
+  - [phpldapadmin.consomalin.ovh](http://phpldapadmin.consomalin.ovh)

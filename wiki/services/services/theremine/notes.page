@@ -1,0 +1,27 @@
+# Questions
+
+couleurs pour les groupes
+
+modifiables ?
+
+
+souvent besoin de switcher "liste de courses" "rayon"
+
+merger les pages ?
+
+bouton d'aller retour facile
+
+# Remarques
+
+Affichage des wishgroupes:
+
+~~~
+trie par nombre de wish décroissant
+trouver le nombre de colonnes x suivant la résolution
+liste de x (wish_nb=0, wishgroups=[])
+pour chaque wishgroup: 
+    le placer dans la colonne contenant le moins de wishes
+    updater le nb de wishes de la colonne
+~~~
+
+Voir pour placer un wishgroup dans plusieurs colonnes si l'écart du nb de wish par colonne est minimisé.

@@ -1,0 +1,13 @@
+# One off command
+[12factor](https://12factor.net/fr/admin-processes)
+
+## Se connectant au network de la stack
+
+En attendant de [pouvoir écrire dans le docker-compose](https://github.com/docker/docker/issues/30191) : 
+
+~~~ { .bash }
+docker service create --name temp_bytediver --network drive_big --with-registry-auth registry.consomalin.ovh:443/byte-diver:6c63eed sleep infinity
+docker ps | grep temp_bytediver
+docker exec -it 536f3e19a8a3 bash
+./byte-diver
+~~~ 

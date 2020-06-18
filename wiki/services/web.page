@@ -1,0 +1,276 @@
+# Persistence du panier
+
+2 cas possibles:
+
+  - Persistence 2h
+     - à la connection, si panier alors redirection page panier
+     - si page "liste de courses" et panier alors "rayons" du header non selectionnable (homogène)
+  - Persistence à vie
+     - à la connection, si panier alors redirection page "liste de courses"
+     - si page "liste de courses" et panier alors "rayons" du header selectionnable
+
+# Page Accueil
+
+Besoin
+
+  - S'inscrire
+  - Se connecter
+  - Presenter le service
+    
+Interface
+
+  - sans scrollbar
+  - sans popup
+  - texte de presentation
+  - images de presentation
+  - Le formulaire d'inscription devrait apparaitre au clic sur un bouton "s'inscrire"
+ 
+Technique
+
+  - Pas de validation de mail
+
+Questions
+
+# Page "Liste de courses"
+
+Besoin
+
+  - Faire sa liste de course
+
+    - Creer des elements, renommer, suprimer, changer de groupe
+    - Creer des groupes, renommer, supprimer
+
+  - Gerer sa liste
+
+    - cocher, decocher la liste complete, des groupes, des elements 
+    - rechercher un element, permettre l'ajout auto si on ne le trouve pas
+
+  - Passer à l'etape suivante
+
+Interface
+
+  - Nommer l'etape dans le haut de page, breadcrumb ?
+  - Presenter les groupes comme un semainier, tableau par groupe, couleurs ? Donner des groupes par defaut ? Preremplis ?
+  - La liste cochée est persitente, entre deux visites, la liste garde le même etat.
+  - Un nom de produit est unique par groupe
+  - Les elements seront dans des tuiles
+  - Un textfield de la forme d'un bloc note
+  - L'ajout de plusieurs produits à la ligne crée les tuiles pour chaque ligne
+  - La suppression de tuile devrait etre une grande croix rouge qui apparait au hover
+  - Bouton "Go" pour passer à la phase suivante.
+
+Technique
+
+  - Le rennomage efface l'historique du produit
+
+Questions :
+
+  - Pourquoi pas wording "Remplir mon caddie" pour le bouton "Go"
+ 
+# Page "Rayons"
+
+Besoin
+
+  - Faire matcher ses wishes avec de vrais produits
+  - Voir les produits : images, nom, prix unitaire, prix par volume, qte (modifiable)
+  - Changer la quantité d'un produit
+  - Supprimer un produit
+  - Supprimer un wish
+  - Aouter un bouton pour dire qu'un produit en contient plusieurs (yaourts, sodas, recette)
+
+Interface
+
+  - Liste a droite haute contenant les wishes
+
+    - scrollbar
+    - Ces wishes se transforme en produit apres avoir été selectionné dans la partie gauche
+    - On peut supprimer un wish ou un produit
+    - On peut changer la quantité d'un produit
+    - On peut ajouter un nouveau wish directement
+
+  - Liste droite basse
+
+    - Total
+    - Nombre de wishes transformés
+    - Un bouton pour mettre au panier tous les derniers achats connus
+    - Le bouton "Passer à la caisse" (a changer je pense, genre "confirmer")
+
+  - Partie gauche haute : Champ de recherche
+
+    - Faire une recherche modifie le nom du wish
+    - Un bouton "ce terme contient plusieurs produits" permet de transformer le terme en groupe, on peut ensuite faire plusieur recherches pour un seul wish.
+
+  - Partie gauche contenant resultat recherche
+
+    - scrollbar
+    - Champ de recherche qui se rempli automatiquement avec le prochain wish de la liste
+    - cette partie gauche affiche tous les produits liés à cette recherche
+    - Les precedents produits deja achetés sont surlignés
+    - On indique aussi les produits deja au panier, on peu choisir une nouvelle quantité directement depuis la tuile
+
+Technique
+
+  - Pinger panier jusqu'a expiration site drive, dans ce cas, vidage produits
+
+
+*Question (laurent): est-ce que les modifications des wishes sont répercutées sur la liste globale ? Par exemple si il
+est supprimé, peut être qu'il faut qu'il soit "grisé" pour être réactivable pour les prochaines courses.*
+
+# Page "Caisse"
+
+Besoin
+
+  - Rappeler panier
+  - Changement de dernieres minutes
+    - supprimer un produit
+    - Changer la quantité d'un produit
+    - ajouter un produit
+
+Interface
+
+  - rappel "Avez vous oublié des produits" si on remarque qu'il ya des wishes non transformés
+  - Les tuiles seront les même que la page "rayons" ou "caddie"
+  - Les groupes seront ceux de la page "Ma liste"
+  - Changement de quantité possible
+  - Suppression de produit possible
+  - Total
+  - input bouton "Ajouter un produit" qui fait revenir a la page precedente avec l'input presaisi dans le champ de recherche
+  - bouton "Chsoisir mon horaire de retrait"
+
+Technique
+
+Questions
+
+# Page "Retrait"
+
+Besoin
+
+  - saisir l'horaire de retrait voulu
+
+Interface
+
+  - tous les jours de la semaine en ligne, avec les horaires dessous
+  - Indiquer les horaires de retraits passé, possible, impossible (leur etat d'affluence?)
+
+Technique
+
+  - Ne pas repartir les wishes dans les groupes
+  - supprimer les products à la validation de la commande
+
+
+# API
+
+POST /register
+
+POST /connect
+
+GET /
+
+GET /selection
+
+GET /basket
+
+GET /checkout
+
+GET /schedule
+
+GET /confirmation
+
+GET /wishlist [viewType]
+
+WishView
+
+~~~{ .json }
+[ 
+    { 
+        name : "ratatouille"    
+        wishes: [{ 
+            name: "oignons", 
+            selected : true 
+        }]
+    }
+]
+~~~
+
+BasketView
+
+~~~{ .json }
+[ 
+    { 
+        name : "ratatouille"
+        wishes: [{ 
+            name: "oignons", 
+            product : <viewFeatures>,
+            quantity : 2 
+        }] 
+    }
+]
+~~~
+
+POST /wishlist/setSelection [boolean]
+
+POST /wishlist/autoFill
+
+~~~{ .json }
+{ 
+    "ratatouille" : { 
+        "oignons" : <viewFeatures> 
+    } 
+}
+~~~
+
+POST /wishlist/order [slotTime ex:"11/01/2017 10:30:00"]
+(création de conversion implicite)
+
+{gid} peut être "default"
+
+POST /wishlist/groups [name]
+
+PUT /wishlist/groups/{gid} [name, selected]
+
+DELETE /wishlist/groups/{gid}
+
+POST /wishlist/groups/{gid}/wishes [name, pid]
+
+POST /wishlist/groups/{gid}/wishes/bulk [[name]]
+
+PUT /wishlist/groups/{gid}/wishes/{wid} [name, selected]
+
+POST /wishlist/groups/{gid}/wishes/{wid}/move [destination_gid]
+          (=> delete de l'entrée et ajout d'une nouvelle)
+
+DELETE /wishlist/groups/{gid}/wishes/{wid}
+
+POST /wishlist/groups/{gid}/wishes/{wid}/product [pid]
+
+PUT /wishlist/groups/{gid}/wishes/{wid}/product [quantity]
+
+DELETE /wishlist/groups/{gid}/wishes/{wid}/product}
+
+GET /products [search_string]
+
+~~~{ .json }
+[ 
+    { 
+        id : pid1,
+        alreadyBought : true,
+        features : <viewFeatures> 
+    } 
+]
+~~~
+
+GET /drive/schedule
+    <schedule>
+
+# Questions 
+
+couleurs pour les groupes
+
+modifiables ?
+
+
+souvent besoin de switcher "liste de courses" "rayon"
+
+merger les pages ?
+
+bouton d'aller retour facile

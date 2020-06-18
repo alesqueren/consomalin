@@ -1,0 +1,6 @@
+compiler:
+  build: ./haskell/compiler
+  volumes:
+    - ./haskell:/app
+    - ./haskell/.stack-compiler/local:/app/.stack-work
+    - ./haskell/.stack-compiler/global:/root/.stack

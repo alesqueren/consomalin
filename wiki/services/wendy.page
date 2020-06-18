@@ -1,0 +1,124 @@
+# API
+
+## Structures de données
+
+**Basket**
+
+~~~{ .json }
+{
+  totalPrice: 92.68,
+  products: { 
+    11174: {
+      productNb: 2,
+      priceByProduct: 1.6,
+      price: 3.2
+    }
+  }
+}
+~~~
+
+**Transaction**
+
+~~~{ .json }
+{
+  slotId: "1234",
+  basket: @Basket,
+}
+~~~
+
+
+## Routes
+
+#### **POST** /user/{uid}/prepareOrder
+
+  1. Ajoute les produits du panier Consomalin au panier du drive.
+  2. Récupère le panier tel qu'il est affiché sur le drive
+  3. Vérifie que le panier du drive et de consomalin soient identiques
+  4. Vérifie que l'horaire de retrait existe.
+
+Url parameters:  
+
+   - uid: string
+
+Data: @Transaction
+
+Response:
+
+  - 200:
+
+~~~{ .json }
+{ 
+  welcomeCode: true
+}
+~~~
+
+  - 409: 
+
+~~~{ .json }
+{ 
+  message: "basket errors",
+  basket: @Basket,
+}
+~~~
+
+  - 409 (actuellement erreur 500):
+
+~~~{ .json }
+{ 
+  message: "slotId is not available",
+}
+~~~
+
+#### **POST** /user/{uid}/order
+
+  1. Récupère le panier tel qu'il est affiché sur le drive.
+  2. Vérifie que le panier du drive et de consomalin soient identiques.
+  3. Sélectionne l'horaire de retrait.
+  4. Confirme la commande.
+  5. Renvoie le panier tel qu'il est affiché sur le drive.
+
+Url parameters:  
+
+   - uid: string
+
+Data: @Transaction
+
+Response:
+
+  - 200:
+
+~~~{ .json }
+{ 
+  transactionId: "55454577",
+  basket: @Basket,
+}
+~~~
+
+  - 409: 
+
+~~~{ .json }
+{ 
+  message: "basket errors",
+  basket: @Basket,
+}
+~~~
+
+  - 409 (actuellement erreur 500):
+
+~~~{ .json }
+{ 
+  message: "slotId is not available",
+}
+~~~
+
+#### **DELETE** /user/{uid}/transaction/{tid}
+
+Url parameters:  
+
+   - uid: string
+   - tid: string
+
+Response:
+
+   - 200: "OK"
+   - 500

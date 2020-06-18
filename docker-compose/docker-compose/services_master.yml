@@ -1,0 +1,42 @@
+version: "3"
+
+networks:
+  big:
+    driver: overlay
+
+services:
+
+  theremine:
+    image: registry.consomalin.ovh:5000/theremine:da1894c
+    env_file: env/theremine.env
+    networks: [big]
+
+  janitor:
+    image: registry.consomalin.ovh:5000/janitor:da1894c
+    env_file: env/janitor.env
+    networks: [big]
+
+  recorder:
+    image: registry.consomalin.ovh:5000/recorder:da1894c
+    env_file: env/recorder.env
+    networks: [big]
+
+  kiva:
+    image: registry.consomalin.ovh:5000/kiva:da1894c
+    networks: [big]
+
+  wendy:
+    image: registry.consomalin.ovh:5000/wendy:da1894c
+    env_file: env/wendy.env
+    networks: [big]
+
+  byte-diver:
+    image: registry.consomalin.ovh:5000/byte-diver:da1894c
+    networks: [big]
+    command: sleep infinity
+
+  metronome:
+    image: registry.consomalin.ovh:5000/metronome:da1894c
+    env_file: env/metronome.env
+    networks: [big]
+    command: ./metronome

@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+    h1 WHISLIST PAGE
+    h2 Vous êtes connecté
+    p Email : #{user._id}
+    ul 
+    each wishGroup in user.wishGroups
+        li= wishGroup.name
+
+    form(id="newGroup" action='/wishlist/groups', method='POST')
+        input(type='text', name='name', placeholder='GroupeName',required, autofocus)
+        button(type='submit') Ajouter le groupe
+    p#response
+    p
+        a(href='/users/signout') Sign Out
+block append script
+    script(src="/javascripts/wishList.js")
+
+
+

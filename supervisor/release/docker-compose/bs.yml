@@ -1,0 +1,32 @@
+version: "3"
+
+networks:
+  big:
+    driver: overlay
+
+services:
+  mysql:
+    image: mysql
+    networks: [big]
+    env_file: env/mysql.env
+    volumes:
+        - /root/apps/mysql:/var/lib/mysql
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  mongo:
+    image: mongo
+    networks: [big]
+    volumes:
+       - /root/apps/mongo/data:/data/db
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  rabbitmq:
+    image: rabbitmq:3.5.5-management
+    networks: [big]
+    env_file: env/rabbitmq.env

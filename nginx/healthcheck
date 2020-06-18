@@ -1,0 +1,23 @@
+#!/bin/bash
+
+myself=$(readlink -f ${BASH_SOURCE[0]})
+myfile=$(basename $myself)
+mydir=$(dirname $myself)
+
+# check and parse arguments
+if [ $# -ne 1 ]; then
+    echo "Usage: $myfile config_directory"
+    exit 1
+fi
+dir=$1
+
+addresses=$(grep -R 'set $address' $dir | sed 's/\t/ /g' | tr -s " " | cut -d" " -f4 | \
+  sed -r -e "s/;//" \
+         -e "s/^([^\/]*)$/http:\/\/\1\//" \
+         -e "s/[^\/]$/\0\//" \
+         -e "s/\/\/([^:/]*)\//\/\/\1:80\//" \
+         -e "s/^(.*)\/\/(.*):([^\/]*)\/(.*)$/\2 \3/")
+
+if [ -n "$addresses" ]; then
+  echo $addresses | xargs -n 2 nc -z
+fi

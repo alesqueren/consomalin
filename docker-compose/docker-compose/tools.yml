@@ -1,0 +1,153 @@
+version: "3"
+
+networks:
+  big:
+    driver: overlay
+
+services:
+  nginx:
+    image: consomalin/nginx-ldap
+    ports:
+      - "80:80"
+      - "443:443"
+    networks: [big]
+    volumes:
+      - /root/apps/nginx/conf:/app/conf:ro
+      - /root/apps/nginx/webroot:/app/html:ro
+      - /root/apps/letsencrypt/data:/app/ssl:ro
+    healthcheck: 
+      disable: true
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  metronome-cache:
+    image: consomalin/nginx-ldap
+    networks: [big]
+    volumes:
+      - /root/apps/cache/metronome/conf:/app/conf/:ro
+      - /root/apps/cache/metronome/data:/app/cache/
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:0.6.11
+    networks: [big]
+    env_file: env/phpldapadmin.env
+    # cn=admin,dc=example,dc=org
+    # admin
+
+  framapad:
+    image: tvelocity/etherpad-lite
+    networks: [big]
+    env_file: env/framapad.env
+    volumes:
+        - /root/apps/framapad/index.html:/opt/etherpad-lite/src/templates/index.html:ro
+        - /root/apps/framapad/data:/opt/etherpad-lite/var
+    deploy:
+      placement:
+        constraints:
+          - node.labels.state == true
+
+  owncloud:
+    image: owncloud:8.2
+    networks: [big]
+    volumes:
+        - /root/apps/owncloud/apps:/var/www/html/apps
+        - /root/apps/owncloud/config:/var/www/html/config
+        - /root/apps/owncloud/data:/var/www/html/data
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  wiki:
+    image: registry.consomalin.ovh:5000/gitit
+    networks: [big]
+    env_file: env/wiki.env
+    volumes:
+      - /root/apps/wiki/data:/app
+      - /root/apps/ssh/git:/root/.ssh
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  # chmod -R 777 xmpp/
+  xmpp:
+    image: rroemhild/ejabberd
+    env_file: env/xmpp.env
+    networks: [big]
+    ports:
+        - 5222:5222
+        - 5269:5269
+        - 5280:5280
+    volumes:
+        - /root/apps/xmpp/backup:/opt/ejabberd/backup
+        - /root/apps/xmpp/upload:/opt/ejabberd/upload
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  wekan:
+    image: mquandalle/wekan:0.10.0
+    networks: [big]
+    env_file: env/wekan.env
+  
+  gogs:
+    image: gogs/gogs
+    ports:
+      - "2222:22"
+    networks: [big]
+    volumes:
+      - /root/apps/gogs:/data
+      - /root/apps/ssh/oneoff-command:/data/git/oneoff-command
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  gocdsrv:
+    image: gocd/gocd-server:16.9.0
+    env_file: env/gocdsrv.env
+    networks: [big]
+    volumes:
+      - /root/apps/gocdsrv/lib:/var/lib/go-server
+      - /root/apps/gocdsrv/config:/etc/go
+      - /root/apps/ssh/git:/var/go/.ssh
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  gocdagent:
+    image: registry.consomalin.ovh:5000/goagent
+    env_file: env/gocdagent.env
+    networks: [big]
+    volumes:                  
+      - /etc/timezone:/etc/timezone            
+      - /etc/localtime:/etc/localtime
+      - /root/.docker:/root/.docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /root/apps/gocdagent/pipelines:/usr/share/go-agent/pipelines/
+      - /root/apps/ssh/git:/root/.ssh
+      - /root/apps/ssh/build-release-run:/root/build-release-run-ssh
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  letsencrypt:
+    image: registry.consomalin.ovh:5000/letsencrypt
+    volumes:
+      - /root/apps/letsencrypt/data:/etc/letsencrypt
+      - /root/apps/nginx/webroot:/webroot
+    command: ["sleep infinity"]
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true

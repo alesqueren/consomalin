@@ -1,0 +1,113 @@
+name:                drive
+version:             0.1.0.0
+synopsis:            Scraper for drive sites
+description:         Please see README.md
+license:             AllRightsReserved
+author:              Drive
+copyright:           2017 Drive
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Drive.Crawl
+                       Drive.Crawl.Auchan
+                       Drive.Crawl.Auchan.ShopChoice
+                       Drive.Crawl.Auchan.Home
+                       Drive.Crawl.Auchan.Category
+                       Drive.Crawl.Auchan.Merchandising
+                       Drive.Product
+                       Drive.Utils
+                       Drive.Re
+                       Drive.Types
+                       Drive.Server
+  ghc-options:         -W -Wall
+  build-depends:       base >= 4.7 && < 5
+                     , protolude
+                     , aeson
+                     , blaze-builder
+                     , bson
+                     , bytestring
+                     , errors
+                     , exceptions
+                     , http-conduit
+                     , http-types
+                     , lens
+                     , mongoDB
+                     , mtl
+                     , network-uri
+                     , regex-tdfa
+                     , scalpel
+                     , scotty
+                     , tagsoup
+                     , text
+                     , time
+                     , transformers
+                     , unordered-containers
+                     , wl-pprint-text
+                     , wai
+                     , warp
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable byte-diver-exe
+  hs-source-dirs:      byte-diver
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , drive
+                     , split
+                     , scalpel
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+executable kiva-exe
+  hs-source-dirs:      kiva
+  main-is:             Main.hs
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , protolude
+                     , attoparsec
+                     , drive
+                     , text
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+test-suite byte-diver-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             test.hs
+  other-modules:       Drive.ProductTest
+  build-depends:       base
+                     , protolude
+                     , mongoDB
+                     , quickcheck-text
+                     , tasty
+                     , tasty-hunit
+                     , tasty-quickcheck
+                     , text
+                     , wl-pprint-text
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude
+
+test-suite kiva-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             test.hs
+  other-modules:       Drive.ProductTest
+  build-depends:       base
+                     , protolude
+                     , mongoDB
+                     , quickcheck-text
+                     , tasty
+                     , tasty-hunit
+                     , tasty-quickcheck
+                     , text
+                     , wl-pprint-text
+  ghc-options:         -W -Wall -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings, NoImplicitPrelude

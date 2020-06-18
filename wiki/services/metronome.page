@@ -1,0 +1,17 @@
+# API
+
+GET /
+
+~~~{ .json }
+{
+    "slots": [{
+        "id": "3556536",
+        "day": "11/01/2017",
+        "time": "10:30:00",
+        "status": <past,available,busy>,
+        "attendanceLevel": <1..10> 
+    }],
+    "expiration": "11/01/2017 10:30:00"
+}
+~~~
+Tableau ordonné, les horaires sont envoyés chronologiquement

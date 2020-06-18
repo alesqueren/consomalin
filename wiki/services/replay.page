@@ -1,0 +1,19 @@
+# Mongo 
+
+**Voir les sessions récentes avec leur nombre d'états**
+
+~~~{.json}
+> db.records.aggregate([{ $project: { _id: 0, startTime: 1, size: { $size: "$states" }}}, { $sort: {startTime: -1} }])
+~~~
+
+**Supprimer les sessions de moins de 10 states**
+
+~~~{.json}
+db.records.aggregate([{ $project: { _id: 1, startTime: 1, stateNb: { $size: "$states" }}}, { $match: { stateNb: { $lt: 10 } }}]).forEach(function (doc) { var query = {"_id": doc._id}; db.records.remove(query); });
+~~~
+
+# Replay
+
+www.consomalin.ovh/replay/{id}
+
+Puis utiliser les flèches pour jouer l'historique des états.

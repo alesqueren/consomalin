@@ -1,0 +1,71 @@
+body {
+  font-size: 14px;
+  min-width: 1200px;
+  overflow-y:scroll;
+}
+a {
+  text-decoration:none;
+  color:black;
+}
+a:hover {
+  text-decoration:none;
+  color:black;
+}
+
+@font-face {
+  font-family: gunny;
+  src: url('/static/fonts/gnyrwn971.ttf');
+}
+
+@font-face {
+  font-family: helvetica;
+  src:  url('/static/fonts/HelveticaNeue.otf');
+}
+
+@font-face {
+  font-family: learningCurve;
+  src: url('/static/fonts/Cursive_standard.ttf');
+}
+
+@font-face {
+  font-family: receipt;
+  src: url('/static/fonts/receipt.regular.ttf');
+}
+
+.left{
+  float:left;
+}
+.right{
+  float:right;
+}
+
+.nav-btn {
+  position: relative;
+  width: auto;
+  height: 47px;
+  cursor: pointer;
+  text-align: center;
+}
+.nav-btn:hover{
+  background-color: #e6e6e6;
+}
+.nav-btn .special-fa {
+  position: absolute;
+  right: 10px;
+  top: 12px;
+}
+.nav-btn.prefered {
+  color: var(--white);
+  font-weight: bolder;
+  background-color: var(--success);
+}
+.nav-btn.prefered:not(.inactive):hover {
+  background-color: var(--color3-3);
+}
+/*LIST*/
+#list .line{
+  font-family: learningCurve;
+  height: 30px;
+  line-height: 40px;
+  font-size: 1.5em;
+}

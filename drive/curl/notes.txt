@@ -1,0 +1,27 @@
+*** MISC
+
+appel ajax: http://www.auchandrive.fr/services/clicMediaRestWebService/getCoupons
+renvoie des codes promos
+
+panier: bouton tout supprimer
+
+
+
+*** Procédure
+
+chrome:
+  - choisir un magasin
+  - copier dans cookies.txt
+
+./connect.sh #ok
+./add2basket.sh #ok
+./get_basket.sh #ok
+./go_schedule.sh #ok
+./get_day.sh 3
+./select_schedule.sh
+./go_payment.sh
+./validate_payment.sh
+
+
+check de l'horaire courant:
+https://www.auchandrive.fr/drive/choixslot

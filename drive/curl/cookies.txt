@@ -1,0 +1,34 @@
+# HTTP Cookie File for domains related to auchandrive.fr.
+# To download this content click here, press return (Mac only) or copy and paste into a cookies.txt file.
+# It can be then used by wget and other standard complaint tools.
+# Example:  wget -x --load-cookies cookies.txt http://www.auchandrive.fr/drive/Toulouse-954/
+#
+www.auchandrive.fr	FALSE	/drive	FALSE	0	JSESSIONID	C9B8DAEEEEAB10F70CAD093D6E5CF3DE.drive01s
+www.auchandrive.fr	FALSE	/	FALSE	1491297924	auchanPath	"/Toulouse-954/"
+.auchandrive.fr	TRUE	/	FALSE	1524129324	kameleoonPersonalizations	true/1491297324226
+www.auchandrive.fr	FALSE	/	FALSE	1522833325	langueFront	fr
+.auchandrive.fr	TRUE	/	FALSE	1491297384	_gat	1
+.auchandrive.fr	TRUE	/	FALSE	0	rdmvalidation	1
+.auchandrive.fr	TRUE	/	FALSE	1491297924	__utmt	1
+.auchandrive.fr	TRUE	/	FALSE	1491297384	_gat_auchanRollup	1
+.auchandrive.fr	TRUE	/	FALSE	1491297379	_gali	liste_drives
+www.auchandrive.fr	FALSE	/	FALSE	1522833350	auchanCook	"954|"
+.auchandrive.fr	TRUE	/	FALSE	0	tosend	%7B%22p%22%3A%7B%22tracker%22%3A%22auchandrive%22%2C%20%22url%22%3A%22Prehome%22%2C%20%22mtime%22%3A1491297345000%2C%20%22ref%22%3A%22http%3A%2F%2Fwww.auchandrive.fr%2Fdrive%2Fmag%2FToulouse-954%2F%22%2C%20%22dest%22%3A%22http%3A%2F%2Fwww.auchandrive.fr%2Fdrive%2Fmag%2FToulouse-954%2F%22%7D%2C%22d%22%3A%7B%22dv%22%3A%22NA%22%7D%2C%20%22t%22%3A%7B%22iplobserverstart%22%3A%221491297344356%22%2C%22jsinit%22%3A%221491297345018%22%2C%22domload%22%3A%221491297345517%22%2C%22clicklink%22%3A%221491297349687%22%2C%22unload%22%3A%221491297350287%22%7D%7D
+.auchandrive.fr	TRUE	/	FALSE	1554369350	__gads	ID=7b3f6a8fe4b18ea2:T=1491297350:S=ALNI_MaMnI12Puq-Fj9PIupJV5p0DH30NQ
+.auchandrive.fr	TRUE	/	FALSE	1491299151	sto__session	1491297351118
+.auchandrive.fr	TRUE	/	FALSE	1491299151	sto__count	0
+.auchandrive.fr	TRUE	/	FALSE	0	rollWAI	-
+.auchandrive.fr	TRUE	/	FALSE	1524993351	aurol	GA1.2.1885065399.1491297325
+.auchandrive.fr	TRUE	/	FALSE	1524993351	__utma	239562643.1784896977.1491297325.1491297325.1491297325.1
+.auchandrive.fr	TRUE	/	FALSE	1491299151	__utmb	239562643.3.10.1491297325
+.auchandrive.fr	TRUE	/	FALSE	0	__utmc	239562643
+.auchandrive.fr	TRUE	/	FALSE	1507065351	__utmz	239562643.1491297325.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)
+.auchandrive.fr	TRUE	/	FALSE	1554369351	_ga	GA1.2.1784896977.1491297325
+.auchandrive.fr	TRUE	/	FALSE	1491297411	_gat_sto_tracker	1
+.auchandrive.fr	TRUE	/	FALSE	1493889351	sto__vuid	c738d6d17bf3f82dfa0406a07f921d96
+www.auchandrive.fr	FALSE	/	FALSE	1491298251	t2s-rank	rank1
+www.auchandrive.fr	FALSE	/	FALSE	1522746951	t2s-p	79edc195-5809-45b9-ec68-82a4fa0c9179
+.auchandrive.fr	TRUE	/	FALSE	1525425351	__ywtfpcvuid	22640121491297326669
+.auchandrive.fr	TRUE	/	FALSE	1491299151	__ywtfpcsuid	25619721491297326669
+.auchandrive.fr	TRUE	/	FALSE	1522833352	WUF	eJwFwYENACEIBLCRnkdPwG1EIXEG4-62-1APUpHqaXORBY-yfCbUYRyWLb6_KsBowvcBVugNcA
+.auchandrive.fr	TRUE	/	FALSE	1522833353	kameleoonVisit	20170220/g5njh5wf7yfg33r9/0/1491297350591/0/

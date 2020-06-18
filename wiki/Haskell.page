@@ -1,0 +1,6 @@
+* [Haskell/Tips]()
+* [Haskell/Testing]()
+* mini exemple + "tuto" sur la lib `webdriver` et les monad transformers [https://git.consomalin.ovh/laurent/webdriver-test]().
+  En anglais, désolé :p.
+* mini outil perso [https://git.consomalin.ovh/laurent/breadthw]().
+  J'experimente quelques trucs avec. Exemple d'utilisation de `optparse-applicative` et `pipes` (simple).

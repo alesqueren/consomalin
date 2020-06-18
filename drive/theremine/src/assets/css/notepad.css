@@ -1,0 +1,218 @@
+.notepad {
+  position: relative;
+  color: #555;
+  font-size: 1.2em;
+  padding: 0 !important;
+  border: 1px solid #dedede;
+  /*background-color: #fff6d5;*/
+  background-color: white;
+  font-family: learningCurve;
+}
+
+.notepad .redLine {
+  position: absolute;
+  border-left: 1px solid #ffaa9f;
+  border-right: 1px solid #ffaa9f;
+  width: 4px;
+  height: 100%;
+  margin-left: 65px;
+  z-index: 3;
+}
+
+.notepad .title {
+  font-size: 2em;
+  text-align: center;
+  margin-left: 65px;
+  padding-top: 10px;
+  height: 60px;
+  overflow: hidden;
+}
+
+.activeGroup .notepad .title {
+  /*text-decoration: underline;*/
+  /*display: none;*/
+}
+
+#newWish {
+  border-top: 1px dotted #72c4ff;
+}
+#newGroup {
+  border-top: 1px dotted #72c4ff;
+}
+.notepad input {
+  /*border-top: 1px dotted #72c4ff;*/
+  width: 100%;
+  border: none;
+  font-size: 1em;
+  height: 50px;
+  line-height: 50px;
+  padding-left: 92px;
+  font-family: learningCurve;
+  /*border: 2px solid #ffaa9f;*/
+  border-radius: 2px;
+}
+.notepad .newIcon{
+  position: absolute;
+  bottom: 9px;
+  left: 22px;
+  font-size: 1.5em;
+  z-index: 2;
+}
+
+.notepad .edition {
+  width: 100%;
+  position: relative;
+  margin-left: -50px;
+  z-index: 2;
+}
+
+.notepad .btn-edition {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  width: 60px;
+  height: 52px;
+  z-index: 2;
+}
+
+.notepad .btn-create {
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  width: 60px;
+  height: 52px;
+  z-index: 3;
+}
+
+.notepad .confirmDeletion {
+  text-transform: none;
+  cursor: pointer;
+  position: absolute;
+  font-size: 1.5em;
+  top: 0;
+  right: 5px;
+  z-index: 3;
+}
+.notepad .line {
+  cursor: pointer;
+  position: relative;
+  list-style: none;
+  border-top: 1px dotted #72c4ff;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 10px 0 50px;
+  /*text-transform: capitalize;*/
+  /*overflow: hidden;*/
+  text-align: left;
+}
+
+.notepad .line:not(.active):hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
+  -webkit-transition: all 0.2s;
+  -moz-transition:    all 0.2s;
+  -ms-transition:     all 0.2s;
+  -o-transition:      all 0.2s;
+}
+
+.notepad .line .name {
+  cursor: pointer;
+  font-size: 1.5em;
+  max-width: 90%;
+  max-height: 50px;
+}
+.notepad .line .name{
+  /*overflow: hidden;*/
+}
+
+.notepad .line .buttns {
+  visibility: hidden;
+  position: absolute;
+  top: 11px;
+  right: 0px;
+  width: 162px;
+  line-height: 13px;
+  height: 13px;
+  font-weight: normal;
+  font-size: 0.7em;
+  font-family: helvetica;
+}
+.notepad .line:hover .buttns {
+/*.line .buttns {*/
+  visibility: visible;
+  cursor: pointer;
+}
+.notepad .line .buttns .action {
+  border: 1px solid rgba(0,0,0,.01);
+  border-radius: .25rem;
+  position: relative;
+  display: table-cell;
+  width: 50%;
+  padding: 6px;
+}
+.notepad .line .buttns .action .icon {
+/*  height: 20px;
+  width: 20px;*/
+}
+.notepad .line:hover .icon {
+  visibility: visible;
+  color: black;
+}
+.notepad .line .content {
+  font-size: 1em;
+  visibility: hidden;
+}
+.notepad [type="checkbox"]:not(:checked),
+.notepad [type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+
+.notepad [type="checkbox"]:not(:checked) + label,
+.notepad [type="checkbox"]:checked + label {
+  position: relative;
+  padding-left: 35px;
+}
+.notepad [type="checkbox"]:not(:checked) + label:before,
+.notepad [type="checkbox"]:checked + label:before {
+  content: '';
+  position: absolute;
+  left:-30px; top: 12px;
+  width: 25px; height: 25px;
+  border: 1px solid #aaa;
+  background: #f8f8f8;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.3);
+}
+.notepad [type="checkbox"]:not(:checked):disabled + label:before,
+.notepad [type="checkbox"]:checked:disabled + label:before {
+  box-shadow: inset 0 1px 28px rgba(0,0,0,.3);
+}
+
+.notepad [type="checkbox"]:not(:checked):not(:disabled) + label:after,
+.notepad [type="checkbox"]:checked:not(:disabled) + label:after {
+  content: '✔';
+  position: absolute;
+  top: 2px; left: -30px;
+  font-size: 30px;
+  color: #09ad7e;
+  transition: all .1s;
+}
+
+.notepad [type="checkbox"]:not(:checked) + label:after {
+  opacity: 0;
+  transform: scale(0);
+}
+.notepad [type="checkbox"]:checked + label:after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.notepad .fakeCheckbox {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 65px;
+  height: 100%;
+}

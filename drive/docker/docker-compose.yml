@@ -1,0 +1,87 @@
+version: "3"
+
+services:
+
+  nginx:
+    image: consomalin/nginx-ldap
+    networks: [big]
+    volumes:
+      - ./docker/nginx/:/app/conf/:ro
+    ports:
+      - "8080:80" 
+
+  theremine:
+    build: ./theremine
+    networks: [big]
+
+  janitor:
+    build: ./janitor
+    networks: [big]
+    environment:
+      - METRONOME_HOST=http://metronome-cache
+      - KIVA_HOST=http://kiva
+
+  recorder:
+    build: ./recorder
+    networks: [big]
+
+  kiva:
+    build: 
+      context: ./haskell
+      dockerfile: ./services/kiva/Dockerfile
+    networks: [big]
+
+  wendy:
+    build:
+      context: ./haskell
+      dockerfile: ./services/wendy/Dockerfile
+    environment:
+      - DRIVE_USER=goto.devnull@mailoo.org
+      - DRIVE_PASS=TTOjKLoXg1!
+    networks: [big]
+
+  metronome-cache:
+    image: consomalin/nginx-ldap
+    networks: [big]
+    volumes:
+      - ./docker/metronome-cache/conf:/app/conf/:ro
+      - ./docker/metronome-cache/cache:/app/cache/
+
+  metronome:
+    build:
+      context: ./haskell
+      dockerfile: ./services/metronome/Dockerfile
+    environment:
+      - DRIVE_USER=bitcoin.miner@mailoo.org
+      - DRIVE_PASS=hDDqSUGmY3!
+    networks: [big]
+
+  lyrist:
+    build:
+      context: ./haskell
+      dockerfile: ./services/lyrist/Dockerfile
+    networks: [big]
+
+  mongo-express:
+    image: mongo-express
+    networks: [big]
+    ports:
+      - "9000:8081"
+
+  mongo:
+    image: mongo
+    networks: [big]
+    volumes:
+      - ./docker/state/mongo:/data/db
+    ports:
+      - "27017:27017"
+
+  rabbitmq:
+    image: rabbitmq:3.5.5-management
+    networks: [big]
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+networks:
+  big:

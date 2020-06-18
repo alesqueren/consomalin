@@ -1,0 +1,235 @@
+# **Authentication**
+
+Prefixé par **/users**
+
+#### GET /me
+
+~~~{ .json }
+{
+    id: "goto.devnull@mailoo.org"
+}
+~~~
+
+#### POST /register
+
+Data:
+
+  - username: string
+  - password: string
+
+Response:
+
+  - 401: User already exists
+
+#### PUT /login
+
+Data:
+
+  - username: string
+  - password: string
+
+Response:
+
+  - 401: Username or password not valid
+
+#### PUT /signout
+
+
+# **Wishlist**
+
+Prefixé par **/wishlist**
+
+#### GET /
+
+Response:
+
+~~~{.json}
+{
+    wishGroups: [{
+        id: "ef58"
+        name: "ratatouille"
+        wishes: [{
+            id: "5472",
+            name: "oignons",
+        }]
+    }],
+
+    currentBasket: { 
+        currentWishId: "ef58",
+
+        slot: { 
+            id: "305789",
+            dateTime: ISODate("2017-03-15T11:31:40.000Z")
+        }
+
+        selectedWishes : {
+            "ef58": {
+                "5472": {
+                    pid: pid1,
+                    quantity: 2
+                },
+                "afe8": {}
+            }
+        }
+    }
+}
+~~~
+
+#### POST /basket/currentWish
+
+Data:
+
+  - wid: string
+
+#### DELETE /basket/currentWish
+
+#### POST /basket/autoFill
+
+Response:
+
+~~~{ .json }
+{
+    "ratatouille" : {
+        "oignons" : <viewFeatures>
+    }
+}
+~~~
+
+#### PUT /basket/slot
+
+Data:
+
+  - id: string
+  - dateTime: dateTime (ex: "11/01/2017 10:30:00")
+
+#### POST /basket/prepareOrder
+
+Data:
+
+~~~{.json}
+    {  
+      "basket":  
+      {  
+        "totalPrice": 59.8,  
+        "products":  
+        {  
+          "19935":  
+          {  
+            "productNb":20,  
+            "priceByProduct":2.99,  
+            "price":59.8  
+          }  
+        }  
+      },  
+      "slotId":"3851770"  
+    }  
+~~~
+
+#### POST /basket/order
+
+Data:
+
+~~~{.json}
+    {  
+      "basket":  
+      {  
+        "totalPrice": 59.8,  
+        "products":  
+        {  
+          "19935":  
+          {  
+            "productNb":20,  
+            "priceByProduct":2.99,  
+            "price":59.8  
+          }  
+        }  
+      },  
+      "slotId":"3851770"  
+    }  
+~~~
+#### POST /groups
+
+Data:
+
+  - name: string
+
+#### PUT /groups/{gid}
+
+Data:
+
+  - name: string (optional)
+  - selected: *string* (optional)
+
+#### DELETE /groups/{gid}
+
+#### POST /groups/{gid}/wishes/bulk 
+
+Data:
+
+  - names: [string]
+
+Response:
+
+~~~{ .json }
+[ "0f58fea87633", "3b819923bf04" ]
+~~~
+
+#### PUT /groups/{gid}/wishes/{wid}
+
+Data:
+
+  - name: string (optional)
+  - selected: *string* (optional)
+
+#### POST /groups/{gid}/wishes/{wid}/move 
+*change a wish position into a wishgroup*
+
+Data:
+
+  - index: integer (starting from 0)
+
+#### DELETE /groups/{gid}/wishes/{wid}
+
+#### POST /groups/{gid}/wishes/{wid}/product
+
+#### PUT /groups/{gid}/wishes/{wid}/product/bulk
+
+Data:
+
+  - products : [{
+    pid: (string), 
+    quantity: (integer - optional)
+  }]
+
+#### PUT /groups/{gid}/wishes/{wid}/product
+*updte one product of wish gid/wid*
+
+Data:
+
+  - pid: (string)
+  - quantity: (integer )
+
+#### DELETE /groups/{gid}/wishes/{wid}/product
+*delete product of wish gid/wid*
+
+Data:
+
+  - pid: string (optional)
+
+# **Products**
+
+Prefixé par **/products**
+
+[API kiva](https://wiki.consomalin.ovh/services/kiva)
+
+# **Schedule**
+
+Prefixé par **/schedule**
+
+[API metronome](https://wiki.consomalin.ovh/services/metronome)
+
+# **History**
+
+Prefixé par **/history**
+
+[API recorder](https://wiki.consomalin.ovh/services/recorder)

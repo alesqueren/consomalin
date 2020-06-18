@@ -1,0 +1,90 @@
+On utilise [tasty](http://documentup.com/feuerbach/tasty) qui est un framework pour unifier plusieurs méthodes de tests Haskell.
+
+Pour l'instant, on a deux types de tests :
+
+- tests unitaires classiques avec HUnit
+- tests de propriétés par génération automatique d'exemples avec QuickCheck
+
+Le seul exemple (29/10/2017) est dans `test/Drive/ProductTest.hs`
+
+## Tests unitaires
+
+Relativement classique, pas forcément très évident à prendre en main au départ à cause des différents opérateurs possibles.
+Le cas par défaut est un test avec IO mais il y a des opérateurs pour faire des tests purs.
+
+## Tests quickcheck
+
+Un peu plus ésotérique. Il faut déclarer des propriétés qui sont en résumé des fonctions d'un ou plusieurs arguments vers `Bool`.
+
+Ensuite QuickCheck se dębrouille pour générer des exemples aléatoires des arguments de la propriété et vérifie que
+ça renvoie tout le temps True.
+
+Voir ici : [https://git.consomalin.ovh/drive/byte-diver/src/88e3083023b898a684d5343ee9599967090b9060/test/Drive/ProductTest.hs#L45]()
+
+La propriété qu'on veut vérifier est : `cast' . val = Just` (à lire `deserialize . serialize = id`) pour le type Product.
+
+Comme on peut le voir, il n'y a pratiquement rien à faire sauf à déclarer l'instance `Arbitrary` pour notre type.
+
+### Arbitrary c'est quoi ?
+
+C'est une type class qui fournie la fonction `arbitrary :: Gen a` pour un type `a`.
+
+`Gen a` c'est un générateur aléatoire de type `a`. Ce qui est pratique c'est que c'est une monad et qu'on peut
+s'appuyer sur des générateurs de types fondamentaux pour générer des types plus complexes.
+
+C'est ce quon fait pour Product qui utilise en particulier un générateur pour le type `Text` fournis par `quickcheck-test`
+
+## Exemple
+
+```
+$ stack test
+byte-diver-0.1.0.0: unregistering (local file changes: test/Drive/ProductTest.hs)
+byte-diver-0.1.0.0: build (lib + exe + test)
+Preprocessing library byte-diver-0.1.0.0...
+Preprocessing executable 'byte-diver-exe' for byte-diver-0.1.0.0...
+Preprocessing test suite 'byte-diver-test' for byte-diver-0.1.0.0...
+[1 of 2] Compiling Drive.ProductTest ( test/Drive/ProductTest.hs, .stack-work/dist/x86_64-linux-tinfo6/Cabal-1.24.0.0/build/byte-diver-test/byte-diver-test-tmp/Drive/ProductTest.o )
+Linking .stack-work/dist/x86_64-linux-tinfo6/Cabal-1.24.0.0/build/byte-diver-test/byte-diver-test ...
+byte-diver-0.1.0.0: copy/register
+Installing library in
+/home/tyk/code/consom/byte-diver/.stack-work/install/x86_64-linux-tinfo6/lts-7.15/8.0.1/lib/x86_64-linux-ghc-8.0.1/byte-diver-0.1.0.0-C3dwlrXfoBR6q8k3fJcZ4E
+Installing executable(s) in
+/home/tyk/code/consom/byte-diver/.stack-work/install/x86_64-linux-tinfo6/lts-7.15/8.0.1/bin
+Registering byte-diver-0.1.0.0...
+byte-diver-0.1.0.0: test (suite: byte-diver-test)
+
+Progress: 1/2Tests
+  Tests for Drive.Product
+    Unit tests
+      extractPrice
+        Read price "1,0":           FAIL
+          read failed
+        Read price "1.0":           FAIL
+          read failed
+        Read price "1":             FAIL
+          read failed
+        Read price "0.01":          OK
+        Read price "1,00":          OK
+        Read price "Ça coûte 0.01": OK
+      pretty
+        Price 1.16:                 OK
+        Price 1.011:                OK
+        Price 0.1:                  OK
+        Price 0.0:                  OK
+    Quick checks
+      Price BSON:                   OK (0.01s)
+        +++ OK, passed 100 tests.
+      Product BSON:                 OK (0.04s)
+        +++ OK, passed 100 tests.
+
+3 out of 12 tests failed (0.05s)
+
+Completed 2 action(s).
+Test suite failure for package byte-diver-0.1.0.0
+    byte-diver-test:  exited with: ExitFailure 1
+Logs printed to console
+```
+
+Bon des tests ne passent pas mais c'est un peu voulu, il faut voir ce qu'on en fait.
+
+On peut voir que QuickCheck a généré 100 tests à chaque fois pour vérifier nos propriétés.

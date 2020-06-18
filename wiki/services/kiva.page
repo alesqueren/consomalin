@@ -1,0 +1,53 @@
+# API
+
+#### **GET** /search
+
+Url parameters:  
+
+   - s: string
+
+Response:
+
+~~~{ .json }
+[
+  { 
+    id: pid1,
+    features: <viewFeatures> 
+  }
+]
+~~~
+
+#### **GET** /details
+
+Url parameters: 
+ 
+   - pids: [string]
+
+Response:
+
+~~~{ .json }
+{ 
+   pid: <ViewFeatures> 
+}
+~~~
+
+Example:
+
+~~~{ .json }
+{  
+   "610702": {  
+      "name":"Courges butternut saut195169 d'agneau",
+      "imageUrl":"http://www.auchandrive.fr/drive/static-media/front/pictures/product/zoom/610702.jpg",
+      "price": 2.99,
+      "priceByQuantity": 1.51,
+      "quantityUnit": "Kg"
+   },
+   "758945": {  
+      "name":"Risotto de courgettes au chévre",
+      "imageUrl":"http://www.auchandrive.fr/drive/static-media/front/pictures/product/zoom/758945.jpg",
+      "price": 2.99,
+      "priceByQuantity": 1.51,
+      "quantityUnit": "Kg"
+   }
+}
+~~~

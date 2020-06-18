@@ -1,0 +1,12 @@
+curl 'https://www.auchandrive.fr/drive/coffre' \
+    -v \
+    --location \
+    -b cookies.txt \
+    -H 'Accept-Encoding: gzip, deflate, sdch, br' \
+    -H 'Accept-Language: fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4' \
+    -H 'Upgrade-Insecure-Requests: 1' \
+    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36' \
+    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \
+    -H 'Referer: http://www.auchandrive.fr/drive/Toulouse-954/' \
+    -H 'Connection: keep-alive' \
+    --compressed

@@ -1,0 +1,21 @@
+#### GET /sessions/{sid}
+
+Response:
+
+~~~{ .json }
+[{
+    "time": 123,
+    "state" : { ... }
+}]
+~~~
+
+#### POST /sessions/{sid}/add
+
+Data:
+
+~~~{ .json }
+[{
+    "time": 123,
+    "state" : { ... }
+}]
+~~~

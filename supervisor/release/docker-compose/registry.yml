@@ -1,0 +1,42 @@
+version: "3"
+
+networks:
+  big:
+    driver: overlay
+
+services:
+  registry-proxy:
+    image: consomalin/nginx-ldap
+    ports:
+      - "5000:5000"
+    networks: [big]
+    volumes:
+      - /root/apps/registry/nginx:/app/conf:ro
+      - /root/apps/letsencrypt/data:/app/ssl:ro
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  registry:
+    image: registry:2
+    networks: [big]
+    env_file: env/registry.env
+    volumes:
+      - /root/apps/registry/data:/var/lib/registry
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
+
+  ldap:
+    image: osixia/openldap
+    networks: [big]
+    env_file: env/ldap.env
+    volumes:
+      - /root/apps/ldap/config:/etc/ldap/slapd.d
+      - /root/apps/ldap/data:/var/lib/ldap
+    deploy:
+      placement:
+        constraints: 
+          - node.labels.state == true
